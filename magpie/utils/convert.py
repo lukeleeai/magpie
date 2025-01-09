@@ -12,12 +12,14 @@ def model_from_string(s):
     msg = f'Unknown model class "{s}"'
     raise RuntimeError(msg)
 
+
 def edit_from_string(s):
     for klass in known_edits:
         if klass.__name__ == s:
             return klass
     msg = f'Unknown edit class "{s}"'
     raise RuntimeError(msg)
+
 
 def protocol_from_string(s):
     for klass in known_protocols:
@@ -26,6 +28,7 @@ def protocol_from_string(s):
     msg = f'Unknown protocol class "{s}"'
     raise RuntimeError(msg)
 
+
 def software_from_string(s):
     for klass in known_software:
         if klass.__name__ == s:
@@ -33,8 +36,10 @@ def software_from_string(s):
     msg = f'Unknown software class "{s}"'
     raise RuntimeError(msg)
 
+
 def algo_from_string(s):
     for klass in known_algos:
+        print("Klass: ", klass.__name__)
         if klass.__name__ == s:
             return klass
     msg = f'Unknown algorithm class "{s}"'

@@ -38,9 +38,15 @@ class AbstractSoftware(abc.ABC):
         with contextlib.suppress(FileExistsError):
             pathlib.Path(magpie.settings.work_dir).mkdir(parents=True)
         while True:
-            self.run_label = f'{self.basename}_{self.timestamp}'
-            new_work_dir = pathlib.Path(magpie.settings.work_dir).resolve() / self.run_label
-            lock_file = f'{new_work_dir}.lock'
+            self.run_label = (
+                f"{self.basename}_{self.timestamp}"  # @luke : uncomment
+            )
+            # self.run_label = self.basename  # @luke : remove
+            new_work_dir = (
+                pathlib.Path(magpie.settings.work_dir).resolve()
+                / self.run_label
+            )
+            lock_file = f"{new_work_dir}.lock"
             try:
                 fd = os.open(lock_file, os.O_CREAT | os.O_EXCL)
                 os.close(fd)
@@ -52,7 +58,7 @@ class AbstractSoftware(abc.ABC):
                     pathlib.Path(lock_file).unlink()
             except FileExistsError:
                 pass
-            self.timestamp = str(int(self.timestamp)+1)
+            self.timestamp = str(int(self.timestamp) + 1)
 
     def reset_logger(self):
         # just in case
@@ -71,24 +77,33 @@ class AbstractSoftware(abc.ABC):
         # to remove ANSI color tags in file logs
         def color_stripper(record):
             if isinstance(record.msg, str):
-                record.msg = re.sub(r'\033\[[0-9;]*m', '', record.msg)
+                record.msg = re.sub(r"\033\[[0-9;]*m", "", record.msg)
             return True
 
         # add file logging
         with contextlib.suppress(FileExistsError):
             pathlib.Path(magpie.settings.log_dir).mkdir(parents=True)
-        file_handler = logging.FileHandler((pathlib.Path(magpie.settings.log_dir) / f'{self.run_label}.log'), delay=True)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s\t[%(levelname)s]\t%(message)s'))
+        file_handler = logging.FileHandler(
+            (pathlib.Path(magpie.settings.log_dir) / f"{self.run_label}.log"),
+            delay=True,
+        )
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s\t[%(levelname)s]\t%(message)s")
+        )
         file_handler.setLevel(logging.DEBUG)
         file_handler.addFilter(color_stripper)
         self.logger.addHandler(file_handler)
 
-
     def reset_workdir(self):
         # creates or move current work_dir
-        new_work_dir = pathlib.Path(magpie.settings.work_dir).resolve() / self.run_label
+        new_work_dir = (
+            pathlib.Path(magpie.settings.work_dir).resolve() / self.run_label
+        )
+        print("NEW WORK DIR", new_work_dir)
         if self.work_dir and self.work_dir.exists():
-            self.work_dir = pathlib.Path(shutil.move(self.work_dir, new_work_dir))
+            self.work_dir = pathlib.Path(
+                shutil.move(self.work_dir, new_work_dir)
+            )
             if magpie.settings.local_original_copy:
                 self.path = self.work_dir / magpie.settings.local_original_name
         else:
@@ -97,15 +112,20 @@ class AbstractSoftware(abc.ABC):
                 new_path = self.work_dir / magpie.settings.local_original_name
                 if self.path != new_path:
                     self.path = shutil.copytree(self.path, new_path)
-        pathlib.Path(f'{new_work_dir}.lock').unlink()
+        pathlib.Path(f"{new_work_dir}.lock").unlink()
 
     def reset_contents(self):
         # expend wildcards in target file list
-        if any('*' in f for f in self.target_files):
-            tmp = [sorted(self.path.glob(f)) if '*' in f else [f] for f in self.target_files]
-            self.target_files = [str(f.relative_to(self.path)) for fl in tmp for f in fl]
+        if any("*" in f for f in self.target_files):
+            tmp = [
+                sorted(self.path.glob(f)) if "*" in f else [f]
+                for f in self.target_files
+            ]
+            self.target_files = [
+                str(f.relative_to(self.path)) for fl in tmp for f in fl
+            ]
 
-        # reset noop variant
+        # reset noop variant (the original version of the software)
         self.noop_variant = Variant(self)
 
     @abc.abstractmethod
@@ -141,7 +161,10 @@ class AbstractSoftware(abc.ABC):
                 target_entry.unlink()
             else:
                 original_entry = original / entry
-                if original_entry.stat().st_mtime < target_entry.stat().st_mtime:
+                if (
+                    original_entry.stat().st_mtime
+                    < target_entry.stat().st_mtime
+                ):
                     # modified file
                     shutil.copyfile(original_entry, target_entry)
                     shutil.copystat(original_entry, target_entry)
@@ -164,44 +187,73 @@ class AbstractSoftware(abc.ABC):
     def exec_cmd(self, cmd, timeout=15, env=None, shell=False, lengthout=1e6):
         # 1e6 bytes is 1Mb
         sprocess = None
-        stdout = b''
-        stderr = b''
+        stdout = b""
+        stderr = b""
         start = time.time()
         sprocess = None
         env = env or os.environ.copy()
-        env['MAGPIE_ROOT'] = magpie.settings.magpie_root
-        env['MAGPIE_LOG_DIR'] = magpie.settings.log_dir
-        env['MAGPIE_WORK_DIR'] = magpie.settings.work_dir
-        env['MAGPIE_BASENAME'] = self.basename
-        env['MAGPIE_TIMESTAMP'] = self.timestamp
+        env["MAGPIE_ROOT"] = magpie.settings.magpie_root
+        env["MAGPIE_LOG_DIR"] = magpie.settings.log_dir
+        env["MAGPIE_WORK_DIR"] = magpie.settings.work_dir
+        env["MAGPIE_BASENAME"] = self.basename
+        env["MAGPIE_TIMESTAMP"] = self.timestamp
         try:
-            with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell, env=env, start_new_session=True) as sprocess:
+            with subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=shell,
+                env=env,
+                start_new_session=True,
+            ) as sprocess:
                 if lengthout > 0:
                     stdout_size = 0
                     stderr_size = 0
                     while sprocess.poll() is None:
                         end = time.time()
-                        if end-start > timeout:
+                        if end - start > timeout:
                             os.killpg(os.getpgid(sprocess.pid), signal.SIGKILL)
                             _, _ = sprocess.communicate()
-                            return ExecResult(cmd, 'TIMEOUT', sprocess.returncode, stdout, stderr, end-start, stdout_size+stderr_size)
-                        a = select.select([sprocess.stdout, sprocess.stderr], [], [], 1)[0]
+                            return ExecResult(
+                                cmd,
+                                "TIMEOUT",
+                                sprocess.returncode,
+                                stdout,
+                                stderr,
+                                end - start,
+                                stdout_size + stderr_size,
+                            )
+                        a = select.select(
+                            [sprocess.stdout, sprocess.stderr], [], [], 1
+                        )[0]
                         if sprocess.stdout in a:
                             for _ in range(1024):
-                                if not select.select([sprocess.stdout], [], [], 0)[0]:
+                                if not select.select(
+                                    [sprocess.stdout], [], [], 0
+                                )[0]:
                                     break
                                 stdout += sprocess.stdout.read(1)
                                 stdout_size += 1
                         if sprocess.stderr in a:
                             for _ in range(1024):
-                                if not select.select([sprocess.stderr], [], [], 0)[0]:
+                                if not select.select(
+                                    [sprocess.stderr], [], [], 0
+                                )[0]:
                                     break
                                 stderr += sprocess.stderr.read(1)
                                 stderr_size += 1
-                        if stdout_size+stderr_size >= lengthout:
+                        if stdout_size + stderr_size >= lengthout:
                             os.killpg(os.getpgid(sprocess.pid), signal.SIGKILL)
                             _, _ = sprocess.communicate()
-                            return ExecResult(cmd, 'LENGTHOUT', sprocess.returncode, stdout, stderr, end-start, stdout_size+stderr_size)
+                            return ExecResult(
+                                cmd,
+                                "LENGTHOUT",
+                                sprocess.returncode,
+                                stdout,
+                                stderr,
+                                end - start,
+                                stdout_size + stderr_size,
+                            )
                     end = time.time()
                     stdout += sprocess.stdout.read()
                     stderr += sprocess.stderr.read()
@@ -212,11 +264,27 @@ class AbstractSoftware(abc.ABC):
                         os.killpg(os.getpgid(sprocess.pid), signal.SIGKILL)
                         stdout, stderr = sprocess.communicate()
                         end = time.time()
-                        return ExecResult(cmd, 'TIMEOUT', sprocess.returncode, stdout, stderr, end-start, len(stdout)+len(stderr))
+                        return ExecResult(
+                            cmd,
+                            "TIMEOUT",
+                            sprocess.returncode,
+                            stdout,
+                            stderr,
+                            end - start,
+                            len(stdout) + len(stderr),
+                        )
                     end = time.time()
-                return ExecResult(cmd, 'SUCCESS', sprocess.returncode, stdout, stderr, end-start, len(stdout)+len(stderr))
+                return ExecResult(
+                    cmd,
+                    "SUCCESS",
+                    sprocess.returncode,
+                    stdout,
+                    stderr,
+                    end - start,
+                    len(stdout) + len(stderr),
+                )
         except FileNotFoundError:
-            return ExecResult(cmd, 'CLI_ERROR', -1, b'', b'', 0, 0)
+            return ExecResult(cmd, "CLI_ERROR", -1, b"", b"", 0, 0)
 
     def clean_work_dir(self):
         with contextlib.suppress(FileNotFoundError):

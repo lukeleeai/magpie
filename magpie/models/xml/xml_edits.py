@@ -5,14 +5,33 @@ from magpie.core import Edit
 from .abstract_model import AbstractXmlModel
 
 
+# LLM Mutation
+class AbstractXmlLLMMutation(Edit):
+    NODE_TAG = ""
+
+    @classmethod
+    def auto_create(cls, ref):
+        target = ref.random_model(AbstractXmlModel).random_target(cls.NODE_TAG)
+        # print("Target: ", target)
+        if not target:
+            return None
+        return cls(target)
+
+    def apply(self, ref, variant):
+        print("Applying LLM Mutation")
+        model = variant.models[self.target[0]]
+        return model.do_llm_mutation()
+
+
 class AbstractXmlNodeDeletion(Edit):
-    NODE_TAG = ''
+    NODE_TAG = ""
 
     @classmethod
     def auto_create(cls, ref):
         target = ref.random_model(AbstractXmlModel).random_target(cls.NODE_TAG)
         if not target:
             return None
+        print("Creating a deletion edit with a target: ", target)
         return cls(target)
 
     def apply(self, ref, variant):
@@ -21,29 +40,40 @@ class AbstractXmlNodeDeletion(Edit):
 
 
 class AbstractXmlNodeReplacement(Edit):
-    NODE_TAG = ''
+    NODE_TAG = ""
 
     @classmethod
     def auto_create(cls, ref):
-        target, ingredient = ref.random_targets(AbstractXmlModel, cls.NODE_TAG, cls.NODE_TAG)
+        print("CLS: ", cls)
+        print("ref: ", ref)
+        target, ingredient = ref.random_targets(
+            AbstractXmlModel, cls.NODE_TAG, cls.NODE_TAG
+        )
         if not (target and ingredient):
             return None
         return cls(target, ingredient)
 
     def apply(self, ref, variant):
         ingredient = self.data[0]
-        ref_model = ref.models[ingredient[0]]
-        model = variant.models[self.target[0]]
+        ref_model = ref.models[ingredient[0]]  # ingredient code model
+        model = variant.models[self.target[0]]  # target code model
         return model.do_replace(ref_model, self.target, ingredient)
 
 
 class AbstractXmlNodeInsertion(Edit):
-    NODE_PARENT_TAG = ''
-    NODE_TAG = ''
+    NODE_PARENT_TAG = ""
+    NODE_TAG = ""
 
     @classmethod
     def auto_create(cls, ref):
-        target, ingredient = ref.random_targets(AbstractXmlModel, f'_inter_{cls.NODE_PARENT_TAG}', cls.NODE_TAG)
+        # print("Insertion Class: ", cls)
+        # print("Insertion, ", cls.NODE_TAG)
+        # grab a random ingredient and insert it into the target block (block's where?)
+        target, ingredient = ref.random_targets(
+            AbstractXmlModel, f"_inter_{cls.NODE_PARENT_TAG}", cls.NODE_TAG
+        )
+        print("Insertion Target: ", target)
+        print("Insertion Ingredient: ", ingredient)
         if not (target and ingredient):
             return None
         return cls(target, ingredient)
@@ -56,8 +86,8 @@ class AbstractXmlNodeInsertion(Edit):
 
 
 class AbstractXmlTextSetting(Edit):
-    NODE_TAG = ''
-    CHOICES = ['']
+    NODE_TAG = ""
+    CHOICES = [""]
 
     @classmethod
     def auto_create(cls, ref):
@@ -74,8 +104,8 @@ class AbstractXmlTextSetting(Edit):
 
 
 class AbstractXmlTextWrapping(Edit):
-    NODE_TAG = ''
-    CHOICES = [('(', ')')]
+    NODE_TAG = ""
+    CHOICES = [("(", ")")]
 
     @classmethod
     def auto_create(cls, ref):
