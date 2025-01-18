@@ -35,7 +35,6 @@ def make_cmake_file(data_dir):
 def make_setup_file(data_dir):
     with open(f"{data_dir}/setup.sh", "w") as f:
         f.write("#!/usr/bin/env bash\n\n")
-        f.write("mkdir helloworld\n")
         f.write("rm -rf build\n")
         f.write("mkdir build\n")
         f.write("cd build\n")
@@ -51,9 +50,18 @@ def create_compile_file(data_dir):
         f.write("make\n")
 
 
-def create_run_file(data_dir, problem_id, max_runs=50):
+def create_run_file(data_dir, problem_id, max_runs=50, use_multipass=False):
+    def to_tilde_path(path):
+        home = os.path.expanduser("~")
+        if path.startswith(home):
+            return path.replace(home, "~", 1)
+        return path
+
     test_case_dir = os.path.abspath(f"dataset/public_test_cases/{problem_id}")
-    input_files = sorted(glob.glob(f"{test_case_dir}/input.*.txt"))
+
+    input_files = sorted(
+        glob.glob(os.path.expanduser(f"{test_case_dir}/input.*.txt"))
+    )
     total_runs = 0
 
     with open(f"{data_dir}/run.sh", "w") as f:
@@ -62,6 +70,7 @@ def create_run_file(data_dir, problem_id, max_runs=50):
         while total_runs < max_runs:
             for input_file in input_files:
                 # Use build/src_code from the current directory
+                # f.write(f"./build/src_code < {to_tilde_path(input_file)}\n")
                 f.write(f"./build/src_code < {input_file}\n")
                 total_runs += 1
                 if total_runs >= max_runs:
@@ -149,7 +158,7 @@ def copy_stdc_file(data_dir):
         f.write(stdc_content)
 
 
-def generate_data(data, index, one_shot=False):
+def generate_data(data, index, one_shot=False, use_multipass=False):
     # Create directory with padded number (e.g., 0000, 0001, etc.)
     id = f"{index:04d}"
     data_dir = f"dataset/magpie_dataset/test/{id}"
@@ -162,16 +171,15 @@ def generate_data(data, index, one_shot=False):
     make_cmake_file(data_dir)
     make_setup_file(data_dir)
     create_compile_file(data_dir)
-    create_run_file(data_dir, data["problem_id"], 50)
+    create_run_file(data_dir, data["problem_id"], 1, use_multipass)
     create_test_file(data_dir, data["problem_id"])
     create_scenario_file(data_dir, one_shot)
 
 
-def generate_dataset(count=10, one_shot=False):
+def generate_dataset(count=10, one_shot=False, use_multipass=False):
     samples = load_jsonl_samples(count)
     for i, data in enumerate(samples):
-        generate_data(data, i, one_shot)
-        print("=" * 100)
+        generate_data(data, i, one_shot, use_multipass)
 
 
 # Example usage
@@ -186,6 +194,16 @@ if __name__ == "__main__":
         default=15,
         help="Number of datasets to generate",
     )
+    parser.add_argument(
+        "--use_multipass",
+        action="store_true",
+        help="Use multipass mode",
+    )
+
     args = parser.parse_args()
 
-    generate_dataset(args.num_data, one_shot=args.is_one_shot)
+    generate_dataset(
+        args.num_data,
+        one_shot=args.is_one_shot,
+        use_multipass=args.use_multipass,
+    )
