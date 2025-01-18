@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./build/src_code < /Users/lukeleeai/eoc/magpie/dataset/public_test_cases/p03146/input.0.txt
+./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p03146/input.0.txt

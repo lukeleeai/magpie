@@ -70,8 +70,8 @@ def create_run_file(data_dir, problem_id, max_runs=50, use_multipass=False):
         while total_runs < max_runs:
             for input_file in input_files:
                 # Use build/src_code from the current directory
-                # f.write(f"./build/src_code < {to_tilde_path(input_file)}\n")
-                f.write(f"./build/src_code < {input_file}\n")
+                f.write(f"./build/src_code < {to_tilde_path(input_file)}\n")
+                # f.write(f"./build/src_code < {input_file}\n")
                 total_runs += 1
                 if total_runs >= max_runs:
                     return
