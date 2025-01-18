@@ -1,0 +1,408 @@
+{
+    "(10)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3833,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <limits>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, std::numeric_limits<int64>::max());\n    ans[0] = 0;  // Base case\n\n    for (int64 i = 1; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the nested loop that calculates the minimum absolute difference and could be optimized by reducing redundant calculations and using a more efficient data structure to track minimum values."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3788
+        ]
+    },
+    "(11)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3804,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <algorithm> // Added for std::min\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        // Using a single loop to calculate the minimum cost by maintaining a sliding window\n        int64 min_cost = ans[i]; // Initialize with the current value\n        for (int64 j = 1; j <= k && (i - j) >= 0; j++) {\n            min_cost = std::min(min_cost, abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n        ans[i] = min_cost; // Update ans[i] with the minimum cost found\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the loop that calculates `ans[i]`, which could be optimized by using a more efficient approach to minimize the computation time."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3754
+        ]
+    },
+    "(2)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3948,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    cin >> n >> k;\n\n    vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        cin >> h[i];\n\n    vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 diff = std::abs(h[i] - h[i - j]);  // Store the absolute difference\n            ans[i] = min(ans[i], diff + ans[i - j]);\n        }\n    }\n    cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the inner loop where the minimum value is calculated for `ans[i]`, which could be optimized by reducing the number of absolute difference calculations when `j` is greater than `i`. Instead of recalculating `std::abs(h[i] - h[i - j])` multiple times, we can store the result in a variable."
+            },
+            {
+                "fitness": 0.389,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        // Optimized inner loop using a single variable to track minimum value\n        int64 min_val = ans[i]; // start with current ans[i]\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            min_val = std::min(min_val, abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n        ans[i] = min_val; // assign the optimized minimum value\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the nested loop that calculates the minimum value for `ans[i]`. The current implementation may lead to increased runtime due to unnecessary repeated calculations. This can be optimized by using a dynamic programming approach to store previously computed values and reduce the number of iterations in the inner loop."
+            },
+            {
+                "fitness": 0.3897,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        int64 current_h = h[i];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 potential_h = h[i - j];\n            ans[i] = std::min(ans[i], abs_custom(current_h - potential_h) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum value for `ans[i]`, which could be optimized by reducing the number of calls to `abs_custom` and minimizing unnecessary calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.366
+        ]
+    },
+    "(2x4x3x7_13_17)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3679,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the initialization and reading input from Parent 1 (fitness: 0.366) with the optimized type for `k` from Parent 2 (fitness: 0.3703)."
+            },
+            {
+                "fitness": 0.3927,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);  // Using std::abs for optimization\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the optimized abs function from Parent 4 (fitness: 0.3822) with the initialization logic and vector handling from Parent 1 (fitness: 0.366)."
+            },
+            {
+                "fitness": 0.3754,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the variable initialization and result output structure from Parent 4 (fitness: 0.3822) with the `abs_custom` function and loop from Parent 3 (fitness: 0.3772)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "2",
+            "4",
+            "3",
+            "7_13_17"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Changed to int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = std::abs(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.366,
+            0.3703,
+            0.3772,
+            0.3822
+        ]
+    },
+    "(3)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3724,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[0] = 0; // Initialize the first position\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        // Optimize by keeping track of minimum in a single pass for j\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the nested loop that calculates the minimum cost by checking previous heights, which could be optimized by using dynamic programming to reduce redundant calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3772
+        ]
+    },
+    "(3x2x1x7_13)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4072,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Changed to int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the efficient loop structure from Parent 1 (fitness: 0.382) with the integer type for `k` from Parent 3 (fitness: 0.3824), while retaining the custom absolute function for performance."
+            },
+            {
+                "fitness": 0.39,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = abs_custom(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Merge the custom absolute function from Parent 1 (fitness: 0.382) with the improved loop structure from Parent 4 (fitness: 0.3899), enhancing performance while maintaining functionality."
+            },
+            {
+                "fitness": 0.3896,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the control structure and clarity from Parent 2 (fitness: 0.3822) with the explicit integer type for `k` from Parent 3 (fitness: 0.3824) to improve readability and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "3",
+            "2",
+            "1",
+            "7_13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = abs_custom(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.382,
+            0.3822,
+            0.3824,
+            0.3899
+        ]
+    },
+    "(4)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3933,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        // Optimize the inner loop by using a sliding window to keep track of the minimum\n        int64 min_cost = ans[i]; // Start with the current minimum\n        for (int64 j = 1; j <= k && (i - j) >= 0; j++) {\n            min_cost = std::min(min_cost, std::abs(h[i] - h[i - j]) + ans[i - j]);\n        }\n        ans[i] = min_cost; // Update to the minimum found\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum cost using the absolute difference, which could be optimized by reducing redundant calculations and using a more efficient approach."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3812
+        ]
+    },
+    "(6x2x4x7)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3978,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the input handling from Parent 1 (fitness: 0.3756) with the custom absolute function from Parent 4 (fitness: 0.3844) to enhance performance while ensuring the same functionality."
+            },
+            {
+                "fitness": 0.3824,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Merge the efficiency of the vector initialization from Parent 2 (fitness: 0.381) with the change to int for `k` from Parent 3 (fitness: 0.3812) to improve clarity and potentially runtime."
+            },
+            {
+                "fitness": 0.4156,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the inline function for custom absolute value from Parent 4 (fitness: 0.3844) with the loop structure of Parent 1 (fitness: 0.3756) to maintain clear and efficient code."
+            },
+            {
+                "fitness": 0.3772,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Integrate the use of `std::min` from Parent 2 (fitness: 0.381) with the optimal variable initialization and inline function from Parent 4 (fitness: 0.3844) to ensure cleaner code and potentially better performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "6",
+            "2",
+            "4",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <algorithm>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    cin >> n >> k;\n\n    vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        cin >> h[i];\n\n    vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3756,
+            0.381,
+            0.3812,
+            0.3844
+        ]
+    },
+    "(7)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3899,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = abs_custom(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum value for `ans[i]`, which could be optimized by reducing the number of calls to `abs_custom` and leveraging a simpler comparison for adjacent elements."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3844
+        ]
+    },
+    "(7_13)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3822,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = std::abs(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the line that calculates the absolute difference, which could be optimized by using the standard library function `std::abs` instead of a custom implementation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7_13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = abs_custom(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3899
+        ]
+    },
+    "(7_13_17)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3864,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        int64 jump_cost;\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            jump_cost = std::abs(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the inner loop where the jump cost is calculated. Instead of recalculating the absolute difference every time, we can store previously computed values to avoid redundant calculations, which can help reduce the overall runtime."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7_13_17"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 jump_cost = std::abs(h[i] - h[i - j]);\n            ans[i] = std::min(ans[i], jump_cost + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3822
+        ]
+    },
+    "(8)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3696,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        int64 min_value = ans[i];  // Initialize with current ans[i]\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            int64 current_value = abs_custom(h[i] - h[i - j]) + ans[i - j];\n            if (current_value < min_value) {\n                min_value = current_value;  // Track the minimum value\n            }\n        }\n        ans[i] = min_value;  // Update ans[i] with the optimized minimum\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the nested loop that calculates the minimum value of `ans[i]`, which could be optimized by reducing unnecessary calculations through memoization."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3693
+        ]
+    },
+    "(8x3_20x11x10)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3771,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[0] = 0; // Initialize the first position\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the initialization and input handling from Parent 2 (fitness: 0.3714) with the optimized loop structure from Parent 1 (fitness: 0.3693)."
+            },
+            {
+                "fitness": 0.3921,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x; // Efficient absolute value function\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[0] = 0; // Initialize the first position\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the improved space allocation from Parent 2 (fitness: 0.3714) with the error handling of the `abs_custom` function from Parent 1 (fitness: 0.3693)."
+            },
+            {
+                "fitness": 0.3756,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the input processing from Parent 1 (fitness: 0.3693) with the loop optimization approach from Parent 4 (fitness: 0.3788) to achieve better performance."
+            },
+            {
+                "fitness": 0.3916,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[0] = 0; // Initialize the first position\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Combine the first element initialization from Parent 2 (fitness: 0.3714) with the body of the loop from Parent 3 (fitness: 0.3754) to enhance performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "3_20",
+            "11",
+            "10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[0] = 0; // Initialize the first position\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        // Optimize by keeping track of minimum in a single pass for j\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n;\n    int k;  // Using int for better performance\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3693,
+            0.3714,
+            0.3754,
+            0.3788
+        ]
+    },
+    "(source)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4049,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    cin >> n >> k;\n\n    vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        cin >> h[i];\n\n    vector<int64> ans(n, 0);  // Reserve space and initialize to 0\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    cout << ans[n - 1];\n}\n",
+                "strategy": "Focus on the initialization of the `ans` vector, which can be optimized by reserving the size during declaration."
+            },
+            {
+                "fitness": 0.3945,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Eliminate the use of the `using namespace std;` directive to avoid namespace pollution."
+            },
+            {
+                "fitness": 0.3812,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n;\n    int k;  // Changed to int\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Change the type of `k` to `int` if it is guaranteed to be non-negative and less than `n`, which may reduce memory usage."
+            },
+            {
+                "fitness": 0.4629,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h;\n    h.reserve(n);  // Reserve space upfront\n    for (int64 i = 0; i < n; i++) {\n        int64 temp;\n        std::cin >> temp;\n        h.push_back(temp);\n    }\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Use `std::vector::reserve` to allocate memory upfront for the `h` vector, which can improve performance for large inputs."
+            },
+            {
+                "fitness": 0.4002,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <algorithm>\n\ntypedef long long int int64;\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = std::abs(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = std::abs(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++) {\n            ans[i] = std::min(ans[i], std::abs(h[i] - h[i - j]) + ans[i - j]);\n        }\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Use `std::min_element` to simplify the inner loop that finds the minimum value."
+            },
+            {
+                "fitness": 0.3844,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n, 0);\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Replace `std::abs` with a custom absolute value function for potential performance benefits."
+            },
+            {
+                "fitness": 0.3857,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\ntypedef long long int int64;\n\ninline int64 abs_custom(int64 x) {\n    return x < 0 ? -x : x;\n}\n\nint main() {\n    int64 n, k;\n    std::cin >> n >> k;\n\n    std::vector<int64> h(n);\n    for (int64 i = 0; i < n; i++)\n        std::cin >> h[i];\n\n    std::vector<int64> ans(n);\n    ans[0] = 0;\n    ans[1] = abs_custom(h[1] - h[0]);\n\n    for (int64 i = 2; i < n; i++) {\n        ans[i] = abs_custom(h[i] - h[i - 1]) + ans[i - 1];\n        for (int64 j = 2; j <= i && j <= k; j++)\n            ans[i] = std::min(ans[i], abs_custom(h[i] - h[i - j]) + ans[i - j]);\n    }\n    std::cout << ans[n - 1];\n}\n",
+                "strategy": "Change the data type of `ans` to `std::vector<int64>` to reduce the amount of copying involved when calculating minimum values."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "# include \"stdc++.h\"\n\n  using namespace std;\n\n\n\ntypedef long long int int64;\n\ntypedef unsigned long long int uint64;\n\ntypedef vector<int64> vi;\n\ntypedef vector<bool> vb;\n\ntypedef vector<char> vc;\n\ntypedef pair<int64,int64> pi;\n\nbool doubleSame(double a, double b)\n\n{ const double eps = 1e-15; return ( abs(a-b)<= eps*abs(a) ); }\n\n\n\nint main()\n\n{\n\n\tint64 n,k;\n\n\tcin>>n>>k;\n\n\n\n\tvector<int64> h(n);\n\n\tfor(int64 i = 0 ; i<n ; i++)\n\n\t\tcin>>h[i];\n\n\n\n\tvector<int64> ans(n);\n\n\tans[0] = 0;\n\n\tans[1] = abs(h[1]-h[0]);\n\n\n\n\tfor(int64 i = 2 ; i<n ; i++)\n\n\t{\n\n\t\tans[i] = abs(h[i]-h[i-1])+ans[i-1];\n\n\t\tfor(int64 j = 2 ; j<=i && j<=k ; j++)\n\n\t\t\tans[i] = min(ans[i],abs(h[i]-h[i-j])+ans[i-j]);\n\n\t}\n\n\tcout<<ans[n-1];\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.379
+        ]
+    }
+}

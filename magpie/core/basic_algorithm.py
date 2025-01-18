@@ -129,7 +129,7 @@ class BasicAlgorithm(AbstractAlgorithm):
         # reset reference fitness
         patch = Patch([])
         variant = Variant(self.software, patch)
-        run = self.evaluate_variant(variant)
+        run = self.evaluate_variant(variant, force=True)
         self.report["reference_fitness"] = run.fitness
         self.report["best_fitness"] = run.fitness
         self.hook_warmup_evaluation("REF", patch, run)
@@ -137,9 +137,10 @@ class BasicAlgorithm(AbstractAlgorithm):
             msg = "Reference software evaluation failed"
             raise RuntimeError(msg)
         # update best patch
-        if self.report["best_patch"] and self.report["best_patch"].edits:
-            variant = Variant(self.software, self.report["best_patch"])
-            run = self.evaluate_variant(variant)
+        if self.report["best_patch"] and self.report["best_patch"].patch.edits:
+            # variant = Variant(self.software, self.report["best_patch"])
+            variant = self.report["best_patch"]
+            run = self.evaluate_variant(variant, force=True)
             best = self.dominates(run.fitness, self.report["best_fitness"])
             self.hook_batch_evaluation(
                 "BEST", self.report["best_patch"], run, best
@@ -147,7 +148,7 @@ class BasicAlgorithm(AbstractAlgorithm):
             if run.status == "SUCCESS" and best:
                 self.report["best_fitness"] = run.fitness
             else:
-                self.report["best_patch"] = patch
+                self.report["best_patch"] = variant
 
     def hook_warmup(self):
         self.hook_reset_batch()
@@ -289,7 +290,8 @@ class BasicAlgorithm(AbstractAlgorithm):
             self.stats["wallclock_end"] - self.stats["wallclock_start"]
         )
         if self.report["best_patch"]:
-            variant = Variant(self.software, self.report["best_patch"])
+            # variant = Variant(self.software, self.report["best_patch"])
+            variant = self.report["best_patch"]
             self.report["diff"] = variant.diff
         msg = "~~~~ END ~~~~"
         if magpie.settings.color_output:
@@ -325,13 +327,15 @@ class BasicAlgorithm(AbstractAlgorithm):
         else:
             msg = "Unknown warmup strategy"
             raise ValueError(msg)
+
         run.fitness = current_fitness
         self.cache_set(variant.diff, run)
         self.hook_warmup_evaluation("REF", patch, run)
         self.report["reference_fitness"] = current_fitness
         if self.report["best_patch"] is None:
+            variant = Variant(self.software, patch)
             self.report["best_fitness"] = current_fitness
-            self.report["best_patch"] = patch
+            self.report["best_patch"] = variant
         else:
             variant = Variant(self.software, self.report["best_patch"])
             run = self.evaluate_variant(variant, force=True)
@@ -339,7 +343,7 @@ class BasicAlgorithm(AbstractAlgorithm):
             if self.dominates(run.fitness, current_fitness):
                 self.report["best_fitness"] = run.fitness
             else:
-                self.report["best_patch"] = patch
+                self.report["best_patch"] = variant
                 self.report["best_fitness"] = current_fitness
 
     def evaluate_variant(self, variant, force=False):

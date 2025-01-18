@@ -1,0 +1,408 @@
+{
+    "(10)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4727,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N); // Efficient allocation\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Reads heights\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        // Using a sliding window to minimize dp[j] calculations.\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the nested loop where the dynamic programming is updated, which could be optimized by using a more efficient approach to reduce the number of iterations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N); // Efficient allocation\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Reads heights\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4541
+        ]
+    },
+    "(10x9_17_18x9_17x6)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.5138,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp.fill(INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j])); // Use std::abs for better clarity\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Combine the efficient height reading from Parent 2 with the use of `std::array` from Parent 4 for better memory management."
+            },
+            {
+                "fitness": 0.4485,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    // Precompute absolute differences\n    vector<ll> height_diff(N);\n    for(int i = 0; i < N; i++) {\n        height_diff[i] = h[i]; // Store original heights\n    }\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(height_diff[i], height_diff[j])); // Use precomputed differences\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Merge the precomputation strategy from Parent 2 with the `abs_diff` function from Parent 1 for better performance and clarity."
+            },
+            {
+                "fitness": 0.4623,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j])); // Using std::abs for better clarity\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Combine the efficient input handling of Parent 2 with the initialization of the `dp` array from Parent 4 to ensure better memory management."
+            },
+            {
+                "fitness": 0.5108,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll& height : h) cin >> height; // Efficient reading\n\n    dp.fill(INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Merge the approach of using `std::array` from Parent 4 with the single-pass reading of heights from Parent 2, optimizing memory allocation and access speed."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10",
+            "9_17_18",
+            "9_17",
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N); // Efficient allocation\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Reads heights\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    // Precompute the absolute differences to avoid multiple calls\n    vector<ll> height_diff(N);\n    for(int i = 0; i < N; i++) {\n        height_diff[i] = h[i]; // Store original heights\n    }\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(height_diff[i] - height_diff[j])); // Use precomputed differences\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j])); // Using std::abs for better clarity and possible optimization\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4541,
+            0.4549,
+            0.4566,
+            0.4581
+        ]
+    },
+    "(1x7x3x9)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4981,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll& height : h) cin >> height; // Optimized input reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Combine the data structure from Parent 2 (array) with the optimized height reading from Parent 4 (using range-based for loop) while keeping the function definitions from Parent 1 to maintain efficiency."
+            },
+            {
+                "fitness": 0.4932,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Fill array to avoid garbage values\n\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h[i] = height; // Using array with direct indexing\n    }\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Merge the memory allocation strategy of Parent 1 (using `reserve`) with the function definitions from Parent 3 and utilize the `array` from Parent 2 for better performance in accessing elements."
+            },
+            {
+                "fitness": 0.4581,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Combine the initialization of the `dp` vector from Parent 1 with the array structure from Parent 2 and the height reading technique from Parent 4 for improved performance in space and execution."
+            },
+            {
+                "fitness": 0.4943,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient height input\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Utilize the direct array initialization from Parent 2 alongside the `reserve` technique from Parent 1 and combine with the efficient loop from Parent 4 for reading heights."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "7",
+            "3",
+            "9"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.443,
+            0.4449,
+            0.452,
+            0.4541
+        ]
+    },
+    "(3)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4616,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\nvector<vector<ll>> abs_diff_cache;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    // Precompute absolute differences\n    abs_diff_cache.resize(N, vector<ll>(N));\n    for (ll i = 0; i < N; i++) {\n        for (ll j = 0; j < N; j++) {\n            abs_diff_cache[i][j] = abs(h[i] - h[j]);\n        }\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff_cache[i][j]);\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the loop that calculates the minimum cost in the dynamic programming array, which could be optimized by reducing the number of calls to the `abs_diff` function through precomputation of absolute differences."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.452
+        ]
+    },
+    "(6)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4765,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        ll h_i = h[i]; // Cache height for h[i] to avoid repeated access\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h_i, h[j])); // Use cached h[i]\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum cost using the `chmin` function. This can be optimized by avoiding the redundant calculations of the absolute difference in heights by pre-computing it, which reduces the number of calls to `abs_diff`."
+            },
+            {
+                "fitness": 0.4701,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        ll current_h_i = h[i]; // Store h[i] in a variable to avoid repeated access\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(current_h_i, h[j])); // Use cached value of h[i]\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the nested loop structure, which could be optimized by reducing the number of unnecessary calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4581
+        ]
+    },
+    "(7)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4681,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            // Optimized by directly calculating the difference\n            ll diff = h[i] - h[j];\n            chmin(dp[j], dp[i] + (diff < 0 ? -diff : diff));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum difference and updates the `dp` array, which could be optimized by avoiding the repeated calculation of `abs_diff` through the use of a more efficient subtraction method."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4594
+        ]
+    },
+    "(8)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4588,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        ll current_dp = dp[i]; // Store current dp value to avoid repeated access\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            ll cost = abs_diff(h[i], h[j]);\n            chmin(dp[j], current_dp + cost); // Use cached current_dp\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the inner loop where the `chmin` function is called, which could be optimized by reducing the number of calls and improving the calculation of the minimum difference."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4747
+        ]
+    },
+    "(9)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4861,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        ll currentHeight = h[i]; // Store current height to avoid repeated access\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[j] - currentHeight)); // Directly compute abs difference\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the nested loop structure that calculates the minimum cost of reaching each position, which could be optimized by reducing the number of calls to the `abs_diff` function and utilizing a more efficient distance calculation."
+            },
+            {
+                "fitness": 0.4566,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j])); // Using std::abs for better clarity and possible optimization\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the inner loop where the `abs_diff` function is called, which could be optimized by using a more efficient absolute difference calculation using the `std::abs` function from the `<cmath>` library."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4541
+        ]
+    },
+    "(9_17)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4602,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    // Precompute the absolute differences to avoid multiple calls\n    vector<ll> height_diff(N);\n    for(int i = 0; i < N; i++) {\n        height_diff[i] = h[i]; // Store original heights\n    }\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(height_diff[i] - height_diff[j])); // Use precomputed differences\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the loop that calculates the minimum cost to reach each height, which could be optimized by reducing the number of calls to the `abs` function by precomputing differences."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9_17"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j])); // Using std::abs for better clarity and possible optimization\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4551
+        ]
+    },
+    "(9_17_18)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.5349,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    // Precompute the absolute differences directly in the loop\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            ll difference = h[i] - h[j]; // Compute difference directly\n            chmin(dp[j], dp[i] + (difference < 0 ? -difference : difference)); // Use direct comparison for absolute value\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the line where absolute differences are calculated, which could be optimized by avoiding the unnecessary use of `abs()` and directly computing differences."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9_17_18"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    // Precompute the absolute differences to avoid multiple calls\n    vector<ll> height_diff(N);\n    for(int i = 0; i < N; i++) {\n        height_diff[i] = h[i]; // Store original heights\n    }\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(height_diff[i] - height_diff[j])); // Use precomputed differences\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4549
+        ]
+    },
+    "(9_17x6x7x1)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4676,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Efficient array initialization\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Combine the initialization and efficient array reading from Parent 2 with the dynamic programming approach of Parent 1."
+            },
+            {
+                "fitness": 0.4636,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space for performance\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Merge the `abs_diff` function from Parent 2 with the `vector` usage from Parent 4 to enhance readability and performance."
+            },
+            {
+                "fitness": 0.4486,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N); // Efficient allocation\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Reads heights\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Integrate the performance improvements from Parent 4's vector usage with the dynamic programming structure from Parent 3."
+            },
+            {
+                "fitness": 0.4625,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Utilize the `array` structure from Parent 2 for its performance efficiency while adopting the `cin` reading method from Parent 1 for simplicity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_17",
+            "6",
+            "7",
+            "1"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j])); // Using std::abs for better clarity and possible optimization\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\n\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.fill(0); // Initialize array\n\n    for (ll i = 0; i < N; i++) cin >> h[i]; // Efficient reading\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4551,
+            0.4571,
+            0.4594,
+            0.4597
+        ]
+    },
+    "(9x7x5x8)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4633,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Combine the vector initialization and `fill` function from Parent 1 (fitness: 0.4564) with the `array` data structure from Parent 2 (fitness: 0.4617) to improve memory efficiency while maintaining the initialization logic."
+            },
+            {
+                "fitness": 0.4597,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Merge the optimized input reading of Parent 4 (fitness: 0.4747) with the `dp` initialization from Parent 1 (fitness: 0.4564) to maintain performance while improving readability and memory allocation."
+            },
+            {
+                "fitness": 0.4552,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    dp.fill(INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Integrate the efficient array initialization from Parent 2 (fitness: 0.4617) with the optimized loop structure from Parent 3 (fitness: 0.4703) to enhance performance while ensuring clarity in the code logic."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9",
+            "7",
+            "5",
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4564,
+            0.4617,
+            0.4703,
+            0.4747
+        ]
+    },
+    "(source)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4804,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N;\nll K;\nvector<ll> h(100010);\n\n// DP\nvector<ll> dp(100010);\n\nvoid chmin(ll& a, ll b) {\n    if (a > b) {\n        a = b;\n    }\n}\n\nint main() {\n    cin >> N >> K;\n    for (int i = 0; i < N; i++) cin >> h[i];\n    fill(dp.begin(), dp.end(), INF);\n    \n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= i + K && j < N; j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j]));\n        }\n    }\n    \n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Optimize the import statement by limiting the included headers to only what is necessary."
+            },
+            {
+                "fitness": 0.4829,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h(100010);\nvector<ll> dp(100010, INF);\n\nvoid chmin(ll& a, ll b) {\n    if (a > b) {\n        a = b;\n    }\n}\n\nint main() {\n    cin >> N >> K;\n    for (int i = 0; i < N; i++) cin >> h[i];\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= i + K && j < N; j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Replace the array with vectors to take advantage of better memory management and bounds checking."
+            },
+            {
+                "fitness": 0.4921,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h(100010);\nvector<ll> dp(100010, INF);\n\nvoid chmin(ll& a, ll b) {\n    if (a > b) {\n        a = b;\n    }\n}\n\nint main() {\n    cin >> N >> K;\n    for (int i = 0; i < N; i++) cin >> h[i];\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Focus on the nested loop that calculates the minimum distance, improving bounds checking to prevent out-of-bounds access."
+            },
+            {
+                "fitness": 0.4939,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\nvoid chmin(ll& a, ll b) {\n    if (a > b) {\n        a = b;\n    }\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs(h[i] - h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Use a single pass to read input data into the height array to reduce the number of iterations."
+            },
+            {
+                "fitness": 0.4929,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nvoid chmin(ll& a, ll b) {\n    if (a > b) {\n        a = b;\n    }\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Introduce a function to calculate the absolute difference to potentially inline it for optimization."
+            },
+            {
+                "fitness": 0.4703,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Change the way the `chmin` function is implemented to minimize branching."
+            },
+            {
+                "fitness": 0.4754,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    for (ll& height : h) cin >> height;\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Use `std::fill` to initialize the `dp` vector instead of a loop for clarity and potential performance benefits."
+            },
+            {
+                "fitness": 0.4594,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\narray<ll, 100010> h;\narray<ll, 100010> dp;\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    for (ll i = 0; i < N; i++) cin >> h[i];\n\n    fill(dp.begin(), dp.end(), INF);\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Consider using `std::array` instead of `std::vector` for fixed-size arrays for potential performance improvements."
+            },
+            {
+                "fitness": 0.4747,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.reserve(N); // Reserve space to avoid reallocations\n    for (ll i = 0; i < N; i++) {\n        ll height;\n        cin >> height;\n        h.push_back(height);\n    }\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Apply `reserve()` to the vector to avoid potential reallocations during input."
+            },
+            {
+                "fitness": 0.4541,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <iterator>\n\nusing namespace std;\n\n#define ll long long\n\nconst ll INF = 1LL << 60;\n\n// Input\nll N, K;\nvector<ll> h;\n\nvector<ll> dp(100010, INF);\n\ninline void chmin(ll& a, ll b) {\n    a = (a > b) ? b : a;\n}\n\ninline ll abs_diff(ll a, ll b) {\n    return a > b ? a - b : b - a;\n}\n\nint main() {\n    cin >> N >> K;\n    h.resize(N);\n    // Read all heights in one go\n    for (ll& height : h) cin >> height;\n\n    dp[0] = 0;\n\n    for (int i = 0; i < N; i++) {\n        for (int j = i + 1; j <= min(i + K, N - 1); j++) {\n            chmin(dp[j], dp[i] + abs_diff(h[i], h[j]));\n        }\n    }\n\n    cout << dp[N - 1] << endl;\n}\n",
+                "strategy": "Modify the input method to read all heights at once to potentially reduce input overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include\"stdc++.h\"\n\nusing namespace std;\n\n#define ll long long\n\n\n\nconst ll INF= 1LL << 60;\n\n\n\n//\u5165\u529b\n\nll N;\n\nll K;\n\nll h[100010];\n\n//dp\n\nll dp[100010];\n\n\n\n\n\nvoid chmin(ll& a, ll b){\n\n  if(a>b){\n\n    a=b;\n\n  }\n\n}\n\n\n\nint main(){\n\n  cin >> N >> K;\n\n  for(int i=0;i<N;i++) cin >>h[i];\n\n  for(int i=0;i<100010;i++) dp[i]=INF;\n\n\n\n  dp[0]=0;\n\n\n\n  for(int i=0;i<N;i++){\n\n    for(int j=i+1;j<=i+K;j++){\n\n      chmin(dp[j],dp[i]+abs(h[i]-h[j]));\n\n      //cout<<i<<\",\"<<j<<\":\"<<dp[j]<<endl;\n\n    }\n\n  }\n\n\n\n  cout << dp[N-1] << endl;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.5091
+        ]
+    }
+}

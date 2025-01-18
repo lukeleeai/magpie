@@ -4,6 +4,9 @@ from .known import models as known_models
 from .known import protocols as known_protocols
 from .known import software as known_software
 
+from magpie.core.llm import LLMCrossover, LLMMutation
+from magpie.utils.constants import CROSSOVER
+
 
 def model_from_string(s):
     for klass in known_models:
@@ -39,8 +42,56 @@ def software_from_string(s):
 
 def algo_from_string(s):
     for klass in known_algos:
-        print("Klass: ", klass.__name__)
+        # print("Klass: ", klass.__name__)
         if klass.__name__ == s:
             return klass
     msg = f'Unknown algorithm class "{s}"'
     raise RuntimeError(msg)
+
+
+def format_crossover_parents(codes, fitnesses):
+    return "\n\n".join(
+        f"<Parent {i + 1}>\nCode: \n```\n{code}\n```\nFitness score: {fitness}"
+        for i, (code, fitness) in enumerate(zip(codes, fitnesses))
+    )
+
+
+def convert_to_prompt_data(log):
+    # Determine the operation type and select the appropriate prompt template
+    is_crossover = log["operation_type"] == CROSSOVER
+    num_offsprings = len(log["children"])
+
+    # Select the appropriate prompt template and data
+    prompt_template = (
+        LLMCrossover.prompt if is_crossover else LLMMutation.prompt
+    )
+
+    if is_crossover:
+        prompt_data = {
+            "codes_and_fitnesses": format_crossover_parents(
+                log["parent_codes"], log["parent_fitnesses"]
+            ),
+            "num_offsprings": num_offsprings,
+        }
+    else:
+        prompt_data = {
+            "code": log["parent_codes"][0],
+            "fitness": log["parent_fitnesses"][0],
+            "num_offsprings": num_offsprings,
+        }
+
+    # Generate the initial prompt
+    prompt = prompt_template.invoke(prompt_data).messages[0].content.strip()
+
+    # Append child-specific information to the prompt
+    for child in log["children"]:
+        prompt += (
+            f"\n```\n"
+            f"Strategy: {child['strategy']}\n"
+            f"{'Crossover' if is_crossover else 'Mutated'} code: {child['new_code']}\n"
+            f"Fitness score: {child['fitness']}\n"
+            f"```\n"
+        )
+
+    # print("PROMPT: ", prompt)
+    return prompt

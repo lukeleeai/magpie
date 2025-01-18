@@ -7,7 +7,7 @@ import subprocess
 import magpie.utils
 
 from .abstract_model import AbstractXmlModel
-from magpie.core.llm import LLMMutator
+from magpie.core.llm import LLMMutation
 
 
 class XmlModel(AbstractXmlModel):
@@ -16,7 +16,7 @@ class XmlModel(AbstractXmlModel):
         self.config = {
             "internodes": [],
         }
-        self.llm_mutator = LLMMutator()
+        self.llm_mutator = LLMMutation()
 
     def setup(self, config, section_name):
         super().setup(config, section_name)

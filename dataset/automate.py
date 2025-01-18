@@ -1,6 +1,7 @@
 import json
 import os
 import glob
+import argparse
 
 
 def load_jsonl_samples(count=3):
@@ -107,8 +108,12 @@ def create_test_file(data_dir, problem_id):
         f.write("exit $((failures > 0))\n")
 
 
-def create_scenario_file(data_dir, id, problem_id):
-    with open("dataset/scenario.txt", "r") as template:
+def create_scenario_file(data_dir, one_shot=False):
+    scenario_filename = "scenario"
+    if one_shot:
+        scenario_filename += "_one_shot"
+
+    with open(f"dataset/{scenario_filename}.txt", "r") as template:
         scenario_content = template.read()
 
     scenario_content = scenario_content.replace(
@@ -123,7 +128,7 @@ def create_scenario_file(data_dir, id, problem_id):
     # #     "work_dir = ", f"work_dir = {data_dir}/_magpie_work"
     # # )
 
-    with open(f"{data_dir}/scenario.txt", "w") as f:
+    with open(f"{data_dir}/{scenario_filename}.txt", "w") as f:
         f.write(scenario_content)
 
 
@@ -144,7 +149,7 @@ def copy_stdc_file(data_dir):
         f.write(stdc_content)
 
 
-def generate_data(data, index):
+def generate_data(data, index, one_shot=False):
     # Create directory with padded number (e.g., 0000, 0001, etc.)
     id = f"{index:04d}"
     data_dir = f"dataset/magpie_dataset/test/{id}"
@@ -157,18 +162,30 @@ def generate_data(data, index):
     make_cmake_file(data_dir)
     make_setup_file(data_dir)
     create_compile_file(data_dir)
-    create_run_file(data_dir, data["problem_id"], 3)
+    create_run_file(data_dir, data["problem_id"], 50)
     create_test_file(data_dir, data["problem_id"])
-    create_scenario_file(data_dir, id, data["problem_id"])
+    create_scenario_file(data_dir, one_shot)
 
 
-def generate_dataset(count=10):
+def generate_dataset(count=10, one_shot=False):
     samples = load_jsonl_samples(count)
     for i, data in enumerate(samples):
-        generate_data(data, i)
+        generate_data(data, i, one_shot)
         print("=" * 100)
 
 
 # Example usage
 if __name__ == "__main__":
-    generate_dataset(10)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--is_one_shot", action="store_true", help="Enable one shot mode"
+    )
+    parser.add_argument(
+        "--num_data",
+        type=int,
+        default=15,
+        help="Number of datasets to generate",
+    )
+    args = parser.parse_args()
+
+    generate_dataset(args.num_data, one_shot=args.is_one_shot)

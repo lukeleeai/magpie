@@ -1,0 +1,389 @@
+{
+    "(0)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3936,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + (l[i - j] - l[i] < 0 ? -(l[i - j] - l[i]) : (l[i - j] - l[i])));  // Reuse the calculation\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the loop that calculates the cumulative absolute differences, which could be optimized by reducing the number of calls to the `abs` function and minimizing unnecessary calculations."
+            },
+            {
+                "fitness": 0.4528,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Store the difference once\n        l1[i] = l1[i - 1] + abs(diff);  // Use the stored difference\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the line that calculates the cumulative absolute difference, which could be optimized by avoiding repeated calculations and minimizing unnecessary calls to `abs()`."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);  // Using abs from Parent 1\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3686
+        ]
+    },
+    "(0_15)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3872,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        long long minValue = l1[i];  // Initialize minValue with l1[i]\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];  // Re-use the current difference\n            minValue = min(minValue, l1[i - j] + (current_diff < 0 ? -current_diff : current_diff));  // Optimize by reducing min calculation\n        }\n        l1[i] = minValue;  // Update l1[i] with the optimized minimum value\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the inner loop where the minimum calculation is done, which could be optimized by reducing the number of operations and avoiding repeated calculations of the differences."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_15"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + (l[i - j] - l[i] < 0 ? -(l[i - j] - l[i]) : (l[i - j] - l[i])));  // Reuse the calculation\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3936
+        ]
+    },
+    "(0_15_21)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4712,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n);  // Removed unnecessary initialization of l1\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    l1[0] = 0; // Initialize first element of l1\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);\n\n        long long minValue = l1[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];\n            long long currentAbs = (current_diff < 0 ? -current_diff : current_diff);\n            minValue = min(minValue, l1[i - j] + currentAbs);  // Simplified the min calculation\n        }\n        l1[i] = minValue;\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the block of code that initializes and updates `l1[i]`, which could be optimized by reducing the number of absolute value calculations and using a more efficient approach to calculate the minimum value."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_15_21"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        long long minValue = l1[i];  // Initialize minValue with l1[i]\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];  // Re-use the current difference\n            minValue = min(minValue, l1[i - j] + (current_diff < 0 ? -current_diff : current_diff));  // Optimize by reducing min calculation\n        }\n        l1[i] = minValue;  // Update l1[i] with the optimized minimum value\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3872
+        ]
+    },
+    "(0_18)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4728,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Store the difference once\n        l1[i] = l1[i - 1] + abs(diff);  // Use the stored difference\n\n        long long currentValue = l[i]; // Cache the current value\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long previousValue = l[i - j]; // Cache the previous value\n            l1[i] = min(l1[i], l1[i - j] + abs(previousValue - currentValue));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum value of l1[i]. By caching the value of l[i - j] and abs(l[i - j] - l[i]), we can avoid repeated calculations, which may improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_18"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Store the difference once\n        l1[i] = l1[i - 1] + abs(diff);  // Use the stored difference\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3744
+        ]
+    },
+    "(0_18x8x11x0_15_21)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4793,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        long long minValue = l1[i];  // Initialize minValue with l1[i]\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];  // Re-use the current difference\n            minValue = min(minValue, l1[i - j] + (current_diff < 0 ? -current_diff : current_diff));  // Optimize by reducing min calculation\n        }\n        l1[i] = minValue;  // Update l1[i] with the optimized minimum value\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Combine the optimized precomputation of absolute differences from Parent 2 with the efficient difference handling from Parent 4."
+            },
+            {
+                "fitness": 0.5027,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i] - l[i - 1]);  // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Merge the efficiency of loop handling from Parent 1 with the precomputation strategy of Parent 3 to minimize runtime."
+            },
+            {
+                "fitness": 0.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Efficient handling of abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];  // Re-use the current difference\n            l1[i] = min(l1[i], l1[i - j] + (current_diff < 0 ? -current_diff : current_diff));  // Optimize min calculation\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Integrate the improved memory handling from Parent 4 with the logic flow of Parent 2 to enhance performance during iteration."
+            },
+            {
+                "fitness": 0.4408,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Efficient handling of abs\n\n        long long minValue = l1[i];  // Initialize minValue with l1[i]\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];  // Re-use the current difference\n            minValue = min(minValue, l1[i - j] + (current_diff < 0 ? -current_diff : current_diff));  // Optimize min calculation\n        }\n        l1[i] = minValue;  // Update l1[i] with the optimized minimum value\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Combine the initialization approach from Parent 1 with the difference calculation strategy from Parent 3 for consistent performance improvements."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0_18",
+            "8",
+            "11",
+            "0_15_21"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Store the difference once\n        l1[i] = l1[i - 1] + abs(diff);  // Use the stored difference\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i - 1] - l[i]); // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        // Precompute the absolute differences to avoid repeated calculations\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i - 1] - l[i]);  // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        long long minValue = l1[i];  // Initialize minValue with l1[i]\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long current_diff = l[i - j] - l[i];  // Re-use the current difference\n            minValue = min(minValue, l1[i - j] + (current_diff < 0 ? -current_diff : current_diff));  // Optimize by reducing min calculation\n        }\n        l1[i] = minValue;  // Update l1[i] with the optimized minimum value\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3744,
+            0.3785,
+            0.3839,
+            0.3872
+        ]
+    },
+    "(0x3_14x2_17x0_15)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.6301,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i - 1] - l[i]); // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        // Precompute the absolute differences to avoid repeated calculations\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Combine the approach of precomputing absolute differences from Parent 2 with the single calculation of absolute difference from Parent 3 to minimize repeated calculations."
+            },
+            {
+                "fitness": 0.416,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long prev_diff = l[i - j] - l[i];\n            l1[i] = min(l1[i], l1[i - j] + (prev_diff < 0 ? -prev_diff : prev_diff));  // Reuse the calculation\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Merge the initialization of the vector `l1` from Parent 1 with the optimized difference calculation from Parent 4, aiming to reduce the number of calculations and improve clarity."
+            },
+            {
+                "fitness": 0.4267,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i - 1] - l[i]);  // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        // Use precomputed differences\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - l[i]);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Combine the initialization strategy from Parent 2 with the optimized looping technique from Parent 4 to improve efficiency through reduced absolute difference calculations."
+            },
+            {
+                "fitness": 0.3839,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i - 1] - l[i]);  // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Utilize the optimized absolute difference calculation from Parent 3 while incorporating the precomputation strategy from Parent 2 to reduce redundancy and improve performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "3_14",
+            "2_17",
+            "0_15"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);  // Using abs from Parent 1\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        // Precompute the absolute differences to avoid repeated calculations\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = std::abs(l[i - 1] - l[i]);  // Calculate once instead of multiple times\n        l1[i] = l1[i - 1] + current_abs;\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long diff = l[i] - l[i - 1];  // Calculate the difference once\n        l1[i] = l1[i - 1] + (diff < 0 ? -diff : diff);  // Use the pre-calculated difference for abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + (l[i - j] - l[i] < 0 ? -(l[i - j] - l[i]) : (l[i - j] - l[i])));  // Reuse the calculation\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3686,
+            0.3811,
+            0.3882,
+            0.3936
+        ]
+    },
+    "(1)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4012,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        // Optimize the inner loop by limiting j to the actual number of steps needed\n        int max_j = min(i, static_cast<int>(k)); // Use static_cast for clear type conversion\n        for (int j = 1; j <= max_j; j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the nested loop structure, which could be optimized by reducing the number of iterations based on conditions."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3893
+        ]
+    },
+    "(2)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3882,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = std::abs(l[i - 1] - l[i]);  // Calculate once instead of multiple times\n        l1[i] = l1[i - 1] + current_abs;\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the nested loop where the minimum value is calculated, which could be optimized by reducing unnecessary calculations and avoiding repeated calls to std::abs."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);  // Use std::abs for consistency\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3932
+        ]
+    },
+    "(2_17)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4793,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = std::abs(l[i - 1] - l[i]);  // Calculate once instead of multiple times\n        l1[i] = l1[i - 1] + current_abs;\n\n        // Instead of recalculating l1[i - j] + std::abs(l[i - j] - l[i]), \n        // we can utilize the previously calculated values to minimize the number of abs calculations.\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long new_abs = std::abs(l[i - j] - l[i]);\n            l1[i] = min(l1[i], l1[i - j] + new_abs);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the inner loop where the minimum value is calculated, which could be optimized by reducing the number of calls to `std::abs` and utilizing a more efficient approach to update `l1[i]`."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2_17"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = std::abs(l[i - 1] - l[i]);  // Calculate once instead of multiple times\n        l1[i] = l1[i - 1] + current_abs;\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3882
+        ]
+    },
+    "(3)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4683,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        // Precompute the absolute differences to avoid repeated calculations\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the line that calculates the minimum value of `l1[i]`, which could be optimized by using a more efficient approach to avoid recalculating `abs(l[i - j] - l[i])` multiple times."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3843
+        ]
+    },
+    "(4)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.4027,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long currentDistance = std::abs(l[i - 1] - l[i]);  // Compute distance once\n        l1[i] = l1[i - 1] + currentDistance;  // Update l1 using the computed distance\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the nested loop that calculates the minimum values in `l1`, which could be optimized by reducing the number of calls to `std::abs` by storing previously computed values."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);  // Explicit std::abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3914
+        ]
+    },
+    "(8)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3891,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);\n        \n        // Changed inner loop to find the minimum more efficiently\n        long long current_min = l1[i];\n        for (int j = 1; j <= min(i, k); j++) {\n            long long temp_value = l1[i - j] + std::abs(l[i - j] - l[i]);\n            current_min = min(current_min, temp_value);\n        }\n        l1[i] = current_min;\n    }\n\n    cout << std::max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the inner loop that calculates the minimum value of `l1[i]`, which could be optimized by reducing the number of absolute difference calculations by using a single pass to find the minimum value instead of recalculating for every iteration."
+            },
+            {
+                "fitness": 0.4608,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n    vector<long long> abs_diff(n); // Precompute absolute differences\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        abs_diff[i] = abs(l[i - 1] - l[i]); // Store the absolute difference\n        l1[i] = l1[i - 1] + abs_diff[i]; // Use precomputed value\n\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - current_l)); // Calculate abs only once\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the inner loop where the absolute differences are calculated. We can optimize the repeated calls to `abs` by using a precomputed array of absolute differences which will reduce the function calls and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        long long current_abs = abs(l[i - 1] - l[i]); // Calculate once\n        l1[i] = l1[i - 1] + current_abs;\n\n        // Precompute the absolute differences to avoid repeated calculations\n        long long current_l = l[i];\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            long long abs_diff = abs(l[i - j] - current_l);\n            l1[i] = min(l1[i], l1[i - j] + abs_diff);\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3785
+        ]
+    },
+    "(8x3x1x4)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.551,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);  // Using abs from Parent 1\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Combine the initialization of the vector `l1` from Parent 2 with the calculation of `l1` from Parent 1 to enhance clarity and performance."
+            },
+            {
+                "fitness": 0.3932,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);  // Use std::abs for consistency\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Combine the explicit use of `std::abs` from Parent 4 with the efficient iteration from Parent 3 for optimal performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "3",
+            "1",
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << std::max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);  // Explicit std::abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.3757,
+            0.3769,
+            0.3893,
+            0.3914
+        ]
+    },
+    "(source)": {
+        "parent_code": null,
+        "children": [
+            {
+                "fitness": 0.3893,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Replace the variable-length arrays with `std::vector` for better memory management and safety. This also avoids stack overflow for large sizes."
+            },
+            {
+                "fitness": 0.4057,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {  // Changed from i<=n to i<n\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Focus on the loop bounds by modifying the first `for` loop to avoid accessing out of bounds, which can lead to undefined behavior."
+            },
+            {
+                "fitness": 0.506,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);  // l1 initialized directly with 0\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Optimize the initialization of the `l1` vector by using the constructor directly instead of a loop."
+            },
+            {
+                "fitness": 0.3914,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);  // Explicit std::abs\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Replace `abs` with a more optimized approach, such as using `std::abs` from `<cmath>`."
+            },
+            {
+                "fitness": 0.3979,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i * 1ll, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << std::max(0 * 1ll, l1[n - 1]) << endl;  // Using std::max\n}\n",
+                "strategy": "Use `std::max` instead of `max` to avoid potential name conflicts and improve clarity."
+            },
+            {
+                "fitness": 0.4024,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint n, k;  // Changed from long long to int\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << std::max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Change the `long long` type for `n` and `k` to `int` if they are not expected to exceed the range of `int` for better performance in terms of memory usage."
+            },
+            {
+                "fitness": 0.3952,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << std::max(0 * 1ll, l1[n - 1]) << endl;\n}\n",
+                "strategy": "Remove unnecessary variables `a`, `m`, `b`, `qq` that are declared but not used, to improve code clarity and reduce memory usage."
+            },
+            {
+                "fitness": 0.3945,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint n, k;\n\nint main() {\n    cin >> n >> k;\n\n    vector<long long> l(n), l1(n, 0);\n\n    for (int i = 0; i < n; i++) {\n        cin >> l[i];\n    }\n\n    for (int i = 1; i < n; i++) {\n        l1[i] = l1[i - 1] + std::abs(l[i - 1] - l[i]);\n\n        for (int j = 1; j <= min(i, k); j++) {\n            l1[i] = min(l1[i], l1[i - j] + std::abs(l[i - j] - l[i]));\n        }\n    }\n\n    cout << max(0LL, l1[n - 1]) << endl;  // Changed from 0*1ll to 0LL\n}\n",
+                "strategy": "Optimize the output operation by removing unnecessary multiplication, simplifying the expression."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include \"stdc++.h\"\n\nusing namespace std;\n\n\n\nlong long n,a,m,b,qq,k;\n\nstring ss;\n\nint main() {\n\n    cin>>n>>k;\n\n    long long l[n],l1[n];\n\n    for (int i=0; i<=n; i++){\n\n        l[i]=0;\n\n        l1[i]=0;\n\n    }\n\n    for (int i=0; i<n; i++){\n\n        cin>>l[i];\n\n    }\n\n    for (int i=1; i<n; i++){\n\n        l1[i]=l1[i-1]+abs(l[i-1]-l[i]);\n\n        for (int j=1; j<=min(i*1ll,k); j++){\n\n            l1[i]=min(l1[i], l1[i-j]+abs(l[i-j]-l[i]));\n\n        }\n\n    }\n\n    cout<<max(0*1ll,l1[n-1])<<endl;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            0.4049
+        ]
+    }
+}

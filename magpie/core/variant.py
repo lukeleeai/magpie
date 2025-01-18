@@ -11,6 +11,7 @@ class Variant:
     def __init__(self, software, patch=None):
         self.models = {}
         # If a noop_variant exists, copy its models
+        self.software = software
         if software.noop_variant:
             self.models = copy.deepcopy(software.noop_variant.models)
         else:
@@ -34,9 +35,31 @@ class Variant:
             software.noop_variant or self, magpie.settings.diff_method
         )
 
+        self.name = None
+        self.fitness = None
+
+    def set_parents(self, operation_type, names, codes, fitnesses):
+        """Set the parents for the variant
+
+        :param operation_type: The type of operation that created the variant (mutate or crossover)
+        :param names: The names of the parents
+        :param codes: The codes of the parents
+        :param fitnesses: The fitnesses of the parents
+        """
+        self.operation_type = operation_type
+        self.parents_names = names
+        self.parents_codes = codes
+        self.parents_fitnesses = fitnesses
+
+    def apply_patch(self, new_edit=None):
+        # the previous patches were already applied
+        # so we need to apply only the new patch
+        self.patch.edits.append(new_edit)
+        new_edit.apply(self.software.noop_variant, self)
+
         self.name = (
             "_".join([str(edit.target[1]) for edit in self.patch.edits])
-            if patch
+            if self.patch
             else "source"
         )
 
@@ -121,6 +144,7 @@ class Variant:
 
     def get_patched_code(self):
         """Returns a dictionary of filename -> code after patch application"""
+        # print("Fetching the code for variant: ", self.name)
         for filename in self.models:
             return self.models[filename].dump()
 

@@ -4,6 +4,8 @@ import time
 
 import magpie.settings
 
+from magpie.utils.constants import LLM_MUTATION, LLM_CROSSOVER
+
 
 class AbstractAlgorithm(abc.ABC):
     def __init__(self):
@@ -34,15 +36,23 @@ class AbstractAlgorithm(abc.ABC):
     def run(self):
         pass
 
-    def get_edits(self, get_llm=False):
-        # get edits for LineLLMMutation
+    def get_edit_class(self, operation_type=None):
         edits = self.config["possible_edits"]
-        if get_llm:
-            return [e for e in edits if e.__name__ == "LineLLMMutation"]
+        if operation_type == LLM_MUTATION:
+            edit_name = "LineLLMMutation"
+            return next(e for e in edits if e.__name__ == edit_name)
+        elif operation_type == LLM_CROSSOVER:
+            edit_name = "LineLLMCrossover"
+            return next(e for e in edits if e.__name__ == edit_name)
         else:
-            return [e for e in edits if e.__name__ != "LineLLMMutation"]
+            return random.choice([e for e in edits if "LLM" not in e.__name__])
 
-    def create_edit(self, variant=None):
+    def create_edit(
+        self,
+        variant=None,
+        operation_type=None,
+        new_code=None,  # only for llm-based edits
+    ):
         """
         Create an edit for the given variant or the software's noop variant.
 
@@ -53,24 +63,28 @@ class AbstractAlgorithm(abc.ABC):
         Args:
             variant: The variant to create an edit for. If None, the software's
                      noop variant is used.
+            operation_type: The type of operation to create an edit for.
+            new_code: The new code created by the llm. Only for llm-based edits.
+                      LLM generates multiple codes at once.
 
         Returns:
             The created edit.
         """
         ref = variant or self.software.noop_variant
-        llm_prob = self.config["llm_prob"]
-        llm_edits = self.get_edits(get_llm=True)
-        non_llm_edits = self.get_edits(get_llm=False)
-
-        if len(llm_edits) > 0 and random.random() < llm_prob:
-            # use LineLLMMutation
-            klass = llm_edits[0]
-        else:
-            # use other edits
-            klass = random.choice(non_llm_edits)
+        # llm_prob = self.config["llm_prob"]
+        use_llm = (
+            operation_type == LLM_MUTATION or operation_type == LLM_CROSSOVER
+        )
+        klass = self.get_edit_class(operation_type)
 
         tries = magpie.settings.edit_retries
-        while (edit := klass.auto_create(ref)) is None:
+        while (
+            edit := (
+                klass.auto_create(ref, new_code)
+                if use_llm
+                else klass.auto_create(ref)
+            )
+        ) is None:
             tries -= 1
             if tries == 0:
                 msg = f"Unable to create an edit of class {klass.__name__}"

@@ -3,7 +3,7 @@ import subprocess
 
 import magpie.utils
 from .abstract_model import AbstractLineModel
-from magpie.core.llm import LLMMutator
+from magpie.core.llm import LLMMutation, LLMCrossover
 
 
 class LineModel(AbstractLineModel):
@@ -12,7 +12,6 @@ class LineModel(AbstractLineModel):
 
     def __init__(self, filename):
         super().__init__(filename)
-        self.llm_mutator = LLMMutator()
 
     def init_model(self, lines=None):
         self.init_contents(lines)
@@ -53,7 +52,7 @@ class LineModel(AbstractLineModel):
             return f"{tag_start}{target_loc}=after:{tag_end}{self.contents[self.locations[target_type][target_loc-1]]}"
         raise ValueError
 
-    def do_llm_mutation(self, llm_id):
+    def do_llm_mutation(self, llm_id, new_code):
         print("\033[35mApplying LLM Mutation to ", llm_id, "\033[0m")
 
         # @LUKE: remove it
@@ -63,16 +62,13 @@ class LineModel(AbstractLineModel):
         #     original_model_code[-20:],
         #     "\n>>>>>>>>>>\n",
         # )
-        mutated_model_code = (
-            f"{original_model_code} \n // LLM Mutation Code {llm_id}"
-        )
         # print(
         #     "<<<Mutated model code\n",
-        #     mutated_model_code[-20:],
+        #     new_code[-20:],
         #     "\n<<<\n",
         # )
 
-        LineModel.mutation_cache[llm_id] = mutated_model_code
+        # LineModel.mutation_cache[llm_id] = new_code
 
         # # Check if the mutation is already cached
         # if llm_id in LineModel.mutation_cache:
@@ -93,7 +89,12 @@ class LineModel(AbstractLineModel):
 
         # print("cache size: ", len(LineModel.mutation_cache))
 
-        self.init_contents(mutated_model_code)
+        self.init_contents(new_code)
+        return True
+
+    def do_llm_crossover(self, llm_id, new_code):
+        print("\033[35mApplying LLM Crossover to ", llm_id, "\033[0m")
+        self.init_contents(new_code)
         return True
 
     def do_replace(self, ref_model, target_dest, target_orig):

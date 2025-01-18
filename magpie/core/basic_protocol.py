@@ -7,7 +7,7 @@ import subprocess
 
 import magpie.settings
 import magpie.utils.known
-from magpie.utils.results_manager import ResultsManager
+from magpie.utils.csv_manager import ResultsManager
 
 
 def apply_diff(source_code_path, diff_file):
@@ -32,9 +32,23 @@ class BasicProtocol:
     def __init__(self):
         self.search = None
         self.software = None
-        self.results_manager = ResultsManager()
+        self.results_manager = None
+
+    def set_results_manager(self, config):
+        if self.results_manager is not None:
+            return
+
+        is_one_shot = (
+            int(config["search"]["max_steps"]) == 1
+            and int(config["search.gp"]["pop_size"]) == 1
+        )
+
+        self.results_manager = ResultsManager(
+            filename=f"llm_one_shot" if is_one_shot else "llm_eoc"
+        )
 
     def run(self, config):
+        self.set_results_manager(config)
 
         if self.software is None:
             msg = "Software not specified"
@@ -82,7 +96,7 @@ class BasicProtocol:
         for handler in logger.handlers:
             if handler.__class__.__name__ == "FileHandler":
                 logger.info("Log file: %s", handler.baseFilename)
-        if result["best_patch"] and result["best_patch"].edits:
+        if result["best_patch"] and result["best_patch"].patch.edits:
             base_path = (
                 pathlib.Path(magpie.settings.log_dir) / self.software.run_label
             )
