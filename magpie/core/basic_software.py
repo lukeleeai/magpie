@@ -522,8 +522,19 @@ class BasicSoftware(AbstractSoftware):
             run_result.status = "CODE_ERROR"
             return
 
+        if True:
+            stdout = exec_result.stdout.decode(magpie.settings.output_encoding)
+            # average the numbers
+            try:
+                cpu_cycles = [int(line) for line in stdout.splitlines()][
+                    4:
+                ]  # skip the first warmups
+                run_result.fitness = sum(cpu_cycles) / len(cpu_cycles)
+            except ValueError:
+                run_result.status = "PARSE_ERROR"
+
         # if "[software] fitness" is "output", we check STDOUT for the string "MAGPIE_FITNESS:"
-        if self.fitness_type == "output":
+        elif self.fitness_type == "output":
             stdout = exec_result.stdout.decode(magpie.settings.output_encoding)
             m = re.search("MAGPIE_FITNESS: (.*)", stdout)
             try:

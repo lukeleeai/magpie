@@ -1,3 +1,23 @@
 #!/usr/bin/env bash
 
-./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt
+mkdir -p perf
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.2.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.2.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.2.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.2.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.2.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.2.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.0.txt 2>&1 | awk '/cycles/ {print $1}'
+perf stat -e cycles ./build/src_code < ~/eoc/magpie/dataset/public_test_cases/p02676/input.1.txt 2>&1 | awk '/cycles/ {print $1}'
