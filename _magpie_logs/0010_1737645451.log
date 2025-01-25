@@ -1,0 +1,177 @@
+2025-01-23 15:17:31,901	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7645857872430532
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0010
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-23 15:17:31,901	[DEBUG]	
+2025-01-23 15:17:31,901	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-23 15:17:31,902	[INFO]	~~~~ WARMUP ~~~~
+2025-01-23 15:17:33,293	[DEBUG]	EXEC>  SUCCESS 5872612.1875
+2025-01-23 15:17:33,293	[INFO]	WARM    SUCCESS               5872612.19 (--) [0 edit(s)]  
+2025-01-23 15:17:34,005	[DEBUG]	EXEC>  SUCCESS 5648144.5
+2025-01-23 15:17:34,005	[INFO]	WARM    SUCCESS               5648144.50 (--) [0 edit(s)]  
+2025-01-23 15:17:34,718	[DEBUG]	EXEC>  SUCCESS 5643051.8125
+2025-01-23 15:17:34,718	[INFO]	WARM    SUCCESS               5643051.81 (--) [0 edit(s)]  
+2025-01-23 15:17:35,419	[DEBUG]	EXEC>  SUCCESS 5756978.0625
+2025-01-23 15:17:35,419	[INFO]	WARM    SUCCESS               5756978.06 (--) [0 edit(s)]  
+2025-01-23 15:17:36,127	[DEBUG]	EXEC>  SUCCESS 5662567.25
+2025-01-23 15:17:36,127	[INFO]	WARM    SUCCESS               5662567.25 (--) [0 edit(s)]  
+2025-01-23 15:17:36,127	[INFO]	REF     SUCCESS               5662567.25 (--) [0 edit(s)]  
+2025-01-23 15:17:36,128	[INFO]	
+2025-01-23 15:17:36,128	[INFO]	~~~~ START ~~~~
+2025-01-23 15:18:59,777	[DEBUG]	EXEC>  SUCCESS 2545682.5
+2025-01-23 15:18:59,777	[INFO]	0-1     SUCCESS              *2545682.50 (44.96%) [1 edit(s)]  
+2025-01-23 15:18:59,778	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <sstream>\n#include <string.h>\n\nusing namespace std;\n\nchar AlphabetTable[26];\nint table[26];\n\nchar decode(char a) {\n    int z = a - \'a\';\n    return AlphabetTable[table[z]];\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    stringstream ssn(code);\n    ssn >> n;\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        for (int b = 0; b < 26; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+
+2025-01-23 15:19:01,352	[DEBUG]	EXEC>  SUCCESS 2518266.625
+2025-01-23 15:19:01,352	[INFO]	0-2     SUCCESS              *2518266.62 (44.47%) [1 edit(s)]  
+2025-01-23 15:19:01,352	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <sstream>\n#include <string.h>\n\nusing namespace std;\n\nchar AlphabetTable[26];\nint table[26];\n\nchar decode(char a) {\n    int z = a - \'a\';\n    return AlphabetTable[table[z]];\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    stringstream ssn(code);\n    ssn >> n;\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        bool found = false;\n        for (int b = 0; b < 26 && !found; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break; // Break early if found\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+
+2025-01-23 15:19:02,745	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 15:19:02,745	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <sstream>\n#include <string.h>\n\nusing namespace std;\n\nchar AlphabetTable[26];\nint table[26];\n\nchar decode(char a) {\n    return AlphabetTable[(a - \'a\') % 26]; // Directly map without loop\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    stringstream ssn(code);\n    ssn >> n;\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        bool found = false;\n        for (int b = 0; b < 26 && !found; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:04,479	[DEBUG]	EXEC>  SUCCESS 2536371.5
+2025-01-23 15:19:04,480	[INFO]	0-4     SUCCESS               2536371.50 (44.79%) [1 edit(s)]  
+2025-01-23 15:19:04,480	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <sstream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\n\nchar decode(char a) {\n    return AlphabetTable[table[a - \'a\']];\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    stringstream ssn(code);\n    ssn >> n;\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        bool found = false;\n        for (int b = 0; b < 26 && !found; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:06,086	[DEBUG]	EXEC>  SUCCESS 2529734.625
+2025-01-23 15:19:06,087	[INFO]	0-5     SUCCESS               2529734.62 (44.67%) [1 edit(s)]  
+2025-01-23 15:19:06,087	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <sstream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\n\nchar decode(char a) {\n    return AlphabetTable[table[a - \'a\']];\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    n = stoi(code); // Convert directly without stringstream\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        bool found = false;\n        for (int b = 0; b < 26 && !found; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:07,507	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 15:19:07,508	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <string>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\n\nchar decode(char a) {\n    return AlphabetTable[table[a - \'a\']];\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    n = stoi(code);\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        bool found = false;\n        for (int comb = 0; comb < 26 && !found; comb++) {\n            int a = (comb % 13 == 0) ? (comb + 1) : comb; // Avoid a % 13 == 0\n            int b = comb;\n            makeTable(a, b);\n            code = tmp;\n            for (int j = 0; j < code.length(); j++) {\n                if (\'a\' <= code[j] && code[j] <= \'z\') {\n                    code[j] = decode(code[j]);\n                }\n            }\n            if (code.find("this") != -1 || code.find("that") != -1) {\n                cout << code << endl;\n                found = true;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:09,037	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 15:19:09,038	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\nunordered_map<char, char> decodeCache;\n\nchar decode(char a) {\n    if (decodeCache.find(a) != decodeCache.end()) return decodeCache[a];\n    char result = AlphabetTable[table[a - \'a\']];\n    decodeCache[a] = result;\n    return result;\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code, tmp;\n    int n;\n    getline(cin, code);\n    n = stoi(code);\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        tmp = code;\n        bool found = false;\n        for (int b = 0; b < 26 && !found; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:10,560	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 15:19:10,560	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\nunordered_map<char, char> decodeCache;\n\nchar decode(char a) {\n    if (decodeCache.find(a) != decodeCache.end()) return decodeCache[a];\n    char result = AlphabetTable[table[a - \'a\']];\n    decodeCache[a] = result;\n    return result;\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code;\n    int n;\n    cin >> n; // Read integer directly\n    cin.ignore(); // Ignore the newline character\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        string tmp = code;\n        bool found = false;\n        for (int b = 0; b < 26 && !found; b++) {\n            for (int a = 1; a < 26; a += 2) {\n                if (a % 13 != 0) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:12,078	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 15:19:12,078	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\nunordered_map<char, char> decodeCache;\n\nchar decode(char a) {\n    if (decodeCache.find(a) != decodeCache.end()) return decodeCache[a];\n    char result = AlphabetTable[table[a - \'a\']];\n    decodeCache[a] = result;\n    return result;\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nvoid makeAlphabetTable() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nint main() {\n    string code;\n    int n;\n    cin >> n;\n    cin.ignore();\n    makeAlphabetTable();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        string tmp = code;\n        bool found = false;\n        for (int a = 1; a < 26 && !found; a += 2) {\n            if (a % 13 != 0) {\n                for (int b = 0; b < 26; b++) {\n                    makeTable(a, b);\n                    code = tmp;\n                    for (int j = 0; j < code.length(); j++) {\n                        if (\'a\' <= code[j] && code[j] <= \'z\') {\n                            code[j] = decode(code[j]);\n                        }\n                    }\n                    if (code.find("this") != -1 || code.find("that") != -1) {\n                        cout << code << endl;\n                        found = true;\n                        break;\n                    }\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:13,597	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 15:19:13,597	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nvector<char> AlphabetTable(26);\nvector<int> table(26);\nunordered_map<char, char> decodeCache;\n\nvoid initializeTables() {\n    for (int i = 0; i < 26; i++) {\n        AlphabetTable[i] = \'a\' + i;\n    }\n}\n\nvoid makeTable(int a, int b) {\n    for (int i = 0; i < 26; i++) {\n        table[i] = (a * i + b) % 26;\n    }\n}\n\nchar decode(char a) {\n    if (decodeCache.find(a) != decodeCache.end()) return decodeCache[a];\n    char result = AlphabetTable[table[a - \'a\']];\n    decodeCache[a] = result;\n    return result;\n}\n\nbool processCode(string &code, string &tmp) {\n    for (int b = 0; b < 26; b++) {\n        for (int a = 1; a < 26; a += 2) {\n            if (a % 13 != 0) {\n                makeTable(a, b);\n                code = tmp;\n                for (int j = 0; j < code.length(); j++) {\n                    if (\'a\' <= code[j] && code[j] <= \'z\') {\n                        code[j] = decode(code[j]);\n                    }\n                }\n                if (code.find("this") != -1 || code.find("that") != -1) {\n                    return true;\n                }\n            }\n        }\n    }\n    return false;\n}\n\nint main() {\n    string code;\n    int n;\n    cin >> n;\n    cin.ignore();\n    initializeTables();\n    for (int i = 0; i < n; i++) {\n        getline(cin, code);\n        string tmp = code;\n        if (processCode(code, tmp)) {\n            cout << code << endl;\n        }\n    }\n    return 0;\n}')"
+2025-01-23 15:19:14,597	[INFO]	Step: 10
+2025-01-23 15:19:14,598	[INFO]	Stop Steps: 100
+2025-01-23 15:19:16,605	[DEBUG]	EXEC>  SUCCESS 5665568.75
+2025-01-23 15:19:16,605	[INFO]	REF     SUCCESS               5665568.75 (--) [0 edit(s)]  
+2025-01-23 15:19:16,605	[INFO]	Best patch: 1
+2025-01-23 15:19:17,163	[DEBUG]	EXEC>  SUCCESS 2591705.0625
+2025-01-23 15:19:17,164	[INFO]	BEST    SUCCESS              *2591705.06 (45.74%) [0 edit(s)]  
+2025-01-23 15:19:17,164	[INFO]	Best patch step: 1
+2025-01-23 15:20:24,504	[INFO]	~~~~ END ~~~~
+2025-01-23 15:20:24,504	[INFO]	Best patch step: 1

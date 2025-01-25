@@ -1,0 +1,718 @@
+2025-01-24 17:21:55,841	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5769330518451571
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0105
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-24 17:21:55,842	[DEBUG]	
+2025-01-24 17:21:55,842	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-24 17:21:55,842	[INFO]	~~~~ WARMUP ~~~~
+2025-01-24 17:21:57,632	[DEBUG]	EXEC>  SUCCESS 5921526.4375
+2025-01-24 17:21:57,632	[INFO]	WARM    SUCCESS               5921526.44 (--) [0 edit(s)]  
+2025-01-24 17:21:58,606	[DEBUG]	EXEC>  SUCCESS 5056590.25
+2025-01-24 17:21:58,606	[INFO]	WARM    SUCCESS               5056590.25 (--) [0 edit(s)]  
+2025-01-24 17:21:59,583	[DEBUG]	EXEC>  SUCCESS 5254726.3125
+2025-01-24 17:21:59,584	[INFO]	WARM    SUCCESS               5254726.31 (--) [0 edit(s)]  
+2025-01-24 17:22:00,639	[DEBUG]	EXEC>  SUCCESS 4527056.375
+2025-01-24 17:22:00,640	[INFO]	WARM    SUCCESS               4527056.38 (--) [0 edit(s)]  
+2025-01-24 17:22:01,589	[DEBUG]	EXEC>  SUCCESS 5531634.0
+2025-01-24 17:22:01,589	[INFO]	WARM    SUCCESS               5531634.00 (--) [0 edit(s)]  
+2025-01-24 17:22:01,590	[INFO]	REF     SUCCESS               5531634.00 (--) [0 edit(s)]  
+2025-01-24 17:22:01,591	[INFO]	
+2025-01-24 17:22:01,591	[INFO]	~~~~ START ~~~~
+2025-01-24 17:22:39,657	[DEBUG]	EXEC>  SUCCESS 5384903.5625
+2025-01-24 17:22:39,658	[INFO]	0-1     SUCCESS              *5384903.56 (97.35%) [1 edit(s)]  
+2025-01-24 17:22:39,658	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<iostream>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<random>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:22:41,571	[DEBUG]	EXEC>  SUCCESS 5941297.125
+2025-01-24 17:22:41,572	[INFO]	0-2     SUCCESS               5941297.12 (107.41%) [1 edit(s)]  
+2025-01-24 17:22:41,572	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;\n    }\n    return 0;\n}')"
+2025-01-24 17:22:43,397	[DEBUG]	EXEC>  SUCCESS 3187912.6875
+2025-01-24 17:22:43,397	[INFO]	0-3     SUCCESS              *3187912.69 (57.63%) [1 edit(s)]  
+2025-01-24 17:22:43,398	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:22:45,025	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-24 17:22:45,025	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n        aizu[a+b] %= 2;\n    }\n    for(int i=0; i<200279; i++){\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:47,110	[DEBUG]	EXEC>  SUCCESS 3979663.3125
+2025-01-24 17:22:47,110	[INFO]	0-5     SUCCESS               3979663.31 (71.94%) [1 edit(s)]  
+2025-01-24 17:22:47,110	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:48,744	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-24 17:22:48,744	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nconst int max_size = 1e5;\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[max_size]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<max_size; i++){\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:50,453	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-24 17:22:50,453	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:52,201	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-24 17:22:52,201	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    vector<int> aizu(200300, 0);\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:54,053	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-24 17:22:54,053	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    unordered_map<int, int> aizu;\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(auto& entry : aizu){\n        if(entry.second == 1) printf("%d 0\\n", entry.first);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:55,779	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-24 17:22:55,779	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:22:56,780	[INFO]	Step: 10
+2025-01-24 17:22:56,780	[INFO]	Stop Steps: 100
+2025-01-24 17:22:59,062	[DEBUG]	EXEC>  SUCCESS 4542229.125
+2025-01-24 17:22:59,062	[INFO]	REF     SUCCESS               4542229.12 (--) [0 edit(s)]  
+2025-01-24 17:22:59,062	[INFO]	Best patch: 2
+2025-01-24 17:22:59,955	[DEBUG]	EXEC>  SUCCESS 3140018.1875
+2025-01-24 17:22:59,955	[INFO]	BEST    SUCCESS              *3140018.19 (69.13%) [0 edit(s)]  
+2025-01-24 17:22:59,956	[INFO]	Best patch step: 2
+2025-01-24 17:23:44,224	[INFO]	Step: 10
+2025-01-24 17:23:44,225	[INFO]	Stop Steps: 100
+2025-01-24 17:23:45,231	[DEBUG]	EXEC>  SUCCESS 3475966.75
+2025-01-24 17:23:45,231	[INFO]	1-1     SUCCESS              +3475966.75 (76.53%) [1 edit(s)]  
+2025-01-24 17:23:45,231	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:23:45,232	[INFO]	Step: 11
+2025-01-24 17:23:45,232	[INFO]	Stop Steps: 100
+2025-01-24 17:23:46,211	[DEBUG]	EXEC>  SUCCESS 3886895.625
+2025-01-24 17:23:46,211	[INFO]	1-2     SUCCESS               3886895.62 (85.57%) [1 edit(s)]  
+2025-01-24 17:23:46,211	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 4), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:23:46,211	[INFO]	Step: 12
+2025-01-24 17:23:46,211	[INFO]	Stop Steps: 100
+2025-01-24 17:23:46,860	[DEBUG]	EXEC>  SUCCESS 4582169.9375
+2025-01-24 17:23:46,860	[INFO]	1-3     SUCCESS               4582169.94 (100.88%) [1 edit(s)]  
+2025-01-24 17:23:46,860	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);  // Using scanf for performance\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);  // Efficient input reading\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);  // Using printf for faster output\n    }\n    return 0;\n}')"
+2025-01-24 17:23:46,860	[INFO]	Step: 13
+2025-01-24 17:23:46,860	[INFO]	Stop Steps: 100
+2025-01-24 17:23:47,776	[DEBUG]	EXEC>  SUCCESS 5530461.75
+2025-01-24 17:23:47,776	[INFO]	1-4     SUCCESS               5530461.75 (121.76%) [1 edit(s)]  
+2025-01-24 17:23:47,776	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n#include<iostream>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;  // Using cin for a more modern approach\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;  // Efficient input reading\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;  // Using cout for output\n    }\n    return 0;\n}')"
+2025-01-24 17:23:47,776	[INFO]	Step: 14
+2025-01-24 17:23:47,776	[INFO]	Stop Steps: 100
+2025-01-24 17:23:48,510	[DEBUG]	EXEC>  SUCCESS 5332765.625
+2025-01-24 17:23:48,511	[INFO]	1-5     SUCCESS               5332765.62 (117.40%) [1 edit(s)]  
+2025-01-24 17:23:48,511	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);  // Using scanf for performance\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);  // Efficient input reading\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);  // Using printf for faster output\n    }\n    return 0;\n}')"
+2025-01-24 17:23:48,511	[INFO]	Step: 15
+2025-01-24 17:23:48,511	[INFO]	Stop Steps: 100
+2025-01-24 17:23:49,409	[DEBUG]	EXEC>  SUCCESS 4988373.625
+2025-01-24 17:23:49,409	[INFO]	1-6     SUCCESS               4988373.62 (109.82%) [1 edit(s)]  
+2025-01-24 17:23:49,410	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n#include<iostream>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;  // Using cin for modern input\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;  // Efficient input reading\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;  // Using cout for output\n    }\n    return 0;\n}')"
+2025-01-24 17:23:49,410	[INFO]	Step: 16
+2025-01-24 17:23:49,410	[INFO]	Stop Steps: 100
+2025-01-24 17:23:50,329	[DEBUG]	EXEC>  SUCCESS 3296918.8125
+2025-01-24 17:23:50,330	[INFO]	1-7     SUCCESS              +3296918.81 (72.58%) [2 edit(s)]  
+2025-01-24 17:23:50,330	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++){\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:23:50,330	[INFO]	Step: 17
+2025-01-24 17:23:50,330	[INFO]	Stop Steps: 100
+2025-01-24 17:23:50,859	[DEBUG]	EXEC>  SUCCESS 4552893.5
+2025-01-24 17:23:50,859	[INFO]	1-8     SUCCESS               4552893.50 (100.23%) [2 edit(s)]  
+2025-01-24 17:23:50,859	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 4), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    vector<int> aizu(200300, 0);\n    \n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    \n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:23:50,860	[INFO]	Step: 18
+2025-01-24 17:23:50,860	[INFO]	Stop Steps: 100
+2025-01-24 17:23:51,857	[DEBUG]	EXEC>  SUCCESS 5869004.625
+2025-01-24 17:23:51,857	[INFO]	1-9     SUCCESS               5869004.62 (129.21%) [2 edit(s)]  
+2025-01-24 17:23:51,857	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 0), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<iostream>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<random>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <deque>\n#include <queue>\n#include <vector>\n#include <algorithm>\n#include <iostream>\n#include <set>\n#include <cmath>\n#include <tuple>\n#include <string>\n#include <chrono>\n#include <functional>\n#include <iterator>\n#include <random>\n#include <unordered_set>\n#include <unordered_map>\n#include <array>\n#include <map>\n#include <iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++){\n        int a, b; cin >> a >> b;\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++){\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) cout << i << " 0\\n";\n    }\n    return 0;\n}')"
+2025-01-24 17:23:51,857	[INFO]	Step: 19
+2025-01-24 17:23:51,857	[INFO]	Stop Steps: 100
+2025-01-24 17:23:52,346	[DEBUG]	EXEC>  SUCCESS 3225090.5625
+2025-01-24 17:23:52,346	[INFO]	1-10    SUCCESS              +3225090.56 (71.00%) [2 edit(s)]  
+2025-01-24 17:23:52,346	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 1), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:23:52,347	[INFO]	Step: 20
+2025-01-24 17:23:52,347	[INFO]	Stop Steps: 100
+2025-01-24 17:23:54,414	[DEBUG]	EXEC>  SUCCESS 5041733.0625
+2025-01-24 17:23:54,415	[INFO]	REF     SUCCESS               5041733.06 (--) [0 edit(s)]  
+2025-01-24 17:23:54,415	[INFO]	Best patch: 2
+2025-01-24 17:23:55,227	[DEBUG]	EXEC>  SUCCESS 3184241.125
+2025-01-24 17:23:55,227	[INFO]	BEST    SUCCESS              *3184241.12 (63.16%) [0 edit(s)]  
+2025-01-24 17:23:55,227	[INFO]	Best patch step: 2
+2025-01-24 17:24:32,743	[INFO]	Step: 20
+2025-01-24 17:24:32,743	[INFO]	Stop Steps: 100
+2025-01-24 17:24:33,380	[DEBUG]	EXEC>  SUCCESS 3275404.3125
+2025-01-24 17:24:33,380	[INFO]	2-1     SUCCESS              +3275404.31 (64.97%) [2 edit(s)]  
+2025-01-24 17:24:33,381	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 1), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:33,381	[INFO]	Step: 21
+2025-01-24 17:24:33,381	[INFO]	Stop Steps: 100
+2025-01-24 17:24:34,306	[DEBUG]	EXEC>  SUCCESS 3271817.875
+2025-01-24 17:24:34,306	[INFO]	2-2     SUCCESS              +3271817.88 (64.89%) [2 edit(s)]  
+2025-01-24 17:24:34,306	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++){\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:34,306	[INFO]	Step: 22
+2025-01-24 17:24:34,306	[INFO]	Stop Steps: 100
+2025-01-24 17:24:34,751	[DEBUG]	EXEC>  SUCCESS 3161500.8125
+2025-01-24 17:24:34,752	[INFO]	2-3     SUCCESS              *3161500.81 (62.71%) [1 edit(s)]  
+2025-01-24 17:24:34,752	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:24:34,752	[INFO]	Step: 23
+2025-01-24 17:24:34,752	[INFO]	Stop Steps: 100
+2025-01-24 17:24:35,252	[DEBUG]	EXEC>  SUCCESS 4006481.1875
+2025-01-24 17:24:35,252	[INFO]	2-4     SUCCESS               4006481.19 (79.47%) [1 edit(s)]  
+2025-01-24 17:24:35,252	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:35,252	[INFO]	Step: 24
+2025-01-24 17:24:35,252	[INFO]	Stop Steps: 100
+2025-01-24 17:24:35,698	[DEBUG]	EXEC>  SUCCESS 3850397.5625
+2025-01-24 17:24:35,698	[INFO]	2-5     SUCCESS               3850397.56 (76.37%) [1 edit(s)]  
+2025-01-24 17:24:35,698	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:35,698	[INFO]	Step: 25
+2025-01-24 17:24:35,698	[INFO]	Stop Steps: 100
+2025-01-24 17:24:36,106	[DEBUG]	EXEC>  SUCCESS 3177492.1875
+2025-01-24 17:24:36,107	[INFO]	2-6     SUCCESS               3177492.19 (63.02%) [1 edit(s)]  
+2025-01-24 17:24:36,107	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:36,107	[INFO]	Step: 26
+2025-01-24 17:24:36,107	[INFO]	Stop Steps: 100
+2025-01-24 17:24:36,634	[DEBUG]	EXEC>  SUCCESS 4527144.0625
+2025-01-24 17:24:36,634	[INFO]	2-7     SUCCESS               4527144.06 (89.79%) [3 edit(s)]  
+2025-01-24 17:24:36,634	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 1), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n;\n    scanf("%d", &n);\n    vector<int> aizu(200300, 0); // Using vector for dynamic sizing and better memory management\n    for (int i = 0; i < n; i++) {\n        int a, b;\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:36,635	[INFO]	Step: 27
+2025-01-24 17:24:36,635	[INFO]	Stop Steps: 100
+2025-01-24 17:24:37,220	[DEBUG]	EXEC>  SUCCESS 3856937.6875
+2025-01-24 17:24:37,220	[INFO]	2-8     SUCCESS               3856937.69 (76.50%) [3 edit(s)]  
+2025-01-24 17:24:37,220	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++){\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <vector>\n#include <array>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static array<int, 200300> aizu = {0}; // Use array instead of static int for better performance\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // Use bitwise AND for checking odd/even instead of modulus\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:37,220	[INFO]	Step: 28
+2025-01-24 17:24:37,220	[INFO]	Stop Steps: 100
+2025-01-24 17:24:37,861	[DEBUG]	EXEC>  SUCCESS 5039884.3125
+2025-01-24 17:24:37,861	[INFO]	2-9     SUCCESS               5039884.31 (99.96%) [2 edit(s)]  
+2025-01-24 17:24:37,861	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <vector>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n; cin >> n;\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; cin >> a >> b;\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) cout << i << " 0\\n";\n    }\n    return 0;\n}')"
+2025-01-24 17:24:37,862	[INFO]	Step: 29
+2025-01-24 17:24:37,862	[INFO]	Stop Steps: 100
+2025-01-24 17:24:38,264	[DEBUG]	EXEC>  SUCCESS 3849906.375
+2025-01-24 17:24:38,264	[INFO]	2-10    SUCCESS               3849906.38 (76.36%) [2 edit(s)]  
+2025-01-24 17:24:38,264	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 4), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <array>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; scanf("%d", &n);\n    static array<int, 200300> aizu = {0}; // Use array for better performance\n    for (int i = 0; i < n; ++i) {\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    // Optimize the loop to reduce unnecessary iterations\n    for (int i = 0; i < 200279; ++i) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:24:38,264	[INFO]	Step: 30
+2025-01-24 17:24:38,264	[INFO]	Stop Steps: 100
+2025-01-24 17:24:40,235	[DEBUG]	EXEC>  SUCCESS 4588044.625
+2025-01-24 17:24:40,235	[INFO]	REF     SUCCESS               4588044.62 (--) [0 edit(s)]  
+2025-01-24 17:24:40,235	[INFO]	Best patch: 4
+2025-01-24 17:24:40,689	[DEBUG]	EXEC>  SUCCESS 3999245.25
+2025-01-24 17:24:40,689	[INFO]	BEST    SUCCESS              *3999245.25 (87.17%) [0 edit(s)]  
+2025-01-24 17:24:40,689	[INFO]	Best patch step: 22
+2025-01-24 17:25:24,691	[INFO]	Step: 30
+2025-01-24 17:25:24,692	[INFO]	Stop Steps: 100
+2025-01-24 17:25:25,256	[DEBUG]	EXEC>  SUCCESS 3627752.9375
+2025-01-24 17:25:25,256	[INFO]	3-1     SUCCESS              *3627752.94 (79.07%) [1 edit(s)]  
+2025-01-24 17:25:25,257	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:25:25,257	[INFO]	Step: 31
+2025-01-24 17:25:25,257	[INFO]	Stop Steps: 100
+2025-01-24 17:25:25,681	[DEBUG]	EXEC>  SUCCESS 3376236.875
+2025-01-24 17:25:25,681	[INFO]	3-2     SUCCESS              *3376236.88 (73.59%) [1 edit(s)]  
+2025-01-24 17:25:25,681	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:25:25,681	[INFO]	Step: 32
+2025-01-24 17:25:25,681	[INFO]	Stop Steps: 100
+2025-01-24 17:25:26,211	[DEBUG]	EXEC>  SUCCESS 3863138.0
+2025-01-24 17:25:26,211	[INFO]	3-3     SUCCESS               3863138.00 (84.20%) [1 edit(s)]  
+2025-01-24 17:25:26,211	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:25:26,211	[INFO]	Step: 33
+2025-01-24 17:25:26,211	[INFO]	Stop Steps: 100
+2025-01-24 17:25:26,669	[DEBUG]	EXEC>  SUCCESS 5408909.3125
+2025-01-24 17:25:26,669	[INFO]	3-4     SUCCESS               5408909.31 (117.89%) [1 edit(s)]  
+2025-01-24 17:25:26,669	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static llint aizu[200300] = {0}; // Adjusted to long long\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%lld 0\\n", i); // Print using long long format\n    }\n    return 0;\n}')"
+2025-01-24 17:25:26,670	[INFO]	Step: 34
+2025-01-24 17:25:26,670	[INFO]	Stop Steps: 100
+2025-01-24 17:25:27,071	[DEBUG]	EXEC>  SUCCESS 3418008.9375
+2025-01-24 17:25:27,072	[INFO]	3-5     SUCCESS               3418008.94 (74.50%) [1 edit(s)]  
+2025-01-24 17:25:27,072	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:25:27,072	[INFO]	Step: 35
+2025-01-24 17:25:27,072	[INFO]	Stop Steps: 100
+2025-01-24 17:25:27,501	[DEBUG]	EXEC>  SUCCESS 3210810.5625
+2025-01-24 17:25:27,501	[INFO]	3-6     SUCCESS              *3210810.56 (69.98%) [1 edit(s)]  
+2025-01-24 17:25:27,501	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:25:27,502	[INFO]	Step: 36
+2025-01-24 17:25:27,502	[INFO]	Stop Steps: 100
+2025-01-24 17:25:28,071	[DEBUG]	EXEC>  SUCCESS 6274754.3125
+2025-01-24 17:25:28,071	[INFO]	3-7     SUCCESS               6274754.31 (136.76%) [2 edit(s)]  
+2025-01-24 17:25:28,071	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n    }\n    // Buffering output to minimize printf calls\n    int output[200300];\n    int count = 0;\n    for (int i = 0; i < 200279; i++) {\n        if (aizu[i] == 1) {\n            output[count++] = i;\n        }\n    }\n    for (int i = 0; i < count; i++) {\n        printf("%d 0\\n", output[i]);\n    }\n    return 0;\n}')"
+2025-01-24 17:25:28,072	[INFO]	Step: 37
+2025-01-24 17:25:28,072	[INFO]	Stop Steps: 100
+2025-01-24 17:25:31,621	[INFO]	3-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-24 17:25:31,622	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        // Optimized the input reading by reading both integers in one call\n        scanf("%d%d", &aizu[a + b]);\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:25:31,622	[INFO]	Step: 38
+2025-01-24 17:25:31,622	[INFO]	Stop Steps: 100
+2025-01-24 17:25:32,527	[DEBUG]	EXEC>  SUCCESS 3989069.3125
+2025-01-24 17:25:32,527	[INFO]	3-9     SUCCESS               3989069.31 (86.94%) [3 edit(s)]  
+2025-01-24 17:25:32,527	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 2), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++){\n        int a, b; scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++){\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include<deque>\n#include<queue>\n#include<vector>\n#include<algorithm>\n#include<set>\n#include<cmath>\n#include<tuple>\n#include<string>\n#include<chrono>\n#include<functional>\n#include<iterator>\n#include<unordered_set>\n#include<unordered_map>\n#include<array>\n#include<map>\n#include<iomanip>\n#include<cstdio>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    array<int, 200300> aizu = {0}; // Use std::array for better performance\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Reduce array accesses\n        aizu[i] %= 2;\n        if(aizu[i] == 1) printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:25:32,528	[INFO]	Step: 39
+2025-01-24 17:25:32,528	[INFO]	Stop Steps: 100
+2025-01-24 17:25:33,035	[DEBUG]	EXEC>  SUCCESS 3772950.5625
+2025-01-24 17:25:33,035	[INFO]	3-10    SUCCESS               3772950.56 (82.23%) [3 edit(s)]  
+2025-01-24 17:25:33,035	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 1), '#include<deque>\n#include<algorithm>\n#include<iostream>\n#include<unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void){\n    int n; cin >> n;\n    static int aizu[200300]={0};\n    for(int i=0; i<n; i++){\n        int a, b; cin >> a >> b;\n        aizu[a+b]++;\n    }\n    for(int i=0; i<200279; i++){\n        aizu[i+1] += aizu[i]/2;\n        aizu[i] %= 2;\n        if(aizu[i]==1) cout << i << " 0" << endl;\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    \n    static int aizu[200300] = {0};\n    \n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    \n    // Final optimization: Reduce the maximum index check to n\n    for (int i = 0; i < n; i++) {\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    \n    return 0;\n}')"
+2025-01-24 17:25:33,036	[INFO]	Step: 40
+2025-01-24 17:25:33,036	[INFO]	Stop Steps: 100
+2025-01-24 17:25:35,142	[DEBUG]	EXEC>  SUCCESS 5484958.125
+2025-01-24 17:25:35,142	[INFO]	REF     SUCCESS               5484958.12 (--) [0 edit(s)]  
+2025-01-24 17:25:35,142	[INFO]	Best patch: 11
+2025-01-24 17:25:35,794	[DEBUG]	EXEC>  SUCCESS 3881966.6875
+2025-01-24 17:25:35,795	[INFO]	BEST    SUCCESS              *3881966.69 (70.77%) [0 edit(s)]  
+2025-01-24 17:25:35,795	[INFO]	Best patch step: 35
+2025-01-24 17:26:33,211	[INFO]	Step: 40
+2025-01-24 17:26:33,212	[INFO]	Stop Steps: 100
+2025-01-24 17:26:33,921	[DEBUG]	EXEC>  SUCCESS 3692526.125
+2025-01-24 17:26:33,921	[INFO]	4-1     SUCCESS              *3692526.12 (67.32%) [1 edit(s)]  
+2025-01-24 17:26:33,921	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:26:33,921	[INFO]	Step: 41
+2025-01-24 17:26:33,921	[INFO]	Stop Steps: 100
+2025-01-24 17:26:34,319	[DEBUG]	EXEC>  SUCCESS 3346735.875
+2025-01-24 17:26:34,319	[INFO]	4-2     SUCCESS              *3346735.88 (61.02%) [1 edit(s)]  
+2025-01-24 17:26:34,319	[DEBUG]	patch(4-2)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:26:34,319	[INFO]	Step: 42
+2025-01-24 17:26:34,319	[INFO]	Stop Steps: 100
+2025-01-24 17:26:34,790	[DEBUG]	EXEC>  SUCCESS 3079868.75
+2025-01-24 17:26:34,790	[INFO]	4-3     SUCCESS              *3079868.75 (56.15%) [1 edit(s)]  
+2025-01-24 17:26:34,790	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:26:34,790	[INFO]	Step: 43
+2025-01-24 17:26:34,790	[INFO]	Stop Steps: 100
+2025-01-24 17:26:35,363	[DEBUG]	EXEC>  SUCCESS 3857722.75
+2025-01-24 17:26:35,364	[INFO]	4-4     SUCCESS               3857722.75 (70.33%) [1 edit(s)]  
+2025-01-24 17:26:35,364	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:35,364	[INFO]	Step: 44
+2025-01-24 17:26:35,364	[INFO]	Stop Steps: 100
+2025-01-24 17:26:35,800	[DEBUG]	EXEC>  SUCCESS 3717586.0
+2025-01-24 17:26:35,801	[INFO]	4-5     SUCCESS               3717586.00 (67.78%) [1 edit(s)]  
+2025-01-24 17:26:35,801	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:35,801	[INFO]	Step: 45
+2025-01-24 17:26:35,801	[INFO]	Stop Steps: 100
+2025-01-24 17:26:36,192	[DEBUG]	EXEC>  SUCCESS 3236064.4375
+2025-01-24 17:26:36,192	[INFO]	4-6     SUCCESS               3236064.44 (59.00%) [1 edit(s)]  
+2025-01-24 17:26:36,192	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:36,192	[INFO]	Step: 46
+2025-01-24 17:26:36,192	[INFO]	Stop Steps: 100
+2025-01-24 17:26:36,642	[DEBUG]	EXEC>  SUCCESS 3100135.3125
+2025-01-24 17:26:36,643	[INFO]	4-7     SUCCESS               3100135.31 (56.52%) [2 edit(s)]  
+2025-01-24 17:26:36,643	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:36,643	[INFO]	Step: 47
+2025-01-24 17:26:36,643	[INFO]	Stop Steps: 100
+2025-01-24 17:26:37,103	[DEBUG]	EXEC>  SUCCESS 3948271.125
+2025-01-24 17:26:37,104	[INFO]	4-8     SUCCESS               3948271.12 (71.98%) [2 edit(s)]  
+2025-01-24 17:26:37,104	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b); // Combined the scanf call for better efficiency\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:37,104	[INFO]	Step: 48
+2025-01-24 17:26:37,104	[INFO]	Stop Steps: 100
+2025-01-24 17:26:37,541	[DEBUG]	EXEC>  SUCCESS 3226957.3125
+2025-01-24 17:26:37,542	[INFO]	4-9     SUCCESS               3226957.31 (58.83%) [2 edit(s)]  
+2025-01-24 17:26:37,542	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:37,542	[INFO]	Step: 49
+2025-01-24 17:26:37,542	[INFO]	Stop Steps: 100
+2025-01-24 17:26:38,000	[DEBUG]	EXEC>  SUCCESS 3499781.375
+2025-01-24 17:26:38,000	[INFO]	4-10    SUCCESS               3499781.38 (63.81%) [2 edit(s)]  
+2025-01-24 17:26:38,000	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // Use bitwise AND to ensure values are 0 or 1\n        if (aizu[i]) // Check if aizu[i] is non-zero directly\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:26:38,000	[INFO]	Step: 50
+2025-01-24 17:26:38,000	[INFO]	Stop Steps: 100
+2025-01-24 17:26:40,148	[DEBUG]	EXEC>  SUCCESS 6176685.125
+2025-01-24 17:26:40,148	[INFO]	REF     SUCCESS               6176685.12 (--) [0 edit(s)]  
+2025-01-24 17:26:40,148	[INFO]	Best patch: 12
+2025-01-24 17:26:40,684	[DEBUG]	EXEC>  SUCCESS 3123196.125
+2025-01-24 17:26:40,684	[INFO]	BEST    SUCCESS              *3123196.12 (50.56%) [0 edit(s)]  
+2025-01-24 17:26:40,684	[INFO]	Best patch step: 42
+2025-01-24 17:27:10,008	[INFO]	Step: 50
+2025-01-24 17:27:10,008	[INFO]	Stop Steps: 100
+2025-01-24 17:27:10,543	[DEBUG]	EXEC>  SUCCESS 3282530.25
+2025-01-24 17:27:10,543	[INFO]	5-1     SUCCESS              +3282530.25 (53.14%) [1 edit(s)]  
+2025-01-24 17:27:10,543	[DEBUG]	patch(5-1)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:10,543	[INFO]	Step: 51
+2025-01-24 17:27:10,543	[INFO]	Stop Steps: 100
+2025-01-24 17:27:10,964	[DEBUG]	EXEC>  SUCCESS 3788086.875
+2025-01-24 17:27:10,964	[INFO]	5-2     SUCCESS               3788086.88 (61.33%) [2 edit(s)]  
+2025-01-24 17:27:10,964	[DEBUG]	patch(5-2)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:10,964	[INFO]	Step: 52
+2025-01-24 17:27:10,964	[INFO]	Stop Steps: 100
+2025-01-24 17:27:11,364	[DEBUG]	EXEC>  SUCCESS 3248336.0625
+2025-01-24 17:27:11,365	[INFO]	5-3     SUCCESS              +3248336.06 (52.59%) [1 edit(s)]  
+2025-01-24 17:27:11,365	[DEBUG]	patch(5-3)="LineLLMCrossover(('source.cpp', 16), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:11,365	[INFO]	Step: 53
+2025-01-24 17:27:11,365	[INFO]	Stop Steps: 100
+2025-01-24 17:27:11,880	[DEBUG]	EXEC>  SUCCESS 3643320.125
+2025-01-24 17:27:11,881	[INFO]	5-4     SUCCESS               3643320.12 (58.99%) [1 edit(s)]  
+2025-01-24 17:27:11,881	[DEBUG]	patch(5-4)="LineLLMCrossover(('source.cpp', 17), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:11,881	[INFO]	Step: 54
+2025-01-24 17:27:11,881	[INFO]	Stop Steps: 100
+2025-01-24 17:27:12,260	[DEBUG]	EXEC>  SUCCESS 3190261.9375
+2025-01-24 17:27:12,261	[INFO]	5-5     SUCCESS              +3190261.94 (51.65%) [1 edit(s)]  
+2025-01-24 17:27:12,261	[DEBUG]	patch(5-5)="LineLLMCrossover(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:12,261	[INFO]	Step: 55
+2025-01-24 17:27:12,261	[INFO]	Stop Steps: 100
+2025-01-24 17:27:12,719	[DEBUG]	EXEC>  SUCCESS 3144643.0625
+2025-01-24 17:27:12,719	[INFO]	5-6     SUCCESS              +3144643.06 (50.91%) [1 edit(s)]  
+2025-01-24 17:27:12,719	[DEBUG]	patch(5-6)="LineLLMCrossover(('source.cpp', 19), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:12,719	[INFO]	Step: 56
+2025-01-24 17:27:12,719	[INFO]	Stop Steps: 100
+2025-01-24 17:27:13,121	[INFO]	5-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-24 17:27:13,121	[DEBUG]	patch(5-7)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 26), '#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    unordered_map<int, int> aizu; // Using unordered_map for dynamic size and faster access\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(auto& pair : aizu) { // Iterating through the unordered_map\n        if(pair.second % 2 == 1) \n            printf("%d 0\\n", pair.first);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:13,122	[INFO]	Step: 57
+2025-01-24 17:27:13,122	[INFO]	Stop Steps: 100
+2025-01-24 17:27:13,497	[DEBUG]	EXEC>  SUCCESS 3158295.0
+2025-01-24 17:27:13,498	[INFO]	5-8     SUCCESS               3158295.00 (51.13%) [3 edit(s)]  
+2025-01-24 17:27:13,498	[DEBUG]	patch(5-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Retain the same size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:13,498	[INFO]	Step: 58
+2025-01-24 17:27:13,498	[INFO]	Stop Steps: 100
+2025-01-24 17:27:14,065	[DEBUG]	EXEC>  SUCCESS 3022802.75
+2025-01-24 17:27:14,066	[INFO]	5-9     SUCCESS              *3022802.75 (48.94%) [3 edit(s)]  
+2025-01-24 17:27:14,066	[DEBUG]	patch(5-9)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:27:14,066	[INFO]	Step: 59
+2025-01-24 17:27:14,066	[INFO]	Stop Steps: 100
+2025-01-24 17:27:14,501	[DEBUG]	EXEC>  SUCCESS 3367939.625
+2025-01-24 17:27:14,502	[INFO]	5-10    SUCCESS               3367939.62 (54.53%) [2 edit(s)]  
+2025-01-24 17:27:14,502	[DEBUG]	patch(5-10)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 29), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    \n    // Combine input reading and frequency counting to reduce overhead\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    \n    // Use a single loop to calculate cumulative values and print results\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:14,502	[INFO]	Step: 60
+2025-01-24 17:27:14,502	[INFO]	Stop Steps: 100
+2025-01-24 17:27:16,594	[DEBUG]	EXEC>  SUCCESS 6208366.875
+2025-01-24 17:27:16,594	[INFO]	REF     SUCCESS               6208366.88 (--) [0 edit(s)]  
+2025-01-24 17:27:16,594	[INFO]	Best patch: 10_24_28
+2025-01-24 17:27:17,103	[DEBUG]	EXEC>  SUCCESS 3088109.125
+2025-01-24 17:27:17,103	[INFO]	BEST    SUCCESS              *3088109.12 (49.74%) [0 edit(s)]  
+2025-01-24 17:27:17,103	[INFO]	Best patch step: 58
+2025-01-24 17:27:54,564	[INFO]	Step: 60
+2025-01-24 17:27:54,564	[INFO]	Stop Steps: 100
+2025-01-24 17:27:55,110	[DEBUG]	EXEC>  SUCCESS 2865253.75
+2025-01-24 17:27:55,110	[INFO]	6-1     SUCCESS              *2865253.75 (46.15%) [3 edit(s)]  
+2025-01-24 17:27:55,110	[DEBUG]	patch(6-1)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:27:55,110	[INFO]	Step: 61
+2025-01-24 17:27:55,110	[INFO]	Stop Steps: 100
+2025-01-24 17:27:55,663	[DEBUG]	EXEC>  SUCCESS 3958823.625
+2025-01-24 17:27:55,663	[INFO]	6-2     SUCCESS               3958823.62 (63.77%) [1 edit(s)]  
+2025-01-24 17:27:55,663	[DEBUG]	patch(6-2)="LineLLMCrossover(('source.cpp', 19), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:55,663	[INFO]	Step: 62
+2025-01-24 17:27:55,663	[INFO]	Stop Steps: 100
+2025-01-24 17:27:56,086	[DEBUG]	EXEC>  SUCCESS 3687382.3125
+2025-01-24 17:27:56,087	[INFO]	6-3     SUCCESS               3687382.31 (59.39%) [1 edit(s)]  
+2025-01-24 17:27:56,087	[DEBUG]	patch(6-3)="LineLLMCrossover(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep the same initialization for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:56,087	[INFO]	Step: 63
+2025-01-24 17:27:56,087	[INFO]	Stop Steps: 100
+2025-01-24 17:27:56,480	[DEBUG]	EXEC>  SUCCESS 3155757.75
+2025-01-24 17:27:56,480	[INFO]	6-4     SUCCESS               3155757.75 (50.83%) [1 edit(s)]  
+2025-01-24 17:27:56,480	[DEBUG]	patch(6-4)="LineLLMCrossover(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:56,480	[INFO]	Step: 64
+2025-01-24 17:27:56,480	[INFO]	Stop Steps: 100
+2025-01-24 17:27:56,930	[DEBUG]	EXEC>  SUCCESS 3225087.1875
+2025-01-24 17:27:56,931	[INFO]	6-5     SUCCESS               3225087.19 (51.95%) [1 edit(s)]  
+2025-01-24 17:27:56,931	[DEBUG]	patch(6-5)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Retain array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:56,931	[INFO]	Step: 65
+2025-01-24 17:27:56,931	[INFO]	Stop Steps: 100
+2025-01-24 17:27:57,390	[DEBUG]	EXEC>  SUCCESS 3771619.0625
+2025-01-24 17:27:57,391	[INFO]	6-6     SUCCESS               3771619.06 (60.75%) [1 edit(s)]  
+2025-01-24 17:27:57,391	[DEBUG]	patch(6-6)="LineLLMCrossover(('source.cpp', 23), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Consistent array initialization\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:57,391	[INFO]	Step: 66
+2025-01-24 17:27:57,391	[INFO]	Stop Steps: 100
+2025-01-24 17:27:57,760	[INFO]	6-7     TEST_CODE_ERROR       None (--) [4 edit(s)]  
+2025-01-24 17:27:57,760	[DEBUG]	patch(6-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 30), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += (aizu[i] & 1) + (aizu[i] >> 1); // Combine counts using bitwise operations\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:57,761	[INFO]	Step: 67
+2025-01-24 17:27:57,761	[INFO]	Stop Steps: 100
+2025-01-24 17:27:58,214	[DEBUG]	EXEC>  SUCCESS 3503807.3125
+2025-01-24 17:27:58,214	[INFO]	6-8     SUCCESS               3503807.31 (56.44%) [2 edit(s)]  
+2025-01-24 17:27:58,215	[DEBUG]	patch(6-8)="LineLLMCrossover(('source.cpp', 19), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 31), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n\n    // Use a single scanf to read both a and b. This reduces the number of I/O operations.\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n\n    // Optimize the second loop to use a single pass and avoid unnecessary operations.\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        // Only update the value of aizu[i] if necessary\n        if (aizu[i] % 2 == 1) {\n            printf("%d 0\\n", i);\n        }\n    }\n\n    return 0;\n}')"
+2025-01-24 17:27:58,215	[INFO]	Step: 68
+2025-01-24 17:27:58,215	[INFO]	Stop Steps: 100
+2025-01-24 17:27:58,642	[DEBUG]	EXEC>  SUCCESS 3426848.5
+2025-01-24 17:27:58,643	[INFO]	6-9     SUCCESS               3426848.50 (55.20%) [4 edit(s)]  
+2025-01-24 17:27:58,643	[DEBUG]	patch(6-9)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Retain the same size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 32), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    const int max_size = 200300;\n    int aizu[max_size] = {0}; // Retain the same size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < max_size - 1; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:58,643	[INFO]	Step: 69
+2025-01-24 17:27:58,643	[INFO]	Stop Steps: 100
+2025-01-24 17:27:59,049	[DEBUG]	EXEC>  SUCCESS 3699312.0625
+2025-01-24 17:27:59,049	[INFO]	6-10    SUCCESS               3699312.06 (59.59%) [2 edit(s)]  
+2025-01-24 17:27:59,049	[DEBUG]	patch(6-10)="LineLLMCrossover(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 33), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n    }\n    for (int i = 0; i < 200279; i++) {\n        if (aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:27:59,050	[INFO]	Step: 70
+2025-01-24 17:27:59,050	[INFO]	Stop Steps: 100
+2025-01-24 17:28:01,387	[DEBUG]	EXEC>  SUCCESS 6182437.1875
+2025-01-24 17:28:01,387	[INFO]	REF     SUCCESS               6182437.19 (--) [0 edit(s)]  
+2025-01-24 17:28:01,389	[INFO]	Best patch: 10_24_28
+2025-01-24 17:28:01,787	[DEBUG]	EXEC>  SUCCESS 3233607.375
+2025-01-24 17:28:01,788	[INFO]	BEST    SUCCESS              *3233607.38 (52.30%) [0 edit(s)]  
+2025-01-24 17:28:01,788	[INFO]	Best patch step: 60
+2025-01-24 17:28:50,964	[INFO]	Step: 70
+2025-01-24 17:28:50,964	[INFO]	Stop Steps: 100
+2025-01-24 17:28:51,660	[DEBUG]	EXEC>  SUCCESS 3130035.25
+2025-01-24 17:28:51,660	[INFO]	7-1     SUCCESS              *3130035.25 (50.63%) [3 edit(s)]  
+2025-01-24 17:28:51,660	[DEBUG]	patch(7-1)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:28:51,660	[INFO]	Step: 71
+2025-01-24 17:28:51,661	[INFO]	Stop Steps: 100
+2025-01-24 17:28:52,091	[DEBUG]	EXEC>  SUCCESS 3109952.5
+2025-01-24 17:28:52,091	[INFO]	7-2     SUCCESS              *3109952.50 (50.30%) [1 edit(s)]  
+2025-01-24 17:28:52,091	[DEBUG]	patch(7-2)="LineLLMCrossover(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:28:52,092	[INFO]	Step: 72
+2025-01-24 17:28:52,092	[INFO]	Stop Steps: 100
+2025-01-24 17:28:52,656	[DEBUG]	EXEC>  SUCCESS 3419114.0625
+2025-01-24 17:28:52,656	[INFO]	7-3     SUCCESS               3419114.06 (55.30%) [1 edit(s)]  
+2025-01-24 17:28:52,656	[DEBUG]	patch(7-3)="LineLLMCrossover(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:28:52,656	[INFO]	Step: 73
+2025-01-24 17:28:52,656	[INFO]	Stop Steps: 100
+2025-01-24 17:28:53,081	[DEBUG]	EXEC>  SUCCESS 3528117.5625
+2025-01-24 17:28:53,081	[INFO]	7-4     SUCCESS               3528117.56 (57.07%) [1 edit(s)]  
+2025-01-24 17:28:53,082	[DEBUG]	patch(7-4)="LineLLMCrossover(('source.cpp', 25), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    const int max_size = 200300;\n    int aizu[max_size] = {0}; // Retain array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < max_size - 1; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Use efficient modulus operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:28:53,082	[INFO]	Step: 74
+2025-01-24 17:28:53,082	[INFO]	Stop Steps: 100
+2025-01-24 17:28:53,491	[DEBUG]	EXEC>  SUCCESS 3288279.5
+2025-01-24 17:28:53,491	[INFO]	7-5     SUCCESS               3288279.50 (53.19%) [1 edit(s)]  
+2025-01-24 17:28:53,491	[DEBUG]	patch(7-5)="LineLLMCrossover(('source.cpp', 26), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:28:53,491	[INFO]	Step: 75
+2025-01-24 17:28:53,491	[INFO]	Stop Steps: 100
+2025-01-24 17:28:53,931	[DEBUG]	EXEC>  SUCCESS 2942756.0625
+2025-01-24 17:28:53,931	[INFO]	7-6     SUCCESS              *2942756.06 (47.60%) [1 edit(s)]  
+2025-01-24 17:28:53,931	[DEBUG]	patch(7-6)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:28:53,931	[INFO]	Step: 76
+2025-01-24 17:28:53,931	[INFO]	Stop Steps: 100
+2025-01-24 17:28:54,463	[DEBUG]	EXEC>  SUCCESS 3896070.9375
+2025-01-24 17:28:54,463	[INFO]	7-7     SUCCESS               3896070.94 (63.02%) [4 edit(s)]  
+2025-01-24 17:28:54,463	[DEBUG]	patch(7-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 34), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n\n    // Combined input and processing to reduce array accesses\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n\n    // Simplified processing loop\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    \n    return 0;\n}')"
+2025-01-24 17:28:54,463	[INFO]	Step: 77
+2025-01-24 17:28:54,463	[INFO]	Stop Steps: 100
+2025-01-24 17:28:54,902	[DEBUG]	EXEC>  SUCCESS 3616667.8125
+2025-01-24 17:28:54,902	[INFO]	7-8     SUCCESS               3616667.81 (58.50%) [2 edit(s)]  
+2025-01-24 17:28:54,903	[DEBUG]	patch(7-8)="LineLLMCrossover(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 35), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:28:54,903	[INFO]	Step: 78
+2025-01-24 17:28:54,903	[INFO]	Stop Steps: 100
+2025-01-24 17:28:55,334	[DEBUG]	EXEC>  SUCCESS 4949708.6875
+2025-01-24 17:28:55,335	[INFO]	7-9     SUCCESS               4949708.69 (80.06%) [2 edit(s)]  
+2025-01-24 17:28:55,335	[DEBUG]	patch(7-9)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Retain array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 36), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Retain array size for safety\n    int *a = new int[n]; // Dynamically allocate array for input\n    int *b = new int[n]; // Dynamically allocate array for input\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a[i], &b[i]); // Read all values once\n        aizu[a[i] + b[i]]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    delete[] a; // Clean up dynamically allocated memory\n    delete[] b; // Clean up dynamically allocated memory\n    return 0;\n}')"
+2025-01-24 17:28:55,335	[INFO]	Step: 79
+2025-01-24 17:28:55,335	[INFO]	Stop Steps: 100
+2025-01-24 17:28:55,993	[INFO]	7-10    TEST_CODE_ERROR       None (--) [5 edit(s)]  
+2025-01-24 17:28:55,993	[DEBUG]	patch(7-10)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Retain the same size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 32), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    const int max_size = 200300;\n    int aizu[max_size] = {0}; // Retain the same size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < max_size - 1; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 37), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    const int max_size = 200300;\n    int aizu[max_size] = {0}; // Retain the same size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d %d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < max_size; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:28:55,993	[INFO]	Step: 80
+2025-01-24 17:28:55,993	[INFO]	Stop Steps: 100
+2025-01-24 17:28:58,163	[DEBUG]	EXEC>  SUCCESS 6101223.4375
+2025-01-24 17:28:58,163	[INFO]	REF     SUCCESS               6101223.44 (--) [0 edit(s)]  
+2025-01-24 17:28:58,163	[INFO]	Best patch: 27
+2025-01-24 17:28:58,674	[DEBUG]	EXEC>  SUCCESS 2948750.25
+2025-01-24 17:28:58,674	[INFO]	BEST    SUCCESS              *2948750.25 (48.33%) [0 edit(s)]  
+2025-01-24 17:28:58,674	[INFO]	Best patch step: 75
+2025-01-24 17:29:36,574	[INFO]	Step: 80
+2025-01-24 17:29:36,574	[INFO]	Stop Steps: 100
+2025-01-24 17:29:37,337	[DEBUG]	EXEC>  SUCCESS 3939526.375
+2025-01-24 17:29:37,337	[INFO]	8-1     SUCCESS              +3939526.38 (64.57%) [1 edit(s)]  
+2025-01-24 17:29:37,337	[DEBUG]	patch(8-1)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:37,337	[INFO]	Step: 81
+2025-01-24 17:29:37,337	[INFO]	Stop Steps: 100
+2025-01-24 17:29:37,929	[DEBUG]	EXEC>  SUCCESS 3895378.5
+2025-01-24 17:29:37,930	[INFO]	8-2     SUCCESS              +3895378.50 (63.85%) [1 edit(s)]  
+2025-01-24 17:29:37,930	[DEBUG]	patch(8-2)="LineLLMCrossover(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:37,930	[INFO]	Step: 82
+2025-01-24 17:29:37,930	[INFO]	Stop Steps: 100
+2025-01-24 17:29:38,359	[DEBUG]	EXEC>  SUCCESS 3209410.75
+2025-01-24 17:29:38,359	[INFO]	8-3     SUCCESS              +3209410.75 (52.60%) [1 edit(s)]  
+2025-01-24 17:29:38,360	[DEBUG]	patch(8-3)="LineLLMCrossover(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:38,360	[INFO]	Step: 83
+2025-01-24 17:29:38,360	[INFO]	Stop Steps: 100
+2025-01-24 17:29:38,895	[DEBUG]	EXEC>  SUCCESS 3199881.5
+2025-01-24 17:29:38,896	[INFO]	8-4     SUCCESS              +3199881.50 (52.45%) [1 edit(s)]  
+2025-01-24 17:29:38,896	[DEBUG]	patch(8-4)="LineLLMCrossover(('source.cpp', 29), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if (aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:38,896	[INFO]	Step: 84
+2025-01-24 17:29:38,896	[INFO]	Stop Steps: 100
+2025-01-24 17:29:39,338	[DEBUG]	EXEC>  SUCCESS 3256061.6875
+2025-01-24 17:29:39,338	[INFO]	8-5     SUCCESS               3256061.69 (53.37%) [1 edit(s)]  
+2025-01-24 17:29:39,338	[DEBUG]	patch(8-5)="LineLLMCrossover(('source.cpp', 30), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:39,338	[INFO]	Step: 85
+2025-01-24 17:29:39,338	[INFO]	Stop Steps: 100
+2025-01-24 17:29:39,753	[DEBUG]	EXEC>  SUCCESS 3785129.4375
+2025-01-24 17:29:39,754	[INFO]	8-6     SUCCESS               3785129.44 (62.04%) [1 edit(s)]  
+2025-01-24 17:29:39,754	[DEBUG]	patch(8-6)="LineLLMCrossover(('source.cpp', 31), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:39,754	[INFO]	Step: 86
+2025-01-24 17:29:39,754	[INFO]	Stop Steps: 100
+2025-01-24 17:29:40,159	[DEBUG]	EXEC>  SUCCESS 3148449.125
+2025-01-24 17:29:40,159	[INFO]	8-7     SUCCESS              +3148449.12 (51.60%) [2 edit(s)]  
+2025-01-24 17:29:40,159	[DEBUG]	patch(8-7)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 38), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] %= 2; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:40,159	[INFO]	Step: 87
+2025-01-24 17:29:40,159	[INFO]	Stop Steps: 100
+2025-01-24 17:29:40,677	[DEBUG]	EXEC>  SUCCESS 3780036.4375
+2025-01-24 17:29:40,677	[INFO]	8-8     SUCCESS               3780036.44 (61.96%) [2 edit(s)]  
+2025-01-24 17:29:40,677	[DEBUG]	patch(8-8)="LineLLMCrossover(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 39), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for (int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for (int i = 0; i < 200280; i++) { // Reduce the loop limit\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] %= 2; // More efficient modulo operation\n        if (aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:40,677	[INFO]	Step: 88
+2025-01-24 17:29:40,677	[INFO]	Stop Steps: 100
+2025-01-24 17:29:41,066	[DEBUG]	EXEC>  SUCCESS 3384454.3125
+2025-01-24 17:29:41,066	[INFO]	8-9     SUCCESS               3384454.31 (55.47%) [4 edit(s)]  
+2025-01-24 17:29:41,066	[DEBUG]	patch(8-9)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2;\n        aizu[i] %= 2;\n        if(aizu[i] == 1) \n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // Use bitwise operation for modulus 2\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 40), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0};\n    int a, b;\n    for(int i = 0; i < n; i++) {\n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        int count = aizu[i]; // Store current count\n        aizu[i + 1] += count / 2; // Combine counts in one pass\n        aizu[i] = count % 2; // Use modulus to determine odd/even\n        if(aizu[i]) // Check if odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:29:41,066	[INFO]	Step: 89
+2025-01-24 17:29:41,066	[INFO]	Stop Steps: 100
+2025-01-24 17:29:41,500	[DEBUG]	EXEC>  SUCCESS 2928234.5625
+2025-01-24 17:29:41,500	[INFO]	8-10    SUCCESS              *2928234.56 (47.99%) [2 edit(s)]  
+2025-01-24 17:29:41,500	[DEBUG]	patch(8-10)="LineLLMCrossover(('source.cpp', 26), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 41), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Consistent array size for safety, removed static for potential stack optimization\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Using bitwise AND for clarity and efficiency\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:29:41,500	[INFO]	Step: 90
+2025-01-24 17:29:41,500	[INFO]	Stop Steps: 100
+2025-01-24 17:29:43,633	[DEBUG]	EXEC>  SUCCESS 5626882.5
+2025-01-24 17:29:43,633	[INFO]	REF     SUCCESS               5626882.50 (--) [0 edit(s)]  
+2025-01-24 17:29:43,634	[INFO]	Best patch: 26_41
+2025-01-24 17:29:44,050	[DEBUG]	EXEC>  SUCCESS 3507938.6875
+2025-01-24 17:29:44,050	[INFO]	BEST    SUCCESS              *3507938.69 (62.34%) [0 edit(s)]  
+2025-01-24 17:29:44,051	[INFO]	Best patch step: 89
+2025-01-24 17:30:18,534	[INFO]	Step: 90
+2025-01-24 17:30:18,534	[INFO]	Stop Steps: 100
+2025-01-24 17:30:19,057	[DEBUG]	EXEC>  SUCCESS 2855966.0625
+2025-01-24 17:30:19,058	[INFO]	9-1     SUCCESS              *2855966.06 (50.76%) [2 edit(s)]  
+2025-01-24 17:30:19,058	[DEBUG]	patch(9-1)="LineLLMCrossover(('source.cpp', 26), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 41), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Consistent array size for safety, removed static for potential stack optimization\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Using bitwise AND for clarity and efficiency\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+
+2025-01-24 17:30:19,058	[INFO]	Step: 91
+2025-01-24 17:30:19,058	[INFO]	Stop Steps: 100
+2025-01-24 17:30:19,614	[DEBUG]	EXEC>  SUCCESS 4085049.8125
+2025-01-24 17:30:19,614	[INFO]	9-2     SUCCESS               4085049.81 (72.60%) [2 edit(s)]  
+2025-01-24 17:30:19,614	[DEBUG]	patch(9-2)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 38), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] %= 2; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:19,614	[INFO]	Step: 92
+2025-01-24 17:30:19,614	[INFO]	Stop Steps: 100
+2025-01-24 17:30:20,023	[DEBUG]	EXEC>  SUCCESS 3690215.3125
+2025-01-24 17:30:20,023	[INFO]	9-3     SUCCESS               3690215.31 (65.58%) [1 edit(s)]  
+2025-01-24 17:30:20,023	[DEBUG]	patch(9-3)="LineLLMCrossover(('source.cpp', 32), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:20,024	[INFO]	Step: 93
+2025-01-24 17:30:20,024	[INFO]	Stop Steps: 100
+2025-01-24 17:30:20,441	[DEBUG]	EXEC>  SUCCESS 2920352.8125
+2025-01-24 17:30:20,441	[INFO]	9-4     SUCCESS               2920352.81 (51.90%) [1 edit(s)]  
+2025-01-24 17:30:20,441	[DEBUG]	patch(9-4)="LineLLMCrossover(('source.cpp', 33), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Using bitwise AND for clarity\n        if (aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:20,441	[INFO]	Step: 94
+2025-01-24 17:30:20,441	[INFO]	Stop Steps: 100
+2025-01-24 17:30:20,985	[DEBUG]	EXEC>  SUCCESS 3215067.8125
+2025-01-24 17:30:20,986	[INFO]	9-5     SUCCESS               3215067.81 (57.14%) [1 edit(s)]  
+2025-01-24 17:30:20,986	[DEBUG]	patch(9-5)="LineLLMCrossover(('source.cpp', 34), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] %= 2; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:20,986	[INFO]	Step: 95
+2025-01-24 17:30:20,986	[INFO]	Stop Steps: 100
+2025-01-24 17:30:21,452	[DEBUG]	EXEC>  SUCCESS 3348477.75
+2025-01-24 17:30:21,453	[INFO]	9-6     SUCCESS               3348477.75 (59.51%) [1 edit(s)]  
+2025-01-24 17:30:21,453	[DEBUG]	patch(9-6)="LineLLMCrossover(('source.cpp', 35), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Using bitwise AND for clarity\n        if (aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:21,453	[INFO]	Step: 96
+2025-01-24 17:30:21,453	[INFO]	Stop Steps: 100
+2025-01-24 17:30:21,872	[DEBUG]	EXEC>  SUCCESS 3822229.25
+2025-01-24 17:30:21,872	[INFO]	9-7     SUCCESS               3822229.25 (67.93%) [3 edit(s)]  
+2025-01-24 17:30:21,872	[DEBUG]	patch(9-7)="LineLLMCrossover(('source.cpp', 26), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 41), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Consistent array size for safety, removed static for potential stack optimization\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Using bitwise AND for clarity and efficiency\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 42), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    \n    // Start processing counts with a more efficient single pass\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        if(aizu[i] % 2 == 1) // Check for odd counts directly\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:21,872	[INFO]	Step: 97
+2025-01-24 17:30:21,872	[INFO]	Stop Steps: 100
+2025-01-24 17:30:22,268	[DEBUG]	EXEC>  SUCCESS 2933078.6875
+2025-01-24 17:30:22,269	[INFO]	9-8     SUCCESS               2933078.69 (52.13%) [3 edit(s)]  
+2025-01-24 17:30:22,269	[DEBUG]	patch(9-8)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 38), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] %= 2; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 43), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    // Combine counts and output results in one loop\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        if(aizu[i] % 2) // If odd count\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:22,269	[INFO]	Step: 98
+2025-01-24 17:30:22,269	[INFO]	Stop Steps: 100
+2025-01-24 17:30:22,809	[DEBUG]	EXEC>  SUCCESS 3967262.9375
+2025-01-24 17:30:22,809	[INFO]	9-9     SUCCESS               3967262.94 (70.51%) [2 edit(s)]  
+2025-01-24 17:30:22,809	[DEBUG]	patch(9-9)="LineLLMCrossover(('source.cpp', 29), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if (aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 44), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        if (aizu[i] % 2 == 1) // Check for odd counts directly\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:22,809	[INFO]	Step: 99
+2025-01-24 17:30:22,809	[INFO]	Stop Steps: 100
+2025-01-24 17:30:23,229	[DEBUG]	EXEC>  SUCCESS 3311357.125
+2025-01-24 17:30:23,229	[INFO]	9-10    SUCCESS               3311357.12 (58.85%) [2 edit(s)]  
+2025-01-24 17:30:23,229	[DEBUG]	patch(9-10)="LineLLMCrossover(('source.cpp', 28), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Combine counts in one pass\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 45), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Keep consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] >> 1; // Combine counts using bitwise right shift\n        aizu[i] &= 1; // More efficient modulo operation\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')"
+2025-01-24 17:30:23,229	[INFO]	Step: 100
+2025-01-24 17:30:23,229	[INFO]	Stop Steps: 100
+2025-01-24 17:30:23,229	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-24 17:30:32,306	[INFO]	~~~~ END ~~~~
+2025-01-24 17:30:32,307	[INFO]	Best patch step: 90
+2025-01-24 17:30:32,307	[INFO]	
+2025-01-24 17:30:32,307	[INFO]	==== REPORT ====
+2025-01-24 17:30:32,307	[INFO]	Termination: step budget
+2025-01-24 17:30:32,308	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0105_1737739315.log
+2025-01-24 17:30:32,308	[INFO]	Patch file: _magpie_logs/0105_1737739315.patch
+2025-01-24 17:30:32,308	[INFO]	Diff file: _magpie_logs/0105_1737739315.diff
+2025-01-24 17:30:32,308	[INFO]	Reference fitness: 5626882.50
+2025-01-24 17:30:32,308	[INFO]	Best fitness: 2855966.06
+2025-01-24 17:30:32,309	[INFO]	
+2025-01-24 17:30:32,309	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 26), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    static int aizu[200300] = {0}; // Consistent array size for safety\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] %= 2; // Use modulus operation for clarity\n        if(aizu[i] == 1) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}') + LineLLMMutation(('source.cpp', 41), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long int llint;\n\nint main(void) {\n    int n; \n    scanf("%d", &n);\n    int aizu[200300] = {0}; // Consistent array size for safety, removed static for potential stack optimization\n    for(int i = 0; i < n; i++) {\n        int a, b; \n        scanf("%d%d", &a, &b);\n        aizu[a + b]++;\n    }\n    for(int i = 0; i < 200279; i++) {\n        aizu[i + 1] += aizu[i] / 2; // Efficiently combine counts\n        aizu[i] &= 1; // Using bitwise AND for clarity and efficiency\n        if(aizu[i]) // Check for odd counts\n            printf("%d 0\\n", i);\n    }\n    return 0;\n}')
+2025-01-24 17:30:32,311	[INFO]	
+2025-01-24 17:30:32,311	[INFO]	==== DIFF ====
+

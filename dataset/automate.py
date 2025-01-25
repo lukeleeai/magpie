@@ -4,11 +4,15 @@ import glob
 import argparse
 
 
-def load_jsonl_samples(count=3):
+def load_jsonl_samples(num_data=3, dataset_name="test"):
     samples = []
-    with open("dataset/test.jsonl", "r") as file:
+    if dataset_name == "test":
+        dataset_path = "dataset/test.jsonl"
+    else:
+        dataset_path = f"dataset/train_hq_only.jsonl"
+    with open(dataset_path, "r") as file:
         for i, line in enumerate(file):
-            if i >= count:
+            if i >= num_data:
                 break
             samples.append(json.loads(line))
     return samples
@@ -33,7 +37,6 @@ def make_cmake_file(data_dir, use_target_code=False):
             print("Using target code")
             f.write("add_executable(src_code target.cpp)\n")
         else:
-            print("Using source code")
             f.write("add_executable(src_code source.cpp)\n")
 
 
@@ -76,9 +79,7 @@ def create_run_file(data_dir, problem_id, max_runs=50, use_multipass=False):
         while num_runs < max_runs:
             for input_file in input_files:
                 # Use build/src_code from the current directory
-                f.write(
-                    f"perf stat -e cycles ./build/src_code < {to_tilde_path(input_file)} 2>&1 | awk '/cycles/ {{print $1}}'\n"
-                )
+                f.write(f"perf stat -e cycles ./build/src_code < {to_tilde_path(input_file)} 2>&1 | awk '/cycles/ {{print $1}}'\n")
                 num_runs += 1
                 if num_runs >= max_runs:
                     return
@@ -161,7 +162,7 @@ def create_source_cpp_file(data_dir, src_code):
 def create_target_cpp_file(data_dir, tgt_code):
     tgt_code = tgt_code.replace("<bits/stdc++.h>", '"stdc++.h"')
     with open(f"{data_dir}/target.cpp", "w") as f:
-        f.write(tgt_code)
+        f.write(tgt_code)   
 
 
 def copy_stdc_file(data_dir):
@@ -171,15 +172,13 @@ def copy_stdc_file(data_dir):
         f.write(stdc_content)
 
 
-def generate_data(
-    data, index, one_shot=False, use_multipass=False, use_target_code=True
-):
+def generate_data(data, index, one_shot=False, use_target_code=True, dataset_name="test", max_runs=20):
     # Create directory with padded number (e.g., 0000, 0001, etc.)
     id = f"{index:04d}"
     if use_target_code:
         data_dir = f"dataset/magpie_dataset/target_code/{id}"
     else:
-        data_dir = f"dataset/magpie_dataset/test/{id}"
+        data_dir = f"dataset/magpie_dataset/{dataset_name}/{id}"
     print("Generating data for", data_dir)
     os.makedirs(data_dir, exist_ok=True)
 
@@ -189,20 +188,19 @@ def generate_data(
     else:
         create_source_cpp_file(data_dir, data["src_code"])
     copy_stdc_file(data_dir)
-    make_cmake_file(data_dir, use_target_code)
+    make_cmake_file(data_dir)
     make_setup_file(data_dir)
     create_compile_file(data_dir)
-    create_run_file(data_dir, data["problem_id"], 20, use_multipass)
+    create_run_file(data_dir, data["problem_id"], max_runs=max_runs)
     create_test_file(data_dir, data["problem_id"])
     create_scenario_file(data_dir, one_shot)
+    
 
 
-def generate_dataset(
-    count=10, one_shot=False, use_multipass=False, use_target_code=True
-):
-    samples = load_jsonl_samples(count)
+def generate_dataset(num_data=10, dataset_name="test", one_shot=False, use_target_code=True, max_runs=20):
+    samples = load_jsonl_samples(num_data, dataset_name)
     for i, data in enumerate(samples):
-        generate_data(data, i, one_shot, use_multipass, use_target_code)
+        generate_data(data, i, one_shot, use_target_code, dataset_name, max_runs=max_runs)
 
 
 # Example usage
@@ -212,20 +210,23 @@ if __name__ == "__main__":
         "--is_one_shot", action="store_true", help="Enable one shot mode"
     )
     parser.add_argument(
+        "--dataset_name", type=str, help="Name of the dataset to generate"
+    )
+    parser.add_argument(
         "--num_data",
         type=int,
         default=30,
         help="Number of datasets to generate",
     )
     parser.add_argument(
-        "--use_multipass",
-        action="store_true",
-        help="Use multipass mode",
+        "--max_runs",
+        type=int,
+        default=20,
+        help="Number of runs to repeat the code execution",
     )
     parser.add_argument(
         "--use_target_code",
         action="store_true",
-        default=False,
         help="Use target code",
     )
 
@@ -233,7 +234,8 @@ if __name__ == "__main__":
 
     generate_dataset(
         args.num_data,
-        one_shot=args.is_one_shot,
-        use_multipass=args.use_multipass,
-        use_target_code=args.use_target_code,
+        args.dataset_name,
+        args.is_one_shot,
+        args.use_target_code,
+        args.max_runs,
     )

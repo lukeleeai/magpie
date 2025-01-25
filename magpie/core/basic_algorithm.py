@@ -138,8 +138,8 @@ class BasicAlgorithm(AbstractAlgorithm):
             raise RuntimeError(msg)
         # update best patch
         if self.report["best_patch"] and self.report["best_patch"].patch.edits:
-            # variant = Variant(self.software, self.report["best_patch"])
             variant = self.report["best_patch"]
+            self.software.logger.info(f"Best patch: {variant.name}")
             run = self.evaluate_variant(variant, force=True)
             best = self.dominates(run.fitness, self.report["best_fitness"])
             self.hook_batch_evaluation(
@@ -149,6 +149,8 @@ class BasicAlgorithm(AbstractAlgorithm):
                 self.report["best_fitness"] = run.fitness
             else:
                 self.report["best_patch"] = variant
+
+        self.software.logger.info(f"Best patch step: {self.report['best_patch_step']}")
 
     def hook_warmup(self):
         self.hook_reset_batch()
@@ -290,13 +292,12 @@ class BasicAlgorithm(AbstractAlgorithm):
             self.stats["wallclock_end"] - self.stats["wallclock_start"]
         )
         if self.report["best_patch"]:
-            # variant = Variant(self.software, self.report["best_patch"])
-            variant = self.report["best_patch"]
-            self.report["diff"] = variant.diff
+            self.report["diff"] = self.report["best_patch"].diff
         msg = "~~~~ END ~~~~"
         if magpie.settings.color_output:
             msg = f"\033[1m{msg}\033[0m"
         self.software.logger.info(msg)
+        self.software.logger.info(f"Best patch step: {self.report['best_patch_step']}")
 
     def warmup(self):
         patch = Patch([])

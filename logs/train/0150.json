@@ -1,0 +1,846 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 2510314.9375,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D) {  // Combined the input check into the while condition\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `while (true)` loop for input handling, which can be optimized by reducing the number of times input is read and avoiding unnecessary checks. Instead of repeatedly checking for `D == 0`, we can read all inputs at once and process them more efficiently."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2616444.625
+        ]
+    },
+    "(1)": {
+        "children": [
+            {
+                "fitness": 1137488.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        // Read the input into the S array more efficiently\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            // Use binary search to find the closest points\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading and array initialization. By reading inputs in a more efficient manner and reducing the number of times we access the array, we can improve performance."
+            },
+            {
+                "fitness": 1261426.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            auto it = lower_bound(S, S + N + 1, T[i]);\n            int l = (it == S) ? S[0] : *(it - 1);\n            int r = (it == S + N + 1) ? S[N] : *it;\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the distance calculation occurs, which could be optimized by reducing the number of calls to `upper_bound` and `lower_bound` by calculating both values in a single pass."
+            },
+            {
+                "fitness": 4752475.25,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nconst int MAXN = 100005;\nvector<int> S(MAXN), T(MAXN);\n\nint main() {\n    int D, N, M;\n    while (true) {\n        cin >> D;\n        if (D == 0) { break; }\n        cin >> N >> M;\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { cin >> S[i]; }\n        for (int i = 0; i < M; i++) { cin >> T[i]; }\n\n        sort(S.begin(), S.begin() + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.begin() + N + 1, T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.begin() + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        cout << distance_ << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `scanf` and `printf` for input and output, which could be optimized by replacing them with faster C++ standard streams and reducing unnecessary calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1027438.125
+        ]
+    },
+    "(10)": {
+        "children": [
+            {
+                "fitness": 1055824.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that reads input for the arrays `S` and `T`, which could be optimized by reducing the number of `scanf` calls and using a single loop for reading inputs."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1042548.9375
+        ]
+    },
+    "(10_23)": {
+        "children": [
+            {
+                "fitness": 1217420.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of the `accumulate` function inside the main loop, which could be optimized by avoiding unnecessary function calls and leveraging a more straightforward iterative approach to calculate the total distance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1055824.1875
+        ]
+    },
+    "(13)": {
+        "children": [
+            {
+                "fitness": 1080660.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            // Manual binary search to find l and r\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting operation and the handling of input arrays, which could be optimized by reducing unnecessary memory usage and improving the runtime by avoiding the use of upper_bound and lower_bound functions."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "13"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1034382.3125
+        ]
+    },
+    "(13_28)": {
+        "children": [
+            {
+                "fitness": 1075272.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            // Using lower_bound to find the closest point\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the manual binary search for finding the closest points in the sorted array S, which could be optimized by using the standard library's lower_bound function to simplify the search process and improve readability."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "13_28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            // Manual binary search to find l and r\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1080660.375
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 1175722.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        // Optimized input reading for S and T using a single read for each array\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        scanf(\"%d\", &T[0]); // Read the first element of T\n        for (int i = 1; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading segment which could be optimized by using a single read for the arrays instead of separate reads for each element."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1064097.1875
+        ]
+    },
+    "(1_10)": {
+        "children": [
+            {
+                "fitness": 1279567.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        // Read the input into the S array more efficiently\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        // Combine input reads for T array into one scanf call\n        if (M > 0) {\n            scanf(\"%d\", T); // Adjusted to read the first element of T\n            for (int i = 1; i < M; i++) { \n                scanf(\"%d\", &T[i]); \n            }\n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            // Use binary search to find the closest points\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on reducing the number of times the `scanf` function is called in the input reading section. This can be optimized by combining the input of multiple integers into a single `scanf` call, which can improve performance by reducing the overhead of multiple function calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        // Read the input into the S array more efficiently\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            // Use binary search to find the closest points\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1055170.0
+        ]
+    },
+    "(1x1_10x2x6_11)": {
+        "children": [
+            {
+                "fitness": 1055015.625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the input handling and sorting from Parent 2 with the advanced accumulation technique from Parent 3 for calculating distances."
+            },
+            {
+                "fitness": 1194252.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100001;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient array handling from Parent 4 with the optimized distance calculation from Parent 2."
+            },
+            {
+                "fitness": 1023251.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100001;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the fixed-size array approach from Parent 4 with the advanced distance calculation using binary search from Parent 1."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "1_10",
+            "2",
+            "6_11"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        // Read the input into the S array more efficiently\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            // Use binary search to find the closest points\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        int S[100001]; // Using a fixed-size array instead of vector\n        int T[100001]; // Assuming M will not exceed 100000 for safety\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1); // Sorting the fixed-size array\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1011485.375,
+            1055170.0,
+            1131736.6875,
+            2167709.0625
+        ]
+    },
+    "(1x6x0x7)": {
+        "children": [
+            {
+                "fitness": 3074416.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient `vector` usage from Parent 4 (fitness: 2980923.875) with the distance calculation from Parent 3 (fitness: 2616444.625) for better performance and clarity."
+            },
+            {
+                "fitness": 2488820.25,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the distance calculation logic from Parent 3 (fitness: 2616444.625) with the input reading format of Parent 4 (fitness: 2980923.875) to improve readability and efficiency."
+            },
+            {
+                "fitness": 1131736.6875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the use of `accumulate` from Parent 2 (fitness: 2548699.0) with the optimized distance calculation logic from Parent 1 (fitness: 1070649.625) to enhance performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "6",
+            "0",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = accumulate(T.begin(), T.end(), 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S.begin(), S.end(), ti) - 1);\n            int r = *lower_bound(S.begin(), S.end(), ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *prev(upper_bound(S.begin(), S.end(), T[i]));\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1070649.625,
+            2548699.0,
+            2616444.625,
+            2980923.875
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 1066337.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0; // Initialize distance variable\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]); // Directly compute distance\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `accumulate` with a lambda function for computing the total distance, which could be optimized by manually iterating through the elements to reduce overhead from function calls and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1131736.6875
+        ]
+    },
+    "(22)": {
+        "children": [
+            {
+                "fitness": 1360507.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            // Use lower_bound to find the closest position instead of manual binary search\n            int leftIdx = lower_bound(S, S + N + 1, ti) - S;\n            int left = (leftIdx > 0) ? S[leftIdx - 1] : S[0];\n            int right = (leftIdx < N + 1) ? S[leftIdx] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the nested loop condition for finding the nearest points, which could be optimized by replacing the binary search logic with a more efficient approach to minimize distance calculations."
+            },
+            {
+                "fitness": 1208720.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading part and sorting, which could be optimized by using a more efficient input method and reducing unnecessary operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "22"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1107026.0625
+        ]
+    },
+    "(22_39)": {
+        "children": [
+            {
+                "fitness": 1019565.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        // Optimize input reading for S\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        // Optimize input reading for T\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that reads values into the array `S`, which could be optimized by reducing the number of `scanf` calls and using a single call to read all inputs at once to improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "22_39"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1007199.625
+        ]
+    },
+    "(23)": {
+        "children": [
+            {
+                "fitness": 2601488.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <set>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Use a set to maintain sorted order of S\n        set<int> sorted_S(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = sorted_S.lower_bound(ti);\n            int r = (it != sorted_S.end()) ? *it : D;\n            int l = (it != sorted_S.begin()) ? *(--it) : 0;\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that sorts the S array, which could be optimized by using a more efficient data structure for range queries to reduce the time complexity of finding the nearest elements."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1109968.3125
+        ]
+    },
+    "(24)": {
+        "children": [
+            {
+                "fitness": 1172576.9375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D) == 1 && D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = lower_bound(S, S + N + 1, ti) - S; // Use lower_bound for better performance\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input handling and distance calculation that can be optimized by reducing unnecessary operations and using more efficient data types."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "24"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1037605.5625
+        ]
+    },
+    "(24x22x25x27)": {
+        "children": [
+            {
+                "fitness": 1046103.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the reading logic from Parent 1 (fitness: 1037605.5625) with the distance calculation using `lower_bound` from Parent 3 (fitness: 1123872.375). This reduces redundancy in reading inputs and utilizes efficient searching."
+            },
+            {
+                "fitness": 1077763.9375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the efficient distance calculation from Parent 4 (fitness: 1131444.0) with the input handling of Parent 1 (fitness: 1037605.5625), optimizing both input reading and distance computation."
+            },
+            {
+                "fitness": 1026603.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input structure of Parent 2 (fitness: 1107026.0625) with the distance calculation technique from Parent 3 (fitness: 1123872.375) to maintain efficiency while improving readability."
+            },
+            {
+                "fitness": 1191451.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the sorting and distance calculation methods from Parent 4 (fitness: 1131444.0) with the structured input/output approach of Parent 1 (fitness: 1037605.5625) to maintain clarity and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "24",
+            "22",
+            "25",
+            "27"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1037605.5625,
+            1107026.0625,
+            1123872.375,
+            1131444.0
+        ]
+    },
+    "(27)": {
+        "children": [
+            {
+                "fitness": 1303139.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        \n        // Optimize T input reading\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", T + i); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that reads input values into arrays S and T, which could be optimized by reducing the number of calls to scanf and utilizing array pointer arithmetic for faster access."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "27"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1131444.0
+        ]
+    },
+    "(28)": {
+        "children": [
+            {
+                "fitness": 1228808.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        // Optimize input reading for S array\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        // Optimize input reading for T array\n        scanf(\"%d\", &T[0]); // Read first element separately\n        for (int i = 1; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that processes the inputs for S and T arrays, which could be optimized by reducing the number of calls to `scanf` and using a more efficient method to read the input data."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1046103.8125
+        ]
+    },
+    "(29)": {
+        "children": [
+            {
+                "fitness": 1148284.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        // Combined input reading for S and T to minimize the number of reads\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S only once\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        // Optimize the search with binary search directly without using extra variables\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading and sorting process which is currently using multiple loops and could be optimized by using a single read operation for both S and T arrays, and by reducing the number of elements being sorted."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "29"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1005568.8125
+        ]
+    },
+    "(29x22_39x30x28)": {
+        "children": [
+            {
+                "fitness": 1059451.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the loop and input logic from Parent 1 (fitness: 1005568.8125) with the optimized binary search logic from Parent 2 (fitness: 1007199.625)."
+            },
+            {
+                "fitness": 1026558.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the initialization and sorting from Parent 3 (fitness: 1026603.8125) with the distance calculation logic from Parent 4 (fitness: 1046103.8125) for improved readability and efficiency."
+            },
+            {
+                "fitness": 1101949.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the input handling and array initialization methods from Parent 1 (fitness: 1005568.8125) with the distance calculation method from Parent 4 (fitness: 1046103.8125) for enhanced performance."
+            },
+            {
+                "fitness": 1218081.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the early exit condition from Parent 3 (fitness: 1026603.8125) with the fully optimized distance calculation from Parent 2 (fitness: 1007199.625) to handle edge cases efficiently."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "29",
+            "22_39",
+            "30",
+            "28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D), D != 0) {\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1005568.8125,
+            1007199.625,
+            1026603.8125,
+            1046103.8125
+        ]
+    },
+    "(30)": {
+        "children": [
+            {
+                "fitness": 1154668.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        \n        // Combine input reading for T to reduce overhead\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading and storage of values in arrays S and T, which could be optimized by reducing the number of input calls and utilizing a single read operation for efficiency."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "30"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1026603.8125
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 2167709.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        int S[100001]; // Using a fixed-size array instead of vector\n        int T[100001]; // Assuming M will not exceed 100000 for safety\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1); // Sorting the fixed-size array\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `vector` for storing positions, which can be optimized by using a fixed-size array to reduce overhead and improve access speed."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = accumulate(T.begin(), T.end(), 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S.begin(), S.end(), ti) - 1);\n            int r = *lower_bound(S.begin(), S.end(), ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2548699.0
+        ]
+    },
+    "(6_11)": {
+        "children": [
+            {
+                "fitness": 2555033.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1); // Using vector for dynamic sizing\n        vector<int> T(M); // Using vector for dynamic sizing\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end()); // Sorting the vector\n\n        long long distance_ = accumulate(T.begin(), T.end(), 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S.begin(), S.end(), ti) - 1);\n            int r = *lower_bound(S.begin(), S.end(), ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of fixed-size arrays for `S` and `T`, which could be optimized by using `std::vector` for better memory management and to avoid potential overflow issues."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6_11"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        int S[100001]; // Using a fixed-size array instead of vector\n        int T[100001]; // Assuming M will not exceed 100000 for safety\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1); // Sorting the fixed-size array\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2167709.0625
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 2662120.625,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        // Optimized input reading\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *prev(upper_bound(S.begin(), S.end(), T[i]));\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that reads input values into vectors S and T, which could be optimized by reducing the number of dynamic memory allocations and improving input efficiency using a single read operation."
+            },
+            {
+                "fitness": 1077150.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that calculates the `distance_` using `accumulate` and lambda, which could be optimized by reducing calls to `upper_bound` and `lower_bound` by caching their results."
+            },
+            {
+                "fitness": 1222553.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the lines where the distances are calculated using `accumulate` and `upper_bound` / `lower_bound`, which could be optimized by precomputing the sorted array and using a more efficient method to calculate distances."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1055015.625
+        ]
+    },
+    "(7_24)": {
+        "children": [
+            {
+                "fitness": 2592970.6875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\n#include <sstream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    string line;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `scanf` for input operations, which can be optimized by reducing the number of calls and improving the overall efficiency of reading input using a single `getline` followed by `istringstream` for parsing."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7_24"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1057621.8125
+        ]
+    },
+    "(7_24x22x13_28_33x23)": {
+        "children": [
+            {
+                "fitness": 1152564.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the sorting functionality and distance calculation from Parent 1 (fitness: 1016880.0625) with the efficient binary search from Parent 2 (fitness: 1061668.375)."
+            },
+            {
+                "fitness": 1175150.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input handling and sorting logic from Parent 1 (fitness: 1016880.0625) with the efficient distance calculation from Parent 3 (fitness: 1075272.875)."
+            },
+            {
+                "fitness": 1131444.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the distance calculation method from Parent 2 (fitness: 1061668.375) with the sorting and input handling from Parent 4 (fitness: 1109968.3125)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "7_24",
+            "22",
+            "13_28_33",
+            "23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            // Using lower_bound to find the closest point\n            auto it = lower_bound(S, S + N + 1, ti);\n            int left = (it != S) ? *(it - 1) : S[0];\n            int right = (it != S + N + 1) ? *it : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1016880.0625,
+            1061668.375,
+            1075272.875,
+            1109968.3125
+        ]
+    },
+    "(7x1_10x6x1)": {
+        "children": [
+            {
+                "fitness": 1181334.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input handling and distance calculation from Parent 1 (fitness: 998709.125) with the optimized sorting and distance calculation from Parent 2 (fitness: 1016784.5625)."
+            },
+            {
+                "fitness": 1207714.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the input optimization from Parent 2 (fitness: 1016784.5625) with the efficient distance calculation from Parent 3 (fitness: 1023251.75)."
+            },
+            {
+                "fitness": 1126558.625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the memory-efficient array usage from Parent 4 (fitness: 1027438.125) with the distance calculation structure from Parent 1 (fitness: 998709.125)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "7",
+            "1_10",
+            "6",
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        // Read the input into the S array more efficiently\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            // Use binary search to find the closest points\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100001;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            998709.125,
+            1016784.5625,
+            1023251.75,
+            1027438.125
+        ]
+    },
+    "(9)": {
+        "children": [
+            {
+                "fitness": 1235237.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d %d %d\", &D, &N, &M) == 3 && D != 0) {\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the arrays and the input reading process, which could be optimized by using a single input method to reduce overhead and improve performance."
+            },
+            {
+                "fitness": 1191815.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D) == 1 && D != 0) { // Combine checks into a single statement for efficiency\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the while loop that reads input, which can be optimized by reducing unnecessary checks and improving the logic for reading input values."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1009592.0
+        ]
+    },
+    "(9_26x7_24x19x13_28)": {
+        "children": [
+            {
+                "fitness": 1156723.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D) == 1 && D != 0) {\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 1 (fitness: 1044264.5) with the optimized binary search from Parent 4 (fitness: 1080660.375)."
+            },
+            {
+                "fitness": 1313748.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the sorting and distance calculation logic from Parent 2 (fitness: 1057621.8125) with the input handling and data structures from Parent 1 (fitness: 1044264.5)."
+            },
+            {
+                "fitness": 1204703.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the manual binary search from Parent 4 (fitness: 1080660.375) with the input structure and distance calculation from Parent 3 (fitness: 1064097.1875)."
+            },
+            {
+                "fitness": 1109968.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient distance calculation from Parent 3 (fitness: 1064097.1875) with the more robust input and sorting mechanism from Parent 2 (fitness: 1057621.8125)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_26",
+            "7_24",
+            "19",
+            "13_28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (scanf(\"%d\", &D) == 1 && D != 0) { // Combine checks into a single statement for efficiency\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        // Sort S array\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            // Manual binary search to find l and r\n            int l = 0, r = N;\n            while (l < r) {\n                int mid = (l + r) / 2;\n                if (S[mid] < ti) {\n                    l = mid + 1;\n                } else {\n                    r = mid;\n                }\n            }\n            int left = (l > 0) ? S[l - 1] : S[0];\n            int right = (l < N + 1) ? S[l] : S[N];\n\n            distance_ += min(ti - left, right - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1044264.5,
+            1057621.8125,
+            1064097.1875,
+            1080660.375
+        ]
+    },
+    "(9x10x7x7_18)": {
+        "children": [
+            {
+                "fitness": 1118374.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the data structure definitions from Parent 4 while integrating the distance calculation approach from Parent 2 for improved performance and readability."
+            },
+            {
+                "fitness": 1316981.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input processing of Parent 1 with the efficient accumulation technique from Parent 3, using a simplified distance calculation method."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9",
+            "10",
+            "7",
+            "7_18"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1027444.125,
+            1042548.9375,
+            1055015.625,
+            1077150.4375
+        ]
+    },
+    "(9x7_24x13x10_23)": {
+        "children": [
+            {
+                "fitness": 1200402.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the initialization and loop structure from Parent 3 with the efficient distance calculation from Parent 4 using `accumulate`."
+            },
+            {
+                "fitness": 1064097.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input and sorting logic from Parent 1 with the improved accumulation logic from Parent 4, ensuring efficient distance computation."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9",
+            "7_24",
+            "13",
+            "10_23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int ti = T[i];\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            distance_ += min(ti - l, r - ti);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        if (scanf(\"%d\", &D) != 1 || D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { \n            scanf(\"%d\", &S[i]); \n        }\n        for (int i = 0; i < M; i++) { \n            scanf(\"%d\", &T[i]); \n        }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = accumulate(T, T + M, 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S, S + N + 1, ti) - 1);\n            int r = *lower_bound(S, S + N + 1, ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1009592.0,
+            1018830.0625,
+            1034382.3125,
+            1055824.1875
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 2616444.625,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Change input handling from `cin` to `scanf` for improved performance on large inputs."
+            },
+            {
+                "fitness": 1027438.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 100005;\nint S[MAXN], T[MAXN];\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S, S + N + 1);\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S, S + N + 1, T[i]) - 1);\n            int r = *lower_bound(S, S + N + 1, T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Replace `vector` with raw arrays for the static size and potentially lower overhead."
+            },
+            {
+                "fitness": 3644574.875,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            auto it_upper = upper_bound(S.begin(), S.end(), T[i]);\n            auto it_lower = lower_bound(S.begin(), S.end(), T[i]);\n            int l = *(it_upper - 1);\n            int r = *it_lower;\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Reduce the number of calls to `upper_bound` and `lower_bound` by storing their results in variables."
+            },
+            {
+                "fitness": 2515208.625,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = accumulate(T.begin(), T.end(), 0LL, [&](long long acc, int ti) {\n            int l = *(upper_bound(S.begin(), S.end(), ti) - 1);\n            int r = *lower_bound(S.begin(), S.end(), ti);\n            return acc + min(ti - l, r - ti);\n        });\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize `std::accumulate` instead of manual summation to improve readability and potentially optimize performance."
+            },
+            {
+                "fitness": 2980923.875,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *prev(upper_bound(S.begin(), S.end(), T[i]));\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Use a binary search directly with custom comparator to reduce the number of function calls."
+            },
+            {
+                "fitness": 3045853.25,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S.reserve(N + 2);\n        T.reserve(M);\n\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        long long distance_ = 0;\n        for (int i = 0; i < M; i++) {\n            int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n            int r = *lower_bound(S.begin(), S.end(), T[i]);\n            distance_ += min(T[i] - l, r - T[i]);\n        }\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Preallocate memory for vectors to avoid dynamic resizing overhead."
+            },
+            {
+                "fitness": 3361667.375,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\n#include <thread>\n#include <future>\nusing namespace std;\n\nlong long calculate_distance(const vector<int>& S, const vector<int>& T, int start, int end) {\n    long long distance_ = 0;\n    for (int i = start; i < end; i++) {\n        int l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n        int r = *lower_bound(S.begin(), S.end(), T[i]);\n        distance_ += min(T[i] - l, r - T[i]);\n    }\n    return distance_;\n}\n\nint main() {\n    int D, N, M;\n    while (true) {\n        scanf(\"%d\", &D);\n        if (D == 0) { break; }\n        scanf(\"%d %d\", &N, &M);\n        \n        vector<int> S(N + 1);\n        vector<int> T(M);\n        S[0] = 0;\n        S[N] = D;\n\n        for (int i = 1; i < N; i++) { scanf(\"%d\", &S[i]); }\n        for (int i = 0; i < M; i++) { scanf(\"%d\", &T[i]); }\n\n        sort(S.begin(), S.end());\n\n        auto f1 = async(launch::async, calculate_distance, ref(S), ref(T), 0, M / 2);\n        auto f2 = async(launch::async, calculate_distance, ref(S), ref(T), M / 2, M);\n        long long distance_ = f1.get() + f2.get();\n\n        printf(\"%lld\\n\", distance_);\n    }\n    return 0;\n}\n",
+                "strategy": "Introduce parallel processing for distance calculation to utilize multiple cores, thus speeding up the operation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include <vector>\n\n#include <iostream>\n\n#include <algorithm>\n\n\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint D, N, M;\n\n\n\n\twhile (true)\n\n\t{\n\n\t\tcin >> D;\n\n\n\n\t\tif (D == 0) { break; }\n\n\n\n\t\tcin >> N >> M;\n\n\n\n\t\tvector<int> S(N + 1);\n\n\t\tvector<int> T(M);\n\n\n\n\t\tS[0] = 0;\n\n\t\tS[N] = D;\n\n\n\n\t\tfor (int i = 1; i < N; i++) { cin >> S[i]; }\n\n\t\tfor (int i = 0; i < M; i++) { cin >> T[i]; }\n\n\n\n\t\tsort(S.begin(), S.end());\n\n\n\n\t\tlong long distance_ = 0;\n\n\n\n\t\tfor (int i = 0; i < M; i++)\n\n\t\t{\n\n\t\t\tint l = *(upper_bound(S.begin(), S.end(), T[i]) - 1);\n\n\t\t\tint r = *lower_bound(S.begin(), S.end(), T[i]);\n\n\n\n\t\t\tdistance_ += min(T[i] - l, r - T[i]);\n\n\t\t}\n\n\n\n\t\tcout << distance_ << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3182321.5625
+        ]
+    }
+}

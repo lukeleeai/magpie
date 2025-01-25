@@ -1,0 +1,799 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 7434108.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0; // cumulative weight to avoid using sumw array\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i]; // directly compute the total weight\n    }\n    \n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Compute the sum of weights directly instead of using sumw\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n",
+                "strategy": "Focus on the use of the `sumw` array, which can be optimized by computing the cumulative sum directly in the input loop to reduce space complexity."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7343351.0625
+        ]
+    },
+    "(0_11)": {
+        "children": [
+            {
+                "fitness": 7426279.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\nlong long prefixSum[100010]; // Prefix sum array\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0; // cumulative weight to avoid using sumw array\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i]; // directly compute the total weight\n        prefixSum[i + 1] = prefixSum[i] + w[i]; // Build the prefix sum\n    }\n    \n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Use prefix sum to compute the sum of weights\n            int currentSum = prefixSum[i + k + 1] - prefixSum[i];\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the way weights are summed and stored, replacing the nested loop that calculates the sum of weights with a more efficient approach using a prefix sum array to reduce time complexity."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_11"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0; // cumulative weight to avoid using sumw array\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i]; // directly compute the total weight\n    }\n    \n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Compute the sum of weights directly instead of using sumw\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7434108.8125
+        ]
+    },
+    "(13)": {
+        "children": [
+            {
+                "fitness": 3295595.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<int> dp(n, 1001); // Changed to a 1D vector\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        vector<int> new_dp(n, 1001); // Temporary vector for the current row\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                new_dp[i] = 1;\n            else \n                new_dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n        dp.swap(new_dp); // Swap to update the dp vector\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` vector and its size, which could be optimized by using a 1D vector to reduce space complexity."
+            },
+            {
+                "fitness": 2926914.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for max integer\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, numeric_limits<int>::max())); // Use max integer limit\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` vector, which is currently set to a large value (1001). This could be optimized by initializing it to a more meaningful value, and by using `std::numeric_limits<int>::max()` to avoid magic numbers. Additionally, the size of the `dp` vector can be adjusted based on the specific requirements of the algorithm to save memory."
+            },
+            {
+                "fitness": 2991519.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    \n    // Optimize dp initialization to use n + 1 instead of n\n    vector<vector<int>> dp(n + 1, vector<int>(n + 1, 1001)); \n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `dp` array, which can be optimized by reducing its memory footprint and initialization time."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2590489.875
+        ]
+    },
+    "(14)": {
+        "children": [
+            {
+                "fitness": 2645222.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<int> dp(n, 1001); // Adjusted size of dp to match n\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Combined condition check to minimize dp updates\n            if (dp[i + 1] == 1 && c[i] >= sumw[i + k] - sumw[i]) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` vector. The initialization loop could be optimized by avoiding redundant checks and leveraging the properties of the problem to reduce the number of iterations needed."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "14"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<int> dp(1001, 1001); // 1D dp for performance\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2604540.875
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 7526870.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    vector<long long> sumw(n + 1); // Using vector for automatic size handling\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i + 1] = sumw[i] + w[i]; // Calculate cumulative weights\n    }\n\n    // Initialize dp array in a single loop\n    for(int i = 0; i < 1001; i++)\n        fill(dp[i], dp[i] + 1001, 1001); // Set all values to maximum initially\n    for(int i = 0; i < 1001; i++)\n        dp[i][i] = 0; // Cost of zero length is zero\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k + 1] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k] - sumw[i]))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the dp array and the sumw array, which can be optimized by reducing redundant calculations and using more efficient data structures."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = sumw[i - 1] + w[i];\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7326838.75
+        ]
+    },
+    "(20)": {
+        "children": [
+            {
+                "fitness": 3344240.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nvector<Item> items;\n\nint main() {\n    int n;\n    cin >> n;\n    items.resize(n);\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n    \n    // Initialize dp for pairs\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : 0;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Check the conditions only once and assign the result\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w)) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the nested loop structure that computes the `dp` array, which can be optimized by reducing the number of iterations and conditions checked."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "20"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nvector<Item> items;\n\nint main() {\n    int n;\n    cin >> n;\n    items.resize(n);\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2585685.3125
+        ]
+    },
+    "(22)": {
+        "children": [
+            {
+                "fitness": 2821089.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    // Optimize the initialization of dp based on the first pair of items\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    // Change the loop to start from 1 instead of 2 to avoid unnecessary checks\n    for (int k = 1; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Simplify the condition to directly set dp[i] based on previous checks\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the loop where the `dp` array is filled, which could be optimized by avoiding unnecessary checks and improving the logic to minimize the number of iterations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "22"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2688116.375
+        ]
+    },
+    "(28)": {
+        "children": [
+            {
+                "fitness": 3344891.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n    dp[n - 1] = 0; // Initialize last item to 0 as a base case\n\n    for(int i = n - 2; i >= 0; i--) {\n        for (int k = 2; i + k < n; k++) {\n            if (items[i].c >= items[i + k].w) {\n                dp[i] = min(dp[i], dp[i + k] + 1);\n            } else if (items[i + 1].c >= items[i].w) {\n                dp[i] = min(dp[i], dp[i + 1] + 1);\n            }\n        }\n    }\n    \n    cout << (dp[0] == numeric_limits<int>::max() ? -1 : dp[0]) << endl; // Handle case where no solution is found\n    return 0;\n}\n",
+                "strategy": "Focus on the double loop structure that calculates the DP values, which could be optimized by reducing unnecessary comparisons and simplifying the logic."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "28"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2715774.8125
+        ]
+    },
+    "(2x0x3x5)": {
+        "children": [
+            {
+                "fitness": 9598311.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nvector<int> w(100010), c(100010), sumw(100010);\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and input handling from Parent 4 (fitness: 7763484.75) with the dynamic programming implementation from Parent 1 (fitness: 7326838.75). This utilizes the efficient input handling of vectors and optimizes the core logic of the dynamic programming approach."
+            },
+            {
+                "fitness": 9285041.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001][1001];\nvector<Item> items(100010);\nvector<int> sumw(100010);\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n    \n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the structure handling from Parent 3 (fitness: 7465916.1875) with the input optimization from Parent 4 (fitness: 7763484.75). This crossover introduces a structured approach to encapsulate item properties while maintaining vector efficiency in input reading."
+            },
+            {
+                "fitness": 9829179.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010], sumw[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the input efficiency from Parent 2 (fitness: 7343351.0625) with the dynamic programming logic from Parent 1 (fitness: 7326838.75). The crossover aims to streamline input handling while retaining the original algorithmic structure."
+            },
+            {
+                "fitness": 9029045.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001][1001];\nvector<Item> items(100010);\nvector<int> sumw(100010);\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    REP(i, 0, n) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n\n    REP(i, 0, n - 1) if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n",
+                "strategy": "Combine the macro definitions and efficiency enhancements from Parent 2 (fitness: 7343351.0625) with the structured approach of Parent 3 (fitness: 7465916.1875). This aims to balance readability with performance optimizations."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "2",
+            "0",
+            "3",
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = sumw[i - 1] + w[i];\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001][1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(1001, vector<int>(1001));\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7326838.75,
+            7343351.0625,
+            7465916.1875,
+            7763484.75
+        ]
+    },
+    "(3)": {
+        "children": [
+            {
+                "fitness": 3596294.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the heavy usage of the 2D array `dp` that is initialized with a nested loop. This could be optimized by using a 1D array to reduce memory usage and possibly improve cache performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001][1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7465916.1875
+        ]
+    },
+    "(3_12)": {
+        "children": [
+            {
+                "fitness": 2636461.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    // Initialize sumw[0] directly to 0\n    int sumw = 0;\n\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw += items[i].w; // Cumulative sum calculation in one loop\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw - items[i].w) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw - items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that initializes the `sumw` array, which can be optimized by using a single loop for both reading the weights and calculating the cumulative sum, thus reducing the number of iterations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3_12"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2449868.75
+        ]
+    },
+    "(3_12_14)": {
+        "children": [
+            {
+                "fitness": 2902455.375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int sumw = 0;\n\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw += items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n; i++)\n        if (i < n - 1 && (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w)) \n            dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            int prev = dp[i];\n            if ((dp[i + 1] == 1 && items[i].c >= sumw - items[i].w) || \n                (prev == 1 && items[i + k].c >= sumw - items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev, dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that initializes `dp` and the subsequent dynamic programming logic, which could be optimized by changing the loop structure and using better state management to minimize unnecessary calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3_12_14"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    // Initialize sumw[0] directly to 0\n    int sumw = 0;\n\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw += items[i].w; // Cumulative sum calculation in one loop\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw - items[i].w) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw - items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2636461.5
+        ]
+    },
+    "(3_12x5_13x2x0_11)": {
+        "children": [
+            {
+                "fitness": 9771081.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the initialization of the `dp` array and the weight calculation from Parent 4 with the logic structure of the loop and main function from Parent 1."
+            },
+            {
+                "fitness": 7347338.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n    \n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Utilize the cumulative weight calculation from Parent 4 with the more compact `dp` definition from Parent 2 while maintaining the original input structure from Parent 3."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "3_12",
+            "5_13",
+            "2",
+            "0_11"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = sumw[i - 1] + w[i];\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0; // cumulative weight to avoid using sumw array\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i]; // directly compute the total weight\n    }\n    \n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Compute the sum of weights directly instead of using sumw\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2449868.75,
+            2452789.1875,
+            7413557.8125,
+            7434108.8125
+        ]
+    },
+    "(5)": {
+        "children": [
+            {
+                "fitness": 2561759.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the way dynamic programming (dp) values are initialized and updated, which could be optimized by reducing the size of the dp vector and avoiding unnecessary initializations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(1001, vector<int>(1001));\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7763484.75
+        ]
+    },
+    "(5_13x3_12x3_12_14x6)": {
+        "children": [
+            {
+                "fitness": 2475462.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and input handling of Parent 1 with the efficient dynamic programming approach of Parent 2. This leverages the fast I/O and structured input from Parent 1 while using Parent 2's optimization techniques."
+            },
+            {
+                "fitness": 3499881.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Utilize the cumulative weight calculation from Parent 3 for efficiency while maintaining the input structure from Parent 1. This crossover focuses on minimizing space complexity by using a single array for weights."
+            },
+            {
+                "fitness": 8000706.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the memory-efficient DP initialization from Parent 4 with the structured approach of Parent 2, leveraging the cumulative weights for simplification while keeping the array sizes manageable."
+            },
+            {
+                "fitness": 2575031.375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int sumw = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw += w[i];\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= sumw - w[i]) || \n                (dp[i] == 1 && c[i + k] >= sumw - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Integrate the logic for cumulative sum from Parent 3 with the initialization and input methods from Parent 1. This combines the best practices of both parents while ensuring clarity and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "5_13",
+            "3_12",
+            "3_12_14",
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    // Initialize sumw[0] directly to 0\n    int sumw = 0;\n\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw += items[i].w; // Cumulative sum calculation in one loop\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw - items[i].w) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw - items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n    \n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2462662.25,
+            2522846.4375,
+            2636461.5,
+            7347338.625
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 8395876.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n    \n    // Optimize the initialization of dp array\n    fill(&dp[0][0], &dp[1000][1001], 1001); // Sets all values to a high number\n    for(int i = 0; i < 1001; i++)\n        dp[i][i] = 1; // Set diagonal to 1, since single item can always be packed\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on improving the initialization of the `dp` array, which could be optimized by avoiding the unnecessary loop and using a more efficient initialization approach."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n    \n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            int currentSum = 0;\n            for (int index = i; index <= i + k; index++) {\n                currentSum += w[index];\n            }\n\n            if ((dp[i + 1][i + k] == 1 && c[i] >= currentSum - w[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= currentSum - (i ? w[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7347338.625
+        ]
+    },
+    "(8)": {
+        "children": [
+            {
+                "fitness": 3250507.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Initialize dp with a high value using a loop instead of fill\n    for(int i = 0; i < 1001; i++) {\n        dp[i] = 1001;\n    }\n\n    // Start from the first item and optimize the checks\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the way we handle the conditions in the nested loops. The `fill` function can be replaced by a more efficient loop, and the conditions can be optimized to reduce the number of checks and improve readability."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2475462.6875
+        ]
+    },
+    "(8_24)": {
+        "children": [
+            {
+                "fitness": 2582341.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Optimize dp initialization using fill\n    fill(dp, dp + 1001, 1001);\n\n    // Start from the first item and optimize the checks\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array, which currently uses a loop to set each element to a high value. This can be optimized by using the `fill` function from the `<algorithm>` library, which is more efficient for initializing arrays."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_24"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Initialize dp with a high value using a loop instead of fill\n    for(int i = 0; i < 1001; i++) {\n        dp[i] = 1001;\n    }\n\n    // Start from the first item and optimize the checks\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3250507.4375
+        ]
+    },
+    "(8_24_29)": {
+        "children": [
+            {
+                "fitness": 2764349.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Optimize dp initialization directly\n    fill(dp, dp + 1001, 1001);\n    dp[n - 1] = 1; // Ensure the last item is considered\n\n    // Adjust the loop to avoid redundant checks\n    for(int i = n - 2; i >= 0; i--) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i + 1];\n    }\n\n    // Simplify the nested loop logic\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1] + 1, dp[i]);\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the dp initialization and the nested loops to improve runtime efficiency by reducing unnecessary checks and simplifying the logic for updating the dp array."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_24_29"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Optimize dp initialization using fill\n    fill(dp, dp + 1001, 1001);\n\n    // Start from the first item and optimize the checks\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2582341.3125
+        ]
+    },
+    "(9)": {
+        "children": [
+            {
+                "fitness": 3128548.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the `fill(dp, dp + 1001, 1001);` line that initializes the `dp` array with a high value. This can be optimized by using `numeric_limits<int>::max()` to set the initial values, which is more expressive and can eliminate the need for a magic number."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2442670.25
+        ]
+    },
+    "(9_22)": {
+        "children": [
+            {
+                "fitness": 2834056.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1e9; // Use a constant for clarity instead of numeric_limits\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, INF); // Initialize dp with a constant\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool condition1 = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]);\n            bool condition2 = (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            if (condition1 || condition2)\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the use of `numeric_limits` to improve clarity and potentially reduce overhead. Instead of initializing `dp` with `numeric_limits<int>::max()`, we can use a large constant value, reducing the dependency on the limits library. Additionally, we can optimize the nested loop structure to avoid unnecessary calculations by re-evaluating conditions only when necessary."
+            },
+            {
+                "fitness": 2597564.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, 0); // Initialize dp with 0, as we are looking for minimum operations\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool condition1 = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]);\n            bool condition2 = (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            if (condition1 || condition2) {\n                dp[i] = 1; // Set dp[i] to 1 if either condition is satisfied\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1; // Calculate minimum operations\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the conditions within the nested loops, which could be optimized by reducing unnecessary checks and iterations."
+            },
+            {
+                "fitness": 2781853.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    // Check pairs only once and store results\n    for(int i = 0; i < n; i++) {\n        if (i < n - 1 && (c[i] >= w[i + 1] || c[i + 1] >= w[i])) {\n            dp[i] = 1;\n        }\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                              (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the loops that handle the dynamic programming array, which could be optimized by reducing the complexity of the inner loop and avoiding unnecessary checks."
+            },
+            {
+                "fitness": 2611859.0625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    // Initialize dp to a large but bounded value instead of numeric_limits<int>::max()\n    fill(dp, dp + 1001, 1001); // Assuming 1001 is larger than any possible solution count\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array that uses `numeric_limits<int>::max()`, which could be optimized by initializing it to a smaller value to reduce unnecessary comparisons."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9_22"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2459520.75
+        ]
+    },
+    "(9_22_38)": {
+        "children": [
+            {
+                "fitness": 2850377.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1e9; // A large constant instead of numeric_limits<int>::max()\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, INF);\n\n    // Check pairs only once and store results\n    for(int i = 0; i < n - 1; i++) {\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) {\n            dp[i] = 1;\n        }\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                              (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the for loop that checks pairs and updates the dp array. This can be optimized by reducing unnecessary calculations and avoiding the use of `numeric_limits<int>::max()` for the initial fill, which may lead to higher memory overhead. Instead, we can initialize the dp array with a larger value as a constant."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9_22_38"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    // Check pairs only once and store results\n    for(int i = 0; i < n; i++) {\n        if (i < n - 1 && (c[i] >= w[i + 1] || c[i + 1] >= w[i])) {\n            dp[i] = 1;\n        }\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                              (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2781853.6875
+        ]
+    },
+    "(9_22x13x14x8_24)": {
+        "children": [
+            {
+                "fitness": 2641416.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    \n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    \n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= items[i].w))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the input handling and dynamic programming approach from Parent 1 (fitness: 2513748.8125) with the optimized data structure from Parent 2 (fitness: 2558255.1875) to improve performance."
+            },
+            {
+                "fitness": 2756606.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Initialize dp with a high value using a loop instead of fill\n    for(int i = 0; i < 1001; i++) {\n        dp[i] = 1001;\n    }\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the efficient array handling and the dynamic programming setup from Parent 3 (fitness: 2604540.875) with the data structure from Parent 4 (fitness: 3250507.4375) to enhance performance without unnecessary overhead."
+            },
+            {
+                "fitness": 2530200.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp to high value\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the efficient input method and data structure from Parent 2 (fitness: 2558255.1875) with the optimized loop handling from Parent 4 (fitness: 3250507.4375) to create a more efficient algorithm."
+            },
+            {
+                "fitness": 2686062.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<int> dp(1001, 1001); // 1D dp for performance\n\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Integrate the optimized performance strategies from Parent 1 (fitness: 2513748.8125) and Parent 3 (fitness: 2604540.875) by maintaining a 1D dynamic programming structure while enhancing input and output performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_22",
+            "13",
+            "14",
+            "8_24"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<int> dp(1001, 1001); // 1D dp for performance\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Initialize dp with a high value using a loop instead of fill\n    for(int i = 0; i < 1001; i++) {\n        dp[i] = 1001;\n    }\n\n    // Start from the first item and optimize the checks\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2513748.8125,
+            2558255.1875,
+            2604540.875,
+            3250507.4375
+        ]
+    },
+    "(9_22x13x18x8_24_29)": {
+        "children": [
+            {
+                "fitness": 2585685.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nvector<Item> items;\n\nint main() {\n    int n;\n    cin >> n;\n    items.resize(n);\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the efficient input handling and data structure of Parent 2 with the dynamic programming logic from Parent 1."
+            },
+            {
+                "fitness": 2820124.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Use the better structured dynamic programming approach from Parent 3 and incorporate the direct input handling from Parent 4 for improved performance."
+            },
+            {
+                "fitness": 2688116.375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the efficient input/output techniques from Parent 2 with the comprehensive logic flow of Parent 1, while simplifying the initialization method."
+            },
+            {
+                "fitness": 3183018.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the item struct usage from Parent 3 with the optimized conditions and initializations from Parent 4, improving readability and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_22",
+            "13",
+            "18",
+            "8_24_29"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp to high value\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    // Optimize dp initialization using fill\n    fill(dp, dp + 1001, 1001);\n\n    // Start from the first item and optimize the checks\n    for(int i = 0; i < n - 1; i++) {\n        dp[i] = (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) ? 1 : dp[i];\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2446316.625,
+            2461680.6875,
+            2530200.3125,
+            2582341.3125
+        ]
+    },
+    "(9_22x13x20x22)": {
+        "children": [
+            {
+                "fitness": 3091066.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nvector<Item> items;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    items.resize(n);\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the efficient data structures from Parent 1 with the optimized input handling from Parent 2 to create a cleaner implementation that reduces overhead."
+            },
+            {
+                "fitness": 3445988.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Use the optimized structure of Parent 3 and integrate the efficient base case handling from Parent 4 for a more performant implementation."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_22",
+            "13",
+            "20",
+            "22"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nvector<Item> items;\n\nint main() {\n    int n;\n    cin >> n;\n    items.resize(n);\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2441631.4375,
+            2521044.25,
+            2585685.3125,
+            2688116.375
+        ]
+    },
+    "(9_22x13x28x9_22_38)": {
+        "children": [
+            {
+                "fitness": 3026647.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the structure of `Item` from Parent 2 with the optimized `dp` logic from Parent 1. This aims to improve performance by leveraging efficient data structures while maintaining clarity in the dynamic programming approach."
+            },
+            {
+                "fitness": 2550869.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nint totalWeight;\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        totalWeight += items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && items[i].c >= totalWeight - items[i].w) || \n                              (dp[i] == 1 && items[i + k].c >= totalWeight - items[i + k].w);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Utilize the input handling and `totalWeight` calculation from Parent 1 while implementing the `Item` structure from Parent 3 to maintain clarity and efficiency. This should enhance the readability and performance of the code."
+            },
+            {
+                "fitness": 3455279.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n; i++) {\n        if (i < n - 1 && (c[i] >= w[i + 1] || c[i + 1] >= w[i])) {\n            dp[i] = 1;\n        }\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                              (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the dynamic programming logic from Parent 4 with the efficient input handling from Parent 2. This aims to reduce the space complexity of the `dp` array while maintaining the correctness of the solution."
+            },
+            {
+                "fitness": 2884699.0625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) {\n            dp[i] = 1;\n        }\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                              (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the initialization process from Parent 3 with the dynamic programming structure from Parent 4 to streamline the input and processing logic while retaining efficiency and clarity in the code."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_22",
+            "13",
+            "28",
+            "9_22_38"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    // Check pairs only once and store results\n    for(int i = 0; i < n; i++) {\n        if (i < n - 1 && (c[i] >= w[i + 1] || c[i + 1] >= w[i])) {\n            dp[i] = 1;\n        }\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool canConnect = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                              (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            dp[i] = canConnect ? 1 : min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2459520.75,
+            2590489.875,
+            2715774.8125,
+            2781853.6875
+        ]
+    },
+    "(9_22x13x9_22_34x22_37)": {
+        "children": [
+            {
+                "fitness": 2715774.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and array handling from Parent 1 with the item structure and optimized dp array management from Parent 4."
+            },
+            {
+                "fitness": 4446177.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nvector<Item> items(100010);\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 0);\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool condition1 = (dp[i + 1] == 1 && items[i].c >= items[i + k].w);\n            bool condition2 = (dp[i] == 1 && items[i + k].c >= items[i].w);\n            if (condition1 || condition2) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the streamlining of input and the use of a dp table from Parent 2 with the optimization logic of Parent 3, allowing for clearer conditions and better handling of the dp array."
+            },
+            {
+                "fitness": 3046196.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    for (int k = 1; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the efficient item struct and dp initialization from Parent 4 with the performance optimizations in the looping structure from Parent 3, focusing on reducing unnecessary checks."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9_22",
+            "13",
+            "9_22_34",
+            "22_37"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits> // Include limits for numeric limits\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max()); // Use numeric_limits for clarity\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, 0); // Initialize dp with 0, as we are looking for minimum operations\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            bool condition1 = (dp[i + 1] == 1 && c[i] >= totalWeight - w[i]);\n            bool condition2 = (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]);\n            if (condition1 || condition2) {\n                dp[i] = 1; // Set dp[i] to 1 if either condition is satisfied\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1; // Calculate minimum operations\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <limits>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, numeric_limits<int>::max());\n\n    // Optimize the initialization of dp based on the first pair of items\n    for(int i = 0; i < n - 1; i++) {\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) \n            dp[i] = 1;\n    }\n\n    // Change the loop to start from 1 instead of 2 to avoid unnecessary checks\n    for (int k = 1; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            // Simplify the condition to directly set dp[i] based on previous checks\n            if (dp[i + 1] == 1 && items[i].c >= items[i + k].w) {\n                dp[i] = 1;\n            } else if (dp[i] == 1 && items[i + k].c >= items[i].w) {\n                dp[i] = 1;\n            } else {\n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n            }\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2431410.5625,
+            2588685.5625,
+            2597564.9375,
+            2821089.4375
+        ]
+    },
+    "(9x3_12x8x5_13)": {
+        "children": [
+            {
+                "fitness": 3444311.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and logic from Parent 1 (fitness: 2442670.25) with the structure and improved weight handling from Parent 2 (fitness: 2450099.5625)."
+            },
+            {
+                "fitness": 2862978.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<Item> items(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n    vector<int> sumw(n);\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the efficient vector handling from Parent 4 (fitness: 2561759.875) with the dynamic programming logic from Parent 3 (fitness: 2475462.6875)."
+            },
+            {
+                "fitness": 2604540.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<int> dp(1001, 1001); // 1D dp for performance\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 1 (fitness: 2442670.25) with the optimization logic from Parent 4 (fitness: 2561759.875) for better performance."
+            },
+            {
+                "fitness": 4775952.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint main() {\n    int n;\n    cin >> n;\n    Item items[100010];\n    int dp[1001];\n    long long sumw[100010] = {0};\n\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = (i > 0) ? sumw[i - 1] + items[i].w : items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient array usage from Parent 2 (fitness: 2450099.5625) with the core logic from Parent 3 (fitness: 2475462.6875) to refine the performance of the solution."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9",
+            "3_12",
+            "8",
+            "5_13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001];\nint w[100010], c[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    int totalWeight = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        totalWeight += w[i];\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && c[i] >= totalWeight - w[i]) || \n                (dp[i] == 1 && c[i + k] >= totalWeight - w[i + k]))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n\n    // Initialize dp array with a large value\n    fill(dp, dp + 1001, 1001);\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        int prev_dp[1001];\n        copy(dp, dp + 1001, prev_dp); // store previous state\n        for (int i = 0; i + k < n; i++) {\n            if ((prev_dp[i + 1] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (prev_dp[i] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i] = 1;\n            else \n                dp[i] = min(prev_dp[i + 1], prev_dp[i]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i] = min(dp[i], dp[j] + prev_dp[j + 1]);\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001];\nItem items[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n    }\n\n    fill(dp, dp + 1001, 1001); // Initialize dp with a high value\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1] == 1 && items[i].c >= items[i + k].w) || \n                (dp[i] == 1 && items[i + k].c >= items[i].w))\n                dp[i] = 1;\n            else \n                dp[i] = min(dp[i + 1], dp[i]) + 1;\n        }\n    }\n    cout << dp[0] << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(n, vector<int>(n, 1001)); // Reduced size of dp to n x n\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    // Initialize base cases for dp\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2442670.25,
+            2450099.5625,
+            2475462.6875,
+            2561759.875
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 7780650.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n#define p(S) cout<<(S)<<endl\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    REP(i, 0, n) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n    REP(i, 0, 1001) REP(j, i, 1001) dp[i][j] = j - i + 1;\n    REP(i, 0, n - 1) if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    p(dp[0][n - 1]);\n    return 0;\n}\n",
+                "strategy": "Replace `#include \"stdc++.h\"` with specific headers to reduce compilation time and dependency."
+            },
+            {
+                "fitness": 9345122.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Change the `REP` macro to a standard loop for better readability and debugging."
+            },
+            {
+                "fitness": 7413557.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint dp[1001][1001];\nint w[100010], c[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = sumw[i - 1] + w[i];\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Optimize the initialization of `sumw` to eliminate the need for a conditional statement inside the loop."
+            },
+            {
+                "fitness": 7465916.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct Item {\n    int c, w;\n};\n\nint dp[1001][1001];\nItem items[100010];\nint sumw[100010];\n\nint main() {\n    int n;\n    cin >> n;\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> items[i].c >> items[i].w;\n        sumw[i] = sumw[i - 1] + items[i].w;\n    }\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (items[i].c >= items[i + 1].w || items[i + 1].c >= items[i].w) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && items[i].c >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && items[i + k].c >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the declaration of `w` and `c` arrays into a single structure to reduce cache misses and improve data locality."
+            },
+            {
+                "fitness": 8137414.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(1001, vector<int>(1001));\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Use `std::vector` instead of raw arrays for automatic memory management and better performance with dynamic sizes."
+            },
+            {
+                "fitness": 7763484.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n), sumw(n);\n    vector<vector<int>> dp(1001, vector<int>(1001));\n\n    sumw[0] = 0;\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n        sumw[i] = (i > 0) ? sumw[i - 1] + w[i] : w[i];\n    }\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Use `std::ios::sync_with_stdio(false)` and `cin.tie(nullptr)` to speed up input and output operations."
+            },
+            {
+                "fitness": 7927766.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <numeric> // for std::accumulate\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    int n;\n    cin >> n;\n    vector<int> c(n), w(n);\n    vector<vector<int>> dp(1001, vector<int>(1001));\n\n    for(int i = 0; i < n; i++) {\n        cin >> c[i] >> w[i];\n    }\n\n    vector<int> sumw(n);\n    partial_sum(w.begin(), w.end(), sumw.begin());\n\n    for(int i = 0; i < 1001; i++)\n        for(int j = i; j < 1001; j++)\n            dp[i][j] = j - i + 1;\n\n    for(int i = 0; i < n - 1; i++)\n        if (c[i] >= w[i + 1] || c[i + 1] >= w[i]) dp[i][i + 1] = 1;\n\n    for (int k = 2; k < n; k++) {\n        for (int i = 0; i + k < n; i++) {\n            if ((dp[i + 1][i + k] == 1 && c[i] >= sumw[i + k] - sumw[i]) || \n                (dp[i][i + k - 1] == 1 && c[i + k] >= sumw[i + k - 1] - (i ? sumw[i - 1] : 0)))\n                dp[i][i + k] = 1;\n            else \n                dp[i][i + k] = min(dp[i + 1][i + k], dp[i][i + k - 1]) + 1;\n\n            for (int j = i + 1; j < i + k; j++)\n                dp[i][i + k] = min(dp[i][i + k], dp[i][j] + dp[j + 1][i + k]);\n        }\n    }\n    cout << dp[0][n - 1] << endl;\n    return 0;\n}\n",
+                "strategy": "Utilize `std::accumulate` for calculating the cumulative sum instead of manually maintaining a sum array."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include \"stdc++.h\"\n\n#define REP(i,n,N) for(int i=n;i<N;i++)\n\n#define p(S) cout<<(S)<<endl\n\nusing namespace std;\n\nint dp[1001][1001];\n\nint w[100010],c[100010];\n\nint sumw[100010];\n\nint main(){\n\n\tint n;\n\n\tcin>>n;\n\n\tREP(i,0,n) {\n\n\t\tcin>>c[i]>>w[i];\n\n\t\tif(i>0)\tsumw[i]=sumw[i-1]+w[i];\n\n\t\telse sumw[i]=w[i];\n\n\t}\n\n\tREP(i,0,1001) REP(j,i,1001) dp[i][j]=j-i+1;\n\n\tREP(i,0,n-1)  if(c[i]>=w[i+1]||c[i+1]>=w[i]) dp[i][i+1]=1;\n\n\n\n\n\n\tfor(int k=2;k<n;k++){\n\n\t\tfor(int i=0;i+k<n;i++){\n\n\t\t\tif((dp[i+1][i+k]==1&&c[i]>=sumw[i+k]-sumw[i])||(dp[i][i+k-1]==1&&c[i+k]>=sumw[i+k-1]-(i?sumw[i-1]:0)))\n\n\t\t\t\tdp[i][i+k]=1;\n\n\t\t\telse dp[i][i+k]=min(dp[i+1][i+k],dp[i][i+k-1])+1;\n\n\n\n\t\t\tfor(int j=i+1;j<i+k;j++)\n\n\t\t\t\tdp[i][i+k]=min(dp[i][i+k],dp[i][j]+dp[j+1][i+k]);\n\n\t\t}\n\n\t}\n\n\tp(dp[0][n-1]);\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            7457961.125
+        ]
+    }
+}

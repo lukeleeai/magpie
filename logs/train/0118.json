@@ -1,0 +1,923 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 2680606.625,
+                "new_code": "#include <iostream>\n#include <array>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\narray<char, 256> mapping;\n\nvoid initialize_mapping() {\n    mapping.fill(-1); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the mapping array, which could be optimized by using `std::array` for better performance and safety over raw arrays, and replacing `memset` with a loop for clarity and potential optimization."
+            },
+            {
+                "fitness": 2701152.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nvector<char> mapping(256, -1); // use vector instead of array\nchar ch[100000];\n\nvoid initialize_mapping() {\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `initialize_mapping` function, which could be optimized by using a more efficient way to handle the mapping using a vector instead of a fixed-size array for better performance and reduced memory usage."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar mapping[256];\n\nvoid initialize_mapping() {\n    memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2430441.625
+        ]
+    },
+    "(0x1x4x5)": {
+        "children": [
+            {
+                "fitness": 3169799.875,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    for (int i = 0; i < 256; i++) {\n        mapping[i] = i; // identity mapping\n    }\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and mapping setup from Parent 1 (fitness: 2430441.625) with the faster character transformation from Parent 2 (fitness: 2510650.625)."
+            },
+            {
+                "fitness": 2901899.8125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the efficient mapping setup from Parent 3 (fitness: 2615719.3125) with the output handling from Parent 4 (fitness: 2623243.75) for improved performance."
+            },
+            {
+                "fitness": 2853811.8125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the character mapping technique from Parent 1 (fitness: 2430441.625) with the string handling from Parent 3 (fitness: 2615719.3125), optimizing memory usage."
+            },
+            {
+                "fitness": 2896813.5625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nvoid setup_mapping() {\n    p.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        p[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = p.count(c) ? p[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient character mapping of Parent 2 (fitness: 2510650.625) with dynamic string allocation from Parent 4 (fitness: 2623243.75) to enhance performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "1",
+            "4",
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar mapping[256];\n\nvoid initialize_mapping() {\n    memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        p[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = p.count(c) ? p[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2430441.625,
+            2510650.625,
+            2615719.3125,
+            2623243.75
+        ]
+    },
+    "(1)": {
+        "children": [
+            {
+                "fitness": 3237204.125,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    // Optimize by initializing only the relevant mappings\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // faster mapping\n        }\n        cout.write(ch, m); // optimize output by using write\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping` function which initializes the mapping array. This can be optimized by using a more efficient approach to fill the mapping array, avoiding the unnecessary identity mapping for every character, which can enhance performance."
+            },
+            {
+                "fitness": 2691419.375,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping` function which creates an identity mapping for all ASCII characters. This can be optimized by reducing the number of iterations and directly initializing the relevant mappings based on input rather than going through all 256 characters."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2510650.625
+        ]
+    },
+    "(10)": {
+        "children": [
+            {
+                "fitness": 2833755.3125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the string `ch` and the character mapping process. The string initialization can be optimized by using a vector of characters instead of a string, which can improve performance in terms of memory allocation and manipulation. Additionally, we can streamline the character transformation process by directly modifying the character vector, which could reduce overhead from string operations."
+            },
+            {
+                "fitness": 3157334.25,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Declare an empty string\n        ch.reserve(m); // Reserve memory to avoid repeated allocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping.count(c) ? mapping[c] : c; // Append transformed character directly\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes a string of size m, which could be optimized by using a more efficient method to transform the character input."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2853811.8125
+        ]
+    },
+    "(10_22)": {
+        "children": [
+            {
+                "fitness": 2792739.9375,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use a string instead of vector for better performance in this case\n        ch.reserve(m); // Reserve memory to avoid multiple allocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch.push_back(mapping.count(c) ? mapping[c] : c); // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the mapping and performs character transformations, which could be optimized by reducing the number of lookups and avoiding unnecessary allocations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_22"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2833755.3125
+        ]
+    },
+    "(10x1_19x0_18x4_20)": {
+        "children": [
+            {
+                "fitness": 3193827.1875,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear();\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' ');\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c;\n        }\n        cout << ch << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the character mapping initialization from Parent 1 (fitness: 2454319.75) with the optimized mapping setup from Parent 2 (fitness: 2681843.6875) for improved efficiency."
+            },
+            {
+                "fitness": 3006893.8125,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nvector<char> mapping(256, -1);\n\nvoid setup_mapping() {\n    for (int i = 0; i < n; i++) {\n        char key, value;\n        cin >> key >> value;\n        mapping[key] = value;\n    }\n    for (int i = 0; i < 256; i++) {\n        if (mapping[i] == -1) mapping[i] = i; // Identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' ');\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c];\n        }\n        cout << ch << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the direct character mapping from Parent 4 (fitness: 2719447.125) with the vector-based mapping from Parent 3 (fitness: 2701152.8125) to enhance performance while maintaining direct access efficiency."
+            },
+            {
+                "fitness": 3010027.875,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256];\n\nvoid initialize_mapping() {\n    fill(begin(mapping), end(mapping), 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m);\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping[c] ? mapping[c] : c;\n        }\n        cout << ch << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient mapping initialization from Parent 2 (fitness: 2681843.6875) with the direct character mapping approach from Parent 4 (fitness: 2719447.125) to streamline the character transformation process."
+            },
+            {
+                "fitness": 3222378.125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use hashmap for lookup\n        }\n        cout << ch << endl; // Output transformed string\n    }\n    return 0;\n}\n",
+                "strategy": "Implement a hybrid of the optimized string handling from Parent 1 (fitness: 2454319.75) and the mapping setup from Parent 3 (fitness: 2701152.8125) to enhance performance in terms of both memory usage and speed."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10",
+            "1_19",
+            "0_18",
+            "4_20"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nvector<char> mapping(256, -1); // use vector instead of array\nchar ch[100000];\n\nvoid initialize_mapping() {\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Array for direct character mapping\n\nvoid setup_mapping() {\n    fill(begin(mapping), end(mapping), 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping[c] ? mapping[c] : c; // Use the array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2454319.75,
+            2681843.6875,
+            2701152.8125,
+            2719447.125
+        ]
+    },
+    "(18)": {
+        "children": [
+            {
+                "fitness": 3034824.9375,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid setup_mapping() {\n    fill(mapping, mapping + 256, 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that utilizes the `unordered_map` for character mapping, which could be optimized by using a fixed-size array instead, given that the mapping involves characters which can be represented within a limited range (e.g., ASCII values)."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "18"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2513135.8125
+        ]
+    },
+    "(18_32)": {
+        "children": [
+            {
+                "fitness": 3032446.75,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid setup_mapping() {\n    fill(mapping, mapping + 256, 0); // Clear existing mappings\n    for (int i = 0; i < n; i++) {\n        char key, value;\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use vector for dynamic size\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Separate output from future inputs\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the character is read and mapped, which could be optimized by using a more efficient input method and avoiding unnecessary checks."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "18_32"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid setup_mapping() {\n    fill(mapping, mapping + 256, 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2475877.875
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 2753684.0625,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `initialize_mapping` function which reads key-value pairs and stores them in a hashmap. This can be optimized by directly using an array for fixed character mappings, which reduces the overhead of dynamic memory allocation and improves the performance for this specific case."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2505877.375
+        ]
+    },
+    "(19_31)": {
+        "children": [
+            {
+                "fitness": 2969217.75,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    if (n > 0) { // Check if n is valid before proceeding\n        for (int i = 0; i < n; i++) {\n            cin >> key >> value;\n            mapping[key] = value; // Store pairs in a fixed array for O(1) access\n        }\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `initialize_mapping` function which initializes the mapping array. The initialization can be optimized by reducing the number of reads from input and directly storing the mappings without the need for a loop if the number of mappings is small or fixed."
+            },
+            {
+                "fitness": 2562710.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        char ch[100005]; // Use a fixed size array for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch, m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of the `vector` for character storage, which could be optimized by using a fixed-size array instead, as the maximum size is known and doesn't require dynamic resizing."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19_31"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2532531.5625
+        ]
+    },
+    "(19_31x18_32x21x20)": {
+        "children": [
+            {
+                "fitness": 2852550.25,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization logic from Parent 1 (fitness: 2468610.125) with the output method from Parent 2 (fitness: 2475877.875)."
+            },
+            {
+                "fitness": 3015836.8125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the mapping setup from Parent 3 (fitness: 2491345.875) with the vector usage from Parent 2 (fitness: 2475877.875) for improved performance."
+            },
+            {
+                "fitness": 2660782.3125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the character mapping logic from Parent 4 (fitness: 2542403.0) with the initialization method from Parent 1 (fitness: 2468610.125) to enhance readability and performance."
+            },
+            {
+                "fitness": 2796010.0,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid setup_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the fixed array mapping from Parent 1 (fitness: 2468610.125) with the dynamic string handling from Parent 4 (fitness: 2542403.0) to achieve a balance of performance and usability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19_31",
+            "18_32",
+            "21",
+            "20"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid setup_mapping() {\n    fill(mapping, mapping + 256, 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2468610.125,
+            2475877.875,
+            2491345.875,
+            2542403.0
+        ]
+    },
+    "(19_31x24x26x21_36)": {
+        "children": [
+            {
+                "fitness": 2874266.75,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient character mapping initialization from Parent 1 (fitness: 2532531.5625) with the dynamic string resizing approach from Parent 2 (fitness: 2626875.375)."
+            },
+            {
+                "fitness": 2948072.4375,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping; // Hashmap for O(1) access\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the optimized character handling from Parent 1 (fitness: 2532531.5625) with the dynamic approach of Parent 3 (fitness: 2660782.3125), ensuring that character mappings are both efficient and adaptable to different string sizes."
+            },
+            {
+                "fitness": 3004190.9375,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid setup_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the fixed array for character mapping from Parent 1 (fitness: 2532531.5625) with the dynamic string handling from Parent 4 (fitness: 2664705.125), optimizing the mapping initialization while ensuring efficient string output."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19_31",
+            "24",
+            "26",
+            "21_36"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        mapping.clear(); // Clear existing mappings before setting up a new one\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2532531.5625,
+            2626875.375,
+            2660782.3125,
+            2664705.125
+        ]
+    },
+    "(1_19)": {
+        "children": [
+            {
+                "fitness": 2714336.0625,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Directly fill unmapped characters with their identity in a single pass\n    for (int i = 0; i < 256; i++) {\n        if (!map[i]) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the mapping setup in the `setup_mapping` function, which can be optimized by reducing unnecessary iterations and simplifying the logic."
+            },
+            {
+                "fitness": 2534380.9375,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // Initialize identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the setup_mapping function, specifically the use of `fill` for initializing the mapping. This could be optimized by using a more efficient structure to handle the mapping directly and reducing the number of iterations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_19"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2730628.25
+        ]
+    },
+    "(1_19_23)": {
+        "children": [
+            {
+                "fitness": 2638830.4375,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Fill unmapped characters with their identity in a single pass\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Optimize by checking directly for zero\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping` function that initializes the mapping array. The optimization can be achieved by reducing the number of iterations and using a more efficient way to handle unmapped characters."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_19_23"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Directly fill unmapped characters with their identity in a single pass\n    for (int i = 0; i < 256; i++) {\n        if (!map[i]) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2796920.75
+        ]
+    },
+    "(1_19_23_27)": {
+        "children": [
+            {
+                "fitness": 2625966.6875,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Combine the mapping setup and identity assignment into a single loop\n    for (int i = 0; i < 256; i++) {\n        map[i] = (map[i] == 0) ? i : map[i]; // Optimize by checking directly for zero\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping` function which initializes mappings and could be optimized by reducing the number of iterations needed to fill the mapping array. Instead of using two separate loops, we can achieve the same effect in a single pass."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_19_23_27"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Fill unmapped characters with their identity in a single pass\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Optimize by checking directly for zero\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2502735.625
+        ]
+    },
+    "(1_19_23_27x19x18x1_19_26)": {
+        "children": [
+            {
+                "fitness": 2542403.0,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient mapping setup from Parent 1 with the dynamic handling of character transformations from Parent 3."
+            },
+            {
+                "fitness": 2594795.125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient mapping setup from Parent 1 with the improved output handling from Parent 2 to enhance performance."
+            },
+            {
+                "fitness": 2544521.875,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Use string for dynamic size\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the identity mapping initialization from Parent 4 with the hashmap approach from Parent 2 for a more efficient character mapping."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1_19_23_27",
+            "19",
+            "18",
+            "1_19_26"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Fill unmapped characters with their identity in a single pass\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Optimize by checking directly for zero\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // Initialize identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2502735.625,
+            2505877.375,
+            2513135.8125,
+            2534380.9375
+        ]
+    },
+    "(1_19x1_19_23x10_22x10)": {
+        "children": [
+            {
+                "fitness": 3210449.4375,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    for (int i = 0; i < 256; i++) {\n        if (!map[i]) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the setup mapping from Parent 1 (fitness: 2730628.25) with the efficient output from Parent 2 (fitness: 2796920.75)."
+            },
+            {
+                "fitness": 2660120.375,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the unordered map initialization from Parent 3 (fitness: 2833755.3125) with the more efficient output from Parent 4 (fitness: 2853811.8125)."
+            },
+            {
+                "fitness": 2513135.8125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the mapping setup from Parent 1 (fitness: 2730628.25) with the direct string manipulation from Parent 4 (fitness: 2853811.8125) to enhance performance and clarity."
+            },
+            {
+                "fitness": 2700548.625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient mapping from Parent 2 (fitness: 2796920.75) with the vector usage from Parent 3 (fitness: 2833755.3125) to optimize memory handling and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1_19",
+            "1_19_23",
+            "10_22",
+            "10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    for (int i = 0; i < 256; i++) {\n        if (map[i] == 0) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    fill(map, map + 256, 0); // Initialize mapping to zero\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // Setup only the necessary mappings\n    }\n    // Directly fill unmapped characters with their identity in a single pass\n    for (int i = 0; i < 256; i++) {\n        if (!map[i]) map[i] = i; // Fill in identity for unmapped characters\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // Faster mapping\n        }\n        cout.write(ch, m); // More efficient output\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2730628.25,
+            2796920.75,
+            2833755.3125,
+            2853811.8125
+        ]
+    },
+    "(1x0x2x7_12)": {
+        "children": [
+            {
+                "fitness": 2615719.3125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the mapping initialization mechanism from Parent 2 (fitness: 2393040.25) with the character transformation logic from Parent 4 (fitness: 2452184.5625). This utilizes an unordered_map for efficient lookups while retaining the setup structure from Parent 2."
+            },
+            {
+                "fitness": 2623243.75,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        p[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = p.count(c) ? p[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the mapping setup from Parent 1 (fitness: 2386474.9375) with the use of strings from Parent 4 (fitness: 2452184.5625). This enhances clarity in storage and retrieval while preserving the efficiency of mapping."
+            },
+            {
+                "fitness": 2983464.9375,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> change_map;\n\nvoid initialize_change_map() {\n    change_map.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        change_map[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_change_map();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += change_map.count(c) ? change_map[c] : c; // Apply mapping if exists\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient character mapping approach from Parent 4 (fitness: 2452184.5625) with the initialization method from Parent 3 (fitness: 2396220.25). This crossover emphasizes efficiency and clarity while maintaining performance."
+            },
+            {
+                "fitness": 3018684.9375,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Apply mapping if exists\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient unordered_map from Parent 4 (fitness: 2452184.5625) with the default mapping initialization from Parent 1 (fitness: 2386474.9375). This balances efficiency and effectiveness in character mapping."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "0",
+            "2",
+            "7_12"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar mapping[256];\n\nvoid initialize_mapping() {\n    memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar change_map[256];\n\nvoid initialize_change_map() {\n    memset(change_map, -1, sizeof(change_map)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (change_map[ch[i]] != -1) {\n                ch[i] = change_map[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nint main() {\n    while (cin >> n && n > 0) {\n        char key, value;\n        for (int i = 0; i < n; i++) {\n            cin >> key >> value;\n            p[key] = value;  // Store pairs in a hashmap for O(1) access\n        }\n        cin >> m;\n        string ch;\n        ch.reserve(m);  // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += p.count(c) ? p[c] : c;  // Use the hashmap for direct lookup\n        }\n        cout << ch << endl;  // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2386474.9375,
+            2393040.25,
+            2396220.25,
+            2452184.5625
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 2758641.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar change_map[256];\n\nvoid initialize_change_map() {\n    fill(change_map, change_map + 256, 0); // Initialize all to 0\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = change_map[ch[i]] ? change_map[ch[i]] : ch[i]; // Only change if there is a mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `initialize_change_map` function which builds a mapping for character changes. This can be optimized by using a more efficient approach to populate the `change_map` array, thereby reducing unnecessary iterations and improving performance."
+            },
+            {
+                "fitness": 3089678.9375,
+                "new_code": "#include <iostream>\n#include <cstring>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nunordered_map<char, char> change_map;\n\nvoid initialize_change_map() {\n    change_map.clear(); // Clear any previous mappings\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            auto it = change_map.find(ch[i]);\n            if (it != change_map.end()) {\n                ch[i] = it->second; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `initialize_change_map` function where the mapping is established. This could be optimized by using a `std::unordered_map` instead of an array, which will improve the lookup time from O(1) to O(n) for larger inputs and can simplify the initialization logic."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar change_map[256];\n\nvoid initialize_change_map() {\n    memset(change_map, -1, sizeof(change_map)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (change_map[ch[i]] != -1) {\n                ch[i] = change_map[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2396220.25
+        ]
+    },
+    "(20)": {
+        "children": [
+            {
+                "fitness": 2689148.6875,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    vector<pair<char, char>> pairs(n); // Use vector to store pairs\n    for (int i = 0; i < n; i++) {\n        cin >> pairs[i].first >> pairs[i].second; // Read pairs into vector\n    }\n    for (const auto& p : pairs) {\n        mapping[p.first] = p.second; // Store pairs in the hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping()` function that uses a `for` loop to read character pairs, which could be optimized by using `std::vector` to store pairs and `std::unordered_map` to reduce the number of accesses during mapping. This would enhance performance when handling multiple mappings."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "20"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2542403.0
+        ]
+    },
+    "(21)": {
+        "children": [
+            {
+                "fitness": 2664705.125,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        mapping.clear(); // Clear existing mappings before setting up a new one\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping` function that clears and sets up the mapping, which could be optimized by reducing the number of times we clear the mapping and reinitialize it. Instead of clearing the mapping every time, we can create a new mapping only when necessary, thereby saving some unnecessary operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "21"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2491345.875
+        ]
+    },
+    "(21_36)": {
+        "children": [
+            {
+                "fitness": 3023599.5,
+                "new_code": "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nint main() {\n    while (cin >> n && n > 0) {\n        mapping.clear(); // Clear existing mappings before setting up a new one\n        for (int i = 0; i < n; i++) {\n            char key, value;\n            cin >> key >> value;\n            mapping[key] = value; // Store pairs in a hashmap for O(1) access\n        }\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the `setup_mapping()` function is called, which could be optimized by reading input more efficiently and reducing the number of function calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "21_36"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        mapping.clear(); // Clear existing mappings before setting up a new one\n        setup_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2664705.125
+        ]
+    },
+    "(24)": {
+        "children": [
+            {
+                "fitness": 2850681.0625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\n\nvoid initialize_mapping(unordered_map<char, char>& mapping) {\n    mapping.clear(); // Clear the map to ensure it's empty before filling\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an unordered_map for O(1) average access time\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        unordered_map<char, char> mapping; // Use unordered_map for dynamic mapping\n        initialize_mapping(mapping);\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use unordered_map for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `initialize_mapping` function that initializes the mapping array, which can be optimized by using `std::unordered_map` for faster lookups instead of a fixed-size array. This change allows for dynamic handling of character mappings and reduces the space complexity for unused characters."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "24"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed-size array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[(unsigned char)key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[(unsigned char)c] ? mapping[(unsigned char)c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2626875.375
+        ]
+    },
+    "(24_39)": {
+        "children": [
+            {
+                "fitness": 3112116.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    int n, m;\n    while (cin >> n && n > 0) {\n        unordered_map<char, char> mapping; // Use unordered_map for dynamic mapping\n        for (int i = 0; i < n; i++) {\n            char key, value;\n            cin >> key >> value;\n            mapping[key] = value; // Store pairs in an unordered_map for O(1) average access time\n        }\n        \n        cin >> m;\n        vector<char> ch(m); // Use vector for dynamic size\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use unordered_map for direct lookup\n        }\n        cout.write(ch.data(), m) << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the input handling and mapping initialization by using more efficient data structures and minimizing the number of operations performed on the input data."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "24_39"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\n\nvoid initialize_mapping(unordered_map<char, char>& mapping) {\n    mapping.clear(); // Clear the map to ensure it's empty before filling\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an unordered_map for O(1) average access time\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        unordered_map<char, char> mapping; // Use unordered_map for dynamic mapping\n        initialize_mapping(mapping);\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use unordered_map for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2850681.0625
+        ]
+    },
+    "(26)": {
+        "children": [
+            {
+                "fitness": 2405449.3125,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\npair<char, char> mapping[256]; // Fixed-size array for mapping\n\nvoid initialize_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = make_pair(key, value); // Store pairs in a fixed-size array\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Preallocate string with size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = (mapping[c].first == c) ? mapping[c].second : c; // Use fixed-size array for lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the lines that read input and store mappings in the unordered_map, which could be optimized by reducing the overhead of dynamic memory allocation and improving the input handling."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "26"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid initialize_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2660782.3125
+        ]
+    },
+    "(26_40)": {
+        "children": [
+            {
+                "fitness": 2985150.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping; // Use unordered_map for faster lookups\n\nvoid initialize_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store value directly in the map\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Preallocate string with size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = (mapping.find(c) != mapping.end()) ? mapping[c] : c; // Use unordered_map for lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the mapping is initialized, which could be optimized by using an unordered_map for faster lookups instead of a fixed-size array."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "26_40"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\npair<char, char> mapping[256]; // Fixed-size array for mapping\n\nvoid initialize_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = make_pair(key, value); // Store pairs in a fixed-size array\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Preallocate string with size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = (mapping[c].first == c) ? mapping[c].second : c; // Use fixed-size array for lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2548003.3125
+        ]
+    },
+    "(26_40x19_31_38x19_31x24_39)": {
+        "children": [
+            {
+                "fitness": 2835023.125,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Preallocate string with size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and mapping logic from Parent 2 with the string output method from Parent 1 to enhance performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "26_40",
+            "19_31_38",
+            "19_31",
+            "24_39"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\npair<char, char> mapping[256]; // Fixed-size array for mapping\n\nvoid initialize_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = make_pair(key, value); // Store pairs in a fixed-size array\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        string ch(m, ' '); // Preallocate string with size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = (mapping[c].first == c) ? mapping[c].second : c; // Use fixed-size array for lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        char ch[100005]; // Use a fixed size array for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch, m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Fixed array for character mapping\n\nvoid initialize_mapping() {\n    fill(mapping, mapping + 256, '\\0'); // Initialize the mapping array\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a fixed array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        initialize_mapping();\n        cin >> m;\n        vector<char> ch(m); // Use a vector for better performance\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping[c] ? mapping[c] : c; // Use the fixed array for direct lookup\n        }\n        cout.write(ch.data(), m); // Output the transformed string directly\n        cout << endl; // Print a newline\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\n\nvoid initialize_mapping(unordered_map<char, char>& mapping) {\n    mapping.clear(); // Clear the map to ensure it's empty before filling\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an unordered_map for O(1) average access time\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        unordered_map<char, char> mapping; // Use unordered_map for dynamic mapping\n        initialize_mapping(mapping);\n        cin >> m;\n        string ch; // Use string for dynamic size\n        ch.resize(m); // Resize to m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = mapping.count(c) ? mapping[c] : c; // Use unordered_map for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2548003.3125,
+            2663945.6875,
+            2753684.0625,
+            2850681.0625
+        ]
+    },
+    "(2x6x7x5)": {
+        "children": [
+            {
+                "fitness": 2784146.0625,
+                "new_code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar mapping[256];\n\nvoid initialize_mapping() {\n    memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        mapping[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization of the change map from Parent 1 with the fast mapping check from Parent 2 to optimize character mapping performance."
+            },
+            {
+                "fitness": 2753126.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]]; // faster mapping\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the use of the pair structure from Parent 1 with the optimized character mapping logic from Parent 4, improving both clarity and performance."
+            },
+            {
+                "fitness": 2396220.25,
+                "new_code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar change_map[256];\n\nvoid initialize_change_map() {\n    memset(change_map, -1, sizeof(change_map)); // default to -1 (no change)\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (change_map[ch[i]] != -1) {\n                ch[i] = change_map[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization logic from Parent 1 with the use of `memset` from Parent 2 to create a more efficient mapping setup."
+            },
+            {
+                "fitness": 2766340.9375,
+                "new_code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid initialize_map() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = -1; // default to -1 (no change)\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second; // direct mapping\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (map[ch[i]] != -1) {\n                ch[i] = map[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Use the character mapping from Parent 4 and optimize the initialization from Parent 3 to ensure clarity and efficiency in the mapping process."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "2",
+            "6",
+            "7",
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar change_map[256];\n\nvoid initialize_change_map() {\n    for (int i = 0; i < 256; i++) {\n        change_map[i] = i; // default to no change\n    }\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = change_map[ch[i]]; // use the map for faster change\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\nchar mapping[256];\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n        for (int i = 0; i < n; i++) {\n            char a, b;\n            cin >> a >> b;\n            mapping[a] = b; // direct mapping\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            for (int j = 0; j < n; j++) {\n                if (p[j].first == ch[i]) {\n                    ch[i] = p[j].second;\n                    break;\n                }\n            }\n        }\n        cout.write(ch, m);\n        cout << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]];\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2435817.0,
+            2574825.1875,
+            2638788.125,
+            3084936.125
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 2719447.125,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Array for direct character mapping\n\nvoid setup_mapping() {\n    fill(begin(mapping), end(mapping), 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping[c] ? mapping[c] : c; // Use the array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `unordered_map` for mapping character pairs, which could be optimized by using a static array since the character range is limited (e.g., ASCII). This will reduce the overhead of hash table operations and improve access speed."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\n\nvoid setup_mapping() {\n    mapping.clear(); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping.count(c) ? mapping[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2615719.3125
+        ]
+    },
+    "(4_20)": {
+        "children": [
+            {
+                "fitness": 2957367.375,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Array for direct character mapping\n\nvoid setup_mapping() {\n    fill(begin(mapping), end(mapping), 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        vector<char> ch; // Use vector for efficient character storage\n        ch.reserve(m); // Reserve space for the vector\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch.push_back(mapping[c] ? mapping[c] : c); // Use the array for direct lookup\n        }\n        cout << string(ch.begin(), ch.end()) << endl; // Output the transformed string\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `string` which can cause dynamic memory allocations during concatenation. By using a `vector<char>` and then converting to a string at the end, we can optimize memory usage and reduce the overhead of string concatenation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_20"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar mapping[256]; // Array for direct character mapping\n\nvoid setup_mapping() {\n    fill(begin(mapping), end(mapping), 0); // Clear existing mappings\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        mapping[key] = value; // Store pairs in an array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch;\n        ch.reserve(m); // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += mapping[c] ? mapping[c] : c; // Use the array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2719447.125
+        ]
+    },
+    "(5)": {
+        "children": [
+            {
+                "fitness": 2825398.0625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nunordered_map<char, char> map;\n\nvoid setup_mapping() {\n    map.clear(); // Clear the map before setting up the mapping\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if(map.find(ch[i]) != map.end()) {\n                ch[i] = map[ch[i]];\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `setup_mapping` function which initializes a mapping for character conversion. This can be optimized by using a more efficient way to handle the mapping, specifically by avoiding the use of an array for identity mapping and directly initializing the mapping for the characters that are actually used, which can reduce memory usage and potentially improve cache performance."
+            },
+            {
+                "fitness": 3036884.75,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\nchar p[256]; // Use a fixed-size array for character mapping\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        p[key] = value; // Store pairs in a fixed-size array for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        fill(begin(p), end(p), 0); // Reset the mapping array\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = p[c] ? p[c] : c; // Use the fixed-size array for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the transformation of characters occurs. The use of `unordered_map` provides O(1) access, but we can improve memory usage and performance by utilizing a fixed-size array since the input characters are likely to be limited to a specific range (like lowercase and uppercase letters)."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nvoid setup_mapping() {\n    char key, value;\n    for (int i = 0; i < n; i++) {\n        cin >> key >> value;\n        p[key] = value; // Store pairs in a hashmap for O(1) access\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        setup_mapping();\n        cin >> m;\n        string ch(m, ' '); // Initialize a string of size m\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = p.count(c) ? p[c] : c; // Use the hashmap for direct lookup\n        }\n        cout << ch << endl; // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2623243.75
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 2839344.9375,
+                "new_code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\nchar mapping[256] = {0}; // initialize to 0 instead of -1\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        // Use '0' for no mapping to simplify the logic\n        for (int i = 0; i < n; i++) {\n            char a, b;\n            cin >> a >> b;\n            mapping[a] = b; // direct mapping\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != 0) { // check against 0\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `memset` that initializes the `mapping` array, which could be optimized by using a more efficient way of initialization since the mapping array is only used for character mappings."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\nchar mapping[256];\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n        for (int i = 0; i < n; i++) {\n            char a, b;\n            cin >> a >> b;\n            mapping[a] = b; // direct mapping\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2574825.1875
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 2452184.5625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nint main() {\n    while (cin >> n && n > 0) {\n        char key, value;\n        for (int i = 0; i < n; i++) {\n            cin >> key >> value;\n            p[key] = value;  // Store pairs in a hashmap for O(1) access\n        }\n        cin >> m;\n        string ch;\n        ch.reserve(m);  // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += p.count(c) ? p[c] : c;  // Use the hashmap for direct lookup\n        }\n        cout << ch << endl;  // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the nested loop structure where the character replacements occur, which could be optimized by using a hashmap for faster lookups instead of a linear search."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            for (int j = 0; j < n; j++) {\n                if (p[j].first == ch[i]) {\n                    ch[i] = p[j].second;\n                    break;\n                }\n            }\n        }\n        cout.write(ch, m);\n        cout << endl;\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2638788.125
+        ]
+    },
+    "(7_12)": {
+        "children": [
+            {
+                "fitness": 3009202.25,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nint main() {\n    while (cin >> n && n > 0) {\n        char key, value;\n        for (int i = 0; i < n; i++) {\n            cin >> key >> value;\n            p[key] = value;  // Store pairs in a hashmap for O(1) access\n        }\n        cin >> m;\n        string ch;\n        ch.resize(m);  // Resize the string to the required size directly\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch[i] = p.count(c) ? p[c] : c;  // Use the hashmap for direct lookup\n        }\n        cout << ch << endl;  // Output the transformed string directly\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that reserves space for the string `ch` to optimize memory allocation by using `std::string::resize` instead of `std::string::reserve`, which can eliminate unnecessary reallocation and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7_12"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> p;\n\nint main() {\n    while (cin >> n && n > 0) {\n        char key, value;\n        for (int i = 0; i < n; i++) {\n            cin >> key >> value;\n            p[key] = value;  // Store pairs in a hashmap for O(1) access\n        }\n        cin >> m;\n        string ch;\n        ch.reserve(m);  // Reserve space for the string to avoid reallocations\n        for (int i = 0; i < m; i++) {\n            char c;\n            cin >> c;\n            ch += p.count(c) ? p[c] : c;  // Use the hashmap for direct lookup\n        }\n        cout << ch << endl;  // Output the transformed string directly\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2452184.5625
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 2509423.6875,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar change_map[256];\n\nvoid initialize_change_map() {\n    for (int i = 0; i < 256; i++) {\n        change_map[i] = i; // default to no change\n    }\n    for (int i = 0; i < n; i++) {\n        change_map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        initialize_change_map();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = change_map[ch[i]]; // use the map for faster change\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Minimize the size of the `find_change` function by using a lookup table for direct character mapping, which can make character substitutions faster."
+            },
+            {
+                "fitness": 3215088.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nint n, m;\nvector<pair<char, char>> p;\nstring ch;\n\nint find_change() {\n    for (char &c : ch) {\n        for (int i = 0; i < n; i++) {\n            if (p[i].first == c) {\n                c = p[i].second;\n                break;\n            }\n        }\n    }\n    return 0;\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        p.resize(n);\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        cin >> m;\n        ch.resize(m);\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n        }\n        find_change();\n        cout << ch << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine reading input into a single array and processing it at once to eliminate multiple I/O operations."
+            },
+            {
+                "fitness": 3084936.125,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\nchar map[256];\n\nvoid setup_mapping() {\n    for (int i = 0; i < 256; i++) {\n        map[i] = i; // identity mapping\n    }\n    for (int i = 0; i < n; i++) {\n        map[p[i].first] = p[i].second;\n    }\n}\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        setup_mapping();\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            ch[i] = map[ch[i]];\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Use a fixed-size array for the character mapping to reduce overhead associated with dynamic data structures."
+            },
+            {
+                "fitness": 2518149.5,
+                "new_code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nint n, m;\nchar mapping[256];\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        memset(mapping, -1, sizeof(mapping)); // default to -1 (no change)\n        for (int i = 0; i < n; i++) {\n            char a, b;\n            cin >> a >> b;\n            mapping[a] = b; // direct mapping\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping[ch[i]] != -1) {\n                ch[i] = mapping[ch[i]]; // apply mapping if exists\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Minimize the number of condition checks by using an array for direct character-to-character mapping, improving performance."
+            },
+            {
+                "fitness": 2638788.125,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint n, m;\npair<char, char> p[100];\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        for (int i = 0; i < n; i++) {\n            cin >> p[i].first >> p[i].second;\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            for (int j = 0; j < n; j++) {\n                if (p[j].first == ch[i]) {\n                    ch[i] = p[j].second;\n                    break;\n                }\n            }\n        }\n        cout.write(ch, m);\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Optimize memory usage by removing unnecessary variables or using fewer data structures."
+            },
+            {
+                "fitness": 3224507.5625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        mapping.clear();\n        for (int i = 0; i < n; i++) {\n            char a, b;\n            cin >> a >> b;\n            mapping[a] = b;\n        }\n        cin >> m;\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping.count(ch[i])) {\n                ch[i] = mapping[ch[i]];\n            }\n        }\n        for (int i = 0; i < m; i++)\n            cout << ch[i];\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Use a more efficient data structure, such as `unordered_map`, to speed up lookups for character changes."
+            },
+            {
+                "fitness": 3257020.625,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint n, m;\nunordered_map<char, char> mapping;\nchar ch[100000];\n\nint main() {\n    while (cin >> n && n > 0) {\n        mapping.clear();\n        for (int i = 0; i < n; i++) {\n            char a, b;\n            cin >> a >> b;\n            mapping[a] = b;\n        }\n        cin >> m;\n        if (m < 0 || m > 100000) {\n            cerr << \"Invalid length for characters.\" << endl;\n            continue;\n        }\n        for (int i = 0; i < m; i++) {\n            cin >> ch[i];\n            if (mapping.count(ch[i])) {\n                ch[i] = mapping[ch[i]];\n            }\n        }\n        cout.write(ch, m);\n        cout << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Incorporate error handling for input values, ensuring robustness in processing."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n\nusing namespace std;\n\n\n\nint n,m;\n\npair<char, char> p[100];\n\nchar ch[100000];\n\n\n\nint find_change(char *a) {\n\n\tfor (int i = 0; i < n; i++) {\n\n\t\tif (p[i].first == *a) {\n\n\t\t\t*a = p[i].second;\n\n\t\t\treturn 0;\n\n\t\t}\n\n\t}\n\n\treturn 1;\n\n}\n\n\n\nint main(){\n\n\n\n\twhile (cin >> n && n > 0) {\n\n\t\tfor (int i = 0; i < n; i++) {\n\n\t\t\tcin >> p[i].first >> p[i].second;\n\n\t\t}\n\n\t\tcin >> m;\n\n\t\tfor (int i = 0; i < m; i++) {\n\n\t\t\tcin >> ch[i];\n\n\t\t\tfind_change(ch + i);\n\n\t\t}\n\n\t\tfor (int i = 0; i < m; i++)\n\n\t\t\tcout << ch[i];\n\n\t\tcout << endl;\n\n\t}\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            2749021.125
+        ]
+    }
+}

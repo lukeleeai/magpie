@@ -30,6 +30,7 @@ class AbstractAlgorithm(abc.ABC):
         self.report["reference_fitness"] = None
         self.report["best_fitness"] = None
         self.report["best_patch"] = None
+        self.report["best_patch_step"] = None
         self.report["stop"] = None
 
     @abc.abstractmethod
@@ -107,38 +108,37 @@ class AbstractAlgorithm(abc.ABC):
 
     def stopping_condition(self):
         # print the stats step in red
-        print(f"\033[91mStep: {self.stats['steps']}\033[0m")
+        # log
+        self.software.logger.info(f"Step: {self.stats['steps']}")
         # prin the stop steps in red
-        print(f"\033[91mStop Steps: {self.stop['steps']}\033[0m")
+        self.software.logger.info(f"Stop Steps: {self.stop['steps']}")
 
         if self.report["stop"] is not None:
-            print(
+            self.software.logger.info(
                 "(Abstract Algorithm) Stopping Condition: ",
                 self.report["stop"],
             )
             return True
         if self.stop["budget"] is not None:
             if self.stats["budget"] >= self.stop["budget"]:
-                print("(Abstract Algorithm) Stopping Condition: budget")
+                self.software.logger.info("(Abstract Algorithm) Stopping Condition: budget")
                 self.report["stop"] = "budget"
                 return True
         if self.stop["wall"] is not None:
             now = time.time()
             if now >= self.stats["wallclock_start"] + self.stop["wall"]:
-                print("(Abstract Algorithm) Stopping Condition: time budget")
+                self.software.logger.info("(Abstract Algorithm) Stopping Condition: time budget")
                 self.report["stop"] = "time budget"
                 return True
         if self.stop["steps"] is not None:
             if self.stats["steps"] >= self.stop["steps"]:
-                print("(Abstract Algorithm) Stopping Condition: step budget")
+                self.software.logger.info("(Abstract Algorithm) Stopping Condition: step budget")
                 self.report["stop"] = "step budget"
                 return True
         if self.stop["fitness"] is not None:  # todo: list
             if self.report["best_fitness"] is not None:
                 if self.report["best_fitness"] <= self.stop["fitness"]:
-                    print(
-                        "(Abstract Algorithm) Stopping Condition: target fitness reached"
-                    )
+                    self.software.logger.info("(Abstract Algorithm) Stopping Condition: target fitness reached")
                     self.report["stop"] = "target fitness reached"
                     return True
         print("Not stopping")

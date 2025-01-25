@@ -2,7 +2,6 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 import os
 import re
-import random
 import textwrap
 
 
@@ -42,11 +41,96 @@ class LLMCrossover(LLMBase):
             As an expert C++ developer, your task is to generate {num_offsprings} crossover codes from given parent codes.
             A lower fitness score means better performance.
 
+
+            Here are some examples of successful code optimizations:
+
+            ```cpp
+            #include <bits/stdc++.h>
+            using namespace std;
+
+            int main() {{
+                string s;
+                cin >> s;
+                int a = 0, z = 0;
+                for(int i = 0; i < s.size(); i++) {{
+                    if (s[i] == 'A') {{
+                        a = i;
+                        break;
+                    }}
+                }}
+            ```
+
+            can be optimized to:
+            ```cpp
+            #include<cstdio>
+            #include<algorithm>
+            using namespace std;
+            char str[200005];
+            int main(){{
+                scanf("%s",str);
+                int ans = 0;
+                int a=-1;
+                for(int i=0;str[i];i++){{
+                    if(str[i]=='Z'){{
+                        if(a!=-1)
+                            ans = max(ans,i-a);
+                    }}else if(str[i]=='A' && a==-1)
+                        a = i;
+                }}
+                printf("%d\n",ans+1);
+                return 0;
+            }}
+            ```
+
+            For another example,
+            ```cpp
+            #include <cstdio>
+            #include <cstring>
+            #include <algorithm>
+            #include <iostream>
+            using namespace std;
+
+            typedef long long ll;
+            const int maxn = 100000;
+            int n;
+            long long a[maxn], b[maxn];
+            int main(void) {{
+                cin >> n;
+                for(int i = 0; i < n; ++i) {{
+                    cin >> a[i] >> b[i];
+                }}
+            }}
+            ```
+            can be optimized to:
+            ```cpp
+            #include <cstdio>
+            #include <cstring>
+            #include <algorithm>
+            using namespace std;
+            typedef long long li;
+            const int maxn = 1e5;
+            int n, a[maxn], b[maxn];
+            int main(void) {{
+                scanf("%d", &n);
+                for (int i = 0; i < n; ++i) {{
+                    scanf("%d%d", a + i, b + i);
+                }}
+                li ans = 0;
+                for (int i = n - 1; i >= 0; --i) {{
+                    li cur = a[i] + ans;
+                    li tar = (cur + b[i] - 1) / b[i] * b[i];
+                    ans += tar - cur;
+                }}
+                printf("%lld\n", ans);
+            }}
+            ```
+
             Each crossover operation should involve selecting parent codes, combining them strategically to produce optimized offspring.
             The strategy should clearly describe how the parent codes are combined to form the crossover.
             Balancing exploration and exploitation is key to success.
 
             Your goal is to return the best {num_offsprings} crossover codes.
+            Your code should be a valid C++ code that can be compiled and run.
             Here's an example an an output format. The third mutation, the example output is:
 
             <Crossover 3>
@@ -60,32 +144,41 @@ class LLMCrossover(LLMBase):
             {codes_and_fitnesses}
 
             Return the best {num_offsprings} crossovers.
-            Strictly follow the output format:
+            Strictly follow the output format (e.g. strategy: ..., code: ...):
             """
         )
     )
 
     def crossover(self, codes_and_fitnesses, num_offsprings):
-        messages = self.prompt.format_messages(
-            codes_and_fitnesses=codes_and_fitnesses,
-            num_offsprings=num_offsprings,
-        )
-        response = self.llm.invoke(messages)
-
-        print("Response: ", response.content)
-
-        strategies = self.extract_strategies(response.content)
-        codes = self.extract_codes(response.content)
-
+        max_attempts = 3
+        attempt = 0
         crossovers = []
-        for strategy, code in zip(strategies, codes):
-            crossovers.append({"strategy": strategy, "crossover_code": code})
 
-        if not strategies or not codes or len(strategies) != len(codes):
-            raise ValueError(
-                "Mismatch between strategies and codes or one of them is empty."
+        while attempt < max_attempts:
+            attempt += 1
+            messages = self.prompt.format_messages(
+                codes_and_fitnesses=codes_and_fitnesses,
+                num_offsprings=num_offsprings,
             )
-        return crossovers
+            response = self.llm.invoke(messages)
+
+            print(f"Attempt {attempt}: Response: ", response.content)
+
+            strategies = self.extract_strategies(response.content)
+            codes = self.extract_codes(response.content)
+
+            if strategies and codes and len(strategies) == len(codes):
+                for strategy, code in zip(strategies, codes):
+                    print("Strategy: ", strategy)
+                    print("Code: ", code)
+                    crossovers.append({"strategy": strategy, "crossover_code": code})
+                return crossovers
+
+            print("Mismatch or empty strategies/codes, retrying...")
+
+        raise ValueError(
+            "Failed to generate valid crossovers after 3 attempts."
+        )
 
 
 class LLMMutation(LLMBase):
@@ -96,6 +189,91 @@ class LLMMutation(LLMBase):
             As an expert C++ developer, your task is to generate {num_offsprings} mutations of the given code.
             A lower fitness score means better performance.
 
+            Here are some examples of successful code optimizations:
+
+            ```cpp
+            #include <bits/stdc++.h>
+            using namespace std;
+
+            int main() {{
+                string s;
+                cin >> s;
+                int a = 0, z = 0;
+                for(int i = 0; i < s.size(); i++) {{
+                    if (s[i] == 'A') {{
+                        a = i;
+                        break;
+                    }}
+                }}
+            ```
+
+            can be optimized to:
+            ```cpp
+            #include<cstdio>
+            #include<algorithm>
+            using namespace std;
+            char str[200005];
+            int main(){{
+                scanf("%s",str);
+                int ans = 0;
+                int a=-1;
+                for(int i=0;str[i];i++){{
+                    if(str[i]=='Z'){{
+                        if(a!=-1)
+                            ans = max(ans,i-a);
+                    }}else if(str[i]=='A' && a==-1)
+                        a = i;
+                }}
+                printf("%d\n",ans+1);
+                return 0;
+            }}
+            ```
+
+            For another example,
+            ```cpp
+            #include <cstdio>
+            #include <cstring>
+            #include <algorithm>
+            #include <iostream>
+            using namespace std;
+
+            typedef long long ll;
+            const int maxn = 100000;
+            int n;
+            long long a[maxn], b[maxn];
+            int main(void) {{
+                cin >> n;
+                for(int i = 0; i < n; ++i) {{
+                    cin >> a[i] >> b[i];
+                }}
+            }}
+            ```
+
+            can be optimized to:
+            ```cpp
+            #include <cstdio>
+            #include <cstring>
+            #include <algorithm>
+            using namespace std;
+            typedef long long li;
+            const int maxn = 1e5;
+            int n, a[maxn], b[maxn];
+            int main(void) {{
+                scanf("%d", &n);
+                for (int i = 0; i < n; ++i) {{
+                    scanf("%d%d", a + i, b + i);
+                }}
+                li ans = 0;
+                for (int i = n - 1; i >= 0; --i) {{
+                    li cur = a[i] + ans;
+                    li tar = (cur + b[i] - 1) / b[i] * b[i];
+                    ans += tar - cur;
+                }}
+                printf("%lld\n", ans);
+            }}
+            ```
+
+            The above are only examples.
             Each mutation operation should involve selecting specific parts of the code, such as import packages, lines, or blocks, and applying diverse strategies to optimize them.
             The strategy should clearly describe the focus area and the intended optimization.
 
@@ -114,7 +292,7 @@ class LLMMutation(LLMBase):
             Fitness score: {fitness}
 
             Return the best {num_offsprings} mutations.
-            Strictly follow the output format:
+            Strictly follow the output format (e.g. strategy: ..., code: ...):
             """
         )
     )
@@ -126,24 +304,31 @@ class LLMMutation(LLMBase):
         target_fitness: int,
         num_offsprings: int,
     ) -> str:
-        messages = self.prompt.format_messages(
-            code=target_code,
-            fitness=target_fitness,
-            num_offsprings=num_offsprings,
-        )
-        response = self.llm.invoke(messages)
+        max_attempts = 3
+        attempt = 0
 
-        print("Response: ", response.content)
-
-        strategies = self.extract_strategies(response.content)
-        codes = self.extract_codes(response.content)
-
-        if not strategies or not codes or len(strategies) != len(codes):
-            raise ValueError(
-                "Mismatch between strategies and codes or one of them is empty."
+        while attempt < max_attempts:
+            attempt += 1
+            messages = self.prompt.format_messages(
+                code=target_code,
+                fitness=target_fitness,
+                num_offsprings=num_offsprings,
             )
+            response = self.llm.invoke(messages)
 
-        return strategies, codes
+            print(f"Attempt {attempt}: Response: ", response.content)
+
+            strategies = self.extract_strategies(response.content)
+            codes = self.extract_codes(response.content)
+
+            if strategies and codes and len(strategies) == len(codes):
+                return strategies, codes
+
+            print("Mismatch or empty strategies/codes, retrying...")
+
+        raise ValueError(
+            "Failed to generate valid mutations after 3 attempts."
+        )
 
     def mutate_debugging(
         self,
@@ -154,8 +339,8 @@ class LLMMutation(LLMBase):
     ) -> str:
         mutations = []
         for _ in range(num_offsprings):
-            mutation_strategy = f"Strategy {self.id}"
-            mutated_code = f"{target_code} // {self.id}"
+            mutation_strategy = f"Strategy {{self.id}}"
+            mutated_code = f"{{target_code}} // {{self.id}}"
             mutations.append(
                 {
                     "strategy": mutation_strategy,

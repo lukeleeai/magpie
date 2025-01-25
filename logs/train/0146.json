@@ -1,0 +1,521 @@
+{
+    "(1)": {
+        "children": [
+            {
+                "fitness": 6805596.5,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the nested loop structure that updates the `dp` array, which could be optimized by unrolling the loops to reduce the overhead of loop control and improve cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5589596.0625
+        ]
+    },
+    "(14)": {
+        "children": [
+            {
+                "fitness": 6337373.0625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        // No need to reset dp[1][j][k] here since we've initialized it to 0.\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the dp array, which could be optimized by avoiding unnecessary resets and reducing the memory footprint."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "14"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5376476.5
+        ]
+    },
+    "(14_27x7x14x9_29)": {
+        "children": [
+            {
+                "fitness": 5467098.1875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the dp initialization method from Parent 1 (fitness: 5246944.875) with the loop structure from Parent 3 (fitness: 5966822.5625) to enhance efficiency."
+            },
+            {
+                "fitness": 6252242.5625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization technique from Parent 4 (fitness: 6133745.125) with the loop structure from Parent 2 (fitness: 5358741.25) to minimize overhead while maintaining readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "14_27",
+            "7",
+            "14",
+            "9_29"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        // No need to reset dp[1][j][k] here since we've initialized it to 0.\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5246944.875,
+            5358741.25,
+            5966822.5625,
+            6133745.125
+        ]
+    },
+    "(15)": {
+        "children": [
+            {
+                "fitness": 6253767.0,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        // Only reset the necessary part of the dp array\n        for (int j = 1; j <= m; j++) {\n            dp[1][j][0] = 0; // Initialize k=0\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the dp array, specifically the reset operation inside the m loop. This can be optimized by reducing the scope of the reset operation to only the necessary dimensions, which can improve cache performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "15"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5458855.375
+        ]
+    },
+    "(20)": {
+        "children": [
+            {
+                "fitness": 6482444.9375,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        // Avoid unnecessary resets by using a single array and updating values selectively.\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = (k == 0) ? 0 : dp[1][j][k]; // Only update for k > 0\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the resetting of its values, which could be optimized by avoiding unnecessary resets and using more efficient data structures."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "20"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5797551.1875
+        ]
+    },
+    "(23x7x22x20)": {
+        "children": [
+            {
+                "fitness": 6256121.0625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization pattern from Parent 3 (fitness: 5467098.1875) with the loop structure from Parent 1 (fitness: 5239064.3125) to enhance clarity and performance."
+            },
+            {
+                "fitness": 5913202.8125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the efficient array handling from Parent 2 (fitness: 5434484.1875) and merge it with the error handling from Parent 4 (fitness: 5797551.1875) to improve robustness and readability."
+            },
+            {
+                "fitness": 6200288.5,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001]; // Use static to ensure persistence across iterations.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the usage of static array from Parent 2 (fitness: 5434484.1875) with the dynamic logic from Parent 3 (fitness: 5467098.1875) to create a more efficient solution."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "23",
+            "7",
+            "22",
+            "20"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5239064.3125,
+            5434484.1875,
+            5467098.1875,
+            5797551.1875
+        ]
+    },
+    "(24x23x25x26)": {
+        "children": [
+            {
+                "fitness": 5423451.0,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the modular arithmetic handling from Parent 4 (fitness: 5979535.25) with the efficient array reset strategy from Parent 3 (fitness: 5913202.8125) to enhance performance."
+            },
+            {
+                "fitness": 6433742.8125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Take the efficient array initialization from Parent 2 (fitness: 5614545.25) and combine it with the loop structure from Parent 3 (fitness: 5913202.8125) to enhance readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "24",
+            "23",
+            "25",
+            "26"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5433782.6875,
+            5614545.25,
+            5913202.8125,
+            5979535.25
+        ]
+    },
+    "(26)": {
+        "children": [
+            {
+                "fitness": 6551423.4375,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        // Reset the dp array for all m values in one go\n        for (int j = 0; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0;\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the dp array is reset at the start of each m loop, which could be optimized by using a single reset operation for the entire dp array instead of resetting it in each iteration."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "26"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5979535.25
+        ]
+    },
+    "(28)": {
+        "children": [
+            {
+                "fitness": 112445237.3125,
+                "new_code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int mod = 100000;\nvector<vector<vector<int>>> dp(2, vector<vector<int>>(2001, vector<int>(3001, 0))); // Use vector for automatic memory management.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            fill(dp[1][j].begin(), dp[1][j].end(), 0); // Use fill to reset the array efficiently\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the dp array, which could be optimized by reducing the memory footprint and utilizing a more efficient data structure for the given problem context."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5397923.4375
+        ]
+    },
+    "(28x31x23x24)": {
+        "children": [
+            {
+                "fitness": 5293749.25,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        \n        // Reset dp array for each m iteration\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; \n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and optimization of the dp array from Parent 1 with the loop structure from Parent 2 to enhance performance."
+            },
+            {
+                "fitness": 6719693.125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the efficient input/output handling from Parent 2 with the dp logic of Parent 3, focusing on reducing unnecessary computations and improving clarity."
+            },
+            {
+                "fitness": 5672800.125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the variable declaration simplifications from Parent 4 while maintaining the core functionality of the dp logic from Parent 1, thus reducing complexity."
+            },
+            {
+                "fitness": 5295937.75,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the reset logic and the structure from Parent 2 with the efficient handling of dp values from Parent 3, optimizing the overall performance by avoiding redundant calculations."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "28",
+            "31",
+            "23",
+            "24"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        int n2 = n * n; // Calculate n squared once\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5397923.4375,
+            5515868.6875,
+            6252242.5625,
+            6256121.0625
+        ]
+    },
+    "(31)": {
+        "children": [
+            {
+                "fitness": 5223633.1875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001]; // Removed initialization to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            // Only reset the necessary values instead of the entire row\n            dp[1][j][0] = 0; // Initialize k=0\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0 only\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the resetting of values within the loops. Instead of resetting the entire row for every iteration of `j`, we can optimize the memory usage by maintaining only necessary values and resetting them conditionally, which should reduce redundant operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "31"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {{{0}}}; // Initialize the dp array to zero at the point of declaration.\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n; // Calculate n squared once\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5515868.6875
+        ]
+    },
+    "(5x8x2x0)": {
+        "children": [
+            {
+                "fitness": 7354611.875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize only k=0 once\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the early exit condition from Parent 1 (fitness: 5338820.5625) with the optimized loop handling from Parent 3 (fitness: 6364442.4375) to improve runtime efficiency."
+            },
+            {
+                "fitness": 5589596.0625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the memory optimization technique from Parent 2 (fitness: 6227754.25) with the modular arithmetic from Parent 4 (fitness: 7250462.0625) to ensure efficient DP updates."
+            },
+            {
+                "fitness": 6488678.5,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the error-checking logic from Parent 4 (fitness: 7250462.0625) with the optimized input handling from Parent 2 (fitness: 6227754.25) to enhance reliability and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "5",
+            "8",
+            "2",
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize only k=0 once\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5338820.5625,
+            6227754.25,
+            6364442.4375,
+            7250462.0625
+        ]
+    },
+    "(7x3x5x8_14)": {
+        "children": [
+            {
+                "fitness": 8138403.875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the initialization logic from Parent 1 with the optimized loop management from Parent 4, enhancing performance by reducing complexity."
+            },
+            {
+                "fitness": 5609780.125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the optimized output handling from Parent 2 with the structure and functionality from Parent 3 to reduce redundant calculations."
+            },
+            {
+                "fitness": 5470436.6875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the modular arithmetic optimizations from Parent 2 with the loop structure of Parent 3, ensuring efficient handling of dynamic programming updates."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "7",
+            "3",
+            "5",
+            "8_14"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5394030.0,
+            5475659.5625,
+            5510734.1875,
+            5921978.125
+        ]
+    },
+    "(8)": {
+        "children": [
+            {
+                "fitness": 5921978.125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the nested loops that perform repetitive calculations. These can be optimized by reducing the number of iterations and avoiding unnecessary calculations through better indexing and initialization."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5460723.125
+        ]
+    },
+    "(8x3x1x0)": {
+        "children": [
+            {
+                "fitness": 6479609.25,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize only k=0 once\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization of `dp` from Parent 4 with the loop structure from Parent 1 for improved efficiency in memory usage and clarity."
+            },
+            {
+                "fitness": 5510734.1875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the early exit condition from Parent 1 with the loop structure from Parent 2 to ensure clarity in termination conditions while maintaining consistent logic."
+            },
+            {
+                "fitness": 7400841.0,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize only k=0 once\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the structure of the loop from Parent 3 while optimizing the initialization of the dynamic programming array from Parent 4 for better memory efficiency."
+            },
+            {
+                "fitness": 7439633.625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the error handling from Parent 2 with the loop efficiency of Parent 1 to create a robust solution that handles edge cases better."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "3",
+            "1",
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize only k=0 once\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5460723.125,
+            5563742.6875,
+            5589596.0625,
+            5726287.5
+        ]
+    },
+    "(9)": {
+        "children": [
+            {
+                "fitness": 6133745.125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001] = {}; // Initialize the array to zero\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that resets `dp[1][j][k]` at the start of each `m` loop, which could be optimized by using a more efficient method to initialize the array. Instead of resetting the entire array, we can initialize it with a single loop during its declaration to save time."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "9"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5609780.125
+        ]
+    },
+    "(9x7x11x8)": {
+        "children": [
+            {
+                "fitness": 5966822.5625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 0; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the input handling and loop structure from Parent 2 (fitness: 5462438.0625) while integrating the `dp` resetting approach from Parent 1 (fitness: 5384973.125), allowing for more efficient memory usage."
+            },
+            {
+                "fitness": 5700041.875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the efficient `dp` initialization from Parent 4 (fitness: 6459984.3125) with the logic structure from Parent 3 (fitness: 5470436.6875) to enhance performance by reducing unnecessary calculations."
+            },
+            {
+                "fitness": 5458855.375,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient memory management from Parent 4 (fitness: 6459984.3125) with the loop traversal logic from Parent 1 (fitness: 5384973.125), optimizing the overall runtime."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "9",
+            "7",
+            "11",
+            "8"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int j = 1; j <= m; j++) {\n            for (int k = 1; k <= s; k++) {\n                dp[1][j][k] = 0; // Reset at the start of each m loop\n            }\n        }\n\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k >= j) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize k=0\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n * n & 1][m][s]);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            5384973.125,
+            5462438.0625,
+            5470436.6875,
+            6459984.3125
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 7250462.0625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input/output operations, which can be optimized by using faster methods like `scanf` and `printf` instead of `cin` and `cout`."
+            },
+            {
+                "fitness": 6364442.4375,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                dp[(i + 1) & 1][j][0] = 0; // Initialize only k=0 once\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of dp array, which can be optimized by reducing redundant calculations and initializing only when necessary."
+            },
+            {
+                "fitness": 9244640.5625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k] % mod;\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j] % mod;\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Remove unnecessary conditional checks inside loops which can lead to performance degradation in tight loops."
+            },
+            {
+                "fitness": 6767242.875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nstatic int dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize static arrays for dp storage to avoid repeated memory allocations and enhance cache performance."
+            },
+            {
+                "fitness": 11549732.1875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        for (int i = 0; i < n * n; i++) {\n            for (int k = 1; k <= s; k++) {\n                for (int j = 1; j <= m; j++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[(n * n) & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Use a single loop for the `j` index to reduce overhead and improve cache locality by combining loops when possible."
+            },
+            {
+                "fitness": 7308383.875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nconst int mod = 100000;\nint dp[2][2001][3001];\n\nint main() {\n    int n, m, s;\n    while (true) {\n        scanf(\"%d %d %d\", &n, &m, &s);\n        if (n == 0) break;\n\n        int n2 = n * n;\n        for (int i = 0; i < n2; i++) {\n            for (int j = 1; j <= m; j++) {\n                for (int k = 1; k <= s; k++) {\n                    if (i == 1) {\n                        dp[1][j][k] = (j < k) ? 0 : 1;\n                    }\n                    dp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j - 1][k];\n\n                    if (k - j >= 0) {\n                        dp[(i + 1) & 1][j][k] += dp[i & 1][j - 1][k - j];\n                    }\n                    dp[(i + 1) & 1][j][k] %= mod;\n                }\n            }\n        }\n        printf(\"%d\\n\", dp[n2 & 1][m][s]);\n    }\n    return 0;\n}\n",
+                "strategy": "Precompute values that remain constant throughout the loops to avoid redundant calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n\n\n\nusing namespace std;\n\nconst int mod = 100000;\n\n\n\nint dp[2][2001][3001];\n\n\n\nint main(int argc, char const* argv[])\n\n{\n\n\tint n, m, s;\n\n\tdo{\n\n\t\t\tcin >> n >> m >> s;\n\n\t\t\tif(n == 0)break;\n\n\t\t\tfor(int i = 0; i < n * n; i++){\n\n\t\t\t\t\tfor(int j = 1; j <= m; j++){\n\n\t\t\t\t\t\t\tfor(int k = 1; k <= s; k++){\n\n\t\t\t\t\t\t\t\t\tif(i == 1){\n\n\t\t\t\t\t\t\t\t\t\t\tif(j < k)dp[1][j][k] = 0;\n\n\t\t\t\t\t\t\t\t\t\t\telse dp[1][j][k] = 1;\n\n\t\t\t\t\t\t\t\t\t}\n\n\t\t\t\t\t\t\t\t\tdp[(i + 1) & 1][j][k] = dp[(i + 1) & 1][j-1][k];\n\n\t\t\t\t\t\t\t\t\tif(k -j >= 0)dp[(i + 1) & 1][j][k] += dp[i & 1][j-1][k-j];\n\n\t\t\t\t\t\t\t\t\tdp[(i + 1) & 1][j][k] %= mod;\n\n\t\t\t\t\t\t\t\t\t// cout << i << \" \" << j << \" \" << k << \" \" << dp[(i + 1) & 1][j][k] << endl;\n\n\t\t\t\t\t\t\t}\n\n\t\t\t\t\t}\n\n\t\t\t}\n\n\t\t\tcout << dp[(n*n) & 1][m][s] << endl;\n\n\t}while(true);\n\n\treturn 0;\n\n}\n\n\n"
+        ],
+        "parent_fitnesses": [
+            7318315.6875
+        ]
+    }
+}

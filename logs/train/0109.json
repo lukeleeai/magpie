@@ -1,0 +1,929 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 1632146.1875,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    memset(state, -1, sizeof(state)); // Initialize state array in one go instead of inside the loop\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `state` array, which could be optimized by eliminating redundant operations and improving memory access patterns."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1061014.9375
+        ]
+    },
+    "(10)": {
+        "children": [
+            {
+                "fitness": 1091157.875,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize x and state arrays to -1 using std::fill\n    fill(x, x + n, -1);\n    fill(state, state + n, -1);\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the input loop where `x` and `state` arrays are initialized. Instead of initializing them to `-1` in the loop, we can improve performance by using `std::fill` to initialize these arrays before the input loop, reducing the overhead associated with repeated assignments within the loop."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1028545.875
+        ]
+    },
+    "(12)": {
+        "children": [
+            {
+                "fitness": 1203902.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); // Initialize state array here\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` array, which could be optimized by removing the redundant initialization inside the loop and instead initializing it in a single call using the helper function `initializeArrays`."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "12"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1065344.3125
+        ]
+    },
+    "(12_28)": {
+        "children": [
+            {
+                "fitness": 1320561.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    fill(state, state + n, -1); // Directly initialize state array here\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    fill(x, x + n, -1); // Directly initialize x array here\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` array and the way we handle the `while` loop. The original code initializes the `state` array using a separate function which adds overhead. We can optimize it by using a simpler approach for initialization and improving the logic inside the loop to minimize state checks."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "12_28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); // Initialize state array here\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1001052.0625
+        ]
+    },
+    "(14)": {
+        "children": [
+            {
+                "fitness": 1108439.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    fill(state, state + n, -1); // Initialize state array in one step\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    fill(x, x + n, -1); // Using std::fill for initialization\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` array, which is currently set to -1 inside the input loop. Instead, we can optimize this by using a single initialization step before the loop to reduce redundant operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "14"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    fill(x, x + n, -1); // Using std::fill for initialization\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1030847.125
+        ]
+    },
+    "(15)": {
+        "children": [
+            {
+                "fitness": 1148188.5625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` array in the input loop. This can be optimized by using a single loop to initialize both `state` and `x` arrays at once, rather than initializing `state` in the loop separately."
+            },
+            {
+                "fitness": 1113865.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Directly initializing x here instead of calling a separate function\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function which is called to initialize the `x` array. This can be optimized by directly using the initialization logic within the `main` function instead of a separate function call, reducing function overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "15"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1038658.8125
+        ]
+    },
+    "(15x14x12x4)": {
+        "children": [
+            {
+                "fitness": 1037022.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the initialization of arrays from Parent 1 (fitness: 1016650.375) with the optimized loop structure from Parent 2 (fitness: 1030847.125)."
+            },
+            {
+                "fitness": 1274805.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the array initialization method from Parent 4 (fitness: 1070669.875) with the loop for calculating the answer from Parent 3 (fitness: 1065344.3125)."
+            },
+            {
+                "fitness": 1154701.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using std::fill for initialization\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 2 (fitness: 1030847.125) with the array initialization from Parent 4 (fitness: 1070669.875), while keeping the core logic from Parent 1 (fitness: 1016650.375)."
+            },
+            {
+                "fitness": 1042028.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Integrate the structure of Parent 3 (fitness: 1065344.3125) with the initialization function from Parent 1 (fitness: 1016650.375) while adjusting the output for clarity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "15",
+            "14",
+            "12",
+            "4"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    fill(x, x + n, -1); // Using std::fill for initialization\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1016650.375,
+            1030847.125,
+            1065344.3125,
+            1070669.875
+        ]
+    },
+    "(16)": {
+        "children": [
+            {
+                "fitness": 1028127.5,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    fill(state, state + n, -1); // Initialize state directly\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Direct initialization of x\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the array initialization and the loop that processes the input. Instead of using a separate initialization function, we can directly initialize the arrays within the main function to reduce function call overhead. Additionally, we can minimize the size of the `state` array by using a more compact representation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1037022.75
+        ]
+    },
+    "(17)": {
+        "children": [
+            {
+                "fitness": 1110784.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize both state and x arrays in the input loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `state` array within the input loop; this can be optimized by combining the initialization of `state` and `x` arrays to reduce redundant operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "17"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            999717.75
+        ]
+    },
+    "(17_30)": {
+        "children": [
+            {
+                "fitness": 1035377.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays to -1 before the input loop\n    fill(state, state + n, -1);\n    fill(x, x + n, -1);\n    \n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` and `x` arrays. Instead of initializing them within the loop, we can allocate them to a default value at the start to eliminate unnecessary assignment in each iteration. This can improve performance by reducing the number of operations in the input loop."
+            },
+            {
+                "fitness": 1014959.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays in a single loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` and `x` arrays, which could be optimized by using a single loop to eliminate the separate initialization steps. This reduces the number of iterations and improves clarity."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "17_30"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize both state and x arrays in the input loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            981351.0625
+        ]
+    },
+    "(17_30_34)": {
+        "children": [
+            {
+                "fitness": 1148929.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays to -1 using a single loop\n    fill(state, state + n, -1);\n    fill(x, x + n, -1);\n    \n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` and `x` arrays, which could be optimized by using a single loop to initialize both arrays simultaneously, reducing the number of iterations and improving the overall performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "17_30_34"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays to -1 before the input loop\n    fill(state, state + n, -1);\n    fill(x, x + n, -1);\n    \n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1035377.8125
+        ]
+    },
+    "(17_30_38)": {
+        "children": [
+            {
+                "fitness": 1077740.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays in a single loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` and `x` arrays, which can be optimized by using a single loop to minimize the number of iterations and improve runtime efficiency."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "17_30_38"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays in a single loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1014959.1875
+        ]
+    },
+    "(17_30x23x16_32x20)": {
+        "children": [
+            {
+                "fitness": 1081841.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n    initializeArrays(x, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the initialization logic from Parent 2 with the state handling from Parent 1, while reducing redundancy in array initialization."
+            },
+            {
+                "fitness": 1313562.5,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    initializeArrays(state, n, -1);\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the efficient input handling from Parent 1 with the array initialization function from Parent 4, ensuring better readability and maintainability."
+            },
+            {
+                "fitness": 1171452.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    fill(state, state + n, -1); \n    fill(x, x + n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Integrate the efficiency of array initialization from Parent 2 and the direct array handling from Parent 3 to streamline the initialization process."
+            },
+            {
+                "fitness": 1107575.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n    initializeArrays(x, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Utilize the structure of Parent 1 while incorporating the initialization function from Parent 4 to reduce code duplication and enhance readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "17_30",
+            "23",
+            "16_32",
+            "20"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize both state and x arrays in the input loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    fill(state, state + n, -1); // Initialize state directly\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Direct initialization of x\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n    }\n\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            988897.9375,
+            1021500.9375,
+            1028127.5,
+            1032310.4375
+        ]
+    },
+    "(17_30x25x17_30_34x24)": {
+        "children": [
+            {
+                "fitness": 1183604.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n    initializeArrays(x, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Use the array initialization from Parent 3 along with the improved loop structure from Parent 4, which avoids redundancy in state initialization."
+            },
+            {
+                "fitness": 1021981.5,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Integrate the effective array initialization of Parent 1 with the logic of Parent 3 to improve processing efficiency while maintaining code clarity."
+            },
+            {
+                "fitness": 1070901.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n    initializeArrays(x, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the initialization method from Parent 2 with the loop logic from Parent 4 to streamline the code and improve performance by eliminating unnecessary checks."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "17_30",
+            "25",
+            "17_30_34",
+            "24"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize both state and x arrays in the input loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    initializeArrays(state, n, -1);\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays to -1 before the input loop\n    fill(state, state + n, -1);\n    fill(x, x + n, -1);\n    \n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n    initializeArrays(x, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            981351.0625,
+            1003364.0,
+            1035377.8125,
+            1081841.0625
+        ]
+    },
+    "(17x12_28x16x15)": {
+        "children": [
+            {
+                "fitness": 1032310.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n    }\n\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 1 (fitness: 999717.75) with the array initialization method from Parent 2 (fitness: 1001052.0625) to optimize the initialization process."
+            },
+            {
+                "fitness": 1250725.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the initialization function from Parent 2 (fitness: 1001052.0625) with the loop structure from Parent 3 (fitness: 1037022.75) to enhance performance by initializing state early."
+            },
+            {
+                "fitness": 1182270.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n    }\n\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Take the optimized input loop from Parent 1 (fitness: 999717.75) and the concise array initialization from Parent 4 (fitness: 1038658.8125) to streamline the array setup."
+            },
+            {
+                "fitness": 1104405.9375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the array initialization from Parent 2 (fitness: 1001052.0625) and the efficient loop structure from Parent 3 (fitness: 1037022.75) to create a balanced offspring."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "17",
+            "12_28",
+            "16",
+            "15"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); // Initialize state array here\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1); // Using initialization function\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            999717.75,
+            1001052.0625,
+            1037022.75,
+            1038658.8125
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 2173419.9375,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    memset(x, -1, sizeof(x)); // Initialize x in a single call\n    memset(state, -1, sizeof(state)); // Initialize state in a single call\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of arrays x and state within the input loop, which could be optimized by moving the initialization outside the loop to reduce redundant operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Utilize state for optimization\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1117788.25
+        ]
+    },
+    "(20)": {
+        "children": [
+            {
+                "fitness": 1830459.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <cstring> // Include for memset\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n    }\n\n    // Using memset to initialize the array x\n    memset(x, -1, sizeof(x)); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function, which initializes the array `x` to -1. This can be optimized by directly using `memset` for better performance, as it avoids the overhead of function calls and can be more efficient for large arrays."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "20"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n    }\n\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1032310.4375
+        ]
+    },
+    "(23)": {
+        "children": [
+            {
+                "fitness": 1136776.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Directly initialize the state array in the main function\n    fill(state, state + n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function, which could be optimized by using a more efficient array initialization method directly in the main function instead of a separate function call."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1021500.9375
+        ]
+    },
+    "(24)": {
+        "children": [
+            {
+                "fitness": 1083284.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    fill(state, state + n, -1); \n    fill(x, x + n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the array initialization and the loop that processes the input, which could be optimized by using more efficient array access and reducing the number of function calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "24"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    initializeArrays(state, n, -1); \n    initializeArrays(x, n, -1); \n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1081841.0625
+        ]
+    },
+    "(25)": {
+        "children": [
+            {
+                "fitness": 1156390.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    \n    // Directly initializing arrays using a simple loop instead of a function call\n    fill(state, state + n, -1);\n    fill(x, x + n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` and `x` arrays, which could be optimized by using a more efficient method for array initialization to reduce the overhead of function calls."
+            },
+            {
+                "fitness": 1204122.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for(int i = 0; i < size; ++i) {\n        arr[i] = value;\n    }\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    initializeArrays(state, n, -1);\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function which uses `fill` for array initialization. This could be optimized by using a simple loop, reducing overhead and potentially improving performance for large arrays."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "25"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    initializeArrays(state, n, -1);\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            991382.0625
+        ]
+    },
+    "(25_39)": {
+        "children": [
+            {
+                "fitness": 1004266.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    \n    // Using a single loop for initialization instead of fill function calls\n    for(int i = 0; i < n; i++) {\n        state[i] = -1;\n        x[i] = -1;\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` and `x` arrays, which could be optimized by using a more efficient approach to avoid unnecessary function calls, potentially reducing initialization time."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "25_39"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    \n    // Directly initializing arrays using a simple loop instead of a function call\n    fill(state, state + n, -1);\n    fill(x, x + n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            985312.6875
+        ]
+    },
+    "(25_39x25x17_30_38x30)": {
+        "children": [
+            {
+                "fitness": 1005330.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize the arrays while reading inputs\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the array initialization from Parent 3 (fitness: 1014959.1875) with the input handling of Parent 1 (fitness: 985312.6875) to maintain efficient initialization while keeping the logic intact."
+            },
+            {
+                "fitness": 1155642.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    initializeArrays(state, n, -1);\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the efficient array initialization from Parent 2 (fitness: 991382.0625) with the direct processing logic from Parent 4 (fitness: 1021981.5) to achieve both improved performance and streamlined logic."
+            },
+            {
+                "fitness": 1192388.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Utilize the optimized initialization from Parent 1 (fitness: 985312.6875) while integrating the logic for processing states and counts from Parent 4 (fitness: 1021981.5) to balance performance with clarity in logic."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "25_39",
+            "25",
+            "17_30_38",
+            "30"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    \n    // Directly initializing arrays using a simple loop instead of a function call\n    fill(state, state + n, -1);\n    fill(x, x + n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n    initializeArrays(state, n, -1);\n    initializeArrays(x, n, -1); \n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize state and x arrays in a single loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            985312.6875,
+            991382.0625,
+            1014959.1875,
+            1021981.5
+        ]
+    },
+    "(3)": {
+        "children": [
+            {
+                "fitness": 2259974.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Initialize x and y arrays in a single loop to improve performance.\n    memset(x, -1, sizeof(x)); // Initialize entire x array to -1\n    memset(y, -1, sizeof(y)); // Initialize entire y array to -1\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        // Initialization of x and y is handled by memset, removed from loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the loops that handle input and array initialization, which could be optimized by reducing the number of operations performed within the loop."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        y[i] = -1; // Initialize y directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1099988.6875
+        ]
+    },
+    "(30)": {
+        "children": [
+            {
+                "fitness": 996888.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int currentIndex = i, cycleLength = 0;\n        while(state[currentIndex] == -1) {\n            state[currentIndex] = (cycleLength << 16) | i; \n            x[currentIndex] = cycleLength++;\n            currentIndex = (currentIndex + a[currentIndex]) % n;\n        }\n        if((state[currentIndex] & 0xFFFF) == i) ans += (cycleLength - (state[currentIndex] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the loop structure and state management, which could be optimized by reducing the number of operations and improving readability by using clearer variable names and avoiding unnecessary calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "30"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; \n        x[i] = -1; \n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; \n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; \n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1021981.5
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 1089838.375,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Use std::fill to initialize arrays\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function that initializes arrays with a specific value. This could be optimized by using the `std::fill` function from the STL, which is more efficient and concise for filling arrays."
+            },
+            {
+                "fitness": 1113318.125,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Added for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using std::fill for better performance\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function that initializes arrays `x` and `y` with a value of `-1`. This can be optimized by using `std::fill` from the `<algorithm>` library, which is more efficient for this purpose."
+            },
+            {
+                "fitness": 2112699.125,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Replace the custom initialization with memset for better performance\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of arrays and the use of `scanf`, which could be optimized by replacing the custom `initializeArrays` function with a single `memset` call for improved performance."
+            },
+            {
+                "fitness": 1209756.5625,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    // Combine the initialization of x and state in the same loop\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x\n        state[i] = -1; // Initialize state\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that initializes `x` and `state`, which could be optimized by combining the initialization into a single loop to reduce the number of iterations and improve cache locality."
+            },
+            {
+                "fitness": 1131247.875,
+                "new_code": "#include <cstdio>\n#include <algorithm> // for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using std::fill to initialize arrays\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the `initializeArrays` function which could be optimized by using `std::fill`, a standard library function that improves readability and potentially performance by directly filling the array with a specified value."
+            },
+            {
+                "fitness": 1080009.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of arrays x and y, which currently uses a function that iterates through the entire array. This could be optimized by using the `std::fill` function from the `<algorithm>` header, which is generally more efficient for filling arrays."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1070669.875
+        ]
+    },
+    "(4_10)": {
+        "children": [
+            {
+                "fitness": 1052176.5625,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using a loop for initialization instead of std::fill\n    for(int i = 0; i < n; i++) {\n        x[i] = -1;\n        y[i] = -1;\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the array initialization using `std::fill`, which could be optimized by using a loop for better control over the initialization process and potentially improving cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Use std::fill to initialize arrays\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1089838.375
+        ]
+    },
+    "(4_10_16)": {
+        "children": [
+            {
+                "fitness": 1039907.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using std::fill for initialization instead of a loop\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of arrays `x` and `y`, which could be optimized by using `std::fill` from the `<algorithm>` header for better performance and cleaner code."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_10_16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using a loop for initialization instead of std::fill\n    for(int i = 0; i < n; i++) {\n        x[i] = -1;\n        y[i] = -1;\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1052176.5625
+        ]
+    },
+    "(4_10_16_21)": {
+        "children": [
+            {
+                "fitness": 4643230.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\n#include <vector>    // Include vector for dynamic array management\nusing namespace std;\n\nint n;\nvector<int> a(100005);\nvector<int> x(100005, -1); // Initialize with -1\nvector<int> y(100005, -1); // Initialize with -1\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of arrays `x` and `y`, which could be optimized by using `std::vector` instead of raw arrays for automatic memory management and potentially better performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_10_16_21"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using std::fill for initialization instead of a loop\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1039907.4375
+        ]
+    },
+    "(4x0x4_10x2)": {
+        "children": [
+            {
+                "fitness": 1012922.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Utilize state for optimization\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the initialization loop from Parent 1 (fitness: 1006672.25) with the optimization strategy using bit manipulation from Parent 2 (fitness: 1061014.9375)."
+            },
+            {
+                "fitness": 1118028.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Utilize state for optimization\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the efficient array filling technique from Parent 3 (fitness: 1089838.375) with the dual state array management from Parent 4 (fitness: 1117788.25)."
+            },
+            {
+                "fitness": 1111704.25,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Fuse the input processing from Parent 1 (fitness: 1006672.25) with the optimized state handling from Parent 2 (fitness: 1061014.9375) for a more efficient algorithm."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "4",
+            "0",
+            "4_10",
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Use std::fill to initialize arrays\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Utilize state for optimization\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1006672.25,
+            1061014.9375,
+            1089838.375,
+            1117788.25
+        ]
+    },
+    "(4x10x4_10_16_21x7)": {
+        "children": [
+            {
+                "fitness": 1065344.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the initialization approach from Parent 2 with the logic for counting cycles from Parent 1 to enhance efficiency while maintaining clarity."
+            },
+            {
+                "fitness": 1151141.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the optimized array initialization from Parent 3 with the cycle counting logic from Parent 4 to streamline the code and maintain performance."
+            },
+            {
+                "fitness": 1270161.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    fill(x, x + n, -1); // Using std::fill for initialization\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Utilize the efficient fill function from Parent 3 while integrating the state management from Parent 4 for improved performance and readability."
+            },
+            {
+                "fitness": 1038658.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    fill(arr, arr + size, value);\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the effective initialization techniques from Parent 1 with the optimized cycle counting logic from Parent 2 to produce a succinct and efficient implementation."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "4",
+            "10",
+            "4_10_16_21",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using std::fill for initialization instead of a loop\n    fill(x, x + n, -1);\n    fill(y, y + n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1008780.125,
+            1028545.875,
+            1039907.4375,
+            1111704.25
+        ]
+    },
+    "(4x3x1x7)": {
+        "children": [
+            {
+                "fitness": 1108452.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the initialization approach from Parent 2 (fitness: 1099988.6875) with the state handling from Parent 3 (fitness: 1696705.6875) to streamline the code and improve performance."
+            },
+            {
+                "fitness": 1134196.3125,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        y[i] = -1; // Initialize y directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        do {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        } while (x[p] == -1);\n        \n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the loop optimization from Parent 4 (fitness: 2099311.5) with the array initialization from Parent 1 (fitness: 1000100.125) to enhance clarity and efficiency."
+            },
+            {
+                "fitness": 1117788.25,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Utilize state for optimization\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the efficient array handling from Parent 3 (fitness: 1696705.6875) with the clear initialization from Parent 2 (fitness: 1099988.6875) to reduce redundancy and improve readability."
+            },
+            {
+                "fitness": 1620732.75,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(state, -1, sizeof(state)); // Initialize state array\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        do {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        } while (state[p] == -1);\n        \n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Integrate the optimization loop from Parent 4 (fitness: 2099311.5) with the memory-efficient state handling from Parent 3 (fitness: 1696705.6875) to enhance computational efficiency."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "4",
+            "3",
+            "1",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        y[i] = -1; // Initialize y directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005]; // Use one array to store both x and y\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(state, -1, sizeof(state));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        do {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        } while (x[p] == -1);\n        \n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1000100.125,
+            1099988.6875,
+            1696705.6875,
+            2099311.5
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 1575162.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    memset(state, -1, sizeof(state)); // Initialize state array in one call\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the state array. Instead of initializing each element in the loop, we can set the entire array to -1 in one go, which is more efficient."
+            },
+            {
+                "fitness": 1532067.5625,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    memset(state, -1, sizeof(state)); // Initialize entire state array before the loop\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `state` array, which could be optimized by reducing the number of times the state is initialized during input. Instead of initializing each entry in the loop, we can initialize the entire array at once before processing, which can improve performance and readability."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1111704.25
+        ]
+    },
+    "(7x4x4x4_10_16)": {
+        "children": [
+            {
+                "fitness": 1158634.5625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the input initialization approach from Parent 1 (using state array) with the optimization logic from Parent 2 (using x and y arrays)."
+            },
+            {
+                "fitness": 1185721.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Merge the state initialization from Parent 3 with the array initialization from Parent 4, while maintaining the optimization logic from Parent 1."
+            },
+            {
+                "fitness": 1223766.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Utilize the array initialization method from Parent 4, combine it with the processing logic of Parent 1, and include the array declaration from Parent 3 for efficient memory usage."
+            },
+            {
+                "fitness": 1243331.625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n        x[i] = -1; // Initialize x directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            x[p] = c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine efficient state management from Parent 1 with the array handling from Parent 2, while keeping the optimization logic intact from Parent 3."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "7",
+            "4",
+            "4",
+            "4_10_16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        state[i] = -1; // Initialize state directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(state[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint state[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        state[i] = -1; // Utilize state for optimization\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if(x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm> // Include algorithm for std::fill\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    // Using a loop for initialization instead of std::fill\n    for(int i = 0; i < n; i++) {\n        x[i] = -1;\n        y[i] = -1;\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            999624.125,
+            1001091.625,
+            1012922.0,
+            1052176.5625
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 2309256.375,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Reduce the complexity of input handling by using `scanf` instead of `cin` for faster input."
+            },
+            {
+                "fitness": 1696705.6875,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint state[100005]; // Use one array to store both x and y\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(state, -1, sizeof(state));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(state[p] == -1) {\n            state[p] = (c << 16) | i; // Store c and i in one integer\n            c++;\n            p = (p + a[p]) % n;\n        }\n        if((state[p] & 0xFFFF) == i) ans += (c - (state[p] >> 16));\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Use a single array for `x` and `y` to save space and improve cache locality."
+            },
+            {
+                "fitness": 2584118.6875,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100000]; // Decrease size to 100000 to match expected maximum\nint x[100000];\nint y[100000];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Optimize the array size to reduce memory usage, ensuring it fits within actual bounds."
+            },
+            {
+                "fitness": 1338080.625,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n        x[i] = -1; // Initialize x directly in the input loop\n        y[i] = -1; // Initialize y directly in the input loop\n    }\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Combine the two loops into one to reduce the number of iterations in certain cases."
+            },
+            {
+                "fitness": 1070669.875,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nvoid initializeArrays(int* arr, int size, int value) {\n    for (int i = 0; i < size; ++i) arr[i] = value;\n}\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    initializeArrays(x, n, -1);\n    initializeArrays(y, n, -1);\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Utilize a more efficient way to set values instead of `memset`, especially for larger arrays."
+            },
+            {
+                "fitness": 3857728.0625,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nlong long a[100005];\nlong long x[100005];\nlong long y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%lld\", &a[i]);\n    }\n\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    long long ans = 0;\n    for(int i = 0; i < n; i++) {\n        long long p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%lld\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Change the data type of the arrays from `int` to `long long` to handle larger numbers and potential overflow."
+            },
+            {
+                "fitness": 2540046.75,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        int p = i, c = 0;\n        while(x[p] == -1) {\n            x[p] = c++;\n            y[p] = i;\n            p += a[p]; // Avoid modulo operation\n            if (p >= n) p -= n; // Manual wrap around\n        }\n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Use a modular arithmetic approach to avoid the modulo operation inside the loop, potentially saving computation time."
+            },
+            {
+                "fitness": 2099311.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n;\nint a[100005];\nint x[100005];\nint y[100005];\n\nint main() {\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &a[i]);\n    }\n\n    memset(x, -1, sizeof(x));\n    memset(y, -1, sizeof(y));\n\n    int ans = 0;\n    for(int i = 0; i < n; i++) {\n        if (x[i] != -1) continue; // Skip already processed\n        int p = i, c = 0;\n        do {\n            x[p] = c++;\n            y[p] = i;\n            p = (p + a[p]) % n;\n        } while (x[p] == -1);\n        \n        if(y[p] == i) ans += (c - x[p]);\n    }\n\n    printf(\"%d\\n\", ans);\n    return 0;\n}\n",
+                "strategy": "Simplify the condition checks inside the loop for better readability and potential performance improvement."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include\"stdc++.h\"\n\nusing namespace std;\n\nint n;\n\nint a[100005];\n\nint x[100005];\n\nint y[100005];\n\n\n\nint main(){\n\n  scanf(\"%d\",&n);\n\n  for(int i=0;i<n;i++){\n\n    cin>>a[i];\n\n  }\n\n\n\n  memset(x,-1,sizeof(x));\n\n  memset(y,-1,sizeof(y));\n\n\n\n  int ans=0;\n\n  for(int i=0;i<n;i++){\n\n    int p=i,c=0;\n\n    while(x[p]==-1){\n\n      x[p]=c++;\n\n      y[p]=i;\n\n      p=(p+a[p])%n;\n\n    }\n\n    if(y[p]==i)ans+=(c-x[p]);\n\n  }\n\n\n\n  cout<<ans<<endl;\n\n  return 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3962083.8125
+        ]
+    }
+}

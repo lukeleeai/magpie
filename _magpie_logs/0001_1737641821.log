@@ -1,0 +1,710 @@
+2025-01-23 14:17:01,738	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 1019048722989159
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0001
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-23 14:17:01,738	[DEBUG]	
+2025-01-23 14:17:01,738	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-23 14:17:01,738	[INFO]	~~~~ WARMUP ~~~~
+2025-01-23 14:17:02,656	[DEBUG]	EXEC>  SUCCESS 2420234.375
+2025-01-23 14:17:02,657	[INFO]	WARM    SUCCESS               2420234.38 (--) [0 edit(s)]  
+2025-01-23 14:17:03,175	[DEBUG]	EXEC>  SUCCESS 2475700.8125
+2025-01-23 14:17:03,176	[INFO]	WARM    SUCCESS               2475700.81 (--) [0 edit(s)]  
+2025-01-23 14:17:03,862	[DEBUG]	EXEC>  SUCCESS 3006882.75
+2025-01-23 14:17:03,862	[INFO]	WARM    SUCCESS               3006882.75 (--) [0 edit(s)]  
+2025-01-23 14:17:04,413	[DEBUG]	EXEC>  SUCCESS 2483671.625
+2025-01-23 14:17:04,414	[INFO]	WARM    SUCCESS               2483671.62 (--) [0 edit(s)]  
+2025-01-23 14:17:04,941	[DEBUG]	EXEC>  SUCCESS 2395598.5
+2025-01-23 14:17:04,941	[INFO]	WARM    SUCCESS               2395598.50 (--) [0 edit(s)]  
+2025-01-23 14:17:04,941	[INFO]	REF     SUCCESS               2395598.50 (--) [0 edit(s)]  
+2025-01-23 14:17:04,942	[INFO]	
+2025-01-23 14:17:04,942	[INFO]	~~~~ START ~~~~
+2025-01-23 14:17:26,911	[DEBUG]	EXEC>  SUCCESS 954891.0625
+2025-01-23 14:17:26,912	[INFO]	0-1     SUCCESS              *954891.06 (39.86%) [1 edit(s)]  
+2025-01-23 14:17:26,912	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:17:28,483	[DEBUG]	EXEC>  SUCCESS 2488340.8125
+2025-01-23 14:17:28,483	[INFO]	0-2     SUCCESS               2488340.81 (103.87%) [1 edit(s)]  
+2025-01-23 14:17:28,483	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : (int)(log10(sum) + 1); // Compute digit length using logarithm\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:30,017	[DEBUG]	EXEC>  SUCCESS 2440737.0625
+2025-01-23 14:17:30,017	[INFO]	0-3     SUCCESS               2440737.06 (101.88%) [1 edit(s)]  
+2025-01-23 14:17:30,018	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <string>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = to_string(sum).length(); // Use string conversion to determine length\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:31,519	[DEBUG]	EXEC>  SUCCESS 2433631.125
+2025-01-23 14:17:31,519	[INFO]	0-4     SUCCESS               2433631.12 (101.59%) [1 edit(s)]  
+2025-01-23 14:17:31,519	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << (a + b < 10 ? 1 : (a + b < 100 ? 2 : (a + b < 1000 ? 3 : 4))) << endl; // Directly output digit length based on value\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:32,797	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-23 14:17:32,797	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << (a + b == 0 ? 1 : (int)log10(a + b) + 1) << endl; // Combine calculation and output\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:33,865	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-23 14:17:33,866	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) != EOF) {\n        int sum = a + b;\n        printf("%d\\n", (sum == 0 ? 1 : (int)log10(sum) + 1)); // Output the length directly\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:35,567	[DEBUG]	EXEC>  SUCCESS 2431259.6875
+2025-01-23 14:17:35,567	[INFO]	0-7     SUCCESS               2431259.69 (101.49%) [1 edit(s)]  
+2025-01-23 14:17:35,567	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << ((a + b) == 0 ? 1 : (int)log10(a + b) + 1) << endl; // Directly compute and output\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:39,184	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-23 14:17:39,184	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint lengthLookup[200]; // Precomputed lengths for sums\n\nvoid computeLengths() {\n    for (int i = 0; i < 200; ++i) {\n        lengthLookup[i] = (i == 0) ? 1 : (int)log10(i) + 1; // Fill lookup for sums\n    }\n}\n\nvoid problemOne() {\n    computeLengths();\n    int a, b;\n    while (cin >> a >> b) {\n        cout << lengthLookup[a + b] << endl; // Use precomputed lengths\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:40,415	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-23 14:17:40,415	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <limits>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (true) {\n        cout << "Enter two integers (or non-integer to stop): ";\n        if (!(cin >> a >> b)) {\n            break; // Exit on invalid input\n        }\n        cout << ((a + b) == 0 ? 1 : (int)log10(a + b) + 1) << endl; // Directly compute and output\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:42,104	[DEBUG]	EXEC>  SUCCESS 2440657.875
+2025-01-23 14:17:42,104	[INFO]	0-10    SUCCESS               2440657.88 (101.88%) [1 edit(s)]  
+2025-01-23 14:17:42,104	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:17:43,104	[INFO]	Step: 10
+2025-01-23 14:17:43,105	[INFO]	Stop Steps: 100
+2025-01-23 14:17:44,722	[DEBUG]	EXEC>  SUCCESS 2376413.4375
+2025-01-23 14:17:44,723	[INFO]	REF     SUCCESS               2376413.44 (--) [0 edit(s)]  
+2025-01-23 14:17:44,723	[INFO]	Best patch: 0
+2025-01-23 14:17:45,024	[DEBUG]	EXEC>  SUCCESS 966921.1875
+2025-01-23 14:17:45,024	[INFO]	BEST    SUCCESS              *966921.19 (40.69%) [0 edit(s)]  
+2025-01-23 14:17:45,024	[INFO]	Best patch step: 0
+2025-01-23 14:18:07,228	[INFO]	Step: 10
+2025-01-23 14:18:07,228	[INFO]	Stop Steps: 100
+2025-01-23 14:18:07,665	[DEBUG]	EXEC>  SUCCESS 959034.5
+2025-01-23 14:18:07,665	[INFO]	1-1     SUCCESS              *959034.50 (40.36%) [1 edit(s)]  
+2025-01-23 14:18:07,665	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:18:07,665	[INFO]	Step: 11
+2025-01-23 14:18:07,665	[INFO]	Stop Steps: 100
+2025-01-23 14:18:08,248	[DEBUG]	EXEC>  SUCCESS 2427296.625
+2025-01-23 14:18:08,248	[INFO]	1-2     SUCCESS               2427296.62 (102.14%) [1 edit(s)]  
+2025-01-23 14:18:08,248	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << ((a + b) == 0 ? 1 : (int)log10(a + b) + 1) << endl; // Directly compute and output\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:08,248	[INFO]	Step: 12
+2025-01-23 14:18:08,248	[INFO]	Stop Steps: 100
+2025-01-23 14:18:08,652	[DEBUG]	EXEC>  SUCCESS 1153981.5625
+2025-01-23 14:18:08,652	[INFO]	1-3     SUCCESS               1153981.56 (48.56%) [1 edit(s)]  
+2025-01-23 14:18:08,652	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:08,652	[INFO]	Step: 13
+2025-01-23 14:18:08,652	[INFO]	Stop Steps: 100
+2025-01-23 14:18:09,158	[DEBUG]	EXEC>  SUCCESS 2419165.125
+2025-01-23 14:18:09,159	[INFO]	1-4     SUCCESS               2419165.12 (101.80%) [1 edit(s)]  
+2025-01-23 14:18:09,159	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : 4))) << endl; // Directly output digit length based on value\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:09,159	[INFO]	Step: 14
+2025-01-23 14:18:09,159	[INFO]	Stop Steps: 100
+2025-01-23 14:18:09,735	[DEBUG]	EXEC>  SUCCESS 2411985.0625
+2025-01-23 14:18:09,735	[INFO]	1-5     SUCCESS               2411985.06 (101.50%) [1 edit(s)]  
+2025-01-23 14:18:09,735	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:09,736	[INFO]	Step: 15
+2025-01-23 14:18:09,736	[INFO]	Stop Steps: 100
+2025-01-23 14:18:10,040	[DEBUG]	EXEC>  SUCCESS 954527.75
+2025-01-23 14:18:10,040	[INFO]	1-6     SUCCESS              *954527.75 (40.17%) [1 edit(s)]  
+2025-01-23 14:18:10,040	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:18:10,040	[INFO]	Step: 16
+2025-01-23 14:18:10,040	[INFO]	Stop Steps: 100
+2025-01-23 14:18:10,112	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:18:10,112	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Optimized calculation of digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:10,112	[INFO]	Step: 17
+2025-01-23 14:18:10,112	[INFO]	Stop Steps: 100
+2025-01-23 14:18:10,686	[DEBUG]	EXEC>  SUCCESS 2412079.25
+2025-01-23 14:18:10,687	[INFO]	1-8     SUCCESS               2412079.25 (101.50%) [2 edit(s)]  
+2025-01-23 14:18:10,687	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << ((a + b) == 0 ? 1 : (int)log10(a + b) + 1) << endl; // Directly compute and output\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b; // Store the sum in a variable\n        cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : (sum < 10000 ? 4 : 5))))) << endl; // Use conditional checks to determine digit count\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:10,687	[INFO]	Step: 18
+2025-01-23 14:18:10,687	[INFO]	Stop Steps: 100
+2025-01-23 14:18:11,253	[DEBUG]	EXEC>  SUCCESS 2548153.125
+2025-01-23 14:18:11,253	[INFO]	1-9     SUCCESS               2548153.12 (107.23%) [2 edit(s)]  
+2025-01-23 14:18:11,253	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << (a + b < 10 ? 1 : (a + b < 100 ? 2 : (a + b < 1000 ? 3 : 4))) << endl; // Directly output digit length based on value\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <cmath> // Include cmath for log10\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << (sum == 0 ? 1 : static_cast<int>(log10(sum)) + 1) << endl; // Use log10 to determine the number of digits\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:11,253	[INFO]	Step: 19
+2025-01-23 14:18:11,253	[INFO]	Stop Steps: 100
+2025-01-23 14:18:11,759	[DEBUG]	EXEC>  SUCCESS 2438633.625
+2025-01-23 14:18:11,759	[INFO]	1-10    SUCCESS               2438633.62 (102.62%) [2 edit(s)]  
+2025-01-23 14:18:11,759	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Special case for zero\n    int length = 0;\n    while (sum > 0) {\n        sum /= 10; // Divide the number by 10 until it becomes 0\n        length++;\n    }\n    return length; // Return the calculated length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:11,759	[INFO]	Step: 20
+2025-01-23 14:18:11,759	[INFO]	Stop Steps: 100
+2025-01-23 14:18:13,280	[DEBUG]	EXEC>  SUCCESS 2428709.8125
+2025-01-23 14:18:13,280	[INFO]	REF     SUCCESS               2428709.81 (--) [0 edit(s)]  
+2025-01-23 14:18:13,280	[INFO]	Best patch: 3
+2025-01-23 14:18:13,588	[DEBUG]	EXEC>  SUCCESS 973177.875
+2025-01-23 14:18:13,588	[INFO]	BEST    SUCCESS              *973177.88 (40.07%) [0 edit(s)]  
+2025-01-23 14:18:13,588	[INFO]	Best patch step: 15
+2025-01-23 14:18:45,068	[INFO]	Step: 20
+2025-01-23 14:18:45,068	[INFO]	Stop Steps: 100
+2025-01-23 14:18:45,519	[DEBUG]	EXEC>  SUCCESS 1025222.5625
+2025-01-23 14:18:45,519	[INFO]	2-1     SUCCESS              +1025222.56 (42.21%) [1 edit(s)]  
+2025-01-23 14:18:45,519	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:45,519	[INFO]	Step: 21
+2025-01-23 14:18:45,519	[INFO]	Stop Steps: 100
+2025-01-23 14:18:45,821	[DEBUG]	EXEC>  SUCCESS 955416.625
+2025-01-23 14:18:45,821	[INFO]	2-2     SUCCESS              *955416.62 (39.34%) [1 edit(s)]  
+2025-01-23 14:18:45,821	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:18:45,821	[INFO]	Step: 22
+2025-01-23 14:18:45,821	[INFO]	Stop Steps: 100
+2025-01-23 14:18:45,899	[INFO]	2-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-23 14:18:45,899	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        printf("%d\\n", digitLength(sum)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:45,899	[INFO]	Step: 23
+2025-01-23 14:18:45,899	[INFO]	Stop Steps: 100
+2025-01-23 14:18:46,496	[DEBUG]	EXEC>  SUCCESS 2431209.0625
+2025-01-23 14:18:46,496	[INFO]	2-4     SUCCESS               2431209.06 (100.10%) [1 edit(s)]  
+2025-01-23 14:18:46,496	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:46,497	[INFO]	Step: 24
+2025-01-23 14:18:46,497	[INFO]	Stop Steps: 100
+2025-01-23 14:18:46,903	[DEBUG]	EXEC>  SUCCESS 1199390.125
+2025-01-23 14:18:46,903	[INFO]	2-5     SUCCESS               1199390.12 (49.38%) [1 edit(s)]  
+2025-01-23 14:18:46,903	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <cstdlib>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        printf("%d\\n", digitLength(sum)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:46,903	[INFO]	Step: 25
+2025-01-23 14:18:46,903	[INFO]	Stop Steps: 100
+2025-01-23 14:18:47,503	[DEBUG]	EXEC>  SUCCESS 2571346.875
+2025-01-23 14:18:47,504	[INFO]	2-6     SUCCESS               2571346.88 (105.87%) [1 edit(s)]  
+2025-01-23 14:18:47,504	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << digitLength(sum) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:47,504	[INFO]	Step: 26
+2025-01-23 14:18:47,504	[INFO]	Stop Steps: 100
+2025-01-23 14:18:47,806	[DEBUG]	EXEC>  SUCCESS 958432.6875
+2025-01-23 14:18:47,806	[INFO]	2-7     SUCCESS               958432.69 (39.46%) [2 edit(s)]  
+2025-01-23 14:18:47,806	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:47,806	[INFO]	Step: 27
+2025-01-23 14:18:47,806	[INFO]	Stop Steps: 100
+2025-01-23 14:18:47,879	[INFO]	2-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:18:47,879	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:47,879	[INFO]	Step: 28
+2025-01-23 14:18:47,879	[INFO]	Stop Steps: 100
+2025-01-23 14:18:48,297	[DEBUG]	EXEC>  SUCCESS 1030364.875
+2025-01-23 14:18:48,298	[INFO]	2-9     SUCCESS               1030364.88 (42.42%) [2 edit(s)]  
+2025-01-23 14:18:48,298	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Handle case for 0\n    int count = 0;\n    while (sum != 0) {\n        sum /= 10; // Remove the last digit\n        count++;   // Increment count for each digit removed\n    }\n    return count; // Return the total digit count\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:48,298	[INFO]	Step: 29
+2025-01-23 14:18:48,298	[INFO]	Stop Steps: 100
+2025-01-23 14:18:48,883	[DEBUG]	EXEC>  SUCCESS 2484291.0625
+2025-01-23 14:18:48,883	[INFO]	2-10    SUCCESS               2484291.06 (102.29%) [2 edit(s)]  
+2025-01-23 14:18:48,883	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 17), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Handle zero case\n    int length = 0;\n    while (sum) {\n        sum /= 10; // Remove the last digit\n        length++;  // Increment the digit count\n    }\n    return length; // Return the digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << digitLength(a + b) << endl; // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:18:48,883	[INFO]	Step: 30
+2025-01-23 14:18:48,883	[INFO]	Stop Steps: 100
+2025-01-23 14:18:50,399	[DEBUG]	EXEC>  SUCCESS 2375806.125
+2025-01-23 14:18:50,399	[INFO]	REF     SUCCESS               2375806.12 (--) [0 edit(s)]  
+2025-01-23 14:18:50,399	[INFO]	Best patch: 0
+2025-01-23 14:18:50,699	[DEBUG]	EXEC>  SUCCESS 970960.8125
+2025-01-23 14:18:50,700	[INFO]	BEST    SUCCESS              *970960.81 (40.87%) [0 edit(s)]  
+2025-01-23 14:18:50,700	[INFO]	Best patch step: 21
+2025-01-23 14:19:11,817	[INFO]	Step: 30
+2025-01-23 14:19:11,818	[INFO]	Stop Steps: 100
+2025-01-23 14:19:12,262	[DEBUG]	EXEC>  SUCCESS 954223.0
+2025-01-23 14:19:12,262	[INFO]	3-1     SUCCESS              *954223.00 (40.16%) [1 edit(s)]  
+2025-01-23 14:19:12,262	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:19:12,262	[INFO]	Step: 31
+2025-01-23 14:19:12,262	[INFO]	Stop Steps: 100
+2025-01-23 14:19:12,573	[DEBUG]	EXEC>  SUCCESS 953899.375
+2025-01-23 14:19:12,573	[INFO]	3-2     SUCCESS              *953899.38 (40.15%) [2 edit(s)]  
+2025-01-23 14:19:12,573	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:19:12,573	[INFO]	Step: 32
+2025-01-23 14:19:12,574	[INFO]	Stop Steps: 100
+2025-01-23 14:19:12,884	[DEBUG]	EXEC>  SUCCESS 980047.75
+2025-01-23 14:19:12,884	[INFO]	3-3     SUCCESS               980047.75 (41.25%) [1 edit(s)]  
+2025-01-23 14:19:12,884	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4; // Determine category\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:12,884	[INFO]	Step: 33
+2025-01-23 14:19:12,884	[INFO]	Stop Steps: 100
+2025-01-23 14:19:13,304	[DEBUG]	EXEC>  SUCCESS 1159568.125
+2025-01-23 14:19:13,304	[INFO]	3-4     SUCCESS               1159568.12 (48.81%) [1 edit(s)]  
+2025-01-23 14:19:13,304	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Handle case for 0\n    return (int)log10(sum) + 1; // Calculate digit length using logarithm\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:13,304	[INFO]	Step: 34
+2025-01-23 14:19:13,304	[INFO]	Stop Steps: 100
+2025-01-23 14:19:13,708	[DEBUG]	EXEC>  SUCCESS 1186184.8125
+2025-01-23 14:19:13,709	[INFO]	3-5     SUCCESS               1186184.81 (49.93%) [1 edit(s)]  
+2025-01-23 14:19:13,709	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Handle case for 0\n    return (int)log10(sum) + 1; // Calculate digit length using logarithm\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        printf("%d\\n", digitLength(sum)); // Print the digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:13,709	[INFO]	Step: 35
+2025-01-23 14:19:13,709	[INFO]	Stop Steps: 100
+2025-01-23 14:19:14,022	[DEBUG]	EXEC>  SUCCESS 961008.8125
+2025-01-23 14:19:14,022	[INFO]	3-6     SUCCESS               961008.81 (40.45%) [1 edit(s)]  
+2025-01-23 14:19:14,022	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:14,023	[INFO]	Step: 36
+2025-01-23 14:19:14,023	[INFO]	Stop Steps: 100
+2025-01-23 14:19:14,094	[INFO]	3-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:19:14,094	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Optimize digit length calculation\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:14,094	[INFO]	Step: 37
+2025-01-23 14:19:14,094	[INFO]	Stop Steps: 100
+2025-01-23 14:19:14,236	[INFO]	3-8     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-23 14:19:14,236	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) + (sum < 100) + (sum < 1000) + 3; // Simplified category calculation\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:14,236	[INFO]	Step: 38
+2025-01-23 14:19:14,236	[INFO]	Stop Steps: 100
+2025-01-23 14:19:14,556	[DEBUG]	EXEC>  SUCCESS 976058.9375
+2025-01-23 14:19:14,556	[INFO]	3-9     SUCCESS               976058.94 (41.08%) [2 edit(s)]  
+2025-01-23 14:19:14,556	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:14,556	[INFO]	Step: 39
+2025-01-23 14:19:14,556	[INFO]	Stop Steps: 100
+2025-01-23 14:19:14,962	[DEBUG]	EXEC>  SUCCESS 1166634.6875
+2025-01-23 14:19:14,962	[INFO]	3-10    SUCCESS               1166634.69 (49.10%) [3 edit(s)]  
+2025-01-23 14:19:14,962	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum == 0) ? 1 : (int)log10(sum) + 1; // Function to compute digit length\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Handle case for 0\n    int count = 0;\n    while (sum != 0) {\n        sum /= 10; // Remove the last digit\n        count++;   // Increment count for each digit removed\n    }\n    return count; // Return the total digit count\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    if (sum == 0) return 1; // Handle case for 0\n    return static_cast<int>(log10(sum)) + 1; // Use logarithm to determine digit count\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", digitLength(a + b)); // Call to the length function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:14,962	[INFO]	Step: 40
+2025-01-23 14:19:14,962	[INFO]	Stop Steps: 100
+2025-01-23 14:19:16,477	[DEBUG]	EXEC>  SUCCESS 2454348.0
+2025-01-23 14:19:16,477	[INFO]	REF     SUCCESS               2454348.00 (--) [0 edit(s)]  
+2025-01-23 14:19:16,477	[INFO]	Best patch: 3_14
+2025-01-23 14:19:16,776	[DEBUG]	EXEC>  SUCCESS 972142.8125
+2025-01-23 14:19:16,776	[INFO]	BEST    SUCCESS              *972142.81 (39.61%) [0 edit(s)]  
+2025-01-23 14:19:16,776	[INFO]	Best patch step: 31
+2025-01-23 14:19:41,703	[INFO]	Step: 40
+2025-01-23 14:19:41,703	[INFO]	Stop Steps: 100
+2025-01-23 14:19:42,127	[DEBUG]	EXEC>  SUCCESS 963458.8125
+2025-01-23 14:19:42,127	[INFO]	4-1     SUCCESS              *963458.81 (39.26%) [2 edit(s)]  
+2025-01-23 14:19:42,127	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:19:42,127	[INFO]	Step: 41
+2025-01-23 14:19:42,127	[INFO]	Stop Steps: 100
+2025-01-23 14:19:42,434	[DEBUG]	EXEC>  SUCCESS 967739.9375
+2025-01-23 14:19:42,434	[INFO]	4-2     SUCCESS               967739.94 (39.43%) [1 edit(s)]  
+2025-01-23 14:19:42,434	[DEBUG]	patch(4-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:42,434	[INFO]	Step: 42
+2025-01-23 14:19:42,434	[INFO]	Stop Steps: 100
+2025-01-23 14:19:42,745	[DEBUG]	EXEC>  SUCCESS 977133.75
+2025-01-23 14:19:42,745	[INFO]	4-3     SUCCESS               977133.75 (39.81%) [1 edit(s)]  
+2025-01-23 14:19:42,745	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4; // Determine category\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:42,745	[INFO]	Step: 43
+2025-01-23 14:19:42,745	[INFO]	Stop Steps: 100
+2025-01-23 14:19:43,057	[DEBUG]	EXEC>  SUCCESS 982458.1875
+2025-01-23 14:19:43,057	[INFO]	4-4     SUCCESS               982458.19 (40.03%) [1 edit(s)]  
+2025-01-23 14:19:43,057	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:43,057	[INFO]	Step: 44
+2025-01-23 14:19:43,057	[INFO]	Stop Steps: 100
+2025-01-23 14:19:43,348	[DEBUG]	EXEC>  SUCCESS 954541.1875
+2025-01-23 14:19:43,349	[INFO]	4-5     SUCCESS              *954541.19 (38.89%) [1 edit(s)]  
+2025-01-23 14:19:43,349	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:19:43,349	[INFO]	Step: 45
+2025-01-23 14:19:43,349	[INFO]	Stop Steps: 100
+2025-01-23 14:19:43,649	[DEBUG]	EXEC>  SUCCESS 953018.0
+2025-01-23 14:19:43,649	[INFO]	4-6     SUCCESS              *953018.00 (38.83%) [1 edit(s)]  
+2025-01-23 14:19:43,649	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:19:43,649	[INFO]	Step: 46
+2025-01-23 14:19:43,649	[INFO]	Stop Steps: 100
+2025-01-23 14:19:43,781	[INFO]	4-7     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-23 14:19:43,782	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) + (sum < 100) + (sum < 1000) + 3; // Optimized conditional checks\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:43,782	[INFO]	Step: 47
+2025-01-23 14:19:43,782	[INFO]	Stop Steps: 100
+2025-01-23 14:19:43,853	[INFO]	4-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:19:43,853	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Optimized way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:43,853	[INFO]	Step: 48
+2025-01-23 14:19:43,853	[INFO]	Stop Steps: 100
+2025-01-23 14:19:44,159	[DEBUG]	EXEC>  SUCCESS 982010.0
+2025-01-23 14:19:44,159	[INFO]	4-9     SUCCESS               982010.00 (40.01%) [2 edit(s)]  
+2025-01-23 14:19:44,160	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int digitCount = 0; // Variable to store the number of digits\n        if (sum < 10) {\n            digitCount = 1;\n        } else if (sum < 100) {\n            digitCount = 2;\n        } else if (sum < 1000) {\n            digitCount = 3;\n        } else {\n            digitCount = 4;\n        }\n        printf("%d\\n", digitCount); // Output the pre-calculated digit count\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:44,160	[INFO]	Step: 49
+2025-01-23 14:19:44,160	[INFO]	Stop Steps: 100
+2025-01-23 14:19:44,458	[DEBUG]	EXEC>  SUCCESS 974654.375
+2025-01-23 14:19:44,458	[INFO]	4-10    SUCCESS               974654.38 (39.71%) [3 edit(s)]  
+2025-01-23 14:19:44,459	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4; // Original logic\n        printf("%d\\n", category);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:19:44,459	[INFO]	Step: 50
+2025-01-23 14:19:44,459	[INFO]	Stop Steps: 100
+2025-01-23 14:19:45,969	[DEBUG]	EXEC>  SUCCESS 2373007.75
+2025-01-23 14:19:45,969	[INFO]	REF     SUCCESS               2373007.75 (--) [0 edit(s)]  
+2025-01-23 14:19:45,969	[INFO]	Best patch: 15
+2025-01-23 14:19:46,277	[DEBUG]	EXEC>  SUCCESS 978743.375
+2025-01-23 14:19:46,277	[INFO]	BEST    SUCCESS              *978743.38 (41.24%) [0 edit(s)]  
+2025-01-23 14:19:46,277	[INFO]	Best patch step: 45
+2025-01-23 14:20:13,689	[INFO]	Step: 50
+2025-01-23 14:20:13,689	[INFO]	Stop Steps: 100
+2025-01-23 14:20:14,120	[DEBUG]	EXEC>  SUCCESS 955893.375
+2025-01-23 14:20:14,120	[INFO]	5-1     SUCCESS              *955893.38 (40.28%) [1 edit(s)]  
+2025-01-23 14:20:14,120	[DEBUG]	patch(5-1)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:20:14,120	[INFO]	Step: 51
+2025-01-23 14:20:14,120	[INFO]	Stop Steps: 100
+2025-01-23 14:20:14,423	[DEBUG]	EXEC>  SUCCESS 977965.9375
+2025-01-23 14:20:14,423	[INFO]	5-2     SUCCESS               977965.94 (41.21%) [1 edit(s)]  
+2025-01-23 14:20:14,423	[DEBUG]	patch(5-2)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:14,423	[INFO]	Step: 52
+2025-01-23 14:20:14,423	[INFO]	Stop Steps: 100
+2025-01-23 14:20:14,723	[DEBUG]	EXEC>  SUCCESS 960286.3125
+2025-01-23 14:20:14,723	[INFO]	5-3     SUCCESS               960286.31 (40.47%) [1 edit(s)]  
+2025-01-23 14:20:14,723	[DEBUG]	patch(5-3)="LineLLMCrossover(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:14,723	[INFO]	Step: 53
+2025-01-23 14:20:14,723	[INFO]	Stop Steps: 100
+2025-01-23 14:20:15,037	[DEBUG]	EXEC>  SUCCESS 948361.875
+2025-01-23 14:20:15,037	[INFO]	5-4     SUCCESS              *948361.88 (39.96%) [1 edit(s)]  
+2025-01-23 14:20:15,038	[DEBUG]	patch(5-4)="LineLLMCrossover(('source.cpp', 17), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:20:15,038	[INFO]	Step: 54
+2025-01-23 14:20:15,038	[INFO]	Stop Steps: 100
+2025-01-23 14:20:15,340	[DEBUG]	EXEC>  SUCCESS 970332.0
+2025-01-23 14:20:15,340	[INFO]	5-5     SUCCESS               970332.00 (40.89%) [1 edit(s)]  
+2025-01-23 14:20:15,340	[DEBUG]	patch(5-5)="LineLLMCrossover(('source.cpp', 18), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:15,340	[INFO]	Step: 55
+2025-01-23 14:20:15,341	[INFO]	Stop Steps: 100
+2025-01-23 14:20:15,648	[DEBUG]	EXEC>  SUCCESS 958456.3125
+2025-01-23 14:20:15,648	[INFO]	5-6     SUCCESS               958456.31 (40.39%) [1 edit(s)]  
+2025-01-23 14:20:15,648	[DEBUG]	patch(5-6)="LineLLMCrossover(('source.cpp', 19), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        if (intLength == 1) {\n            printf("1\\n");\n        } else if (intLength == 2) {\n            printf("2\\n");\n        } else if (intLength == 3) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:15,648	[INFO]	Step: 56
+2025-01-23 14:20:15,648	[INFO]	Stop Steps: 100
+2025-01-23 14:20:15,722	[INFO]	5-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:20:15,722	[DEBUG]	patch(5-7)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 26), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Calculate digit length more efficiently\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:15,722	[INFO]	Step: 57
+2025-01-23 14:20:15,722	[INFO]	Stop Steps: 100
+2025-01-23 14:20:16,023	[DEBUG]	EXEC>  SUCCESS 963141.1875
+2025-01-23 14:20:16,023	[INFO]	5-8     SUCCESS               963141.19 (40.59%) [2 edit(s)]  
+2025-01-23 14:20:16,023	[DEBUG]	patch(5-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 27), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        printf("%d\\n", (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:16,023	[INFO]	Step: 58
+2025-01-23 14:20:16,023	[INFO]	Stop Steps: 100
+2025-01-23 14:20:16,333	[DEBUG]	EXEC>  SUCCESS 959773.4375
+2025-01-23 14:20:16,333	[INFO]	5-9     SUCCESS               959773.44 (40.45%) [3 edit(s)]  
+2025-01-23 14:20:16,333	[DEBUG]	patch(5-9)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:16,333	[INFO]	Step: 59
+2025-01-23 14:20:16,333	[INFO]	Stop Steps: 100
+2025-01-23 14:20:16,406	[INFO]	5-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:20:16,406	[DEBUG]	patch(5-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = snprintf(NULL, 0, "%d", sum); // Faster way to calculate digit length\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 29), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        // Directly calculate the digit length without snprintf\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; \n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:16,406	[INFO]	Step: 60
+2025-01-23 14:20:16,406	[INFO]	Stop Steps: 100
+2025-01-23 14:20:17,928	[DEBUG]	EXEC>  SUCCESS 2432106.25
+2025-01-23 14:20:17,929	[INFO]	REF     SUCCESS               2432106.25 (--) [0 edit(s)]  
+2025-01-23 14:20:17,929	[INFO]	Best patch: 17
+2025-01-23 14:20:18,230	[DEBUG]	EXEC>  SUCCESS 958040.375
+2025-01-23 14:20:18,230	[INFO]	BEST    SUCCESS              *958040.38 (39.39%) [0 edit(s)]  
+2025-01-23 14:20:18,230	[INFO]	Best patch step: 53
+2025-01-23 14:20:46,760	[INFO]	Step: 60
+2025-01-23 14:20:46,760	[INFO]	Stop Steps: 100
+2025-01-23 14:20:47,196	[DEBUG]	EXEC>  SUCCESS 967537.3125
+2025-01-23 14:20:47,197	[INFO]	6-1     SUCCESS              +967537.31 (39.78%) [1 edit(s)]  
+2025-01-23 14:20:47,197	[DEBUG]	patch(6-1)="LineLLMCrossover(('source.cpp', 17), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:47,197	[INFO]	Step: 61
+2025-01-23 14:20:47,197	[INFO]	Stop Steps: 100
+2025-01-23 14:20:47,504	[DEBUG]	EXEC>  SUCCESS 971320.125
+2025-01-23 14:20:47,504	[INFO]	6-2     SUCCESS               971320.12 (39.94%) [1 edit(s)]  
+2025-01-23 14:20:47,504	[DEBUG]	patch(6-2)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:47,504	[INFO]	Step: 62
+2025-01-23 14:20:47,504	[INFO]	Stop Steps: 100
+2025-01-23 14:20:47,801	[DEBUG]	EXEC>  SUCCESS 963961.1875
+2025-01-23 14:20:47,802	[INFO]	6-3     SUCCESS              +963961.19 (39.63%) [1 edit(s)]  
+2025-01-23 14:20:47,802	[DEBUG]	patch(6-3)="LineLLMCrossover(('source.cpp', 20), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:47,802	[INFO]	Step: 63
+2025-01-23 14:20:47,802	[INFO]	Stop Steps: 100
+2025-01-23 14:20:48,105	[DEBUG]	EXEC>  SUCCESS 1001268.375
+2025-01-23 14:20:48,105	[INFO]	6-4     SUCCESS               1001268.38 (41.17%) [1 edit(s)]  
+2025-01-23 14:20:48,105	[DEBUG]	patch(6-4)="LineLLMCrossover(('source.cpp', 21), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a lookup table for category determination\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:48,105	[INFO]	Step: 64
+2025-01-23 14:20:48,105	[INFO]	Stop Steps: 100
+2025-01-23 14:20:48,401	[DEBUG]	EXEC>  SUCCESS 957626.5
+2025-01-23 14:20:48,402	[INFO]	6-5     SUCCESS              *957626.50 (39.37%) [1 edit(s)]  
+2025-01-23 14:20:48,402	[DEBUG]	patch(6-5)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:20:48,402	[INFO]	Step: 65
+2025-01-23 14:20:48,402	[INFO]	Stop Steps: 100
+2025-01-23 14:20:48,700	[DEBUG]	EXEC>  SUCCESS 959661.125
+2025-01-23 14:20:48,700	[INFO]	6-6     SUCCESS               959661.12 (39.46%) [1 edit(s)]  
+2025-01-23 14:20:48,700	[DEBUG]	patch(6-6)="LineLLMCrossover(('source.cpp', 23), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:48,700	[INFO]	Step: 66
+2025-01-23 14:20:48,700	[INFO]	Stop Steps: 100
+2025-01-23 14:20:48,771	[INFO]	6-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:20:48,771	[DEBUG]	patch(6-7)="LineLLMCrossover(('source.cpp', 17), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 30), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Calculate digit length using logarithm\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:48,771	[INFO]	Step: 67
+2025-01-23 14:20:48,771	[INFO]	Stop Steps: 100
+2025-01-23 14:20:49,175	[DEBUG]	EXEC>  SUCCESS 1156557.0625
+2025-01-23 14:20:49,175	[INFO]	6-8     SUCCESS               1156557.06 (47.55%) [2 edit(s)]  
+2025-01-23 14:20:49,176	[DEBUG]	patch(6-8)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 31), '#include <cstdio>\n#include <cstdlib>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Calculate digit length using logarithm\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:49,176	[INFO]	Step: 68
+2025-01-23 14:20:49,176	[INFO]	Stop Steps: 100
+2025-01-23 14:20:49,245	[INFO]	6-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:20:49,245	[DEBUG]	patch(6-9)="LineLLMCrossover(('source.cpp', 19), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        if (intLength == 1) {\n            printf("1\\n");\n        } else if (intLength == 2) {\n            printf("2\\n");\n        } else if (intLength == 3) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 32), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Calculate digit length efficiently\n        printf("%d\\n", intLength > 4 ? 4 : intLength); // Directly print the result\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:49,245	[INFO]	Step: 69
+2025-01-23 14:20:49,245	[INFO]	Stop Steps: 100
+2025-01-23 14:20:49,379	[INFO]	6-10    TEST_CODE_ERROR       None (--) [4 edit(s)]  
+2025-01-23 14:20:49,380	[DEBUG]	patch(6-10)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 28), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 33), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Optimized category determination using arithmetic\n        int category = (sum + 9) / 10; // This will give 1 for sums 0-9, 2 for 10-99, 3 for 100-999, and 4 for 1000+\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:20:49,380	[INFO]	Step: 70
+2025-01-23 14:20:49,380	[INFO]	Stop Steps: 100
+2025-01-23 14:20:50,899	[DEBUG]	EXEC>  SUCCESS 2392936.625
+2025-01-23 14:20:50,899	[INFO]	REF     SUCCESS               2392936.62 (--) [0 edit(s)]  
+2025-01-23 14:20:50,899	[INFO]	Best patch: 22
+2025-01-23 14:20:51,195	[DEBUG]	EXEC>  SUCCESS 958274.875
+2025-01-23 14:20:51,195	[INFO]	BEST    SUCCESS              *958274.88 (40.05%) [0 edit(s)]  
+2025-01-23 14:20:51,195	[INFO]	Best patch step: 64
+2025-01-23 14:21:16,854	[INFO]	Step: 70
+2025-01-23 14:21:16,854	[INFO]	Stop Steps: 100
+2025-01-23 14:21:17,281	[DEBUG]	EXEC>  SUCCESS 961449.4375
+2025-01-23 14:21:17,282	[INFO]	7-1     SUCCESS              +961449.44 (40.18%) [1 edit(s)]  
+2025-01-23 14:21:17,282	[DEBUG]	patch(7-1)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:17,282	[INFO]	Step: 71
+2025-01-23 14:21:17,282	[INFO]	Stop Steps: 100
+2025-01-23 14:21:17,576	[DEBUG]	EXEC>  SUCCESS 951052.375
+2025-01-23 14:21:17,577	[INFO]	7-2     SUCCESS              *951052.38 (39.74%) [1 edit(s)]  
+2025-01-23 14:21:17,577	[DEBUG]	patch(7-2)="LineLLMCrossover(('source.cpp', 23), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:21:17,577	[INFO]	Step: 72
+2025-01-23 14:21:17,577	[INFO]	Stop Steps: 100
+2025-01-23 14:21:17,870	[DEBUG]	EXEC>  SUCCESS 988289.25
+2025-01-23 14:21:17,870	[INFO]	7-3     SUCCESS               988289.25 (41.30%) [1 edit(s)]  
+2025-01-23 14:21:17,870	[DEBUG]	patch(7-3)="LineLLMCrossover(('source.cpp', 24), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:17,870	[INFO]	Step: 73
+2025-01-23 14:21:17,870	[INFO]	Stop Steps: 100
+2025-01-23 14:21:18,162	[DEBUG]	EXEC>  SUCCESS 972338.625
+2025-01-23 14:21:18,162	[INFO]	7-4     SUCCESS               972338.62 (40.63%) [1 edit(s)]  
+2025-01-23 14:21:18,162	[DEBUG]	patch(7-4)="LineLLMCrossover(('source.cpp', 25), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:18,162	[INFO]	Step: 74
+2025-01-23 14:21:18,162	[INFO]	Stop Steps: 100
+2025-01-23 14:21:18,460	[DEBUG]	EXEC>  SUCCESS 973098.875
+2025-01-23 14:21:18,460	[INFO]	7-5     SUCCESS               973098.88 (40.67%) [1 edit(s)]  
+2025-01-23 14:21:18,461	[DEBUG]	patch(7-5)="LineLLMCrossover(('source.cpp', 26), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:18,461	[INFO]	Step: 75
+2025-01-23 14:21:18,461	[INFO]	Stop Steps: 100
+2025-01-23 14:21:18,755	[DEBUG]	EXEC>  SUCCESS 950123.3125
+2025-01-23 14:21:18,756	[INFO]	7-6     SUCCESS              *950123.31 (39.71%) [1 edit(s)]  
+2025-01-23 14:21:18,756	[DEBUG]	patch(7-6)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:21:18,756	[INFO]	Step: 76
+2025-01-23 14:21:18,756	[INFO]	Stop Steps: 100
+2025-01-23 14:21:19,051	[DEBUG]	EXEC>  SUCCESS 956161.3125
+2025-01-23 14:21:19,051	[INFO]	7-7     SUCCESS               956161.31 (39.96%) [2 edit(s)]  
+2025-01-23 14:21:19,052	[DEBUG]	patch(7-7)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 34), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:19,052	[INFO]	Step: 77
+2025-01-23 14:21:19,052	[INFO]	Stop Steps: 100
+2025-01-23 14:21:19,357	[DEBUG]	EXEC>  SUCCESS 975988.1875
+2025-01-23 14:21:19,357	[INFO]	7-8     SUCCESS               975988.19 (40.79%) [2 edit(s)]  
+2025-01-23 14:21:19,357	[DEBUG]	patch(7-8)="LineLLMCrossover(('source.cpp', 23), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 35), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Directly determine the digit length by dividing sum\n        int intLength = 0;\n        if (sum == 0) {\n            intLength = 1; // Special case for zero\n        } else {\n            while (sum > 0) {\n                sum /= 10;\n                intLength++;\n            }\n        }\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:19,357	[INFO]	Step: 78
+2025-01-23 14:21:19,357	[INFO]	Stop Steps: 100
+2025-01-23 14:21:19,771	[DEBUG]	EXEC>  SUCCESS 2423257.875
+2025-01-23 14:21:19,772	[INFO]	7-9     SUCCESS               2423257.88 (101.27%) [2 edit(s)]  
+2025-01-23 14:21:19,772	[DEBUG]	patch(7-9)="LineLLMCrossover(('source.cpp', 20), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category); // Print the category in one go\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 36), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    vector<int> categories; // Store categories for batch printing\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        categories.push_back(category); // Store category\n    }\n    for (int cat : categories) {\n        printf("%d\\n", cat); // Print all categories at once\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:19,772	[INFO]	Step: 79
+2025-01-23 14:21:19,772	[INFO]	Stop Steps: 100
+2025-01-23 14:21:20,171	[DEBUG]	EXEC>  SUCCESS 1166500.5
+2025-01-23 14:21:20,171	[INFO]	7-10    SUCCESS               1166500.50 (48.75%) [2 edit(s)]  
+2025-01-23 14:21:20,171	[DEBUG]	patch(7-10)="LineLLMCrossover(('source.cpp', 17), '#include <cstdio>\n#include <cstdlib>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 37), '#include <cstdio>\n#include <cstdlib>\n#include <cmath> // Include cmath for log10\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1; // Calculate digit length using log10\n        printf("%d\\n", intLength); // Print digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:20,171	[INFO]	Step: 80
+2025-01-23 14:21:20,171	[INFO]	Stop Steps: 100
+2025-01-23 14:21:21,683	[DEBUG]	EXEC>  SUCCESS 2415314.1875
+2025-01-23 14:21:21,683	[INFO]	REF     SUCCESS               2415314.19 (--) [0 edit(s)]  
+2025-01-23 14:21:21,683	[INFO]	Best patch: 27
+2025-01-23 14:21:21,983	[DEBUG]	EXEC>  SUCCESS 946609.3125
+2025-01-23 14:21:21,984	[INFO]	BEST    SUCCESS              *946609.31 (39.19%) [0 edit(s)]  
+2025-01-23 14:21:21,984	[INFO]	Best patch step: 75
+2025-01-23 14:21:50,060	[INFO]	Step: 80
+2025-01-23 14:21:50,060	[INFO]	Stop Steps: 100
+2025-01-23 14:21:50,482	[DEBUG]	EXEC>  SUCCESS 960692.1875
+2025-01-23 14:21:50,482	[INFO]	8-1     SUCCESS              +960692.19 (39.78%) [1 edit(s)]  
+2025-01-23 14:21:50,482	[DEBUG]	patch(8-1)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:50,482	[INFO]	Step: 81
+2025-01-23 14:21:50,482	[INFO]	Stop Steps: 100
+2025-01-23 14:21:50,781	[DEBUG]	EXEC>  SUCCESS 993205.875
+2025-01-23 14:21:50,781	[INFO]	8-2     SUCCESS               993205.88 (41.12%) [1 edit(s)]  
+2025-01-23 14:21:50,781	[DEBUG]	patch(8-2)="LineLLMCrossover(('source.cpp', 23), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:50,781	[INFO]	Step: 82
+2025-01-23 14:21:50,781	[INFO]	Stop Steps: 100
+2025-01-23 14:21:51,083	[DEBUG]	EXEC>  SUCCESS 949358.4375
+2025-01-23 14:21:51,083	[INFO]	8-3     SUCCESS              +949358.44 (39.31%) [1 edit(s)]  
+2025-01-23 14:21:51,083	[DEBUG]	patch(8-3)="LineLLMCrossover(('source.cpp', 28), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:51,083	[INFO]	Step: 83
+2025-01-23 14:21:51,084	[INFO]	Stop Steps: 100
+2025-01-23 14:21:51,383	[DEBUG]	EXEC>  SUCCESS 945014.5
+2025-01-23 14:21:51,383	[INFO]	8-4     SUCCESS              *945014.50 (39.13%) [1 edit(s)]  
+2025-01-23 14:21:51,383	[DEBUG]	patch(8-4)="LineLLMCrossover(('source.cpp', 29), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:21:51,383	[INFO]	Step: 84
+2025-01-23 14:21:51,383	[INFO]	Stop Steps: 100
+2025-01-23 14:21:51,693	[DEBUG]	EXEC>  SUCCESS 960937.5
+2025-01-23 14:21:51,693	[INFO]	8-5     SUCCESS               960937.50 (39.79%) [1 edit(s)]  
+2025-01-23 14:21:51,693	[DEBUG]	patch(8-5)="LineLLMCrossover(('source.cpp', 30), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a simple conditional to determine the category based on digit length\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:51,694	[INFO]	Step: 85
+2025-01-23 14:21:51,694	[INFO]	Stop Steps: 100
+2025-01-23 14:21:51,996	[DEBUG]	EXEC>  SUCCESS 975522.0
+2025-01-23 14:21:51,997	[INFO]	8-6     SUCCESS               975522.00 (40.39%) [1 edit(s)]  
+2025-01-23 14:21:51,997	[DEBUG]	patch(8-6)="LineLLMCrossover(('source.cpp', 31), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:51,997	[INFO]	Step: 86
+2025-01-23 14:21:51,997	[INFO]	Stop Steps: 100
+2025-01-23 14:21:52,063	[INFO]	8-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:21:52,063	[DEBUG]	patch(8-7)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 38), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : (int)log10(sum) + 1; // Calculate digit length using logarithm\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:52,063	[INFO]	Step: 87
+2025-01-23 14:21:52,063	[INFO]	Stop Steps: 100
+2025-01-23 14:21:52,134	[INFO]	8-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-23 14:21:52,134	[DEBUG]	patch(8-8)="LineLLMCrossover(('source.cpp', 23), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 39), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Calculate digit length directly without snprintf\n        int intLength = (sum == 0) ? 1 : (log10(sum) + 1); \n        // Using a simple conditional to determine the category based on digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:52,134	[INFO]	Step: 88
+2025-01-23 14:21:52,134	[INFO]	Stop Steps: 100
+2025-01-23 14:21:52,439	[DEBUG]	EXEC>  SUCCESS 968054.3125
+2025-01-23 14:21:52,440	[INFO]	8-9     SUCCESS               968054.31 (40.08%) [3 edit(s)]  
+2025-01-23 14:21:52,440	[DEBUG]	patch(8-9)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 34), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 40), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Directly index into the outputs array based on the sum\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:52,440	[INFO]	Step: 89
+2025-01-23 14:21:52,440	[INFO]	Stop Steps: 100
+2025-01-23 14:21:52,755	[DEBUG]	EXEC>  SUCCESS 1004501.125
+2025-01-23 14:21:52,755	[INFO]	8-10    SUCCESS               1004501.12 (41.59%) [2 edit(s)]  
+2025-01-23 14:21:52,755	[DEBUG]	patch(8-10)="LineLLMCrossover(('source.cpp', 22), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 41), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Directly determine the category based on the value of sum\n        if (sum < 10) {\n            puts("1");\n        } else if (sum < 100) {\n            puts("2");\n        } else if (sum < 1000) {\n            puts("3");\n        } else {\n            puts("4");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:21:52,755	[INFO]	Step: 90
+2025-01-23 14:21:52,755	[INFO]	Stop Steps: 100
+2025-01-23 14:21:54,275	[DEBUG]	EXEC>  SUCCESS 2471206.5
+2025-01-23 14:21:54,275	[INFO]	REF     SUCCESS               2471206.50 (--) [0 edit(s)]  
+2025-01-23 14:21:54,275	[INFO]	Best patch: 29
+2025-01-23 14:21:54,574	[DEBUG]	EXEC>  SUCCESS 982061.875
+2025-01-23 14:21:54,574	[INFO]	BEST    SUCCESS              *982061.88 (39.74%) [0 edit(s)]  
+2025-01-23 14:21:54,574	[INFO]	Best patch step: 83
+2025-01-23 14:22:18,588	[INFO]	Step: 90
+2025-01-23 14:22:18,588	[INFO]	Stop Steps: 100
+2025-01-23 14:22:19,021	[DEBUG]	EXEC>  SUCCESS 992003.6875
+2025-01-23 14:22:19,021	[INFO]	9-1     SUCCESS              +992003.69 (40.14%) [1 edit(s)]  
+2025-01-23 14:22:19,021	[DEBUG]	patch(9-1)="LineLLMCrossover(('source.cpp', 29), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:19,021	[INFO]	Step: 91
+2025-01-23 14:22:19,021	[INFO]	Stop Steps: 100
+2025-01-23 14:22:19,321	[DEBUG]	EXEC>  SUCCESS 953115.6875
+2025-01-23 14:22:19,322	[INFO]	9-2     SUCCESS              *953115.69 (38.57%) [1 edit(s)]  
+2025-01-23 14:22:19,322	[DEBUG]	patch(9-2)="LineLLMCrossover(('source.cpp', 28), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-01-23 14:22:19,322	[INFO]	Step: 92
+2025-01-23 14:22:19,322	[INFO]	Stop Steps: 100
+2025-01-23 14:22:19,622	[DEBUG]	EXEC>  SUCCESS 967361.0625
+2025-01-23 14:22:19,623	[INFO]	9-3     SUCCESS               967361.06 (39.15%) [1 edit(s)]  
+2025-01-23 14:22:19,623	[DEBUG]	patch(9-3)="LineLLMCrossover(('source.cpp', 32), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:19,623	[INFO]	Step: 93
+2025-01-23 14:22:19,623	[INFO]	Stop Steps: 100
+2025-01-23 14:22:19,932	[DEBUG]	EXEC>  SUCCESS 974135.8125
+2025-01-23 14:22:19,933	[INFO]	9-4     SUCCESS               974135.81 (39.42%) [1 edit(s)]  
+2025-01-23 14:22:19,933	[DEBUG]	patch(9-4)="LineLLMCrossover(('source.cpp', 33), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        if (sum < 10) {\n            printf("%s", outputs[0]);\n        } else if (sum < 100) {\n            printf("%s", outputs[1]);\n        } else if (sum < 1000) {\n            printf("%s", outputs[2]);\n        } else {\n            printf("%s", outputs[3]);\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:19,933	[INFO]	Step: 94
+2025-01-23 14:22:19,933	[INFO]	Stop Steps: 100
+2025-01-23 14:22:20,240	[DEBUG]	EXEC>  SUCCESS 972823.8125
+2025-01-23 14:22:20,241	[INFO]	9-5     SUCCESS               972823.81 (39.37%) [1 edit(s)]  
+2025-01-23 14:22:20,241	[DEBUG]	patch(9-5)="LineLLMCrossover(('source.cpp', 34), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:20,241	[INFO]	Step: 95
+2025-01-23 14:22:20,241	[INFO]	Stop Steps: 100
+2025-01-23 14:22:20,546	[DEBUG]	EXEC>  SUCCESS 985096.875
+2025-01-23 14:22:20,546	[INFO]	9-6     SUCCESS               985096.88 (39.86%) [1 edit(s)]  
+2025-01-23 14:22:20,546	[DEBUG]	patch(9-6)="LineLLMCrossover(('source.cpp', 35), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        if (intLength < 4) {\n            printf("%d\\n", intLength);\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:20,546	[INFO]	Step: 96
+2025-01-23 14:22:20,546	[INFO]	Stop Steps: 100
+2025-01-23 14:22:20,842	[DEBUG]	EXEC>  SUCCESS 964540.3125
+2025-01-23 14:22:20,842	[INFO]	9-7     SUCCESS               964540.31 (39.03%) [2 edit(s)]  
+2025-01-23 14:22:20,842	[DEBUG]	patch(9-7)="LineLLMCrossover(('source.cpp', 29), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a lookup table for category determination\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 42), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int category = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4;\n        printf("%d\\n", category);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:20,842	[INFO]	Step: 97
+2025-01-23 14:22:20,842	[INFO]	Stop Steps: 100
+2025-01-23 14:22:21,152	[DEBUG]	EXEC>  SUCCESS 982666.25
+2025-01-23 14:22:21,152	[INFO]	9-8     SUCCESS               982666.25 (39.76%) [2 edit(s)]  
+2025-01-23 14:22:21,152	[DEBUG]	patch(9-8)="LineLLMCrossover(('source.cpp', 28), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 43), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        // Print all outputs in one go to reduce the number of I/O operations\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:21,152	[INFO]	Step: 98
+2025-01-23 14:22:21,152	[INFO]	Stop Steps: 100
+2025-01-23 14:22:21,454	[DEBUG]	EXEC>  SUCCESS 960280.125
+2025-01-23 14:22:21,454	[INFO]	9-9     SUCCESS               960280.12 (38.86%) [2 edit(s)]  
+2025-01-23 14:22:21,454	[DEBUG]	patch(9-9)="LineLLMCrossover(('source.cpp', 27), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = snprintf(NULL, 0, "%d", sum); // Calculate digit length\n        printf("%d\\n", (intLength < 4) ? intLength : 4); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 44), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        int intLength = (sum == 0) ? 1 : (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4; // Calculate digit length more efficiently\n        printf("%d\\n", intLength); // Print category based on digit length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:21,454	[INFO]	Step: 99
+2025-01-23 14:22:21,454	[INFO]	Stop Steps: 100
+2025-01-23 14:22:21,753	[DEBUG]	EXEC>  SUCCESS 968808.0625
+2025-01-23 14:22:21,754	[INFO]	9-10    SUCCESS               968808.06 (39.20%) [2 edit(s)]  
+2025-01-23 14:22:21,754	[DEBUG]	patch(9-10)="LineLLMCrossover(('source.cpp', 30), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using a simple conditional to determine the category based on digit length\n        if (sum < 10) {\n            printf("1\\n");\n        } else if (sum < 100) {\n            printf("2\\n");\n        } else if (sum < 1000) {\n            printf("3\\n");\n        } else {\n            printf("4\\n");\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 45), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Directly calculate the digit length and print the category\n        printf("%d\\n", (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-01-23 14:22:21,754	[INFO]	Step: 100
+2025-01-23 14:22:21,754	[INFO]	Stop Steps: 100
+2025-01-23 14:22:21,754	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-23 14:22:22,018	[INFO]	~~~~ END ~~~~
+2025-01-23 14:22:22,018	[INFO]	Best patch step: 91
+2025-01-23 14:22:22,019	[INFO]	
+2025-01-23 14:22:22,019	[INFO]	==== REPORT ====
+2025-01-23 14:22:22,019	[INFO]	Termination: step budget
+2025-01-23 14:22:22,019	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0001_1737641821.log
+2025-01-23 14:22:22,019	[INFO]	Patch file: _magpie_logs/0001_1737641821.patch
+2025-01-23 14:22:22,019	[INFO]	Diff file: _magpie_logs/0001_1737641821.diff
+2025-01-23 14:22:22,019	[INFO]	Reference fitness: 2471206.50
+2025-01-23 14:22:22,019	[INFO]	Best fitness: 953115.69
+2025-01-23 14:22:22,019	[INFO]	
+2025-01-23 14:22:22,019	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 28), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b; // Compute sum once\n        // Using an array for category determination\n        const char* outputs[] = {"1\\n", "2\\n", "3\\n", "4\\n"};\n        int idx = (sum < 10) ? 0 : (sum < 100) ? 1 : (sum < 1000) ? 2 : 3;\n        printf("%s", outputs[idx]);\n    }\n}\n\nint main() {\n    problemOne();\n}')
+2025-01-23 14:22:22,019	[INFO]	
+2025-01-23 14:22:22,020	[INFO]	==== DIFF ====
+

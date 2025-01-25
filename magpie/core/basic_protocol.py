@@ -43,9 +43,7 @@ class BasicProtocol:
             and int(config["search.gp"]["pop_size"]) == 1
         )
 
-        self.results_manager = ResultsManager(
-            filename=f"llm_one_shot" if is_one_shot else "llm_eoc"
-        )
+        self.results_manager = ResultsManager()
 
     def run(self, config):
         self.set_results_manager(config)

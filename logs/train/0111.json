@@ -1,0 +1,905 @@
+{
+    "(1)": {
+        "children": [
+            {
+                "fitness": 8072355.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // changed comparison to -1\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // set all to -1\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the memoization array is checked for zero (ret != 0). This condition could be optimized by changing the initialization of the dp array to -1, which allows us to distinguish between uncomputed states and states with a value of zero."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != 0) return ret; // change comparison to 0\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, 0, sizeof(dp)); // set all to 0\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            8223850.1875
+        ]
+    },
+    "(10)": {
+        "children": [
+            {
+                "fitness": 3032303.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Changed to a 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array to utilize a single-dimensional array for better cache performance and reduced memory usage, which could streamline the memory access during the recursive calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Improved clarity in checking state\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            6990665.125
+        ]
+    },
+    "(10_28)": {
+        "children": [
+            {
+                "fitness": 3057698.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Changed to a 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    \n    // Using a lookup table to optimize bit operations\n    static const int bitmask[4] = {0, 0b111, 0b110, 0b011}; \n    bit |= b[i];\n    \n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, bitmask[2]) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, bitmask[3]) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line `bit |= b[i];` which performs a bitwise OR operation. This could be optimized by using a lookup table to reduce the number of operations needed during state encoding."
+            },
+            {
+                "fitness": 2673327.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Use vector for dynamic sizing and better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    if (state >= dp.size()) dp.resize(state + 1, -1); // Resize dp vector if needed\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the `dp` array initialization and input handling in the `main` function, which could be optimized by using `std::vector` for dynamic sizing and reducing the number of branches in the `dfs` function."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_28"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Changed to a 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3032303.9375
+        ]
+    },
+    "(10_28_37)": {
+        "children": [
+            {
+                "fitness": 2472034.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; \n    \n    // Optimize dp resizing by using a fixed size based on maximum possible states\n    static const int MAX_STATE = (1 << 3) * 100; // Assuming h can go up to 100\n    if (state >= dp.size()) dp.resize(MAX_STATE, -1); // Preallocate a fixed size\n\n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((1 << 3) * (h + 1), -1); // Preallocate size based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line that manages the dynamic programming state resizing, which could be optimized by using a more efficient method for state representation and reducing unnecessary resizing operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_28_37"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Use vector for dynamic sizing and better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    if (state >= dp.size()) dp.resize(state + 1, -1); // Resize dp vector if needed\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2432101.75
+        ]
+    },
+    "(10_28_37_38)": {
+        "children": [
+            {
+                "fitness": 3082972.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\n// Define a fixed size for dp based on maximum possible states\nstatic const int MAX_STATE = (1 << 3) * 100; // Assuming h can go up to 100\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; \n\n    // Prevent resizing by using a fixed size vector\n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.assign(MAX_STATE, -1); // Preallocate fixed size based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line that resizes the `dp` vector, which could be optimized by eliminating unnecessary resizing operations and using a fixed size from the start."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_28_37_38"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; \n    \n    // Optimize dp resizing by using a fixed size based on maximum possible states\n    static const int MAX_STATE = (1 << 3) * 100; // Assuming h can go up to 100\n    if (state >= dp.size()) dp.resize(MAX_STATE, -1); // Preallocate a fixed size\n\n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((1 << 3) * (h + 1), -1); // Preallocate size based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2472034.875
+        ]
+    },
+    "(10_28_37x11_23_32_34x20_35x11_23_32)": {
+        "children": [
+            {
+                "fitness": 2654256.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Use vector for dynamic sizing and better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1, -1); // Efficiently initialize dp vector\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the initialization and state resizing logic from Parent 1 (fitness: 2432101.75) with the streamlined recursion conditions from Parent 2 (fitness: 2724737.125)."
+            },
+            {
+                "fitness": 2943833.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Use vector for dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1, -1); // Efficiently initialize dp vector\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the dynamic state encoding from Parent 3 (fitness: 2967129.6875) with the efficient input handling from Parent 4 (fitness: 3026579.5625)."
+            },
+            {
+                "fitness": 2855369.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Vector for dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state >= dp.size()) dp.resize(state + 1, -1); // Resize if needed\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Integrate the dynamic vector resizing from Parent 1 (fitness: 2432101.75) with the efficient input handling and bit manipulation from Parent 3 (fitness: 2967129.6875)."
+            },
+            {
+                "fitness": 2447898.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Vector for dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the efficient state checking from Parent 2 (fitness: 2724737.125) with the dynamic sizing and input logic from Parent 4 (fitness: 3026579.5625)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10_28_37",
+            "11_23_32_34",
+            "20_35",
+            "11_23_32"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Use vector for dynamic sizing and better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    if (state >= dp.size()) dp.resize(state + 1, -1); // Resize dp vector if needed\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1); // Use resize to allocate space without initialization\n    fill(dp.begin(), dp.end(), -1); // Efficiently fill with -1\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed dp to a vector to handle dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    dp.resize((h + 1) << 3); // Dynamically sized dp vector\n    memset(dp.data(), -1, dp.size() * sizeof(int)); // Correctly memset the vector\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed to a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.assign(h + 1, -1); // Initialize dp vector\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2432101.75,
+            2724737.125,
+            2967129.6875,
+            3026579.5625
+        ]
+    },
+    "(10x11x8_10_15_18x8_10_15)": {
+        "children": [
+            {
+                "fitness": 7101399.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Using bitmask for states for better clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in checking state\n    \n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Improved clarity in initialization\n    cin >> h >> n; // Input handling\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Use bit shifting for clarity and performance\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the optimized input handling from Parent 1 with the efficient use of bitmasking from Parent 4, while also utilizing the clear state checking from Parent 3."
+            },
+            {
+                "fitness": 7093772.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the input handling of Parent 2 with the optimized dp array size from Parent 1, while leveraging the clarity in state checking from Parent 3."
+            },
+            {
+                "fitness": 7628806.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Using bitmask for states instead of separate bits for better clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the clear recursion strategy from Parent 3 with the efficient input handling from Parent 4 and the optimized usage of the dp array from Parent 2."
+            },
+            {
+                "fitness": 8419855.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Improved clarity in initialization\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Integrate the optimized input handling and clarity in state checking from Parent 1 with the efficient dp size and bit manipulation from Parent 2."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10",
+            "11",
+            "8_10_15_18",
+            "8_10_15"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Improved clarity in checking state\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp array size\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Keeping the bitmask for states for clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Use bit shifting for clarity and performance\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Using bitmask for states instead of separate bits for better clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7042426.4375,
+            7120041.8125,
+            7170319.75,
+            7638935.125
+        ]
+    },
+    "(11)": {
+        "children": [
+            {
+                "fitness": 3271939.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the `dp` array declaration and initialization, which can be optimized by using a one-dimensional array to reduce space complexity and improve cache performance."
+            },
+            {
+                "fitness": 7439960.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\n#include <cstdio> // Added for scanf\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Keep the optimized dp array size\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    scanf(\"%d %d\", &h, &n); // Efficient input handling using scanf\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        scanf(\"%d %d\", &x, &y); // Efficient input handling using scanf\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the input handling in the `main` function. The `dp` array can be reduced in size, and input can be handled more efficiently by using `scanf` instead of `cin`, which can help improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp array size\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            6978268.1875
+        ]
+    },
+    "(11_23)": {
+        "children": [
+            {
+                "fitness": 3835829.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the use of the `dp` array, which could be optimized by using a more efficient state representation to reduce memory usage and potentially improve cache locality."
+            },
+            {
+                "fitness": 3026579.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed to a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.assign(h + 1, -1); // Initialize dp vector\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the `dp` array is initialized and accessed. By using a `std::vector` instead of a fixed-size array, we can optimize memory usage and avoid potential stack overflows for larger inputs. Additionally, changing the initialization method can improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11_23"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3271939.0
+        ]
+    },
+    "(11_23_32)": {
+        "children": [
+            {
+                "fitness": 2997801.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1); // Use resize to allocate space without initialization\n    fill(dp.begin(), dp.end(), -1); // Efficiently fill with -1\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the `dp` vector is initialized with `-1`, which could be optimized by using a more efficient method for initializing the vector."
+            },
+            {
+                "fitness": 2700916.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Retained as a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.resize(h + 1, -1); // Use resize instead of assign for better memory handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the dynamic programming vector `dp` is initialized. This can be optimized by changing the initialization strategy to minimize the number of resizing operations and improve memory management."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11_23_32"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed to a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.assign(h + 1, -1); // Initialize dp vector\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3026579.5625
+        ]
+    },
+    "(11_23_32_34)": {
+        "children": [
+            {
+                "fitness": 2474770.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.assign(h + 1, -1); // Directly assign -1 to avoid unnecessary resizing operation\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the dp vector that could be optimized by using a more efficient approach to avoid unnecessary resizing and filling."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11_23_32_34"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1); // Use resize to allocate space without initialization\n    fill(dp.begin(), dp.end(), -1); // Efficiently fill with -1\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2724737.125
+        ]
+    },
+    "(11_23_32_34_39)": {
+        "children": [
+            {
+                "fitness": 2801749.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1, -1); // Using resize for better performance\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the `dp` vector is assigned, which could be optimized by using `std::vector::resize` instead of `assign` for better performance in scenarios where the vector size is known beforehand."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11_23_32_34_39"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.assign(h + 1, -1); // Directly assign -1 to avoid unnecessary resizing operation\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2474770.4375
+        ]
+    },
+    "(11_23_32_41)": {
+        "children": [
+            {
+                "fitness": 3039181.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nconst int MAX_H = 100005; // Define a maximum size for h\nint dp[MAX_H]; // Use a fixed-size array instead of a vector\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    memset(dp, -1, sizeof(dp)); // Initialize the dp array using memset\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the `vector<int> dp` is declared. Since `dp` is used for dynamic programming and its size is known beforehand, it can be optimized by using a fixed-size array instead of a vector to improve memory access times and reduce overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11_23_32_41"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Retained as a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.resize(h + 1, -1); // Use resize instead of assign for better memory handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2430362.5
+        ]
+    },
+    "(11_23_32x20x19_33x10_28)": {
+        "children": [
+            {
+                "fitness": 3364122.0625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Using a 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Initialize dp array\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the efficient input handling from Parent 1 (fitness: 2485873.3125) with the optimized state encoding from Parent 2 (fitness: 2973290.125)."
+            },
+            {
+                "fitness": 3245675.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp(101010, -1); // Initialize dp vector with size and default value\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the dynamic vector allocation of Parent 1 (fitness: 2485873.3125) with the loop initialization of Parent 3 (fitness: 3031034.875) for better clarity."
+            },
+            {
+                "fitness": 3246340.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Leveraging a 1D array for performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Clarity in state checking\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Initialize dp array\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the improved clarity in state checking from Parent 3 (fitness: 3031034.875) with the concise input handling from Parent 4 (fitness: 3032303.9375) to produce clearer code."
+            },
+            {
+                "fitness": 3336189.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Using a 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Initialize dp array\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Integrate the improved state management from Parent 2 (fitness: 2973290.125) with enhanced readability from Parent 1 (fitness: 2485873.3125) for better optimization."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "11_23_32",
+            "20",
+            "19_33",
+            "10_28"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed to a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.assign(h + 1, -1); // Initialize dp vector\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced dp size to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    for(int i = 0; i < 101010; ++i) dp[i] = -1; // Loop initialization for clarity\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Changed to a 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2485873.3125,
+            2973290.125,
+            3031034.875,
+            3032303.9375
+        ]
+    },
+    "(11_23x11x10x13)": {
+        "children": [
+            {
+                "fitness": 8610022.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp array size\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the optimized dynamic programming logic from Parent 1 (fitness: 3101077.4375) with the improved state handling from Parent 2 (fitness: 6978268.1875)."
+            },
+            {
+                "fitness": 8358265.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Improved clarity in checking state\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the efficient input handling from Parent 1 (fitness: 3101077.4375) with the optimized caching from Parent 3 (fitness: 6990665.125)."
+            },
+            {
+                "fitness": 8132881.375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the optimized state checking from Parent 2 (fitness: 6978268.1875) with the efficient bit manipulations from Parent 4 (fitness: 7093772.8125)."
+            },
+            {
+                "fitness": 3636656.375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the improved clarity and readability from Parent 3 (fitness: 6990665.125) with the efficient bit manipulation from Parent 1 (fitness: 3101077.4375)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "11_23",
+            "11",
+            "10",
+            "13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp array size\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Improved clarity in checking state\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3101077.4375,
+            6978268.1875,
+            6990665.125,
+            7093772.8125
+        ]
+    },
+    "(13)": {
+        "children": [
+            {
+                "fitness": 3255309.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced dp size to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int& ret = dp[i * 8 + bit]; // Using a 1D array to store states effectively\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Adjusted for new dp size\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array, which could be optimized by using a more compact representation to reduce memory usage and improve cache performance. Instead of a 2D array, we can use a single dimension array since the `bit` values can be represented as a single integer."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7093772.8125
+        ]
+    },
+    "(13_29x10_28x11_23x19)": {
+        "children": [
+            {
+                "fitness": 3421207.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced dp size to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the efficient input handling from Parent 1 (fitness: 3025527.3125) with the optimized recursive conditions from Parent 2 (fitness: 3146729.6875)."
+            },
+            {
+                "fitness": 3121647.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Optimized dp array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int& ret = dp[i]; // Simple access with `i`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n\n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Initialize dp array\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the 1D array state tracking from Parent 3 (fitness: 3271939.0) with the improved input handling from Parent 4 (fitness: 3636656.375)."
+            },
+            {
+                "fitness": 3033018.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the state encoding technique from Parent 2 (fitness: 3146729.6875) with the optimized bit manipulation from Parent 1 (fitness: 3025527.3125)."
+            },
+            {
+                "fitness": 3204460.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Optimized dp array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int& ret = dp[i]; // Accessing only with `i`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n\n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Initialize dp array\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Integrate the efficient input handling and encoding strategy from Parent 3 (fitness: 3271939.0) with the recursive structure from Parent 4 (fitness: 3636656.375)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "13_29",
+            "10_28",
+            "11_23",
+            "19"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced dp size to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int& ret = dp[i * 8 + bit]; // Using a 1D array to store states effectively\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Adjusted for new dp size\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Changed to a 1D array for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3025527.3125,
+            3146729.6875,
+            3271939.0,
+            3636656.375
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 3031034.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    for(int i = 0; i < 101010; ++i) dp[i] = -1; // Loop initialization for clarity\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line that initializes the `dp` array. Instead of using `memset` to initialize, we can use a loop to set the values to -1, which could improve clarity and potentially allow for better optimization by the compiler."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3636656.375
+        ]
+    },
+    "(19_33)": {
+        "children": [
+            {
+                "fitness": 3469654.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\n// Optimized dfs function with reduced bitwise operations\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Combined conditions for better performance\n    if (bit == 0) {\n        ret = max(ret, dfs(i + 1, 0b111) + 2);\n    } else {\n        // Simplifying the checks for setting bits\n        if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n        else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    }\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    fill(dp, dp + 101010, -1); // Using fill for clarity and efficiency\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the use of the `bit` variable in the `dfs` function, which can be optimized by using a more efficient bitmask representation and avoiding unnecessary bitwise operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19_33"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i]; // Accessing only with `i`, not `bit`\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    for(int i = 0; i < 101010; ++i) dp[i] = -1; // Loop initialization for clarity\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3031034.875
+        ]
+    },
+    "(1x8_10x2x5)": {
+        "children": [
+            {
+                "fitness": 10201391.1875,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    int temp = dfs(i + 1, 0); // Store max of base case\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, temp);\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the efficient use of arrays from Parent 3 with the improved base case handling from Parent 4."
+            },
+            {
+                "fitness": 8299333.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the vector usage from Parent 1 with the improved array size management from Parent 2 to enhance performance."
+            },
+            {
+                "fitness": 8841793.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions for better performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Utilize the improved bit manipulation from Parent 1 with the clearer return conditions from Parent 2 for better readability and performance."
+            },
+            {
+                "fitness": 8864219.625,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the effective array handling from Parent 3 with the enhanced base case checking from Parent 4 to reduce redundant calculations."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "8_10",
+            "2",
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != 0) return ret; // change comparison to 0\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, 0, sizeof(dp)); // set all to 0\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    int temp = dfs(i + 1, 0); // store max of base case\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, temp);\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            8223850.1875,
+            8433184.1875,
+            8643136.0,
+            8940670.3125
+        ]
+    },
+    "(20)": {
+        "children": [
+            {
+                "fitness": 2967129.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed dp to a vector to handle dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    dp.resize((h + 1) << 3); // Dynamically sized dp vector\n    memset(dp.data(), -1, dp.size() * sizeof(int)); // Correctly memset the vector\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the `dp` array is initialized and the size of the `dp` array is reduced to improve memory usage and access speed. The `dp` array could be optimized by using a smaller data structure or by implementing a more efficient state representation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "20"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010]; // Reduced dp size to 1D array for better performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2973290.125
+        ]
+    },
+    "(20_35)": {
+        "children": [
+            {
+                "fitness": 2557126.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit;\n    if (state >= dp.size()) return 0;\n    if (dp[state] != -1) return dp[state];\n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0));\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n;\n    b.assign(h + 1, 0);\n    dp.resize((h + 1) << 3);\n    memset(dp.data(), -1, dp.size() * sizeof(int));\n    \n    // Optimized input handling with direct bit setting\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y] |= (1 << x); // Set bit state for both y and y+1 in a single read\n        b[y + 1] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line that initializes the `b` vector and processes input, which could be optimized by directly reading and setting bit states for efficiency."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "20_35"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Changed dp to a vector to handle dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; // Encode the state using bit manipulation\n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    b.assign(h + 1, 0);\n    dp.resize((h + 1) << 3); // Dynamically sized dp vector\n    memset(dp.data(), -1, dp.size() * sizeof(int)); // Correctly memset the vector\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Using bit manipulation for state encoding\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2967129.6875
+        ]
+    },
+    "(31)": {
+        "children": [
+            {
+                "fitness": 2528275.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\n#include <array>\nusing namespace std;\n\nint h, n;\nvector<int> b;\narray<int, 1 << 8> dp; // Use fixed-size array for dp, reducing overhead\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.fill(-1); // Initialize all elements to -1\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` vector, which could be optimized by using a more efficient data structure to avoid potential performance issues with dynamic resizing and to improve memory usage."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "31"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Vector for dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2400566.5625
+        ]
+    },
+    "(31x11_23_32_41x10_28_37_38x11_23_32_34_39)": {
+        "children": [
+            {
+                "fitness": 2587116.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\n// Optimize dp resizing by using a fixed size based on maximum possible states.\nstatic const int MAX_STATE = (1 << 3) * 100; // Assuming h can go up to 100\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state >= dp.size()) dp.resize(MAX_STATE, -1); // Preallocate a fixed size\n    if (dp[state] != -1) return dp[state]; \n    \n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(MAX_STATE, -1); // Preallocate size based on maximum state possible\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the dynamic programming approach from Parent 1 (fitness: 2400566.5625) with the fixed state management of Parent 3 (fitness: 2472034.875). This allows for better memory management while retaining the clear recursion logic."
+            },
+            {
+                "fitness": 2512485.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; \n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.assign(h + 1, -1); \n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the efficient input handling and state management of Parent 2 (fitness: 2430362.5) with the improved recursion from Parent 4 (fitness: 2474770.4375). This enhances the clarity of state conditions while integrating better dynamic memory handling."
+            },
+            {
+                "fitness": 2407069.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (dp[state] != -1) return dp[state]; \n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize((h << 3) + 8, -1); \n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the recursive function from Parent 1 (fitness: 2400566.5625) with the input handling of Parent 2 (fitness: 2430362.5). This retains the clarity of the recursion while improving the efficiency of input processing."
+            },
+            {
+                "fitness": 2410816.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; \n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize(h + 1, -1); \n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Integrate the optimization techniques from Parent 3 (fitness: 2472034.875) with the clarity and efficient input handling of Parent 4 (fitness: 2474770.4375). This combines the best aspects of both parents for improved performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "31",
+            "11_23_32_41",
+            "10_28_37_38",
+            "11_23_32_34_39"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Vector for dynamic sizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state >= dp.size()) return 0; // Prevent out of bounds access\n    if (dp[state] != -1) return dp[state]; // Improved clarity in checking state\n    dp[state] = 0;\n\n    // Streamlined recursion conditions for clarity\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n\n    dp[state] = max(dp[state], dfs(i + 1, 0)); // Check for no bits set\n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.resize((h << 3) + 8, -1); // Preallocate size for dp vector\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x);\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp; // Retained as a vector for dynamic resizing\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i]; // Accessing only with `i`\n    dp[i] = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); // Check for no bits set\n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; // Efficient input handling\n    dp.resize(h + 1, -1); // Use resize instead of assign for better memory handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int state = (i << 3) | bit; \n    if (state < dp.size() && dp[state] != -1) return dp[state]; \n    \n    // Optimize dp resizing by using a fixed size based on maximum possible states\n    static const int MAX_STATE = (1 << 3) * 100; // Assuming h can go up to 100\n    if (state >= dp.size()) dp.resize(MAX_STATE, -1); // Preallocate a fixed size\n\n    dp[state] = 0;\n\n    if (bit == 0) dp[state] = max(dp[state], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[state] = max(dp[state], dfs(i + 1, 0b011) + 1);\n    \n    dp[state] = max(dp[state], dfs(i + 1, 0)); \n    return dp[state];\n}\n\nint main() {\n    cin >> h >> n; \n    b.assign(h + 1, 0);\n    dp.resize((1 << 3) * (h + 1), -1); // Preallocate size based on maximum state possible\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nvector<int> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    if (dp[i] != -1) return dp[i];\n    dp[i] = 0;\n\n    if (bit == 0) dp[i] = max(dp[i], dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) dp[i] = max(dp[i], dfs(i + 1, 0b011) + 1);\n    \n    dp[i] = max(dp[i], dfs(i + 1, 0)); \n    return dp[i];\n}\n\nint main() {\n    cin >> h >> n; \n    dp.assign(h + 1, -1); // Directly assign -1 to avoid unnecessary resizing operation\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2400566.5625,
+            2430362.5,
+            2472034.875,
+            2474770.4375
+        ]
+    },
+    "(5)": {
+        "children": [
+            {
+                "fitness": 9552246.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    // Use a temporary variable to hold the current bit mask from vector b\n    bit = (bit | b[i]); // Combining current bit with the value in b[i]\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    int temp = dfs(i + 1, 0); // store max of base case\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, temp);\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line `bit |= b[i];` that combines the current bit mask with the value from vector `b`. This could be optimized by using a simpler method to initialize or update the `bit` variable, potentially avoiding unnecessary operations."
+            },
+            {
+                "fitness": 7759308.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; \n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion and avoid redundant calls\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); \n    return ret;\n}\n\nint main() {\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    \n    // Directly utilize bit manipulation to reduce number of operations\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    memset(dp, -1, sizeof(dp)); // Moved memset to after input processing to avoid unnecessary operations\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the dp array and the way bits are handled in the dfs function, which could be optimized by reducing unnecessary memory allocation and improving bit manipulation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "5"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7474926.5625
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 13281121.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][16]; // Increased bitmask size for more states\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Change initialization value to -1 for better check\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // Set all to -1 for better detection of uninitialized states\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line that initializes the `dp` array, which could be optimized by using an alternative initialization method to reduce memory overhead and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != 0) return ret; // change comparison to 0\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, 0, sizeof(dp)); // set all to 0\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            8324297.3125
+        ]
+    },
+    "(8)": {
+        "children": [
+            {
+                "fitness": 8131921.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on optimizing the recursive function `dfs` by reducing the number of calls and avoiding unnecessary calculations. This can be optimized by utilizing memoization more effectively and simplifying the bit manipulation operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1); // combined condition\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            8064077.5
+        ]
+    },
+    "(8_10)": {
+        "children": [
+            {
+                "fitness": 7638935.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Using bitmask for states instead of separate bits for better clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the dp array and the way the bits are managed, which could be optimized by using a more efficient data structure and simplifying the bit manipulation logic."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            8433184.1875
+        ]
+    },
+    "(8_10_15)": {
+        "children": [
+            {
+                "fitness": 7170319.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Keeping the bitmask for states for clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Use bit shifting for clarity and performance\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array and the way the `b` vector is populated, which could be optimized by reducing the memory footprint and utilizing a more efficient way to handle states."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_10_15"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Using bitmask for states instead of separate bits for better clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7057958.375
+        ]
+    },
+    "(8_10_15_18)": {
+        "children": [
+            {
+                "fitness": 7826626.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Keeping the bitmask for states for clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        // Combine bit setting into a single line to reduce redundancy\n        b[y] |= (1 << x);\n        b[y + 1] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the line where the bitmask is initialized, as it could be optimized by using a single loop to combine the bit settings for `b[y + 1]` and `b[y]` when reading input values. This reduces redundancy and may improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_10_15_18"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Keeping the bitmask for states for clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    b.assign(h + 1, 0); // Initialize vector to size h + 1\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= (1 << x); // Use bit shifting for clarity and performance\n        b[y] |= (1 << x);\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7170319.75
+        ]
+    },
+    "(8_10_15x5x1_14x8_10)": {
+        "children": [
+            {
+                "fitness": 8080780.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions for readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the optimized `dp` array size from Parent 2 with the improved bitmask clarity from Parent 1."
+            },
+            {
+                "fitness": 8077547.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Combined conditions for efficiency\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the efficient bitmask handling from Parent 3 with the improved recursion depth management from Parent 4."
+            },
+            {
+                "fitness": 6990665.125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp size for better cache performance\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Improved clarity in checking state\n    ret = 0;\n\n    // Simplified conditions for better readability\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the iterative design of `main` from Parent 1 with the enhanced readability of the `dfs` function from Parent 2."
+            },
+            {
+                "fitness": 8387385.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Optimized dp array size\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity in state checking\n    ret = 0;\n\n    // Streamlined recursion conditions\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n; // Efficient input handling\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Integrate the efficient bit manipulation from Parent 4 with the overall structure and input handling from Parent 3."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8_10_15",
+            "5",
+            "1_14",
+            "8_10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][1 << 3]; // Using bitmask for states instead of separate bits for better clarity\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Clarity remains in checking state\n    \n    ret = 0;\n\n    // Simplified conditions to improve readability and potentially performance\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // changed comparison to -1\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp)); // set all to -1\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][8]; // Reduced size of dp array for better cache efficiency\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != -1) return ret; // Changed from ~ret to ret != -1 for clarity\n    ret = 0;\n\n    // Combine conditions to reduce depth of recursion\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    else if ((bit & 0b110) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    else if ((bit & 0b011) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    \n    ret = max(ret, dfs(i + 1, 0)); // Check for no bits set\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            7057958.375,
+            7474926.5625,
+            8072355.1875,
+            8131921.5
+        ]
+    },
+    "(8x5x6x4)": {
+        "children": [
+            {
+                "fitness": 9404711.125,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1); // combined condition\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine the initialization and input handling from Parent 4 with the optimized DFS function structure from Parent 1."
+            },
+            {
+                "fitness": 9338933.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != 0) return ret; // change comparison to 0\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, 0, sizeof(dp)); // set all to 0\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Merge the DFS logic from Parent 3 with the input and data structure initialization from Parent 2, ensuring efficiency in the DFS recursive calls."
+            },
+            {
+                "fitness": 8643136.0,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Utilize the effective bit manipulation from Parent 1 while adopting the array data structure from Parent 4 to optimize memory usage."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "5",
+            "6",
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1); // combined condition\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    int temp = dfs(i + 1, 0); // store max of base case\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, temp);\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != 0) return ret; // change comparison to 0\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, 0, sizeof(dp)); // set all to 0\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+            "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n"
+        ],
+        "parent_fitnesses": [
+            8064077.5,
+            8128214.0,
+            8324297.3125,
+            8696589.5
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 9245979.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) {\n        return 0;\n    }\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Focus on the include directive to reduce overhead by using only necessary headers."
+            },
+            {
+                "fitness": 9955916.25,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    scanf(\"%d %d\", &h, &n);\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        scanf(\"%d %d\", &x, &y);\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    printf(\"%d\\n\", dfs());\n}\n",
+                "strategy": "Replace `cin` with `scanf` to improve input speed, especially for large datasets."
+            },
+            {
+                "fitness": 10669568.3125,
+                "new_code": "#include <iostream>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\nint b[MAX_H];\nint dp[MAX_H][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    memset(b, 0, sizeof(b));\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Change the `vector` to a static array for known maximum size to reduce dynamic memory allocation overhead."
+            },
+            {
+                "fitness": 8696589.5,
+                "new_code": "#include <iostream>\n#include <array>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_H = 101010;\nint h, n;\narray<int, MAX_H> b;\narray<array<int, 10>, MAX_H> dp;\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp.data(), -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.fill(0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Use `std::array` instead of raw arrays for better safety and performance in fixed size arrays."
+            },
+            {
+                "fitness": 8940670.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    int temp = dfs(i + 1, 0); // store max of base case\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, temp);\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Reduce the number of times `max` is called by storing intermediate results in a variable."
+            },
+            {
+                "fitness": 8324297.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (ret != 0) return ret; // change comparison to 0\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, 0, sizeof(dp)); // set all to 0\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Change the default value of `dp` from -1 to a more suitable integer that minimizes unnecessary comparisons."
+            },
+            {
+                "fitness": 8778483.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\ninline int max_dfs(int a, int b) { return (a > b) ? a : b; }\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max_dfs(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b100)) == 0) ret = max_dfs(ret, dfs(i + 1, 0b110) + 1);\n    if ((bit & (0b010)) == 0) ret = max_dfs(ret, dfs(i + 1, 0b111) + 1);\n    if ((bit & (0b001)) == 0) ret = max_dfs(ret, dfs(i + 1, 0b011) + 1);\n    ret = max_dfs(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Inline small functions to reduce function call overhead."
+            },
+            {
+                "fitness": 9348040.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if ((bit & (0b110)) == 0) ret = max(ret, dfs(i + 1, 0b110) + 1); // combined condition\n    if ((bit & (0b011)) == 0) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Combine similar conditions to reduce redundant checks in the `dfs` function."
+            },
+            {
+                "fitness": 9792150.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nint h, n;\nvector<int> b;\nint dp[101010][10];\n\nint dfs(int i = 1, int bit = 0) {\n    if (i == h) return 0;\n    bit |= b[i];\n    int &ret = dp[i][bit];\n    if (~ret) return ret;\n    ret = 0;\n    int nextBit = 0b111 - bit; // cache next available bits\n    if (bit == 0) ret = max(ret, dfs(i + 1, 0b111) + 2);\n    if (nextBit & 0b100) ret = max(ret, dfs(i + 1, 0b110) + 1);\n    if (nextBit & 0b010) ret = max(ret, dfs(i + 1, 0b111) + 1);\n    if (nextBit & 0b001) ret = max(ret, dfs(i + 1, 0b011) + 1);\n    ret = max(ret, dfs(i + 1, 0));\n    return ret;\n}\n\nint main() {\n    memset(dp, -1, sizeof(dp));\n    cin >> h >> n;\n    int ei[4] = {0b100, 0b110, 0b011, 0b001};\n    b.assign(h + 1, 0);\n    for (int i = 0; i < n; ++i) {\n        int x, y;\n        cin >> x >> y;\n        b[y + 1] |= ei[x];\n        b[y] |= ei[x];\n    }\n    cout << dfs() << endl;\n}\n",
+                "strategy": "Use bitwise operations more efficiently by caching results of previous computations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include \"stdc++.h\"\n\nusing namespace std;\n\n\n\nint h, n;\n\nvector<int> b;\n\n\n\nint dp[101010][10];\n\n\n\nint dfs(int i = 1, int bit = 0) {\n\n  if (i == h) {\n\n    return 0;\n\n  }\n\n  bit |= b[i];\n\n\n\n  int &ret = dp[i][bit];\n\n  if (~ret)\n\n    return ret;\n\n\n\n  ret = 0;\n\n  if (bit == 0)\n\n    ret = max(ret, dfs(i + 1, 0b111) + 2);\n\n  if ((bit & (0b100)) == 0)\n\n    ret = max(ret, dfs(i + 1, 0b110) + 1);\n\n  if ((bit & (0b010)) == 0)\n\n    ret = max(ret, dfs(i + 1, 0b111) + 1);\n\n  if ((bit & (0b001)) == 0)\n\n    ret = max(ret, dfs(i + 1, 0b011) + 1);\n\n  ret = max(ret, dfs(i + 1, 0));\n\n\n\n  return ret;\n\n}\n\n\n\nint main() {\n\n  memset(dp, -1, sizeof(dp));\n\n  cin >> h >> n;\n\n\n\n  int ei[4] = {0b100, 0b110, 0b011, 0b001};\n\n  b.assign(h + 1, 0);\n\n  for (int i = 0; i < n; ++i) {\n\n    int x, y;\n\n    cin >> x >> y;\n\n    b[y + 1] |= ei[x];\n\n    b[y] |= ei[x];\n\n  }\n\n\n\n  cout << dfs() << endl;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            8374694.875
+        ]
+    }
+}

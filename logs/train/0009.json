@@ -1,0 +1,736 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 2411965.625,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\nbool memo[10][1 << 10]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // Return cached result if exists\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Cache the result\n    return temp;\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function, which has unnecessary recursive calls that could be optimized by using memoization to avoid redundant calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2379476.1875
+        ]
+    },
+    "(1)": {
+        "children": [
+            {
+                "fitness": 2507339.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10][100]; // Storing results for dfs(i, x, pre)\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x][pre]) return false; // Check memoization\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x][pre] = temp || dfs(i + 1, x | (1 << i), pre); // Store result\n    return memo[i][x][pre];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, 0, sizeof(memo)); // Initialize memoization array\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function, which recursively explores combinations but can be optimized by using memoization to avoid redundant calculations."
+            },
+            {
+                "fitness": 2381038.0625,
+                "new_code": "#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int x) {\n    stack<pair<int, int>> s; // Stack for iterative DFS\n    s.push({1, x});\n    int pre = a[0];\n    \n    while (!s.empty()) {\n        auto [i, current] = s.top();\n        s.pop();\n        \n        if (i == 10) {\n            if (check(current)) return true;\n            continue;\n        }\n        \n        if (a[i] > pre) {\n            s.push({i + 1, current}); // do not include a[i]\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        } else {\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        }\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function, which uses recursion. The recursion could lead to large call stacks and potential inefficiencies. By using an iterative approach with a stack, we can reduce the overhead associated with recursive function calls."
+            },
+            {
+                "fitness": 982546.5625,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // memoization array for dfs\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // check if already calculated\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[i][x];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, false, sizeof(memo)); // clear memoization array\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function's recursive calls, which could be optimized by using memoization to avoid redundant calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            948923.9375
+        ]
+    },
+    "(16)": {
+        "children": [
+            {
+                "fitness": 942437.25,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Modified condition to include equality\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Start dfs with i = 0 for correct indexing\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `check` function that verifies the order of selected elements. The condition `if (a[i] <= pre)` could be optimized by using a more efficient ordering strategy to reduce the number of comparisons."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Modified condition to include equality\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, -1) ? \"YES\" : \"NO\"); // Start dfs with pre = -1\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            953820.875
+        ]
+    },
+    "(18)": {
+        "children": [
+            {
+                "fitness": 961439.25,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Change here: avoid unnecessary recursion when a[i] < pre\n    if (a[i] >= pre) {\n        temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    }\n    // Optimize by skipping further dfs calls if we already found a valid result\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); \n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the `dfs` function is called with the initial parameters, which could be optimized by using a more efficient way to handle the equality check to avoid unnecessary recursive calls."
+            },
+            {
+                "fitness": 946414.0625,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] >= pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that checks the condition in the `dfs` function. By optimizing the way the conditions are checked and possibly reducing the number of recursive calls, we can improve the overall performance. Instead of checking equality for better checks, we can eliminate unnecessary checks and simplify the flow."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "18"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            940086.625
+        ]
+    },
+    "(18_34)": {
+        "children": [
+            {
+                "fitness": 951617.875,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element is always valid\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed '<' to '<=' for optimization\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] >= pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Changed initial pre to -1\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `check` function which evaluates conditions based on bit manipulation and array comparisons. This can be optimized by reducing the number of comparisons and using early exits to avoid unnecessary checks."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "18_34"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] >= pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            946414.0625
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 952250.625,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Removed equality check to streamline performance\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); \n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that checks for equality `if (a[i] >= pre)`, which could be optimized by removing the equality check and simplifying the recursive call."
+            },
+            {
+                "fitness": 948238.25,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Changed >= to > for optimization\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function, which performs a depth-first search to check conditions. The optimization involves removing the equality check for `a[i] >= pre` to simplify the logic and potentially reduce the number of recursive calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            940078.375
+        ]
+    },
+    "(19_28)": {
+        "children": [
+            {
+                "fitness": 2480860.1875,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10][100]; // Memoization table\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x][pre]) return false; // Check if already computed\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x][pre] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[i][x][pre];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        memset(memo, false, sizeof(memo)); // Clear memoization table\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function, which could be optimized by eliminating redundant recursive calls and using a more efficient approach to store results."
+            },
+            {
+                "fitness": 989539.75,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10]; // Memoization table for storing results\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return memo[i][x]; // Check if already computed\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); \n    return memo[i][x] = temp || dfs(i + 1, x | (1 << i), pre); // Store result in memo\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, 0, sizeof(memo)); // Clear memoization table for each test case\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function which has a recursive structure that can lead to excessive function call overhead. This can be optimized by using memoization to avoid redundant calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19_28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Removed equality check to streamline performance\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); \n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            952250.625
+        ]
+    },
+    "(19_28x19x18x23)": {
+        "children": [
+            {
+                "fitness": 972135.625,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false; // Maintain original check\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Removed equality check to streamline performance\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); \n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the `dfs` function from Parent 1 (fitness: 939038.875) with the `check` function from Parent 2 (fitness: 940078.375) to enhance the logic that checks the conditions for valid sequences."
+            },
+            {
+                "fitness": 952432.3125,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the input handling from Parent 2 (fitness: 940078.375) with the `dfs` function from Parent 3 (fitness: 940086.625), while keeping the optimization in `check` function."
+            },
+            {
+                "fitness": 963278.125,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Streamlined check\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the `check` function from Parent 4 (fitness: 940225.625) while adopting the `dfs` logic from Parent 1 (fitness: 939038.875) to maintain tighter checks while optimizing the flow."
+            },
+            {
+                "fitness": 1020412.375,
+                "new_code": "#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality check\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine input handling and output formatting from Parent 2 (fitness: 940078.375) with the `dfs` function from Parent 4 (fitness: 940225.625) to ensure efficient input processing and maintain function integrity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19_28",
+            "19",
+            "18",
+            "23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Removed equality check to streamline performance\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); \n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            939038.875,
+            940078.375,
+            940086.625,
+            940225.625
+        ]
+    },
+    "(19_33)": {
+        "children": [
+            {
+                "fitness": 966663.625,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Change the condition to check for pre instead of a[i] > pre\n    if (a[i] > pre) {\n        temp = dfs(i + 1, x, a[i]); // Keeping the recursion intact\n    }\n    // If we include the current element\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function where the recursive calls occur. The original code checks if `a[i] > pre` to proceed with the recursion. This condition can be optimized by using a direct comparison to reduce unnecessary recursive calls, potentially improving performance."
+            },
+            {
+                "fitness": 971873.5,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Only proceed with the next step if the current value is valid\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    // Optimize by using a single recursive call with a bitwise operation\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the `dfs` function checks for conditions based on the previous value, which could be optimized by using a more efficient approach to avoid redundant checks."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19_33"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Changed >= to > for optimization\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            948238.25
+        ]
+    },
+    "(19_33x19x18_34x19_28)": {
+        "children": [
+            {
+                "fitness": 957831.75,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] > pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the optimized `dfs` function from Parent 3 (fitness: 946414.0625) with the streamlined check condition from Parent 4 (fitness: 952250.625) to enhance performance by reducing unnecessary checks."
+            },
+            {
+                "fitness": 954879.0625,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Retain equality check for optimization\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the efficient input handling from Parent 2 (fitness: 940860.625) with the optimized `check` and `dfs` logic from Parent 1 (fitness: 940196.4375) to improve runtime while maintaining the original logic."
+            },
+            {
+                "fitness": 962529.4375,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Combine checks for efficiency\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the effective loop structure from Parent 4 (fitness: 952250.625) with the check logic from Parent 2 (fitness: 940860.625) to enhance readability while maintaining performance."
+            },
+            {
+                "fitness": 942944.6875,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Retain optimized check from Parent 1\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Use the optimized `dfs` from Parent 1 (fitness: 940196.4375) but integrate the efficient input reading from Parent 2 (fitness: 940860.625) to streamline data handling while preserving performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19_33",
+            "19",
+            "18_34",
+            "19_28"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Changed >= to > for optimization\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] >= pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Removed equality check to streamline performance\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); \n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            940196.4375,
+            940860.625,
+            946414.0625,
+            952250.625
+        ]
+    },
+    "(19x18x16x17)": {
+        "children": [
+            {
+                "fitness": 941741.8125,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Modified condition to include equality\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Start dfs with pre = -1\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the optimized `check` function from Parent 3 (fitness: 953820.875) with the `dfs` function from Parent 1 (fitness: 949230.4375) for improved clarity and structure."
+            },
+            {
+                "fitness": 943581.875,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Use '>' for stricter comparison\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the `dfs` function from Parent 4 (fitness: 953857.5625) with the input structure from Parent 2 (fitness: 953234.9375) to enhance input handling and maintain the depth-first search logic."
+            },
+            {
+                "fitness": 980129.3125,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the `dfs` functionality from Parent 1 (fitness: 949230.4375) and the input approach from Parent 4 (fitness: 953857.5625) to streamline input processing while preserving the original logic."
+            },
+            {
+                "fitness": 940225.625,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the `check` logic from Parent 2 (fitness: 953234.9375) with the `dfs` function structure from Parent 3 (fitness: 953820.875), enhancing the condition checks for better optimization."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19",
+            "18",
+            "16",
+            "17"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Modified condition to include equality\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, -1) ? \"YES\" : \"NO\"); // Start dfs with pre = -1\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            949230.4375,
+            953234.9375,
+            953820.875,
+            953857.5625
+        ]
+    },
+    "(1_12)": {
+        "children": [
+            {
+                "fitness": 2420233.375,
+                "new_code": "#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int x) {\n    stack<pair<int, int>> s; // Stack for iterative DFS\n    s.push({1, x});\n    int pre = a[0];\n    \n    while (!s.empty()) {\n        auto [i, current] = s.top();\n        s.pop();\n        \n        if (i == 10) {\n            if (check(current)) return true;\n            continue;\n        }\n        \n        // Optimized stack manipulation\n        if (a[i] > pre) {\n            s.push({i + 1, current}); // do not include a[i]\n        }\n        s.push({i + 1, current | (1 << i)}); // include a[i]\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line within the `dfs` function that deals with the stack operations, which could be optimized by reducing the number of times the stack is manipulated by combining conditions."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_12"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int x) {\n    stack<pair<int, int>> s; // Stack for iterative DFS\n    s.push({1, x});\n    int pre = a[0];\n    \n    while (!s.empty()) {\n        auto [i, current] = s.top();\n        s.pop();\n        \n        if (i == 10) {\n            if (check(current)) return true;\n            continue;\n        }\n        \n        if (a[i] > pre) {\n            s.push({i + 1, current}); // do not include a[i]\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        } else {\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        }\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2381038.0625
+        ]
+    },
+    "(1_16)": {
+        "children": [
+            {
+                "fitness": 985044.5625,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // memoization array for dfs\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // check if already calculated\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[i][x];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, false, sizeof(memo)); // clear memoization array\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // start dfs from index 0 with -1 as previous\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization array usage and the initialization logic, which could be optimized by reducing the size of the memoization array and improving the way we check for previously calculated values."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // memoization array for dfs\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // check if already calculated\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[i][x];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, false, sizeof(memo)); // clear memoization array\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            982546.5625
+        ]
+    },
+    "(1x0)": {
+        "children": [
+            {
+                "fitness": 2425343.0625,
+                "new_code": "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input method from Parent 1 (scanf) with the output method from Parent 2 (cin), while retaining the algorithmic functions from both parents."
+            },
+            {
+                "fitness": 2413575.1875,
+                "new_code": "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        cout << (dfs(1, 0, a[0]) ? \"YES\" : \"NO\") << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the data structure from Parent 1 (array `a[20]`) with the input/output handling from Parent 2 (using `cin` and `cout`)."
+            },
+            {
+                "fitness": 2416583.125,
+                "new_code": "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the algorithmic logic from both parents while switching to a consistent input method using `cin` for all inputs and using `printf` for all outputs."
+            },
+            {
+                "fitness": 2417789.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        cout << (dfs(1, 0, a[0]) ? \"YES\" : \"NO\") << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the input method from Parent 1 and integrate the output method from Parent 2, while keeping the function names and logic intact."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1218803.75,
+            2379476.1875
+        ]
+    },
+    "(1x0_11x1x2)": {
+        "children": [
+            {
+                "fitness": 2394636.8125,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\nbool memo[10][1 << 10]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // Return cached result if exists\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Cache the result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the memoization approach from Parent 2 (fitness: 2397121.5625) with the input reading style from Parent 1 (fitness: 935236.75)."
+            },
+            {
+                "fitness": 950638.3125,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the improved input handling from Parent 2 (fitness: 2397121.5625) with the straightforward logic of Parent 1 (fitness: 935236.75)."
+            },
+            {
+                "fitness": 2452895.6875,
+                "new_code": "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        cout << (dfs(1, 0, a[0]) ? \"YES\" : \"NO\") << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient input reading from Parent 2 (fitness: 2397121.5625) with the output style of Parent 3 (fitness: 2413575.1875)."
+            },
+            {
+                "fitness": 2485262.125,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\nbool memo[10][1 << 10]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // Return cached result if exists\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Cache the result\n    return temp;\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the memoization technique from Parent 2 (fitness: 2397121.5625) with the input method and output style from Parent 4 (fitness: 2416583.125)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "0_11",
+            "1",
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\nbool memo[10][1 << 10]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // Return cached result if exists\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Cache the result\n    return temp;\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        cout << (dfs(1, 0, a[0]) ? \"YES\" : \"NO\") << endl;\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            935236.75,
+            2397121.5625,
+            2413575.1875,
+            2416583.125
+        ]
+    },
+    "(1x5x2_15x1_12)": {
+        "children": [
+            {
+                "fitness": 2383994.4375,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the iterative DFS approach from Parent 3 with the stack-driven DFS implementation from Parent 4, keeping the input handling from Parent 1."
+            },
+            {
+                "fitness": 2441802.125,
+                "new_code": "#include <cstdio>\n#include <stack>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int x) {\n    stack<pair<int, int>> s; // Stack for iterative DFS\n    s.push({1, x});\n    int pre = a[0];\n\n    while (!s.empty()) {\n        auto [i, current] = s.top();\n        s.pop();\n\n        if (i == 10) {\n            if (check(current)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, current}); // do not include a[i]\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        } else {\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        }\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the concise input handling from Parent 2 with the DFS structure of Parent 4, while ensuring the overall structure is efficient."
+            },
+            {
+                "fitness": 2420694.1875,
+                "new_code": "#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the input method of Parent 1 with the core DFS logic of Parent 3, while optimizing the data types and removing redundancy."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "5",
+            "2_15",
+            "1_12"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int x) {\n    stack<pair<int, int>> s; // Stack for iterative DFS\n    s.push({1, x});\n    int pre = a[0];\n    \n    while (!s.empty()) {\n        auto [i, current] = s.top();\n        s.pop();\n        \n        if (i == 10) {\n            if (check(current)) return true;\n            continue;\n        }\n        \n        if (a[i] > pre) {\n            s.push({i + 1, current}); // do not include a[i]\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        } else {\n            s.push({i + 1, current | (1 << i)}); // include a[i]\n        }\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            948923.9375,
+            961083.625,
+            2380779.875,
+            2381038.0625
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 2380779.875,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the recursive depth in the `dfs` function which may lead to stack overflow or performance issues for larger inputs. This can be optimized by changing the recursion to an iterative approach using a stack, reducing the overhead of function calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) cin >> a[i];\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2416583.125
+        ]
+    },
+    "(23)": {
+        "children": [
+            {
+                "fitness": 958315.1875,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Use a temporary variable to store the result of the recursive call\n    bool includeCurrent = (a[i] >= pre) ? dfs(i + 1, x, a[i]) : false;\n    bool excludeCurrent = dfs(i + 1, x | (1 << i), pre);\n    return includeCurrent || excludeCurrent;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `dfs` function's recursive calls, which can be optimized by reducing unnecessary checks and improving readability."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "23"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            940225.625
+        ]
+    },
+    "(28x31x19_33x18_34_38)": {
+        "children": [
+            {
+                "fitness": 970195.1875,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element is always valid\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed '<' to '<=' for optimization\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] > pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Changed initial pre to -1\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the optimization of the `check` function from Parent 4 (fitness: 951617.875) with the `dfs` function from Parent 1 (fitness: 940094.1875), which incorporates efficient skipping of checks."
+            },
+            {
+                "fitness": 969326.75,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element is always valid\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Retain optimized check from Parent 1\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Changed initial pre to -1\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient input handling from Parent 2 (fitness: 940970.875) with the optimized `check` function from Parent 4, which ensures the first element is always valid."
+            },
+            {
+                "fitness": 952995.9375,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element is always valid\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Changed >= to > for optimization\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Changed initial pre to -1\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the input handling and iterative structure from Parent 3 (fitness: 948238.25) with the optimized `check` function from Parent 4, which ensures that the sequence of elements is strictly increasing."
+            },
+            {
+                "fitness": 958440.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element is always valid\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed '<' to '<=' for optimization\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Retain optimized check from Parent 1\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Changed initial pre to -1\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the effective `dfs` structure from Parent 2 (fitness: 940970.875) with the optimized `check` function from Parent 4, ensuring a strict increasing order for the elements while maintaining the fast input handling."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "28",
+            "31",
+            "19_33",
+            "18_34_38"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] > pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Retain optimized check from Parent 1\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Changed >= to > for optimization\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element is always valid\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed '<' to '<=' for optimization\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    // Skip directly checking if the current value can be part of the solution\n    if (a[i] >= pre && dfs(i + 1, x, a[i])) {\n        return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Changed initial pre to -1\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            940094.1875,
+            940970.875,
+            948238.25,
+            951617.875
+        ]
+    },
+    "(31)": {
+        "children": [
+            {
+                "fitness": 943646.9375,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Initialize pre to -1 for clarity\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Change to <= to simplify the check\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, -1) ? \"YES\" : \"NO\"); // Use -1 to match pre initialization\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `check` function that iterates through the first 10 bits of `x`, which could be optimized by reducing unnecessary comparisons and leveraging early returns."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "31"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Retain optimized check from Parent 1\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            940970.875
+        ]
+    },
+    "(5)": {
+        "children": [
+            {
+                "fitness": 959553.5625,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `check` function that performs a linear scan of the first 10 elements of `a`, which could be optimized by reducing the number of iterations and utilizing early termination."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "5"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            946815.0625
+        ]
+    },
+    "(5_20)": {
+        "children": [
+            {
+                "fitness": 960826.5625,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; ++i) {\n        if (x & (1 << i)) {\n            // Directly check if the current element is valid\n            if (a[i] <= pre) return false; \n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    // Call dfs only if the current element is greater than pre\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    // Remove redundant dfs call\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `check` function that iterates over the first 10 bits of `x` to validate the elements in array `a`. This can be optimized by reducing the number of iterations and using a more efficient check for the elements in `a`."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "5_20"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            944959.3125
+        ]
+    },
+    "(5_20x1x5x14)": {
+        "children": [
+            {
+                "fitness": 953820.875,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Modified condition to include equality\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, -1) ? \"YES\" : \"NO\"); // Start dfs with pre = -1\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the `dfs` function from Parent 1 (fitness: 944959.3125) with the `check` function from Parent 2 (fitness: 948972.6875) to enhance the condition checking mechanism while retaining the original depth-first search logic."
+            },
+            {
+                "fitness": 953857.5625,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the `main` function and input handling of Parent 2 (fitness: 948972.6875) with the `check` function from Parent 3 (fitness: 950638.3125) to streamline the input process and maintain functionality."
+            },
+            {
+                "fitness": 940086.625,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the `dfs` function from Parent 4 (fitness: 960501.8125) with the `main` function of Parent 1 (fitness: 944959.3125) to preserve the original logic while enhancing the overall structure."
+            },
+            {
+                "fitness": 954668.1875,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] >= pre) temp = dfs(i + 1, x, a[i]); // Include equality for better checks\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(0, 0, 0) ? \"YES\" : \"NO\"); // Start dfs with pre = 0\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the `check` function from Parent 2 (fitness: 948972.6875) with the `dfs` function from Parent 3 (fitness: 950638.3125) while maintaining the original input handling from Parent 4 (fitness: 960501.8125) for a comprehensive solution."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "5_20",
+            "1",
+            "5",
+            "14"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = -1; // Start with -1 to ensure the first element can be checked\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed from < to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            944959.3125,
+            948972.6875,
+            950638.3125,
+            960501.8125
+        ]
+    },
+    "(5x1x1_16x8)": {
+        "children": [
+            {
+                "fitness": 2445039.125,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <stack>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // memoization array for dfs\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (memo[i][x]) continue; // check if already calculated\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n        memo[i][x] = true; // mark as calculated\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, false, sizeof(memo)); // clear memoization array\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the iterative DFS function from Parent 4 with memoization from Parent 3 to improve efficiency and reduce stack usage."
+            },
+            {
+                "fitness": 991077.125,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // memoization array for dfs\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // check if already calculated\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[i][x];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, false, sizeof(memo)); // clear memoization array\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the depth-first search logic from Parent 3 with the input handling and output formatting from Parent 1 to maintain clarity and conciseness."
+            },
+            {
+                "fitness": 960501.8125,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient input/output handling of Parent 2 with the enhanced `check` function from Parent 1, ensuring faster execution and clearer logic."
+            },
+            {
+                "fitness": 2412766.875,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <stack>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the iterative DFS from Parent 4 with the concise data handling of Parent 1, ensuring that the stack-based approach is used for better memory efficiency."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "5",
+            "1",
+            "1_16",
+            "8"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // memoization array for dfs\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[i][x]) return false; // check if already calculated\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[i][x] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[i][x];\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        memset(memo, false, sizeof(memo)); // clear memoization array\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            946815.0625,
+            974093.0625,
+            982546.5625,
+            2383994.4375
+        ]
+    },
+    "(8)": {
+        "children": [
+            {
+                "fitness": 2423279.375,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    vector<pair<int, pair<int, int>>> s;\n    s.reserve(1024); // Reserve space to minimize reallocations\n    s.push_back({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.back(); s.pop_back(); // Use vector for faster access\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push_back({i + 1, {x, a[i]}});\n        }\n        s.push_back({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `iterative_dfs` function, which can be optimized by reducing the number of stack operations to enhance performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n#include <stack>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs() {\n    stack<pair<int, pair<int, int>>> s;\n    s.push({1, {0, a[0]}});\n    \n    while (!s.empty()) {\n        auto [i, p] = s.top(); s.pop();\n        int x = p.first;\n        int pre = p.second;\n\n        if (i == 10) {\n            if (check(x)) return true;\n            continue;\n        }\n\n        if (a[i] > pre) {\n            s.push({i + 1, {x, a[i]}});\n        }\n        s.push({i + 1, {x | (1 << i), pre}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", iterative_dfs() ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2383994.4375
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 2439900.3125,
+                "new_code": "#include <iostream>\n#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    cin >> T;\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the inclusion of unnecessary headers, which could be optimized by using only the required ones for better compilation time."
+            },
+            {
+                "fitness": 971811.5,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf(\"%d\", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n        printf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+                "strategy": "Optimize input reading by replacing `cin` with `scanf` for faster performance when reading multiple integers."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include\"stdc++.h\"\n\nusing namespace std;\n\n\n\nint a[20];\n\n\n\nbool check(int x)\n\n{\n\n\tint pre = 0;\n\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\n\t{\n\n\t\tif (a[i] < pre) return false;\n\n\t\tpre = a[i];\n\n\t}\n\n\treturn true;\n\n}\n\n\n\nbool dfs(int i, int x, int pre)\n\n{\n\n\tif (i == 10)\n\n\t{\n\n\t\treturn check(x);\n\n\t}\n\n\tbool temp = false;\n\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n\n}\n\n\n\nint main()\n\n{\n\n\tint T;\n\n\tcin >> T;\n\n\twhile (T--)\n\n\t{\n\n\t\tfor (int i = 0; i < 10; i++) scanf(\"%d\", &a[i]);\n\n\t\tprintf(\"%s\\n\", dfs(1, 0, a[0]) ? \"YES\" : \"NO\");\n\n\t}\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            2427069.625
+        ]
+    }
+}

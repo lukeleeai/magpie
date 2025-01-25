@@ -36,7 +36,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         self.config["batch_reset"] = True
 
         self.node_history = defaultdict(
-            lambda: {"parent_code": None, "children": []}
+            lambda: {"children": []}
         )
         self.prompts_dataset = PromptsDataset()
 
@@ -56,6 +56,9 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         self.config["uniform_rate"] = float(sec["uniform_rate"])
         self.dataset = config["software"]["path"].split("/")[-2]
         self.id = config["software"]["path"].split("/")[-1]
+
+        print("Dataset: ", self.dataset)
+        print("ID: ", self.id)
 
         tmp = sec["batch_reset"].lower()
         if tmp in ["true", "t", "1"]:
@@ -88,7 +91,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
             "new_code": new_code,
             "strategy": child.strategy,
         }
-        # Overwrite if exists, otherwise append
+        # Skip if exists, otherwise append
         children = self.node_history[parent_name]["children"]
         for i, child in enumerate(children):
             if child["new_code"] == new_code:
@@ -116,6 +119,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
     def save_node_history_to_file(self):
         """Save the node history to a local JSON file."""
         path = f"logs/{self.dataset}/{self.id}.json"
+        print("Saving node history to: ", path)
         # Ensure the directory exists
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as file:
@@ -160,6 +164,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                         ):
                             self.report["best_fitness"] = run.fitness
                             self.report["best_patch"] = variant
+                            self.report["best_patch_step"] = self.stats["steps"]
                             best = True
                 self.hook_evaluation(variant, run, accept, best)
                 pop[variant] = run
@@ -247,6 +252,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                             ):
                                 self.report["best_fitness"] = run.fitness
                                 self.report["best_patch"] = variant
+                                self.report["best_patch_step"] = self.stats["steps"]
                                 best = True
                     self.hook_evaluation(variant, run, accept, best)
                     pop[variant] = run
@@ -261,7 +267,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
             # print("--------------------------------")
 
             print("=====================")
-            print("Node history: ")
+            print("Node history")
 
             self.node_history = {
                 k: self.node_history[k] for k in sorted(self.node_history)
