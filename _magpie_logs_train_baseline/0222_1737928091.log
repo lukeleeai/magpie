@@ -1,0 +1,429 @@
+2025-01-26 21:48:11,960	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 4880454157145441
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0222
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 21:48:11,961	[DEBUG]	
+2025-01-26 21:48:11,961	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 21:48:11,961	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 21:48:13,038	[DEBUG]	EXEC>  SUCCESS 2437830.0
+2025-01-26 21:48:13,038	[INFO]	WARM    SUCCESS               2437830.00 (--) [0 edit(s)]  
+2025-01-26 21:48:13,505	[DEBUG]	EXEC>  SUCCESS 2399873.0625
+2025-01-26 21:48:13,505	[INFO]	WARM    SUCCESS               2399873.06 (--) [0 edit(s)]  
+2025-01-26 21:48:13,972	[DEBUG]	EXEC>  SUCCESS 2404286.4375
+2025-01-26 21:48:13,972	[INFO]	WARM    SUCCESS               2404286.44 (--) [0 edit(s)]  
+2025-01-26 21:48:14,448	[DEBUG]	EXEC>  SUCCESS 2362208.1875
+2025-01-26 21:48:14,448	[INFO]	WARM    SUCCESS               2362208.19 (--) [0 edit(s)]  
+2025-01-26 21:48:14,915	[DEBUG]	EXEC>  SUCCESS 2367065.8125
+2025-01-26 21:48:14,915	[INFO]	WARM    SUCCESS               2367065.81 (--) [0 edit(s)]  
+2025-01-26 21:48:14,915	[INFO]	REF     SUCCESS               2367065.81 (--) [0 edit(s)]  
+2025-01-26 21:48:14,915	[INFO]	
+2025-01-26 21:48:14,915	[INFO]	~~~~ START ~~~~
+2025-01-26 21:48:36,088	[DEBUG]	EXEC>  SUCCESS 940158.625
+2025-01-26 21:48:36,089	[INFO]	0-1     SUCCESS              *940158.62 (39.72%) [1 edit(s)]  
+2025-01-26 21:48:36,089	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+
+2025-01-26 21:48:37,706	[DEBUG]	EXEC>  SUCCESS 2369096.1875
+2025-01-26 21:48:37,707	[INFO]	0-2     SUCCESS               2369096.19 (100.09%) [1 edit(s)]  
+2025-01-26 21:48:37,707	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k;\n    \n    while (cin >> k, k) {\n        vector<int> values(k * (k - 1) / 2);\n        int a = 0;\n        for (int i = 0; i < values.size(); i++) {\n            cin >> values[i];\n            a += values[i];\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:48:39,185	[DEBUG]	EXEC>  SUCCESS 2416295.3125
+2025-01-26 21:48:39,185	[INFO]	0-3     SUCCESS               2416295.31 (102.08%) [1 edit(s)]  
+2025-01-26 21:48:39,185	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (cin >> k, k) {\n        int a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:48:40,469	[DEBUG]	EXEC>  SUCCESS 961918.625
+2025-01-26 21:48:40,470	[INFO]	0-4     SUCCESS               961918.62 (40.64%) [1 edit(s)]  
+2025-01-26 21:48:40,470	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:48:41,990	[DEBUG]	EXEC>  SUCCESS 2438200.875
+2025-01-26 21:48:41,990	[INFO]	0-5     SUCCESS               2438200.88 (103.01%) [1 edit(s)]  
+2025-01-26 21:48:41,990	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (cin >> k, k) {\n        int a = 0;\n        vector<int> values(k * (k - 1) / 2);\n        for (int &c : values) {\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:48:43,468	[DEBUG]	EXEC>  SUCCESS 2363418.875
+2025-01-26 21:48:43,468	[INFO]	0-6     SUCCESS               2363418.88 (99.85%) [1 edit(s)]  
+2025-01-26 21:48:43,468	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (cin >> k, k) {\n        int a = 0;\n        int iterations = k * (k - 1) / 2;\n        for (int i = 0; i < iterations; i++) {\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:48:44,984	[DEBUG]	EXEC>  SUCCESS 2413453.625
+2025-01-26 21:48:44,985	[INFO]	0-7     SUCCESS               2413453.62 (101.96%) [1 edit(s)]  
+2025-01-26 21:48:44,985	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (cin >> k, k) {\n        vector<int> values(k * (k - 1) / 2);\n        for (int &c : values) cin >> c;\n        int a = accumulate(values.begin(), values.end(), 0);\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:48:46,462	[DEBUG]	EXEC>  SUCCESS 2370193.125
+2025-01-26 21:48:46,463	[INFO]	0-8     SUCCESS               2370193.12 (100.13%) [1 edit(s)]  
+2025-01-26 21:48:46,463	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (cin >> k, k) {\n        int a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            cin >> c;\n            a += c;\n        }\n        cout << (k == 1 ? 0 : a / (k - 1)) << endl; // Handle division by zero\n    }\n}')"
+2025-01-26 21:48:48,114	[DEBUG]	EXEC>  SUCCESS 3291362.625
+2025-01-26 21:48:48,115	[INFO]	0-9     SUCCESS               3291362.62 (139.05%) [1 edit(s)]  
+2025-01-26 21:48:48,115	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    do {\n        cin >> k;\n        if (k == 0) break;\n        int a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    } while (true);\n}')"
+2025-01-26 21:48:49,596	[DEBUG]	EXEC>  SUCCESS 2457225.75
+2025-01-26 21:48:49,596	[INFO]	0-10    SUCCESS               2457225.75 (103.81%) [1 edit(s)]  
+2025-01-26 21:48:49,596	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    int k, c, a;\n\n    while (cin >> k, k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:48:50,597	[INFO]	Step: 10
+2025-01-26 21:48:50,597	[INFO]	Stop Steps: 50
+2025-01-26 21:48:52,085	[DEBUG]	EXEC>  SUCCESS 2415892.625
+2025-01-26 21:48:52,085	[INFO]	REF     SUCCESS               2415892.62 (--) [0 edit(s)]  
+2025-01-26 21:48:52,085	[INFO]	Best patch: 0
+2025-01-26 21:48:52,364	[DEBUG]	EXEC>  SUCCESS 958821.5
+2025-01-26 21:48:52,364	[INFO]	BEST    SUCCESS              *958821.50 (39.69%) [0 edit(s)]  
+2025-01-26 21:48:52,364	[INFO]	Best patch step: 0
+2025-01-26 21:49:20,548	[INFO]	Step: 10
+2025-01-26 21:49:20,548	[INFO]	Stop Steps: 50
+2025-01-26 21:49:20,950	[DEBUG]	EXEC>  SUCCESS 951779.5
+2025-01-26 21:49:20,950	[INFO]	1-1     SUCCESS              *951779.50 (39.40%) [1 edit(s)]  
+2025-01-26 21:49:20,951	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+
+2025-01-26 21:49:20,951	[INFO]	Step: 11
+2025-01-26 21:49:20,951	[INFO]	Stop Steps: 50
+2025-01-26 21:49:21,226	[DEBUG]	EXEC>  SUCCESS 946789.5
+2025-01-26 21:49:21,226	[INFO]	1-2     SUCCESS              *946789.50 (39.19%) [1 edit(s)]  
+2025-01-26 21:49:21,226	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+
+2025-01-26 21:49:21,226	[INFO]	Step: 12
+2025-01-26 21:49:21,226	[INFO]	Stop Steps: 50
+2025-01-26 21:49:21,728	[DEBUG]	EXEC>  SUCCESS 2391170.6875
+2025-01-26 21:49:21,728	[INFO]	1-3     SUCCESS               2391170.69 (98.98%) [1 edit(s)]  
+2025-01-26 21:49:21,728	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (cin >> k, k) {\n        vector<int> values(k * (k - 1) / 2);\n        int a = 0;\n        for (int i = 0; i < values.size(); i++) {\n            cin >> values[i];\n            a += values[i];\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:49:21,729	[INFO]	Step: 13
+2025-01-26 21:49:21,729	[INFO]	Stop Steps: 50
+2025-01-26 21:49:22,011	[DEBUG]	EXEC>  SUCCESS 947283.6875
+2025-01-26 21:49:22,012	[INFO]	1-4     SUCCESS               947283.69 (39.21%) [1 edit(s)]  
+2025-01-26 21:49:22,012	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (scanf("%d", &k), k) {\n        int a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            int c;\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:49:22,012	[INFO]	Step: 14
+2025-01-26 21:49:22,012	[INFO]	Stop Steps: 50
+2025-01-26 21:49:22,510	[DEBUG]	EXEC>  SUCCESS 2466975.375
+2025-01-26 21:49:22,510	[INFO]	1-5     SUCCESS               2466975.38 (102.11%) [1 edit(s)]  
+2025-01-26 21:49:22,511	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (cin >> k, k) {\n        vector<int> values(k * (k - 1) / 2);\n        int a = 0;\n        for (int i = 0; i < values.size(); i++) {\n            cin >> values[i];\n            a += values[i];\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:49:22,511	[INFO]	Step: 15
+2025-01-26 21:49:22,511	[INFO]	Stop Steps: 50
+2025-01-26 21:49:22,901	[DEBUG]	EXEC>  SUCCESS 2499317.0625
+2025-01-26 21:49:22,902	[INFO]	1-6     SUCCESS               2499317.06 (103.45%) [1 edit(s)]  
+2025-01-26 21:49:22,902	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (scanf("%d", &k), k) {\n        vector<int> values(k * (k - 1) / 2);\n        int a = 0;\n        for (int i = 0; i < values.size(); i++) {\n            scanf("%d", &values[i]);\n            a += values[i];\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:49:22,902	[INFO]	Step: 16
+2025-01-26 21:49:22,902	[INFO]	Stop Steps: 50
+2025-01-26 21:49:23,178	[DEBUG]	EXEC>  SUCCESS 940689.125
+2025-01-26 21:49:23,178	[INFO]	1-7     SUCCESS              *940689.12 (38.94%) [2 edit(s)]  
+2025-01-26 21:49:23,178	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+
+2025-01-26 21:49:23,178	[INFO]	Step: 17
+2025-01-26 21:49:23,178	[INFO]	Stop Steps: 50
+2025-01-26 21:49:23,457	[DEBUG]	EXEC>  SUCCESS 953132.0
+2025-01-26 21:49:23,458	[INFO]	1-8     SUCCESS               953132.00 (39.45%) [2 edit(s)]  
+2025-01-26 21:49:23,458	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Store inputs in an array for better management\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum directly\n        }\n        printf("%d\\n", a / (k - 1)); // Calculate average\n    }\n}')"
+2025-01-26 21:49:23,458	[INFO]	Step: 18
+2025-01-26 21:49:23,458	[INFO]	Stop Steps: 50
+2025-01-26 21:49:53,789	[INFO]	1-9     TEST_TIMEOUT          None (--) [2 edit(s)]  
+2025-01-26 21:49:53,789	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (cin >> k, k) {\n        int a = 0;\n        int iterations = k * (k - 1) / 2;\n        for (int i = 0; i < iterations; i++) {\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (cin >> k, k) {\n        int a = 0;\n        int iterations = k * (k - 1) / 2;\n        int *arr = new int[iterations]; // Dynamic array for storing input\n        cin.read(reinterpret_cast<char*>(arr), iterations * sizeof(int)); // Faster bulk input\n        for (int i = 0; i < iterations; i++) {\n            a += arr[i];\n        }\n        cout << (a / (k - 1)) << endl;\n        delete[] arr; // Free allocated memory\n    }\n}')"
+2025-01-26 21:49:53,789	[INFO]	Step: 19
+2025-01-26 21:49:53,789	[INFO]	Stop Steps: 50
+2025-01-26 21:49:54,498	[DEBUG]	EXEC>  SUCCESS 2392247.8125
+2025-01-26 21:49:54,498	[INFO]	1-10    SUCCESS               2392247.81 (99.02%) [2 edit(s)]  
+2025-01-26 21:49:54,498	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k;\n    \n    while (cin >> k, k) {\n        vector<int> values(k * (k - 1) / 2);\n        int a = 0;\n        for (int i = 0; i < values.size(); i++) {\n            cin >> values[i];\n            a += values[i];\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k;\n    \n    while (cin >> k, k) {\n        long long a = 0;  // Use long long to prevent overflow for large sums\n        int value;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            cin >> value;\n            a += value;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:49:54,499	[INFO]	Step: 20
+2025-01-26 21:49:54,499	[INFO]	Stop Steps: 50
+2025-01-26 21:49:54,977	[DEBUG]	EXEC>  SUCCESS 2423905.4375
+2025-01-26 21:49:54,977	[INFO]	1-1     SUCCESS               2423905.44 (100.33%) [1 edit(s)]  
+2025-01-26 21:49:54,977	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n\nusing namespace std;\n\nint main(){\n\n\tint k,c,a;\n\n\twhile( cin >> k , k ){\n\n\t\ta = 0;\n\n\t\tfor(int i=0 ; i < k*(k-1)/2 ; i++ ){\n\n\t\t\tcin >> c;\n\n\t\t\ta += c;\n\n\t\t}\n\n\t\tcout << ( a / (k-1) ) << endl;\n\n\t}\n\n}')"
+2025-01-26 21:49:54,977	[INFO]	Step: 21
+2025-01-26 21:49:54,977	[INFO]	Stop Steps: 50
+2025-01-26 21:49:56,455	[DEBUG]	EXEC>  SUCCESS 2393185.6875
+2025-01-26 21:49:56,456	[INFO]	REF     SUCCESS               2393185.69 (--) [0 edit(s)]  
+2025-01-26 21:49:56,456	[INFO]	Best patch: 0_10
+2025-01-26 21:49:56,728	[DEBUG]	EXEC>  SUCCESS 979538.9375
+2025-01-26 21:49:56,729	[INFO]	BEST    SUCCESS              *979538.94 (40.93%) [0 edit(s)]  
+2025-01-26 21:49:56,729	[INFO]	Best patch step: 16
+2025-01-26 21:50:25,770	[INFO]	Step: 21
+2025-01-26 21:50:25,770	[INFO]	Stop Steps: 50
+2025-01-26 21:50:26,169	[DEBUG]	EXEC>  SUCCESS 947332.125
+2025-01-26 21:50:26,169	[INFO]	2-2     SUCCESS              *947332.12 (39.58%) [2 edit(s)]  
+2025-01-26 21:50:26,169	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+
+2025-01-26 21:50:26,169	[INFO]	Step: 22
+2025-01-26 21:50:26,169	[INFO]	Stop Steps: 50
+2025-01-26 21:50:26,445	[DEBUG]	EXEC>  SUCCESS 956236.8125
+2025-01-26 21:50:26,445	[INFO]	2-3     SUCCESS               956236.81 (39.96%) [1 edit(s)]  
+2025-01-26 21:50:26,445	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:50:26,445	[INFO]	Step: 23
+2025-01-26 21:50:26,446	[INFO]	Stop Steps: 50
+2025-01-26 21:50:26,721	[DEBUG]	EXEC>  SUCCESS 987654.875
+2025-01-26 21:50:26,721	[INFO]	2-4     SUCCESS               987654.88 (41.27%) [1 edit(s)]  
+2025-01-26 21:50:26,721	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a = 0; // Initialize sum\n    while (scanf("%d", &k), k) {\n        a = 0; // Reset sum for each new k\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:50:26,721	[INFO]	Step: 24
+2025-01-26 21:50:26,721	[INFO]	Stop Steps: 50
+2025-01-26 21:50:26,998	[DEBUG]	EXEC>  SUCCESS 948101.6875
+2025-01-26 21:50:26,998	[INFO]	2-5     SUCCESS               948101.69 (39.62%) [1 edit(s)]  
+2025-01-26 21:50:26,998	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:50:26,998	[INFO]	Step: 25
+2025-01-26 21:50:26,998	[INFO]	Stop Steps: 50
+2025-01-26 21:50:27,286	[DEBUG]	EXEC>  SUCCESS 967490.3125
+2025-01-26 21:50:27,286	[INFO]	2-6     SUCCESS               967490.31 (40.43%) [1 edit(s)]  
+2025-01-26 21:50:27,286	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:50:27,286	[INFO]	Step: 26
+2025-01-26 21:50:27,286	[INFO]	Stop Steps: 50
+2025-01-26 21:50:27,562	[DEBUG]	EXEC>  SUCCESS 958104.3125
+2025-01-26 21:50:27,562	[INFO]	2-7     SUCCESS               958104.31 (40.03%) [1 edit(s)]  
+2025-01-26 21:50:27,563	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:50:27,563	[INFO]	Step: 27
+2025-01-26 21:50:27,563	[INFO]	Stop Steps: 50
+2025-01-26 21:50:57,704	[INFO]	2-8     TEST_TIMEOUT          None (--) [3 edit(s)]  
+2025-01-26 21:50:57,704	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        long long a = 0; // Use long long to avoid overflow\n        for (int i = 0; i < k - 1; i++) { // Loop only k-1 times\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%lld\\n", a / (k - 1)); // Print average using long long\n    }\n}')"
+2025-01-26 21:50:57,704	[INFO]	Step: 28
+2025-01-26 21:50:57,704	[INFO]	Stop Steps: 50
+2025-01-26 21:50:58,158	[DEBUG]	EXEC>  SUCCESS 960097.5
+2025-01-26 21:50:58,158	[INFO]	2-9     SUCCESS               960097.50 (40.12%) [2 edit(s)]  
+2025-01-26 21:50:58,158	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        long long a = 0;  // Use long long to prevent overflow\n        int total_numbers = k * (k - 1) / 2;  // Calculate total numbers once\n        for (int i = 0; i < total_numbers; i++) {\n            scanf("%d", &c);\n            a += c;  // Accumulate sum\n        }\n        printf("%lld\\n", a / (k - 1));  // Use long long for division\n    }\n}')"
+2025-01-26 21:50:58,158	[INFO]	Step: 29
+2025-01-26 21:50:58,158	[INFO]	Stop Steps: 50
+2025-01-26 21:51:28,307	[INFO]	2-10    TEST_TIMEOUT          None (--) [2 edit(s)]  
+2025-01-26 21:51:28,307	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (scanf("%d", &k), k) {\n        int a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            int c;\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k;\n\n    while (scanf("%d", &k), k) {\n        int a = 0;\n        int c;\n        for (int i = 0; i < k - 1; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:51:28,307	[INFO]	Step: 30
+2025-01-26 21:51:28,307	[INFO]	Stop Steps: 50
+2025-01-26 21:51:28,758	[DEBUG]	EXEC>  SUCCESS 937388.8125
+2025-01-26 21:51:28,759	[INFO]	2-1     SUCCESS              *937388.81 (39.17%) [2 edit(s)]  
+2025-01-26 21:51:28,759	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    \n    while (scanf("%d", &k), k) {\n        int a = 0;\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n        \n        // Read all inputs at once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i];\n        }\n        \n        // Calculate and print the average\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+
+2025-01-26 21:51:28,759	[INFO]	Step: 31
+2025-01-26 21:51:28,759	[INFO]	Stop Steps: 50
+2025-01-26 21:51:29,230	[DEBUG]	EXEC>  SUCCESS 2405431.3125
+2025-01-26 21:51:29,230	[INFO]	2-2     SUCCESS               2405431.31 (100.51%) [1 edit(s)]  
+2025-01-26 21:51:29,230	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n\nusing namespace std;\n\nint main(){\n    int k, c, a;\n\n    while(cin >> k, k){\n        a = 0;\n        for(int i = 0; i < k * (k - 1) / 2; i++){\n            cin >> c;\n            a += c;\n        }\n        cout << (a / (k - 1)) << endl;\n    }\n}')"
+2025-01-26 21:51:29,230	[INFO]	Step: 32
+2025-01-26 21:51:29,230	[INFO]	Stop Steps: 50
+2025-01-26 21:51:30,714	[DEBUG]	EXEC>  SUCCESS 2373903.0
+2025-01-26 21:51:30,715	[INFO]	REF     SUCCESS               2373903.00 (--) [0 edit(s)]  
+2025-01-26 21:51:30,715	[INFO]	Best patch: 0_18
+2025-01-26 21:51:30,993	[DEBUG]	EXEC>  SUCCESS 968016.1875
+2025-01-26 21:51:30,993	[INFO]	BEST    SUCCESS              *968016.19 (40.78%) [0 edit(s)]  
+2025-01-26 21:51:30,993	[INFO]	Best patch step: 30
+2025-01-26 21:51:57,934	[INFO]	Step: 32
+2025-01-26 21:51:57,934	[INFO]	Stop Steps: 50
+2025-01-26 21:51:58,383	[DEBUG]	EXEC>  SUCCESS 952685.125
+2025-01-26 21:51:58,383	[INFO]	3-3     SUCCESS              *952685.12 (40.13%) [2 edit(s)]  
+2025-01-26 21:51:58,383	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    \n    while (scanf("%d", &k), k) {\n        int a = 0;\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n        \n        // Read all inputs at once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i];\n        }\n        \n        // Calculate and print the average\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+
+2025-01-26 21:51:58,383	[INFO]	Step: 33
+2025-01-26 21:51:58,383	[INFO]	Stop Steps: 50
+2025-01-26 21:51:58,658	[DEBUG]	EXEC>  SUCCESS 969026.0625
+2025-01-26 21:51:58,658	[INFO]	3-4     SUCCESS               969026.06 (40.82%) [2 edit(s)]  
+2025-01-26 21:51:58,659	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:51:58,659	[INFO]	Step: 34
+2025-01-26 21:51:58,659	[INFO]	Stop Steps: 50
+2025-01-26 21:51:58,939	[DEBUG]	EXEC>  SUCCESS 964137.625
+2025-01-26 21:51:58,939	[INFO]	3-5     SUCCESS               964137.62 (40.61%) [1 edit(s)]  
+2025-01-26 21:51:58,939	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    \n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        int inputs[totalInputs]; // Preallocate to hold inputs\n        \n        // Read all inputs at once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum\n        }\n        \n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:51:58,939	[INFO]	Step: 35
+2025-01-26 21:51:58,939	[INFO]	Stop Steps: 50
+2025-01-26 21:51:59,215	[DEBUG]	EXEC>  SUCCESS 956499.5625
+2025-01-26 21:51:59,215	[INFO]	3-6     SUCCESS               956499.56 (40.29%) [1 edit(s)]  
+2025-01-26 21:51:59,216	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:51:59,216	[INFO]	Step: 36
+2025-01-26 21:51:59,216	[INFO]	Stop Steps: 50
+2025-01-26 21:51:59,500	[DEBUG]	EXEC>  SUCCESS 945649.625
+2025-01-26 21:51:59,500	[INFO]	3-7     SUCCESS              *945649.62 (39.84%) [1 edit(s)]  
+2025-01-26 21:51:59,500	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+
+2025-01-26 21:51:59,500	[INFO]	Step: 37
+2025-01-26 21:51:59,500	[INFO]	Stop Steps: 50
+2025-01-26 21:51:59,776	[DEBUG]	EXEC>  SUCCESS 949142.625
+2025-01-26 21:51:59,776	[INFO]	3-8     SUCCESS               949142.62 (39.98%) [1 edit(s)]  
+2025-01-26 21:51:59,776	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:51:59,776	[INFO]	Step: 38
+2025-01-26 21:51:59,776	[INFO]	Stop Steps: 50
+2025-01-26 21:52:00,054	[DEBUG]	EXEC>  SUCCESS 950642.6875
+2025-01-26 21:52:00,055	[INFO]	3-9     SUCCESS               950642.69 (40.05%) [3 edit(s)]  
+2025-01-26 21:52:00,055	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    \n    while (scanf("%d", &k), k) {\n        int a = 0;\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n        \n        // Read all inputs at once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i];\n        }\n        \n        // Calculate and print the average\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    \n    while (scanf("%d", &k), k) {\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n\n        // Read all inputs at once\n        int a = 0;\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i];\n        }\n        \n        // Calculate and print the average directly using a float for precision\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:52:00,055	[INFO]	Step: 39
+2025-01-26 21:52:00,055	[INFO]	Stop Steps: 50
+2025-01-26 21:52:00,184	[INFO]	3-10    TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 21:52:00,185	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        long long a = 0; // Initialize sum as long long to prevent overflow\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        int inputs[totalInputs]; // Create an array to store inputs\n        scanf("%d", inputs); // Read all inputs in one go\n\n        for (int i = 0; i < totalInputs; i++) {\n            a += inputs[i]; // Accumulate the sum\n        }\n        printf("%lld\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:52:00,185	[INFO]	Step: 40
+2025-01-26 21:52:00,185	[INFO]	Stop Steps: 50
+2025-01-26 21:52:00,308	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 21:52:00,308	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n    while (scanf("%d", &k), k) {\n        long long a = 0; // Use long long to avoid overflow\n        int count = 0; // Initialize count of numbers read\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n            count++; // Increment count\n        }\n        printf("%lld\\n", a / count); // Print average using count for division\n    }\n}')"
+2025-01-26 21:52:00,308	[INFO]	Step: 41
+2025-01-26 21:52:00,308	[INFO]	Stop Steps: 50
+2025-01-26 21:52:00,636	[DEBUG]	EXEC>  SUCCESS 2400640.8125
+2025-01-26 21:52:00,636	[INFO]	3-2     SUCCESS               2400640.81 (101.13%) [2 edit(s)]  
+2025-01-26 21:52:00,636	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c;\n        }\n        printf("%d\\n", a / (k - 1));\n    }\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c, a;\n\n    while (scanf("%d", &k), k) {\n        a = 0;\n        int totalInputs = k * (k - 1) / 2;\n        int* inputs = new int[totalInputs]; // dynamically allocate array to store inputs\n        scanf("%d", &inputs[0]); // read the first input outside the loop\n        for (int i = 1; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]); // read remaining inputs\n        }\n        for (int i = 0; i < totalInputs; i++) {\n            a += inputs[i]; // sum inputs\n        }\n        delete[] inputs; // free allocated memory\n        printf("%d\\n", a / (k - 1));\n    }\n}')"
+2025-01-26 21:52:00,636	[INFO]	Step: 42
+2025-01-26 21:52:00,636	[INFO]	Stop Steps: 50
+2025-01-26 21:52:01,104	[DEBUG]	EXEC>  SUCCESS 2409581.125
+2025-01-26 21:52:01,104	[INFO]	3-3     SUCCESS               2409581.12 (101.50%) [1 edit(s)]  
+2025-01-26 21:52:01,104	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <iostream>\n\nusing namespace std;\n\nint main(){\n\n    int k,c,a;\n\n    while( cin >> k , k ){\n\n        a = 0;\n\n        for(int i=0 ; i < k*(k-1)/2 ; i++ ){\n\n            cin >> c;\n\n            a += c;\n\n        }\n\n        cout << ( a / (k-1) ) << endl;\n\n    }\n\n}')"
+2025-01-26 21:52:01,104	[INFO]	Step: 43
+2025-01-26 21:52:01,104	[INFO]	Stop Steps: 50
+2025-01-26 21:52:02,583	[DEBUG]	EXEC>  SUCCESS 2375948.9375
+2025-01-26 21:52:02,584	[INFO]	REF     SUCCESS               2375948.94 (--) [0 edit(s)]  
+2025-01-26 21:52:02,584	[INFO]	Best patch: 10
+2025-01-26 21:52:02,858	[DEBUG]	EXEC>  SUCCESS 959210.6875
+2025-01-26 21:52:02,859	[INFO]	BEST    SUCCESS              *959210.69 (40.37%) [0 edit(s)]  
+2025-01-26 21:52:02,859	[INFO]	Best patch step: 36
+2025-01-26 21:52:34,608	[INFO]	Step: 43
+2025-01-26 21:52:34,608	[INFO]	Stop Steps: 50
+2025-01-26 21:52:35,012	[DEBUG]	EXEC>  SUCCESS 973206.1875
+2025-01-26 21:52:35,013	[INFO]	4-4     SUCCESS              +973206.19 (40.96%) [1 edit(s)]  
+2025-01-26 21:52:35,013	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:52:35,013	[INFO]	Step: 44
+2025-01-26 21:52:35,013	[INFO]	Stop Steps: 50
+2025-01-26 21:52:35,289	[DEBUG]	EXEC>  SUCCESS 961534.5625
+2025-01-26 21:52:35,289	[INFO]	4-5     SUCCESS              +961534.56 (40.47%) [1 edit(s)]  
+2025-01-26 21:52:35,289	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        for (int i = 0; i < k * (k - 1) / 2; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:52:35,289	[INFO]	Step: 45
+2025-01-26 21:52:35,289	[INFO]	Stop Steps: 50
+2025-01-26 21:52:35,568	[DEBUG]	EXEC>  SUCCESS 968585.25
+2025-01-26 21:52:35,568	[INFO]	4-6     SUCCESS               968585.25 (40.77%) [1 edit(s)]  
+2025-01-26 21:52:35,568	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n\n        int a = 0; // Initialize sum\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:52:35,568	[INFO]	Step: 46
+2025-01-26 21:52:35,568	[INFO]	Stop Steps: 50
+2025-01-26 21:52:35,845	[DEBUG]	EXEC>  SUCCESS 955661.5
+2025-01-26 21:52:35,845	[INFO]	4-7     SUCCESS              *955661.50 (40.22%) [1 edit(s)]  
+2025-01-26 21:52:35,845	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n\n        int a = 0; // Initialize sum\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+
+2025-01-26 21:52:35,845	[INFO]	Step: 47
+2025-01-26 21:52:35,845	[INFO]	Stop Steps: 50
+2025-01-26 21:52:36,128	[DEBUG]	EXEC>  SUCCESS 975197.375
+2025-01-26 21:52:36,129	[INFO]	4-8     SUCCESS               975197.38 (41.04%) [1 edit(s)]  
+2025-01-26 21:52:36,129	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int totalInputs = k * (k - 1) / 2;\n        int a = 0; // Initialize sum\n        int inputs[totalInputs]; // Preallocate to hold inputs\n        \n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:52:36,129	[INFO]	Step: 48
+2025-01-26 21:52:36,129	[INFO]	Stop Steps: 50
+2025-01-26 21:52:36,406	[DEBUG]	EXEC>  SUCCESS 972444.0
+2025-01-26 21:52:36,406	[INFO]	4-9     SUCCESS               972444.00 (40.93%) [1 edit(s)]  
+2025-01-26 21:52:36,407	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int totalInputs = k * (k - 1) / 2;\n        int a = 0; // Initialize sum\n        int inputs[totalInputs]; // Preallocate to hold inputs\n\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')"
+2025-01-26 21:52:36,407	[INFO]	Step: 49
+2025-01-26 21:52:36,407	[INFO]	Stop Steps: 50
+2025-01-26 21:52:36,681	[DEBUG]	EXEC>  SUCCESS 981010.8125
+2025-01-26 21:52:36,681	[INFO]	4-10    SUCCESS               981010.81 (41.29%) [2 edit(s)]  
+2025-01-26 21:52:36,681	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int a = 0; // Initialize sum\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        long long a = 0; // Use long long to prevent overflow\n        int totalInputs = k * (k - 1) / 2; // Calculate total inputs once\n        for (int i = 0; i < totalInputs; i++) {\n            // Use a single scanf to read all inputs at once if possible for larger inputs\n            scanf("%d", &c);\n            a += c; // Accumulate the sum\n        }\n        printf("%lld\\n", a / (k - 1)); // Print average using long long\n    }\n}')"
+2025-01-26 21:52:36,681	[INFO]	Step: 50
+2025-01-26 21:52:36,681	[INFO]	Stop Steps: 50
+2025-01-26 21:52:36,681	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 21:52:36,681	[INFO]	Step: 50
+2025-01-26 21:52:36,681	[INFO]	Stop Steps: 50
+2025-01-26 21:52:37,947	[INFO]	~~~~ END ~~~~
+2025-01-26 21:52:37,947	[INFO]	Best patch step: 46
+2025-01-26 21:52:37,947	[INFO]	
+2025-01-26 21:52:37,947	[INFO]	==== REPORT ====
+2025-01-26 21:52:37,947	[INFO]	Termination: step budget
+2025-01-26 21:52:37,947	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0222_1737928091.log
+2025-01-26 21:52:37,947	[INFO]	Patch file: _magpie_logs/0222_1737928091.patch
+2025-01-26 21:52:37,947	[INFO]	Diff file: _magpie_logs/0222_1737928091.diff
+2025-01-26 21:52:37,947	[INFO]	Reference fitness: 2375948.94
+2025-01-26 21:52:37,947	[INFO]	Best fitness: 955661.50
+2025-01-26 21:52:37,947	[INFO]	
+2025-01-26 21:52:37,948	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, c;\n\n    while (scanf("%d", &k), k) {\n        int totalInputs = k * (k - 1) / 2;\n        int inputs[totalInputs]; // Preallocate to hold inputs\n\n        int a = 0; // Initialize sum\n        for (int i = 0; i < totalInputs; i++) {\n            scanf("%d", &inputs[i]);\n            a += inputs[i]; // Accumulate the sum\n        }\n        printf("%d\\n", a / (k - 1)); // Print average\n    }\n}')
+2025-01-26 21:52:37,948	[INFO]	
+2025-01-26 21:52:37,948	[INFO]	==== DIFF ====
+

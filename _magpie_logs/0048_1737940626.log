@@ -1,0 +1,177 @@
+2025-01-27 01:17:06,889	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 1823241967662351
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0048
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-27 01:17:06,890	[DEBUG]	
+2025-01-27 01:17:06,890	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-27 01:17:06,890	[INFO]	~~~~ WARMUP ~~~~
+2025-01-27 01:17:08,466	[DEBUG]	EXEC>  SUCCESS 5278080.9375
+2025-01-27 01:17:08,466	[INFO]	WARM    SUCCESS               5278080.94 (--) [0 edit(s)]  
+2025-01-27 01:17:09,767	[DEBUG]	EXEC>  SUCCESS 5289326.1875
+2025-01-27 01:17:09,768	[INFO]	WARM    SUCCESS               5289326.19 (--) [0 edit(s)]  
+2025-01-27 01:17:10,952	[DEBUG]	EXEC>  SUCCESS 5252153.375
+2025-01-27 01:17:10,952	[INFO]	WARM    SUCCESS               5252153.38 (--) [0 edit(s)]  
+2025-01-27 01:17:12,130	[DEBUG]	EXEC>  SUCCESS 5220050.1875
+2025-01-27 01:17:12,130	[INFO]	WARM    SUCCESS               5220050.19 (--) [0 edit(s)]  
+2025-01-27 01:17:13,315	[DEBUG]	EXEC>  SUCCESS 5245266.375
+2025-01-27 01:17:13,315	[INFO]	WARM    SUCCESS               5245266.38 (--) [0 edit(s)]  
+2025-01-27 01:17:13,316	[INFO]	REF     SUCCESS               5245266.38 (--) [0 edit(s)]  
+2025-01-27 01:17:13,317	[INFO]	
+2025-01-27 01:17:13,317	[INFO]	~~~~ START ~~~~
+2025-01-27 01:17:48,919	[DEBUG]	EXEC>  SUCCESS 5289576.3125
+2025-01-27 01:17:48,919	[INFO]	0-1     SUCCESS              +5289576.31 (100.84%) [1 edit(s)]  
+2025-01-27 01:17:48,919	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0)\n            return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> name[i] >> w[i] >> s[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            cout << name[bestIndex[i]] << endl;\n    }\n}')"
+2025-01-27 01:17:52,833	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:17:52,833	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        scanf("%d", &n);\n        if(n == 0)\n            return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            scanf("%s %d %d", &name[i], &w[i], &s[i]);\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            printf("%s\\n", name[bestIndex[i]]);\n    }\n}')"
+2025-01-27 01:17:54,777	[DEBUG]	EXEC>  SUCCESS 5458734.9375
+2025-01-27 01:17:54,778	[INFO]	0-3     SUCCESS               5458734.94 (104.07%) [1 edit(s)]  
+2025-01-27 01:17:54,778	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0)\n            return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> name[i] >> w[i] >> s[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            puts(name[bestIndex[i]].c_str());\n    }\n}')"
+2025-01-27 01:17:56,751	[DEBUG]	EXEC>  SUCCESS 5285132.0
+2025-01-27 01:17:56,752	[INFO]	0-4     SUCCESS              +5285132.00 (100.76%) [1 edit(s)]  
+2025-01-27 01:17:56,752	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> weights, strengths;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(strengths[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*weights[i], sumW+weights[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0)\n            return 0;\n\n        vector<string> names(n);\n        weights.resize(n);\n        strengths.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> names[i] >> weights[i] >> strengths[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            cout << names[bestIndex[i]] << endl;\n    }\n}')"
+2025-01-27 01:17:58,709	[DEBUG]	EXEC>  SUCCESS 5251251.0
+2025-01-27 01:17:58,710	[INFO]	0-5     SUCCESS              +5251251.00 (100.11%) [1 edit(s)]  
+2025-01-27 01:17:58,710	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i]) continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0) return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> name[i] >> w[i] >> s[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            cout << name[bestIndex[i]] << endl;\n    }\n}')"
+2025-01-27 01:18:00,688	[DEBUG]	EXEC>  SUCCESS 5265179.0
+2025-01-27 01:18:00,689	[INFO]	0-6     SUCCESS               5265179.00 (100.38%) [1 edit(s)]  
+2025-01-27 01:18:00,689	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i]) continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0) return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> name[i] >> w[i] >> s[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            cout << name[bestIndex[i]] << endl;\n    }\n}')"
+2025-01-27 01:18:02,657	[DEBUG]	EXEC>  SUCCESS 5265476.625
+2025-01-27 01:18:02,657	[INFO]	0-7     SUCCESS               5265476.62 (100.39%) [1 edit(s)]  
+2025-01-27 01:18:02,657	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> weights, strengths;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(strengths[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*weights[i], sumW+weights[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0)\n            return 0;\n\n        vector<string> names(n);\n        weights.resize(n);\n        strengths.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> names[i] >> weights[i] >> strengths[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            cout << names[bestIndex[i]] << endl;\n    }\n}')"
+2025-01-27 01:18:06,577	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:18:06,577	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        scanf("%d", &n);\n        if(n == 0)\n            return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            scanf("%s %d %d", &name[i], &w[i], &s[i]);\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            printf("%s\\n", name[bestIndex[i]]);\n    }\n}')"
+2025-01-27 01:18:08,636	[DEBUG]	EXEC>  SUCCESS 5456037.5
+2025-01-27 01:18:08,636	[INFO]	0-9     SUCCESS               5456037.50 (104.02%) [1 edit(s)]  
+2025-01-27 01:18:08,636	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> w, s;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i]) continue;\n\n        used[i] = true;\n        if(s[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*w[i], sumW+w[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0) return 0;\n\n        vector<string> name(n);\n        w.resize(n);\n        s.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> name[i] >> w[i] >> s[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            puts(name[bestIndex[i]].c_str());\n    }\n}')"
+2025-01-27 01:18:10,707	[DEBUG]	EXEC>  SUCCESS 5248241.4375
+2025-01-27 01:18:10,708	[INFO]	0-10    SUCCESS              +5248241.44 (100.06%) [1 edit(s)]  
+2025-01-27 01:18:10,708	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#include <string>\n#include <climits>\nusing namespace std;\n\nint n;\nvector<int> weights, strengths;\nvector<bool> used;\nvector<int> bestIndex;\nint bestG;\n\nvoid solve(int k, vector<int>& index, int g, int sumW) {\n    if(k == n) {\n        if(g < bestG) {\n            bestG = g;\n            bestIndex = index;\n        }\n        return;\n    }\n\n    for(int i=0; i<n; ++i) {\n        if(used[i])\n            continue;\n\n        used[i] = true;\n        if(strengths[i] >= sumW) {\n            index[k] = i;\n            solve(k+1, index, g+(n-k)*weights[i], sumW+weights[i]);\n        }\n        used[i] = false;\n    }\n}\n\nint main() {\n    for(;;) {\n        cin >> n;\n        if(n == 0)\n            return 0;\n\n        vector<string> names(n);\n        weights.resize(n);\n        strengths.resize(n);\n        for(int i=0; i<n; ++i)\n            cin >> names[i] >> weights[i] >> strengths[i];\n\n        bestG = INT_MAX;\n        used.assign(n, false);\n        vector<int> index(n);\n        solve(0, index, 0, 0);\n        for(int i=n-1; i>=0; --i)\n            cout << names[bestIndex[i]] << endl;\n    }\n}')"
+2025-01-27 01:18:11,708	[INFO]	Step: 10
+2025-01-27 01:18:11,709	[INFO]	Stop Steps: 50
+2025-01-27 01:18:14,013	[DEBUG]	EXEC>  SUCCESS 5282249.875
+2025-01-27 01:18:14,013	[INFO]	REF     SUCCESS               5282249.88 (--) [0 edit(s)]  
+2025-01-27 01:18:14,014	[INFO]	Best patch step: None
+2025-01-27 01:19:16,208	[INFO]	~~~~ END ~~~~
+2025-01-27 01:19:16,208	[INFO]	Best patch step: None

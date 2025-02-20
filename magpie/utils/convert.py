@@ -5,7 +5,26 @@ from .known import protocols as known_protocols
 from .known import software as known_software
 
 from magpie.core.llm import LLMCrossover, LLMMutation
-from magpie.utils.constants import CROSSOVER
+from magpie.utils.constants import (
+    CROSSOVER,
+    BASELINE_LLM,
+    EOC_FINETUNED_LLM,
+    PIE_FINETUNED_LLM,
+    PIE_EOC_FINETUNED_LLM,
+)
+
+
+def llm_model_name_from_string(s):
+    if s == BASELINE_LLM:
+        return "gpt-4o-mini"
+    elif s == EOC_FINETUNED_LLM:
+        return "ft:gpt-4o-mini-2024-07-18:prompt-infection::AtfYDdzA"
+    elif s == PIE_FINETUNED_LLM:
+        raise NotImplementedError("PIE finetuned LLM not implemented")
+    elif s == PIE_EOC_FINETUNED_LLM:
+        raise NotImplementedError("PIE EOC finetuned LLM not implemented")
+    else:
+        raise ValueError(f"Unknown LLM model name: {s}")
 
 
 def model_from_string(s):

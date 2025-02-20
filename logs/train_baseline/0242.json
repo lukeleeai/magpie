@@ -1,0 +1,313 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 2516774.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        vector<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.erase(l.begin()); // Remove the oldest element\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Focus on the use of `deque` for managing elements, which could be optimized by using a `vector` for better cache locality and performance in this context."
+            },
+            {
+                "fitness": 2494140.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        vector<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) {\n                    l.push_back(x);\n                } else {\n                    l.erase(l.begin()); // Remove the oldest element\n                    l.push_back(x); // Add new element\n                }\n            }\n            if (query == 1) {\n                if (x - 1 < l.size()) {\n                    l.erase(l.begin() + x - 1);\n                }\n            }\n            if (query == 2) {\n                if (x - 1 < l.size()) {\n                    printf(\"%d\\n\", l[x - 1]);\n                }\n            }\n            if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) {\n                    l.erase(it);\n                }\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Focus on reducing the overhead of the deque operations and avoiding unnecessary erasure by using a vector for better cache locality. This can improve the performance of insertion and deletion operations."
+            },
+            {
+                "fitness": 2473467.875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        vector<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) {\n                    l.push_back(x);\n                } else {\n                    l.erase(l.begin()); // remove the oldest element\n                    l.push_back(x); // add the new element\n                }\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Focus on the use of `deque` for dynamic size management, which can be optimized by using a more efficient data structure like `vector` for better performance in terms of memory and access times since the maximum size is known upfront."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", *(l.begin() + x - 1));\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2410249.625
+        ]
+    },
+    "(0x4x2x6)": {
+        "children": [
+            {
+                "fitness": 2475583.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n        l.reserve(lim); // Reserve space to avoid reallocations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.erase(l.begin());\n            } else if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n                else printf(\"Error: Index out of bounds\\n\");\n            } else if (query == 3) {\n                l.erase(remove(l.begin(), l.end(), x), l.end());\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Merge the dynamic array handling from Parent 3 (fitness: 2450046.5625) with the robust query checks from Parent 2 (fitness: 2448071.5). This crossover aims to enhance performance while maintaining error safety."
+            },
+            {
+                "fitness": 2486916.375,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) printf(\"%d\\n\", *(l.begin() + x - 1));\n                else printf(\"Error: Index out of bounds\\n\");\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Integrate the queue logic from Parent 1 (fitness: 2443627.3125) with the improved error handling from Parent 2 (fitness: 2448071.5) to optimize performance during query operations."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "4",
+            "2",
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", *(l.begin() + x - 1));\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) printf(\"%d\\n\", *(l.begin() + x - 1));\n                else printf(\"Error: Index out of bounds\\n\");\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        vector<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.erase(l.begin());\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n        l.reserve(lim); // Reserve space to avoid reallocations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.erase(l.begin());\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2443627.3125,
+            2448071.5,
+            2450046.5625,
+            2454196.625
+        ]
+    },
+    "(0x4x6_13x7)": {
+        "children": [
+            {
+                "fitness": 2449312.375,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Integrate the efficient input handling from Parent 1 with the enhanced error handling from Parent 2 to create a robust code structure."
+            },
+            {
+                "fitness": 2466233.25,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Merge the loop structure and input reading efficiency from Parent 1 with the condition checks from Parent 4 for enhanced query handling."
+            },
+            {
+                "fitness": 2479816.375,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) {\n                    l.push_back(x);\n                } else {\n                    l.pop_front(); // Remove from front if limit is exceeded\n                    l.push_back(x);\n                }\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", l[x - 1]);\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Combine the clear loop structure from Parent 3 with the more robust error handling of Parent 2, ensuring the program is both efficient and informative."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "4",
+            "6_13",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", *(l.begin() + x - 1));\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l; // Use deque for efficient front and back operations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.pop_front(); // Efficiently remove from front\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2410249.625,
+            2427296.8125,
+            2430922.6875,
+            2438284.75
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 2599050.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.erase(l.begin()); // Remove the first element\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", l[x - 1]);\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Focus on the use of `deque` for dynamic data manipulation, which can be optimized by using a `vector` instead, as the overhead of `deque` may lead to performance issues when frequent insertions and deletions are not at both ends."
+            },
+            {
+                "fitness": 2656983.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (true) {\n        cin >> q >> lim;\n        if (q == 0 && lim == 0) break;\n\n        vector<int> l;\n\n        for (int i = 0; i < q; i++) {\n            cin >> query >> x;\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.erase(l.begin()); // remove the oldest element\n            } else if (query == 1 && x > 0 && x <= l.size()) {\n                l.erase(l.begin() + (x - 1));\n            } else if (query == 2 && x > 0 && x <= l.size()) {\n                cout << l[x - 1] << endl;\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                cout << \"Error: Invalid query\" << endl;\n            }\n        }\n        cout << \"end\" << endl;\n    }\n}\n",
+                "strategy": "Focus on the use of `deque` for dynamic array management. While `deque` is useful for certain operations, it can be optimized by using a vector instead, which provides better performance for indexed access and does not require the overhead of maintaining two ends. Additionally, the use of `scanf` can be replaced with `cin` for better readability, and the error handling can be improved."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2435321.875
+        ]
+    },
+    "(4x0x11x9)": {
+        "children": [
+            {
+                "fitness": 2478829.125,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) {\n                    l.erase(l.begin() + x - 1);\n                }\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) {\n                    printf(\"%d\\n\", *(l.begin() + x - 1));\n                }\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Combine the input handling and loop structure from Parent 1 with the error handling and cleaner structure from Parent 2."
+            },
+            {
+                "fitness": 2484736.375,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                l.erase(remove(l.begin(), l.end(), x), l.end());\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Merge the input/output approach from Parent 4 with the deque operations from Parent 3 for improved readability and efficiency."
+            },
+            {
+                "fitness": 2448303.1875,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (true) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) {\n                    l.erase(l.begin() + x - 1);\n                }\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) {\n                    printf(\"%d\\n\", l[x - 1]);\n                }\n            } else if (query == 3) {\n                l.erase(remove(l.begin(), l.end(), x), l.end());\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Utilize the efficient input method from Parent 2 while incorporating the structure of the main loop from Parent 1, ensuring optimal performance."
+            },
+            {
+                "fitness": 2537346.8125,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (true) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) {\n                    l.erase(l.begin() + x - 1);\n                }\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) {\n                    printf(\"%d\\n\", l[x - 1]);\n                } else {\n                    printf(\"Error: Invalid index\\n\");\n                }\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Integrate the error-checking logic from Parent 1 with the efficient data handling from Parent 4, ensuring robustness in handling queries."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "4",
+            "0",
+            "11",
+            "9"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", *(l.begin() + x - 1));\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2435321.875,
+            2445696.5,
+            2449312.375,
+            2466233.25
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 2430922.6875,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l; // Use deque for efficient front and back operations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.pop_front(); // Efficiently remove from front\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Focus on the handling of the vector `l` to optimize memory usage and improve performance by reducing unnecessary reallocations and erasures, while also leveraging `std::deque` for more efficient front insertions/removals."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n        l.reserve(lim); // Reserve space to avoid reallocations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.erase(l.begin());\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2454196.625
+        ]
+    },
+    "(6_13)": {
+        "children": [
+            {
+                "fitness": 2471964.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l; // Use vector instead of deque for better cache performance\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.erase(l.begin()); // Remove the first element\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Optimize the way we handle the deque by replacing it with a vector, which can provide better cache locality and reduced overhead for operations that don't require frequent front/back modifications."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6_13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l; // Use deque for efficient front and back operations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.pop_front(); // Efficiently remove from front\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2430922.6875
+        ]
+    },
+    "(6_13x0x4x1)": {
+        "children": [
+            {
+                "fitness": 2584784.25,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Combine efficient input handling from Parent 1 with query processing improvements from Parent 3 for better error handling and input management."
+            },
+            {
+                "fitness": 2503328.8125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n        l.reserve(lim); // Reserve space to avoid reallocations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.erase(l.begin());\n            } else if (query == 1 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", l[x - 1]);\n            } else if (query == 3) {\n                l.erase(remove(l.begin(), l.end(), x), l.end());\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Integrate the vector space management from Parent 4 with the input processing logic from Parent 2 to optimize for memory and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "6_13",
+            "0",
+            "4",
+            "1"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l; // Use deque for efficient front and back operations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.pop_front(); // Efficiently remove from front\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", *(l.begin() + x - 1));\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) printf(\"%d\\n\", *(l.begin() + x - 1));\n                else printf(\"Error: Index out of bounds\\n\");\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n        l.reserve(lim); // Reserve space to avoid reallocations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.erase(l.begin());\n            } else if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n                else printf(\"Error: Index out of bounds\\n\");\n            } else if (query == 3) {\n                l.erase(remove(l.begin(), l.end(), x), l.end());\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2430775.875,
+            2440239.4375,
+            2463253.3125,
+            2475583.0
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 2483512.1875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.erase(l.begin());\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", l[x - 1]);\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Focus on the usage of `deque`, which can introduce overhead for certain operations. By replacing it with a `vector` and managing the size manually, we can optimize the performance of push and erase operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        deque<int> l;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1 && x - 1 >= 0 && x - 1 < l.size()) {\n                l.erase(l.begin() + x - 1);\n            } else if (query == 2 && x - 1 >= 0 && x - 1 < l.size()) {\n                printf(\"%d\\n\", *(l.begin() + x - 1));\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            2438284.75
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 3341047.125,
+                "new_code": "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            }\n            if (query == 1) l.erase(l.begin() + x - 1);\n            if (query == 2) printf(\"%d\\n\", *(l.begin() + x - 1));\n            if (query == 3) l.erase(find(l.begin(), l.end(), x));\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Use `scanf` instead of `cin` for faster input handling."
+            },
+            {
+                "fitness": 2450046.5625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        vector<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.erase(l.begin());\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Optimize the loop structure by using a vector instead of a deque for better performance and automatic size management."
+            },
+            {
+                "fitness": 2463253.3125,
+                "new_code": "#include <iostream>\n#include <queue>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 >= 0 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            } else if (query == 2) {\n                if (x - 1 >= 0 && x - 1 < l.size()) printf(\"%d\\n\", *(l.begin() + x - 1));\n                else printf(\"Error: Index out of bounds\\n\");\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            } else {\n                printf(\"Error: Invalid query\\n\");\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Implement error handling for invalid queries to improve robustness and prevent crashes."
+            },
+            {
+                "fitness": 2454196.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        vector<int> l;\n        l.reserve(lim); // Reserve space to avoid reallocations\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                if (l.size() < lim) l.push_back(x);\n                else {\n                    l.erase(l.begin());\n                    l.push_back(x);\n                }\n            }\n            if (query == 1 && x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            if (query == 2 && x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            if (query == 3) l.erase(remove(l.begin(), l.end(), x), l.end());\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Optimize memory usage by using `std::vector` with `reserve` to avoid multiple reallocations."
+            },
+            {
+                "fitness": 2491934.3125,
+                "new_code": "#include <iostream>\n#include <deque>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        deque<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if ((int)l.size() > lim) l.pop_front();\n            } else if (query == 1) {\n                if (x - 1 < l.size()) l.erase(l.begin() + x - 1);\n            } else if (query == 2) {\n                if (x - 1 < l.size()) printf(\"%d\\n\", l[x - 1]);\n            } else if (query == 3) {\n                auto it = find(l.begin(), l.end(), x);\n                if (it != l.end()) l.erase(it);\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Minimize use of unnecessary variables by combining declarations where possible."
+            },
+            {
+                "fitness": 2459185.5625,
+                "new_code": "#include <iostream>\n#include <list>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int q, lim, query, x;\n\n    while (1) {\n        list<int> l;\n        scanf(\"%d %d\", &q, &lim);\n        if (!q && !lim) break;\n\n        for (int i = 0; i < q; i++) {\n            scanf(\"%d %d\", &query, &x);\n            if (query == 0) {\n                l.push_back(x);\n                if (l.size() > lim) l.pop_front();\n            }\n            if (query == 1) {\n                auto it = next(l.begin(), x - 1);\n                if (it != l.end()) l.erase(it);\n            }\n            if (query == 2) {\n                auto it = next(l.begin(), x - 1);\n                if (it != l.end()) printf(\"%d\\n\", *it);\n            }\n            if (query == 3) {\n                l.remove(x);\n            }\n        }\n        printf(\"end\\n\");\n    }\n}\n",
+                "strategy": "Replace `deque` with `list` for potentially better performance on erase operations since lists are optimized for such use cases."
+            },
+            {
+                "fitness": 2604587.9375,
+                "new_code": "#include<iostream>\n#include<queue>\n#include<algorithm>\nusing namespace std;\n\nint main(){\n  int q,lim,query,x;\n\n  while(1){\n    deque<int> l;\n    cin >> q >> lim;\n\n    if(!q && !lim) break;\n\n    for(int i=0; i<q; i++){\n      cin >> query >> x;\n\n      if(query==0){\n        l.push_back(x);\n        if((int)l.size() > lim) l.pop_front();\n      }\n\n      if(query==1) l.erase(l.begin() + x - 1);\n      if(query==2) cout << *(l.begin() + x - 1) << endl;\n      if(query==3) l.erase(find(l.begin(), l.end(), x));\n    }\n\n    cout << \"end\" << endl;\n  }\n}\n",
+                "strategy": "No mutations are to be applied as the current implementation already meets the requirements for performance and functionality."
+            },
+            {
+                "fitness": 2594851.875,
+                "new_code": "#include<iostream>\n#include<queue>\n#include<algorithm>\nusing namespace std;\n\nint main(){\n  int q,lim,query,x;\n\n  while(1){\n    deque<int> l;\n    cin >> q >> lim;\n\n    if(!q && !lim) break;\n\n    for(int i=0;i<q;i++){\n      cin >> query >> x;\n\n      if(query==0){\n        l.push_back(x);\n        if((int)l.size()>lim) l.pop_front();\n      }\n\n      if(query==1) l.erase(l.begin()+x-1);\n      if(query==2) cout << *(l.begin()+x-1) << endl;\n      if(query==3) l.erase(find(l.begin(),l.end(),x));\n    }\n\n    cout << \"end\" << endl;\n  }\n}\n",
+                "strategy": "No mutation applied to maintain original functionality and correctness."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include<iostream>\n\n#include<queue>\n\n#include<algorithm>\n\nusing namespace std;\n\n\n\nint main(){\n\n  int q,lim,query,x;\n\n\n\n  while(1){\n\n    deque<int> l;\n\n    cin >> q >> lim;\n\n    if(!q && !lim)break;\n\n    for(int i=0;i<q;i++){\n\n      cin >> query >> x;\n\n\n\n      if(query==0){\n\n\tl.push_back(x);\n\n\tif((int)l.size()>lim)l.pop_front();\n\n      }\n\n      if(query==1)l.erase(l.begin()+x-1);\n\n      if(query==2)cout << *(l.begin()+x-1) << endl;\n\n      if(query==3)l.erase(find(l.begin(),l.end(),x));\n\n    }\n\n    cout << \"end\" << endl;\n\n  }\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            2586808.125
+        ]
+    }
+}

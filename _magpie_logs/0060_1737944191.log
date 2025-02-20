@@ -1,0 +1,423 @@
+2025-01-27 02:16:31,119	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 9682291865117953
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0060
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-27 02:16:31,119	[DEBUG]	
+2025-01-27 02:16:31,119	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-27 02:16:31,119	[INFO]	~~~~ WARMUP ~~~~
+2025-01-27 02:16:32,264	[DEBUG]	EXEC>  SUCCESS 3099979.8125
+2025-01-27 02:16:32,265	[INFO]	WARM    SUCCESS               3099979.81 (--) [0 edit(s)]  
+2025-01-27 02:16:32,941	[DEBUG]	EXEC>  SUCCESS 3112635.875
+2025-01-27 02:16:32,941	[INFO]	WARM    SUCCESS               3112635.88 (--) [0 edit(s)]  
+2025-01-27 02:16:33,631	[DEBUG]	EXEC>  SUCCESS 3104249.25
+2025-01-27 02:16:33,631	[INFO]	WARM    SUCCESS               3104249.25 (--) [0 edit(s)]  
+2025-01-27 02:16:34,333	[DEBUG]	EXEC>  SUCCESS 3134590.5
+2025-01-27 02:16:34,333	[INFO]	WARM    SUCCESS               3134590.50 (--) [0 edit(s)]  
+2025-01-27 02:16:35,031	[DEBUG]	EXEC>  SUCCESS 3114401.1875
+2025-01-27 02:16:35,031	[INFO]	WARM    SUCCESS               3114401.19 (--) [0 edit(s)]  
+2025-01-27 02:16:35,032	[INFO]	REF     SUCCESS               3114401.19 (--) [0 edit(s)]  
+2025-01-27 02:16:35,032	[INFO]	
+2025-01-27 02:16:35,032	[INFO]	~~~~ START ~~~~
+2025-01-27 02:16:52,233	[DEBUG]	EXEC>  SUCCESS 3126782.625
+2025-01-27 02:16:52,233	[INFO]	0-1     SUCCESS              +3126782.62 (100.40%) [1 edit(s)]  
+2025-01-27 02:16:52,233	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:16:54,045	[DEBUG]	EXEC>  SUCCESS 3106394.75
+2025-01-27 02:16:54,045	[INFO]	0-2     SUCCESS              *3106394.75 (99.74%) [1 edit(s)]  
+2025-01-27 02:16:54,045	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:16:55,498	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 02:16:55,499	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << "Base-8: " << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:16:57,308	[DEBUG]	EXEC>  SUCCESS 3121788.375
+2025-01-27 02:16:57,309	[INFO]	0-4     SUCCESS               3121788.38 (100.24%) [1 edit(s)]  
+2025-01-27 02:16:57,309	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:16:59,006	[DEBUG]	EXEC>  SUCCESS 3120515.4375
+2025-01-27 02:16:59,007	[INFO]	0-5     SUCCESS               3120515.44 (100.20%) [1 edit(s)]  
+2025-01-27 02:16:59,007	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:00,698	[DEBUG]	EXEC>  SUCCESS 3128343.875
+2025-01-27 02:17:00,699	[INFO]	0-6     SUCCESS               3128343.88 (100.45%) [1 edit(s)]  
+2025-01-27 02:17:00,699	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n; // User input for decimal number\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:02,395	[DEBUG]	EXEC>  SUCCESS 3127546.875
+2025-01-27 02:17:02,396	[INFO]	0-7     SUCCESS               3127546.88 (100.42%) [1 edit(s)]  
+2025-01-27 02:17:02,396	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Loop until zero is entered\n\n    while( cin >> n && n != 0 ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:04,142	[DEBUG]	EXEC>  SUCCESS 3121988.75
+2025-01-27 02:17:04,142	[INFO]	0-8     SUCCESS               3121988.75 (100.24%) [1 edit(s)]  
+2025-01-27 02:17:04,142	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:05,817	[DEBUG]	EXEC>  SUCCESS 3097393.3125
+2025-01-27 02:17:05,818	[INFO]	0-9     SUCCESS              *3097393.31 (99.45%) [1 edit(s)]  
+2025-01-27 02:17:05,818	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:17:08,352	[DEBUG]	EXEC>  SUCCESS 3140618.625
+2025-01-27 02:17:08,352	[INFO]	0-10    SUCCESS               3140618.62 (100.84%) [1 edit(s)]  
+2025-01-27 02:17:08,352	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <bits/stdc++.h>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:09,353	[INFO]	Step: 10
+2025-01-27 02:17:09,353	[INFO]	Stop Steps: 50
+2025-01-27 02:17:11,043	[DEBUG]	EXEC>  SUCCESS 3119339.125
+2025-01-27 02:17:11,043	[INFO]	REF     SUCCESS               3119339.12 (--) [0 edit(s)]  
+2025-01-27 02:17:11,043	[INFO]	Best patch: 8
+2025-01-27 02:17:11,717	[DEBUG]	EXEC>  SUCCESS 3108801.125
+2025-01-27 02:17:11,718	[INFO]	BEST    SUCCESS              *3108801.12 (99.66%) [0 edit(s)]  
+2025-01-27 02:17:11,718	[INFO]	Best patch step: 8
+2025-01-27 02:17:30,435	[INFO]	Step: 10
+2025-01-27 02:17:30,435	[INFO]	Stop Steps: 50
+2025-01-27 02:17:31,236	[DEBUG]	EXEC>  SUCCESS 3110778.3125
+2025-01-27 02:17:31,237	[INFO]	1-1     SUCCESS              +3110778.31 (99.73%) [1 edit(s)]  
+2025-01-27 02:17:31,237	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:31,237	[INFO]	Step: 11
+2025-01-27 02:17:31,237	[INFO]	Stop Steps: 50
+2025-01-27 02:17:31,921	[DEBUG]	EXEC>  SUCCESS 3096151.1875
+2025-01-27 02:17:31,922	[INFO]	1-2     SUCCESS              *3096151.19 (99.26%) [1 edit(s)]  
+2025-01-27 02:17:31,922	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:17:31,922	[INFO]	Step: 12
+2025-01-27 02:17:31,922	[INFO]	Stop Steps: 50
+2025-01-27 02:17:32,628	[DEBUG]	EXEC>  SUCCESS 3151389.8125
+2025-01-27 02:17:32,628	[INFO]	1-3     SUCCESS               3151389.81 (101.03%) [1 edit(s)]  
+2025-01-27 02:17:32,628	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:32,628	[INFO]	Step: 13
+2025-01-27 02:17:32,628	[INFO]	Stop Steps: 50
+2025-01-27 02:17:33,311	[DEBUG]	EXEC>  SUCCESS 3122153.1875
+2025-01-27 02:17:33,311	[INFO]	1-4     SUCCESS               3122153.19 (100.09%) [1 edit(s)]  
+2025-01-27 02:17:33,311	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:33,311	[INFO]	Step: 14
+2025-01-27 02:17:33,311	[INFO]	Stop Steps: 50
+2025-01-27 02:17:33,997	[DEBUG]	EXEC>  SUCCESS 3104273.125
+2025-01-27 02:17:33,998	[INFO]	1-5     SUCCESS               3104273.12 (99.52%) [1 edit(s)]  
+2025-01-27 02:17:33,998	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:33,998	[INFO]	Step: 15
+2025-01-27 02:17:33,998	[INFO]	Stop Steps: 50
+2025-01-27 02:17:34,684	[DEBUG]	EXEC>  SUCCESS 3101030.375
+2025-01-27 02:17:34,685	[INFO]	1-6     SUCCESS               3101030.38 (99.41%) [1 edit(s)]  
+2025-01-27 02:17:34,685	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:34,685	[INFO]	Step: 16
+2025-01-27 02:17:34,685	[INFO]	Stop Steps: 50
+2025-01-27 02:17:34,885	[INFO]	1-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 02:17:34,885	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n\nint main() {\n\n\tint n;\n\n\tscanf("%d", &n);\n\n\twhile (n) {\n\n\t\tint arr[20], cnt = 0;\n\n\t\twhile (n) {\n\n\t\t\tarr[cnt++] = n % 8;\n\n\t\t\tn /= 8;\n\n\t\t}\n\n\t\tfor (int i = cnt - 1; i >= 0; i--)\n\n\t\t\tprintf("%d", arr[i]);\n\n\t\tprintf("\\n");\n\n\t\tscanf("%d", &n);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 02:17:34,885	[INFO]	Step: 17
+2025-01-27 02:17:34,885	[INFO]	Stop Steps: 50
+2025-01-27 02:17:35,576	[DEBUG]	EXEC>  SUCCESS 3108264.125
+2025-01-27 02:17:35,576	[INFO]	1-8     SUCCESS               3108264.12 (99.64%) [2 edit(s)]  
+2025-01-27 02:17:35,576	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:35,576	[INFO]	Step: 18
+2025-01-27 02:17:35,576	[INFO]	Stop Steps: 50
+2025-01-27 02:17:36,023	[INFO]	1-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 02:17:36,024	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n\nusing namespace std;\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)n%8*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:36,024	[INFO]	Step: 19
+2025-01-27 02:17:36,024	[INFO]	Stop Steps: 50
+2025-01-27 02:17:36,713	[DEBUG]	EXEC>  SUCCESS 3112637.375
+2025-01-27 02:17:36,714	[INFO]	1-10    SUCCESS               3112637.38 (99.79%) [2 edit(s)]  
+2025-01-27 02:17:36,714	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0, i=1;\n\n\tfor(; n >0; n /= 8){\n\n\t\ts += (long long int)t[n%8]*i;\n\n\t\ti *= 10;\n\n\t}\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:36,714	[INFO]	Step: 20
+2025-01-27 02:17:36,714	[INFO]	Stop Steps: 50
+2025-01-27 02:17:37,399	[DEBUG]	EXEC>  SUCCESS 3122460.0625
+2025-01-27 02:17:37,400	[INFO]	1-1     SUCCESS               3122460.06 (100.10%) [1 edit(s)]  
+2025-01-27 02:17:37,400	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int octalDigits[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int convertToDecimal(int n){\n\n\tlong long int decimalValue=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\tdecimalValue += (long long int)octalDigits[n%8]*i;\n\n\treturn decimalValue;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << convertToDecimal(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:37,400	[INFO]	Step: 21
+2025-01-27 02:17:37,400	[INFO]	Stop Steps: 50
+2025-01-27 02:17:39,100	[DEBUG]	EXEC>  SUCCESS 3115086.375
+2025-01-27 02:17:39,100	[INFO]	REF     SUCCESS               3115086.38 (--) [0 edit(s)]  
+2025-01-27 02:17:39,100	[INFO]	Best patch: 1
+2025-01-27 02:17:39,799	[DEBUG]	EXEC>  SUCCESS 3122928.375
+2025-01-27 02:17:39,800	[INFO]	BEST    SUCCESS               3122928.38 (100.25%) [0 edit(s)]  
+2025-01-27 02:17:39,800	[INFO]	Best patch step: 11
+2025-01-27 02:17:59,108	[INFO]	Step: 21
+2025-01-27 02:17:59,108	[INFO]	Stop Steps: 50
+2025-01-27 02:17:59,920	[DEBUG]	EXEC>  SUCCESS 3137757.8125
+2025-01-27 02:17:59,920	[INFO]	2-2     SUCCESS              +3137757.81 (100.73%) [1 edit(s)]  
+2025-01-27 02:17:59,921	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:17:59,921	[INFO]	Step: 22
+2025-01-27 02:17:59,921	[INFO]	Stop Steps: 50
+2025-01-27 02:18:00,610	[DEBUG]	EXEC>  SUCCESS 3132144.1875
+2025-01-27 02:18:00,611	[INFO]	2-3     SUCCESS              +3132144.19 (100.55%) [1 edit(s)]  
+2025-01-27 02:18:00,611	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:00,611	[INFO]	Step: 23
+2025-01-27 02:18:00,611	[INFO]	Stop Steps: 50
+2025-01-27 02:18:01,292	[DEBUG]	EXEC>  SUCCESS 3142322.1875
+2025-01-27 02:18:01,292	[INFO]	2-4     SUCCESS               3142322.19 (100.87%) [1 edit(s)]  
+2025-01-27 02:18:01,292	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:01,293	[INFO]	Step: 24
+2025-01-27 02:18:01,293	[INFO]	Stop Steps: 50
+2025-01-27 02:18:01,976	[DEBUG]	EXEC>  SUCCESS 3140173.125
+2025-01-27 02:18:01,977	[INFO]	2-5     SUCCESS               3140173.12 (100.81%) [1 edit(s)]  
+2025-01-27 02:18:01,977	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\n\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:01,977	[INFO]	Step: 25
+2025-01-27 02:18:01,977	[INFO]	Stop Steps: 50
+2025-01-27 02:18:02,674	[DEBUG]	EXEC>  SUCCESS 3110240.8125
+2025-01-27 02:18:02,675	[INFO]	2-6     SUCCESS              *3110240.81 (99.84%) [1 edit(s)]  
+2025-01-27 02:18:02,675	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:18:02,675	[INFO]	Step: 26
+2025-01-27 02:18:02,675	[INFO]	Stop Steps: 50
+2025-01-27 02:18:03,372	[DEBUG]	EXEC>  SUCCESS 3178065.8125
+2025-01-27 02:18:03,373	[INFO]	2-7     SUCCESS               3178065.81 (102.02%) [1 edit(s)]  
+2025-01-27 02:18:03,373	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\n\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:03,373	[INFO]	Step: 27
+2025-01-27 02:18:03,373	[INFO]	Stop Steps: 50
+2025-01-27 02:18:04,092	[DEBUG]	EXEC>  SUCCESS 3133142.25
+2025-01-27 02:18:04,092	[INFO]	2-8     SUCCESS               3133142.25 (100.58%) [2 edit(s)]  
+2025-01-27 02:18:04,092	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octalToDecimal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << octalToDecimal(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:04,092	[INFO]	Step: 28
+2025-01-27 02:18:04,092	[INFO]	Stop Steps: 50
+2025-01-27 02:18:04,508	[DEBUG]	EXEC>  SUCCESS 1219653.5625
+2025-01-27 02:18:04,509	[INFO]	2-9     SUCCESS              *1219653.56 (39.15%) [2 edit(s)]  
+2025-01-27 02:18:04,509	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:18:04,509	[INFO]	Step: 29
+2025-01-27 02:18:04,509	[INFO]	Stop Steps: 50
+2025-01-27 02:18:04,718	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 02:18:04,719	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)(n % 8)*i, n -= n % 8; // Calculate octal digit\n\n\treturn s;\n\n}\n\n\n\nint main(){\n\n    int n;\n\n\n\n    while(scanf("%d", &n), n)\n\n\t\tprintf("%lld\\n", solve(n));\n\n\n\n}')"
+2025-01-27 02:18:04,719	[INFO]	Step: 30
+2025-01-27 02:18:04,719	[INFO]	Stop Steps: 50
+2025-01-27 02:18:05,170	[INFO]	2-1     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-27 02:18:05,171	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:05,171	[INFO]	Step: 31
+2025-01-27 02:18:05,171	[INFO]	Stop Steps: 50
+2025-01-27 02:18:05,866	[DEBUG]	EXEC>  SUCCESS 3109134.625
+2025-01-27 02:18:05,867	[INFO]	2-2     SUCCESS               3109134.62 (99.81%) [1 edit(s)]  
+2025-01-27 02:18:05,867	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}')"
+2025-01-27 02:18:05,867	[INFO]	Step: 32
+2025-01-27 02:18:05,867	[INFO]	Stop Steps: 50
+2025-01-27 02:18:07,539	[DEBUG]	EXEC>  SUCCESS 3115063.125
+2025-01-27 02:18:07,539	[INFO]	REF     SUCCESS               3115063.12 (--) [0 edit(s)]  
+2025-01-27 02:18:07,540	[INFO]	Best patch: 3_16
+2025-01-27 02:18:07,950	[DEBUG]	EXEC>  SUCCESS 1219042.125
+2025-01-27 02:18:07,950	[INFO]	BEST    SUCCESS              *1219042.12 (39.13%) [0 edit(s)]  
+2025-01-27 02:18:07,950	[INFO]	Best patch step: 28
+2025-01-27 02:18:26,079	[INFO]	Step: 32
+2025-01-27 02:18:26,079	[INFO]	Stop Steps: 50
+2025-01-27 02:18:26,619	[DEBUG]	EXEC>  SUCCESS 1219282.9375
+2025-01-27 02:18:26,619	[INFO]	3-3     SUCCESS              +1219282.94 (39.14%) [2 edit(s)]  
+2025-01-27 02:18:26,620	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:26,620	[INFO]	Step: 33
+2025-01-27 02:18:26,620	[INFO]	Stop Steps: 50
+2025-01-27 02:18:27,328	[DEBUG]	EXEC>  SUCCESS 3115883.8125
+2025-01-27 02:18:27,329	[INFO]	3-4     SUCCESS               3115883.81 (100.03%) [1 edit(s)]  
+2025-01-27 02:18:27,329	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}')"
+2025-01-27 02:18:27,329	[INFO]	Step: 34
+2025-01-27 02:18:27,329	[INFO]	Stop Steps: 50
+2025-01-27 02:18:27,747	[DEBUG]	EXEC>  SUCCESS 1235549.0
+2025-01-27 02:18:27,747	[INFO]	3-5     SUCCESS               1235549.00 (39.66%) [1 edit(s)]  
+2025-01-27 02:18:27,747	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n\nusing namespace std;\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:27,748	[INFO]	Step: 35
+2025-01-27 02:18:27,748	[INFO]	Stop Steps: 50
+2025-01-27 02:18:28,448	[DEBUG]	EXEC>  SUCCESS 3127095.9375
+2025-01-27 02:18:28,448	[INFO]	3-6     SUCCESS               3127095.94 (100.39%) [1 edit(s)]  
+2025-01-27 02:18:28,448	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:28,448	[INFO]	Step: 36
+2025-01-27 02:18:28,448	[INFO]	Stop Steps: 50
+2025-01-27 02:18:29,156	[DEBUG]	EXEC>  SUCCESS 3135734.0625
+2025-01-27 02:18:29,157	[INFO]	3-7     SUCCESS               3135734.06 (100.66%) [1 edit(s)]  
+2025-01-27 02:18:29,157	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:29,157	[INFO]	Step: 37
+2025-01-27 02:18:29,157	[INFO]	Stop Steps: 50
+2025-01-27 02:18:29,576	[DEBUG]	EXEC>  SUCCESS 1222592.6875
+2025-01-27 02:18:29,577	[INFO]	3-8     SUCCESS               1222592.69 (39.25%) [1 edit(s)]  
+2025-01-27 02:18:29,577	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)conversion_table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:29,577	[INFO]	Step: 38
+2025-01-27 02:18:29,577	[INFO]	Stop Steps: 50
+2025-01-27 02:18:29,774	[INFO]	3-9     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-27 02:18:29,774	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\nusing namespace std;\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 8 , n /= 8)\n\n\t\ts += (long long int)n%8*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:29,774	[INFO]	Step: 39
+2025-01-27 02:18:29,775	[INFO]	Stop Steps: 50
+2025-01-27 02:18:29,959	[INFO]	3-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 02:18:29,959	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n\nint main(){\n\n    int n;\n\n    while( scanf("%d",&n) , n ){\n\n\t\tlong long int s=0;\n\n\t\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\t\ts += (n%8)*i , n /= 8 , s += (n%8)*i*10;\n\n\t\tprintf("%lld\\n",s);\n\n    }\n\n}')"
+2025-01-27 02:18:29,959	[INFO]	Step: 40
+2025-01-27 02:18:29,959	[INFO]	Stop Steps: 50
+2025-01-27 02:18:30,151	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 02:18:30,151	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 22), '#include<cstdio>\nint main(){\n    int x;\n    while(~scanf("%d",&x)){\n        int ans=0,base=1;\n        while(x){\n            ans+=(x%10)*base;\n            x/=10;\n            base*=8;\n        }\n        printf("%d\\n",ans);\n    }\n}')"
+2025-01-27 02:18:30,151	[INFO]	Step: 41
+2025-01-27 02:18:30,151	[INFO]	Stop Steps: 50
+2025-01-27 02:18:30,350	[INFO]	3-2     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 02:18:30,351	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\nusing namespace std;\n\nint main() {\n\tint n, x, y, z, o = 0; \n\tfor (scanf("%d", &n); n; scanf("%d", &n)) {\n\t\tx = n % 8, y = n / 8 % 8, z = n / 64 % 8;\n\t\to = o * 10 + (z ? z + 5 : 0) + (y ? y + 1 : 0) * 10 + (x ? x + 1 : 0) * 100;\n\t}\n\treturn !printf("%d\\n", o);\n}')"
+2025-01-27 02:18:30,351	[INFO]	Step: 42
+2025-01-27 02:18:30,351	[INFO]	Stop Steps: 50
+2025-01-27 02:18:31,034	[DEBUG]	EXEC>  SUCCESS 3129911.6875
+2025-01-27 02:18:31,035	[INFO]	3-3     SUCCESS               3129911.69 (100.48%) [1 edit(s)]  
+2025-01-27 02:18:31,035	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n/*void solve(int n){\n\n    if(n >= 8)\n\n        solve(n / 8);\n\n    cout << table[n % 8] ;\n\n}*/\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:31,035	[INFO]	Step: 43
+2025-01-27 02:18:31,035	[INFO]	Stop Steps: 50
+2025-01-27 02:18:32,739	[DEBUG]	EXEC>  SUCCESS 3127938.1875
+2025-01-27 02:18:32,739	[INFO]	REF     SUCCESS               3127938.19 (--) [0 edit(s)]  
+2025-01-27 02:18:32,739	[INFO]	Best patch: 3_16
+2025-01-27 02:18:33,162	[DEBUG]	EXEC>  SUCCESS 1228141.4375
+2025-01-27 02:18:33,163	[INFO]	BEST    SUCCESS              *1228141.44 (39.26%) [0 edit(s)]  
+2025-01-27 02:18:33,163	[INFO]	Best patch step: 28
+2025-01-27 02:18:51,880	[INFO]	Step: 43
+2025-01-27 02:18:51,881	[INFO]	Stop Steps: 50
+2025-01-27 02:18:52,448	[DEBUG]	EXEC>  SUCCESS 1227038.75
+2025-01-27 02:18:52,449	[INFO]	4-4     SUCCESS              *1227038.75 (39.23%) [2 edit(s)]  
+2025-01-27 02:18:52,449	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:18:52,449	[INFO]	Step: 44
+2025-01-27 02:18:52,450	[INFO]	Stop Steps: 50
+2025-01-27 02:18:52,873	[DEBUG]	EXEC>  SUCCESS 1233646.6875
+2025-01-27 02:18:52,873	[INFO]	4-5     SUCCESS               1233646.69 (39.44%) [1 edit(s)]  
+2025-01-27 02:18:52,873	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)conversion_table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:52,873	[INFO]	Step: 45
+2025-01-27 02:18:52,873	[INFO]	Stop Steps: 50
+2025-01-27 02:18:53,316	[DEBUG]	EXEC>  SUCCESS 1228668.9375
+2025-01-27 02:18:53,316	[INFO]	4-6     SUCCESS               1228668.94 (39.28%) [1 edit(s)]  
+2025-01-27 02:18:53,316	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:53,316	[INFO]	Step: 46
+2025-01-27 02:18:53,316	[INFO]	Stop Steps: 50
+2025-01-27 02:18:53,746	[DEBUG]	EXEC>  SUCCESS 1235084.9375
+2025-01-27 02:18:53,747	[INFO]	4-7     SUCCESS               1235084.94 (39.49%) [1 edit(s)]  
+2025-01-27 02:18:53,747	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)conversion_table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:53,747	[INFO]	Step: 47
+2025-01-27 02:18:53,747	[INFO]	Stop Steps: 50
+2025-01-27 02:18:54,443	[DEBUG]	EXEC>  SUCCESS 3125890.6875
+2025-01-27 02:18:54,444	[INFO]	4-8     SUCCESS               3125890.69 (99.93%) [1 edit(s)]  
+2025-01-27 02:18:54,444	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}')"
+2025-01-27 02:18:54,444	[INFO]	Step: 48
+2025-01-27 02:18:54,444	[INFO]	Stop Steps: 50
+2025-01-27 02:18:54,863	[DEBUG]	EXEC>  SUCCESS 1230368.1875
+2025-01-27 02:18:54,863	[INFO]	4-9     SUCCESS               1230368.19 (39.33%) [1 edit(s)]  
+2025-01-27 02:18:54,863	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}')"
+2025-01-27 02:18:54,863	[INFO]	Step: 49
+2025-01-27 02:18:54,863	[INFO]	Stop Steps: 50
+2025-01-27 02:18:55,289	[DEBUG]	EXEC>  SUCCESS 1209831.125
+2025-01-27 02:18:55,290	[INFO]	4-10    SUCCESS              *1209831.12 (38.68%) [3 edit(s)]  
+2025-01-27 02:18:55,290	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", octal_to_decimal(n));\n\n    }\n\n\n\n}')"
+
+2025-01-27 02:18:55,290	[INFO]	Step: 50
+2025-01-27 02:18:55,290	[INFO]	Stop Steps: 50
+2025-01-27 02:18:55,290	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-27 02:18:55,290	[INFO]	Step: 50
+2025-01-27 02:18:55,290	[INFO]	Stop Steps: 50
+2025-01-27 02:18:57,511	[INFO]	~~~~ END ~~~~
+2025-01-27 02:18:57,511	[INFO]	Best patch step: 49
+2025-01-27 02:18:57,511	[INFO]	
+2025-01-27 02:18:57,511	[INFO]	==== REPORT ====
+2025-01-27 02:18:57,511	[INFO]	Termination: step budget
+2025-01-27 02:18:57,511	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0060_1737944191.log
+2025-01-27 02:18:57,511	[INFO]	Patch file: _magpie_logs/0060_1737944191.patch
+2025-01-27 02:18:57,511	[INFO]	Diff file: _magpie_logs/0060_1737944191.diff
+2025-01-27 02:18:57,511	[INFO]	Reference fitness: 3127938.19
+2025-01-27 02:18:57,511	[INFO]	Best fitness: 1209831.12
+2025-01-27 02:18:57,512	[INFO]	
+2025-01-27 02:18:57,512	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}') + LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", solve(n));\n\n    }\n\n\n\n}') + LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf("%d", &n), n ){\n\n\t\tprintf("%lld\\n", octal_to_decimal(n));\n\n    }\n\n\n\n}')
+2025-01-27 02:18:57,513	[INFO]	
+2025-01-27 02:18:57,513	[INFO]	==== DIFF ====
+

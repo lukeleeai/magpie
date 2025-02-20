@@ -1,0 +1,412 @@
+2025-01-26 00:25:18,999	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8419344338698963
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0023
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 00:25:19,000	[DEBUG]	
+2025-01-26 00:25:19,000	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 00:25:19,000	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 00:25:19,965	[DEBUG]	EXEC>  SUCCESS 3346983.0
+2025-01-26 00:25:19,965	[INFO]	WARM    SUCCESS               3346983.00 (--) [0 edit(s)]  
+2025-01-26 00:25:20,690	[DEBUG]	EXEC>  SUCCESS 3423402.5625
+2025-01-26 00:25:20,691	[INFO]	WARM    SUCCESS               3423402.56 (--) [0 edit(s)]  
+2025-01-26 00:25:21,446	[DEBUG]	EXEC>  SUCCESS 3357161.375
+2025-01-26 00:25:21,447	[INFO]	WARM    SUCCESS               3357161.38 (--) [0 edit(s)]  
+2025-01-26 00:25:22,172	[DEBUG]	EXEC>  SUCCESS 3297943.6875
+2025-01-26 00:25:22,172	[INFO]	WARM    SUCCESS               3297943.69 (--) [0 edit(s)]  
+2025-01-26 00:25:22,902	[DEBUG]	EXEC>  SUCCESS 3349315.75
+2025-01-26 00:25:22,902	[INFO]	WARM    SUCCESS               3349315.75 (--) [0 edit(s)]  
+2025-01-26 00:25:22,903	[INFO]	REF     SUCCESS               3349315.75 (--) [0 edit(s)]  
+2025-01-26 00:25:22,903	[INFO]	
+2025-01-26 00:25:22,903	[INFO]	~~~~ START ~~~~
+2025-01-26 00:25:45,581	[DEBUG]	EXEC>  SUCCESS 1916433.0
+2025-01-26 00:25:45,581	[INFO]	0-1     SUCCESS              *1916433.00 (57.22%) [1 edit(s)]  
+2025-01-26 00:25:45,581	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+
+2025-01-26 00:25:46,679	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:25:46,679	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    string a;\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        cin >> a;\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:47,852	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 00:25:47,852	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    fill(d, d + 100005, 0); // Initialize d to 0\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == 0) { // Change the condition to check for 0 instead of -1\n continue;\n        }\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:49,289	[DEBUG]	EXEC>  SUCCESS 1910765.0
+2025-01-26 00:25:49,289	[INFO]	0-4     SUCCESS              *1910765.00 (57.05%) [1 edit(s)]  
+2025-01-26 00:25:49,289	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+
+2025-01-26 00:25:50,696	[DEBUG]	EXEC>  SUCCESS 3329431.9375
+2025-01-26 00:25:50,697	[INFO]	0-5     SUCCESS               3329431.94 (99.41%) [1 edit(s)]  
+2025-01-26 00:25:50,697	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> c(100005, 0), d(100005, 0);\n    char a[10];\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:52,024	[DEBUG]	EXEC>  SUCCESS 1957531.125
+2025-01-26 00:25:52,024	[INFO]	0-6     SUCCESS               1957531.12 (58.45%) [1 edit(s)]  
+2025-01-26 00:25:52,024	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:53,355	[DEBUG]	EXEC>  SUCCESS 1914199.5625
+2025-01-26 00:25:53,356	[INFO]	0-7     SUCCESS               1914199.56 (57.15%) [1 edit(s)]  
+2025-01-26 00:25:53,356	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        int b;\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:54,686	[DEBUG]	EXEC>  SUCCESS 1939033.9375
+2025-01-26 00:25:54,686	[INFO]	0-8     SUCCESS               1939033.94 (57.89%) [1 edit(s)]  
+2025-01-26 00:25:54,686	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n#include <array>\nusing namespace std;\n\nconst int MAXN = 100005;\n\nint main() {\n    char a[10];\n    array<int, MAXN> c = {0}, d = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:56,166	[DEBUG]	EXEC>  SUCCESS 2963772.9375
+2025-01-26 00:25:56,167	[INFO]	0-9     SUCCESS               2963772.94 (88.49%) [1 edit(s)]  
+2025-01-26 00:25:56,167	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0};\n    unordered_map<int, int> d;\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:25:57,489	[DEBUG]	EXEC>  SUCCESS 1906486.375
+2025-01-26 00:25:57,489	[INFO]	0-10    SUCCESS              *1906486.38 (56.92%) [1 edit(s)]  
+2025-01-26 00:25:57,489	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        puts("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+
+2025-01-26 00:25:58,489	[INFO]	Step: 10
+2025-01-26 00:25:58,489	[INFO]	Stop Steps: 50
+2025-01-26 00:26:00,228	[DEBUG]	EXEC>  SUCCESS 3319772.0
+2025-01-26 00:26:00,229	[INFO]	REF     SUCCESS               3319772.00 (--) [0 edit(s)]  
+2025-01-26 00:26:00,229	[INFO]	Best patch: 9
+2025-01-26 00:26:00,541	[DEBUG]	EXEC>  SUCCESS 1889474.6875
+2025-01-26 00:26:00,541	[INFO]	BEST    SUCCESS              *1889474.69 (56.92%) [0 edit(s)]  
+2025-01-26 00:26:00,541	[INFO]	Best patch step: 9
+2025-01-26 00:26:26,960	[INFO]	Step: 10
+2025-01-26 00:26:26,960	[INFO]	Stop Steps: 50
+2025-01-26 00:26:27,443	[DEBUG]	EXEC>  SUCCESS 2355641.1875
+2025-01-26 00:26:27,444	[INFO]	1-1     SUCCESS              +2355641.19 (70.96%) [1 edit(s)]  
+2025-01-26 00:26:27,444	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        puts("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:26:27,444	[INFO]	Step: 11
+2025-01-26 00:26:27,444	[INFO]	Stop Steps: 50
+2025-01-26 00:26:27,762	[DEBUG]	EXEC>  SUCCESS 1906202.4375
+2025-01-26 00:26:27,762	[INFO]	1-2     SUCCESS              +1906202.44 (57.42%) [1 edit(s)]  
+2025-01-26 00:26:27,762	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:26:27,762	[INFO]	Step: 12
+2025-01-26 00:26:27,762	[INFO]	Stop Steps: 50
+2025-01-26 00:26:27,845	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:27,845	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>')"
+2025-01-26 00:26:27,845	[INFO]	Step: 13
+2025-01-26 00:26:27,845	[INFO]	Stop Steps: 50
+2025-01-26 00:26:27,926	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:27,926	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>')"
+2025-01-26 00:26:27,926	[INFO]	Step: 14
+2025-01-26 00:26:27,926	[INFO]	Stop Steps: 50
+2025-01-26 00:26:28,007	[INFO]	1-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:28,007	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>')"
+2025-01-26 00:26:28,007	[INFO]	Step: 15
+2025-01-26 00:26:28,007	[INFO]	Stop Steps: 50
+2025-01-26 00:26:28,089	[INFO]	1-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:28,089	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>')"
+2025-01-26 00:26:28,089	[INFO]	Step: 16
+2025-01-26 00:26:28,089	[INFO]	Stop Steps: 50
+2025-01-26 00:26:28,180	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:26:28,180	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        puts("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[10];\n        scanf("%s", a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d\\n", x, z);\n}\n\nFitness score: 1856476.6875')"
+2025-01-26 00:26:28,180	[INFO]	Step: 17
+2025-01-26 00:26:28,180	[INFO]	Stop Steps: 50
+2025-01-26 00:26:28,499	[DEBUG]	EXEC>  SUCCESS 1865793.3125
+2025-01-26 00:26:28,500	[INFO]	1-8     SUCCESS              *1865793.31 (56.20%) [2 edit(s)]  
+2025-01-26 00:26:28,500	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}')"
+
+2025-01-26 00:26:28,500	[INFO]	Step: 18
+2025-01-26 00:26:28,500	[INFO]	Stop Steps: 50
+2025-01-26 00:26:28,592	[INFO]	1-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:26:28,593	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        int b;\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0};\n    int m, n, x = 0, z = 0;\n    bool d[100005] = {false}; // Use a boolean array instead of int for status tracking\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        int b;\n        scanf("%d%s", &b, a);\n        if (d[b]) continue; // Check if already marked\n        if (a[0] == \'A\') {\n d[b] = true; // Mark as processed\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}\nFitness score: 1860395.5625')"
+2025-01-26 00:26:28,593	[INFO]	Step: 19
+2025-01-26 00:26:28,593	[INFO]	Stop Steps: 50
+2025-01-26 00:26:28,900	[DEBUG]	EXEC>  SUCCESS 1910342.9375
+2025-01-26 00:26:28,900	[INFO]	1-10    SUCCESS               1910342.94 (57.54%) [2 edit(s)]  
+2025-01-26 00:26:28,900	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[2];\n        scanf("%s", a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}')"
+2025-01-26 00:26:28,900	[INFO]	Step: 20
+2025-01-26 00:26:28,900	[INFO]	Stop Steps: 50
+2025-01-26 00:26:29,321	[DEBUG]	EXEC>  SUCCESS 2351998.5625
+2025-01-26 00:26:29,321	[INFO]	1-1     SUCCESS               2351998.56 (70.85%) [1 edit(s)]  
+2025-01-26 00:26:29,321	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d; // Use unordered_map for dynamic sizing\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", n == 0 ? 0 : x, z);\n}')"
+2025-01-26 00:26:29,321	[INFO]	Step: 21
+2025-01-26 00:26:29,321	[INFO]	Stop Steps: 50
+2025-01-26 00:26:31,058	[DEBUG]	EXEC>  SUCCESS 3287246.375
+2025-01-26 00:26:31,058	[INFO]	REF     SUCCESS               3287246.38 (--) [0 edit(s)]  
+2025-01-26 00:26:31,058	[INFO]	Best patch: 3_11
+2025-01-26 00:26:31,365	[DEBUG]	EXEC>  SUCCESS 1932860.75
+2025-01-26 00:26:31,365	[INFO]	BEST    SUCCESS              *1932860.75 (58.80%) [0 edit(s)]  
+2025-01-26 00:26:31,365	[INFO]	Best patch step: 17
+2025-01-26 00:26:56,347	[INFO]	Step: 21
+2025-01-26 00:26:56,347	[INFO]	Stop Steps: 50
+2025-01-26 00:26:56,783	[DEBUG]	EXEC>  SUCCESS 1887103.9375
+2025-01-26 00:26:56,783	[INFO]	2-2     SUCCESS              *1887103.94 (57.41%) [2 edit(s)]  
+2025-01-26 00:26:56,784	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}')"
+
+2025-01-26 00:26:56,784	[INFO]	Step: 22
+2025-01-26 00:26:56,784	[INFO]	Stop Steps: 50
+2025-01-26 00:26:57,090	[DEBUG]	EXEC>  SUCCESS 1878791.8125
+2025-01-26 00:26:57,090	[INFO]	2-3     SUCCESS              *1878791.81 (57.15%) [1 edit(s)]  
+2025-01-26 00:26:57,090	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+
+2025-01-26 00:26:57,090	[INFO]	Step: 23
+2025-01-26 00:26:57,090	[INFO]	Stop Steps: 50
+2025-01-26 00:26:57,522	[DEBUG]	EXEC>  SUCCESS 2334140.9375
+2025-01-26 00:26:57,523	[INFO]	2-4     SUCCESS               2334140.94 (71.01%) [1 edit(s)]  
+2025-01-26 00:26:57,523	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d;\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", n == 0 ? 0 : x, z);\n}')"
+2025-01-26 00:26:57,523	[INFO]	Step: 24
+2025-01-26 00:26:57,523	[INFO]	Stop Steps: 50
+2025-01-26 00:26:57,618	[INFO]	2-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:57,618	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", n == 0 ? 0 : x, z);\n}')"
+2025-01-26 00:26:57,618	[INFO]	Step: 25
+2025-01-26 00:26:57,618	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,040	[DEBUG]	EXEC>  SUCCESS 2315142.3125
+2025-01-26 00:26:58,040	[INFO]	2-6     SUCCESS               2315142.31 (70.43%) [1 edit(s)]  
+2025-01-26 00:26:58,040	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d;\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}')"
+2025-01-26 00:26:58,040	[INFO]	Step: 26
+2025-01-26 00:26:58,040	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,132	[INFO]	2-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:58,132	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}')"
+2025-01-26 00:26:58,132	[INFO]	Step: 27
+2025-01-26 00:26:58,132	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,441	[DEBUG]	EXEC>  SUCCESS 1857984.5
+2025-01-26 00:26:58,442	[INFO]	2-8     SUCCESS              *1857984.50 (56.52%) [3 edit(s)]  
+2025-01-26 00:26:58,442	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b;\n    long long x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int d[100005] = {0}, c[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[10];\n        scanf("%s", a);\n        \n        if (d[b] == -1) continue; // Skip if already marked\n\n        if (a[0] == \'A\') {\n d[b] = -1; // Mark as processed\n x++;\n z += c[b]; // Accumulate score\n        } else if (a[0] == \'W\') {\n c[b]++; // Increment count\n        }\n    }\n\n    printf("%lld %lld\\n", x, z);\n}')"
+
+2025-01-26 00:26:58,442	[INFO]	Step: 28
+2025-01-26 00:26:58,442	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,535	[INFO]	2-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:26:58,535	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    memset(d, 0, sizeof(d)); // Initialize d to 0 for all elements\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (a[0] == \'W\') {\n c[b]++;\n        } else if (a[0] == \'A\' && d[b] != -1) {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n    }\n\n    printf("%d %d", x, z);\n}\n\nFitness score: 1862494.3125')"
+2025-01-26 00:26:58,535	[INFO]	Step: 29
+2025-01-26 00:26:58,535	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,629	[INFO]	2-10    COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-01-26 00:26:58,629	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[2];\n        scanf("%s", a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d %s", &b, a); // Combined the reads to minimize input calls\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') { // Using else if to avoid unnecessary checks\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}\n\nFitness score: 1820013.8125')"
+2025-01-26 00:26:58,629	[INFO]	Step: 30
+2025-01-26 00:26:58,629	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,684	[INFO]	2-1     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:26:58,684	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d; // Use unordered_map for dynamic sizing\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", n == 0 ? 0 : x, z);\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nconst int MAX_SIZE = 100005; // Assuming a maximum size for the arrays\nint c[MAX_SIZE] = {0}, d[MAX_SIZE] = {0}; // Use fixed-size arrays instead of unordered_map\nchar a[10];\nint m, n, b, x = 0, z = 0;\n\nint main() {\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", n == 0 ? 0 : x, z);\n}\n\nFitness score: 1031007.9375')"
+2025-01-26 00:26:58,684	[INFO]	Step: 31
+2025-01-26 00:26:58,684	[INFO]	Stop Steps: 50
+2025-01-26 00:26:58,767	[INFO]	2-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:26:58,767	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>')"
+2025-01-26 00:26:58,767	[INFO]	Step: 32
+2025-01-26 00:26:58,767	[INFO]	Stop Steps: 50
+2025-01-26 00:27:00,497	[DEBUG]	EXEC>  SUCCESS 3228989.625
+2025-01-26 00:27:00,498	[INFO]	REF     SUCCESS               3228989.62 (--) [0 edit(s)]  
+2025-01-26 00:27:00,498	[INFO]	Best patch: 3_11_15
+2025-01-26 00:27:00,804	[DEBUG]	EXEC>  SUCCESS 1856238.4375
+2025-01-26 00:27:00,805	[INFO]	BEST    SUCCESS              *1856238.44 (57.49%) [0 edit(s)]  
+2025-01-26 00:27:00,805	[INFO]	Best patch step: 27
+2025-01-26 00:27:30,145	[INFO]	Step: 32
+2025-01-26 00:27:30,145	[INFO]	Stop Steps: 50
+2025-01-26 00:27:30,581	[DEBUG]	EXEC>  SUCCESS 1916020.75
+2025-01-26 00:27:30,581	[INFO]	3-3     SUCCESS              +1916020.75 (59.34%) [3 edit(s)]  
+2025-01-26 00:27:30,581	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b;\n    long long x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int d[100005] = {0}, c[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[10];\n        scanf("%s", a);\n        \n        if (d[b] == -1) continue; // Skip if already marked\n\n        if (a[0] == \'A\') {\n d[b] = -1; // Mark as processed\n x++;\n z += c[b]; // Accumulate score\n        } else if (a[0] == \'W\') {\n c[b]++; // Increment count\n        }\n    }\n\n    printf("%lld %lld\\n", x, z);\n}')"
+2025-01-26 00:27:30,581	[INFO]	Step: 33
+2025-01-26 00:27:30,581	[INFO]	Stop Steps: 50
+2025-01-26 00:27:30,889	[DEBUG]	EXEC>  SUCCESS 1895172.5625
+2025-01-26 00:27:30,889	[INFO]	3-4     SUCCESS              +1895172.56 (58.69%) [1 edit(s)]  
+2025-01-26 00:27:30,890	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:27:30,890	[INFO]	Step: 34
+2025-01-26 00:27:30,890	[INFO]	Stop Steps: 50
+2025-01-26 00:27:30,985	[INFO]	3-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:27:30,985	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b;\n    long long x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%lld %lld\\n", x, z);\n}')"
+2025-01-26 00:27:30,985	[INFO]	Step: 35
+2025-01-26 00:27:30,985	[INFO]	Stop Steps: 50
+2025-01-26 00:27:31,408	[DEBUG]	EXEC>  SUCCESS 2366699.125
+2025-01-26 00:27:31,408	[INFO]	3-6     SUCCESS               2366699.12 (73.30%) [1 edit(s)]  
+2025-01-26 00:27:31,408	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d;\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d\\n", x, z);\n}')"
+2025-01-26 00:27:31,408	[INFO]	Step: 36
+2025-01-26 00:27:31,408	[INFO]	Stop Steps: 50
+2025-01-26 00:27:31,543	[INFO]	3-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:27:31,543	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d;\n    int m, n, b;\n    long long x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%d", &b, &a);\n        if (d[b] == -1) continue;\n\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%lld %lld\\n", x, z);\n}')"
+2025-01-26 00:27:31,543	[INFO]	Step: 37
+2025-01-26 00:27:31,543	[INFO]	Stop Steps: 50
+2025-01-26 00:27:31,864	[DEBUG]	EXEC>  SUCCESS 1874838.4375
+2025-01-26 00:27:31,864	[INFO]	3-8     SUCCESS              +1874838.44 (58.06%) [1 edit(s)]  
+2025-01-26 00:27:31,864	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d\\n", x, z);\n}')"
+2025-01-26 00:27:31,864	[INFO]	Step: 38
+2025-01-26 00:27:31,864	[INFO]	Stop Steps: 50
+2025-01-26 00:27:32,028	[INFO]	3-9     COMPILE_CODE_ERROR    None (--) [4 edit(s)]  
+2025-01-26 00:27:32,029	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b;\n    long long x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int d[100005] = {0}, c[100005] = {0};\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[10];\n        scanf("%s", a);\n        \n        if (d[b] == -1) continue; // Skip if already marked\n\n        if (a[0] == \'A\') {\n d[b] = -1; // Mark as processed\n x++;\n z += c[b]; // Accumulate score\n        } else if (a[0] == \'W\') {\n c[b]++; // Increment count\n        }\n    }\n\n    printf("%lld %lld\\n", x, z);\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    int m, n, b;\n    long long x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    unordered_map<int, int> c; // Use unordered_map for dynamic sizing\n    unordered_map<int, bool> d; // Use unordered_map to track processed items\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &b);\n        char a[10];\n        scanf("%s", a);\n        \n        if (d[b]) continue; // Skip if already marked\n\n        if (a[0] == \'A\') {\n d[b] = true; // Mark as processed\n x++;\n z += c[b]; // Accumulate score\n        } else if (a[0] == \'W\') {\n c[b]++; // Increment count\n        }\n    }\n\n    printf("%lld %lld\\n", x, z);\n}\n\nFitness score: 949769.625')"
+2025-01-26 00:27:32,029	[INFO]	Step: 39
+2025-01-26 00:27:32,029	[INFO]	Stop Steps: 50
+2025-01-26 00:27:32,122	[INFO]	3-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:27:32,122	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    \n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        \n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}\nFitness score: 1807699.1875')"
+2025-01-26 00:27:32,122	[INFO]	Step: 40
+2025-01-26 00:27:32,122	[INFO]	Stop Steps: 50
+2025-01-26 00:27:32,214	[INFO]	3-1     COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-01-26 00:27:32,214	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0, i;\n\n    scanf("%d%d", &m, &n);\n    for (i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (a[0] == \'A\' && d[b] != -1) { // Combine checks to reduce nesting\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}\n\nFitness score: 1689629.1875')"
+2025-01-26 00:27:32,215	[INFO]	Step: 41
+2025-01-26 00:27:32,215	[INFO]	Stop Steps: 50
+2025-01-26 00:27:32,266	[INFO]	3-2     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:27:32,266	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> c, d;\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\nusing namespace std;\n\nconst int MAXN = 10005; // Assuming b values are within this range\nint c[MAXN] = {0}, d[MAXN] = {0};\nchar a[10];\nint m, n, b, x = 0, z = 0;\n\nint main() {\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d", x, z);\n}\n\nFitness score: 1032657.5')"
+2025-01-26 00:27:32,266	[INFO]	Step: 42
+2025-01-26 00:27:32,266	[INFO]	Stop Steps: 50
+2025-01-26 00:27:32,556	[DEBUG]	EXEC>  SUCCESS 1904508.0
+2025-01-26 00:27:32,557	[INFO]	3-3     SUCCESS               1904508.00 (58.98%) [1 edit(s)]  
+2025-01-26 00:27:32,557	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <array>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    array<int, 100005> c = {0}, d = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    if (n == 0) printf("0 0");\n    else printf("%d %d", x, z);\n}')"
+2025-01-26 00:27:32,557	[INFO]	Step: 43
+2025-01-26 00:27:32,557	[INFO]	Stop Steps: 50
+2025-01-26 00:27:32,826	[DEBUG]	EXEC>  SUCCESS 1866974.6875
+2025-01-26 00:27:32,827	[INFO]	3-4     SUCCESS              +1866974.69 (57.82%) [1 edit(s)]  
+2025-01-26 00:27:32,827	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 25), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    printf("%d %d", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')"
+2025-01-26 00:27:32,827	[INFO]	Step: 44
+2025-01-26 00:27:32,827	[INFO]	Stop Steps: 50
+2025-01-26 00:27:33,091	[DEBUG]	EXEC>  SUCCESS 1868849.6875
+2025-01-26 00:27:33,091	[INFO]	3-5     SUCCESS               1868849.69 (57.88%) [1 edit(s)]  
+2025-01-26 00:27:33,092	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (a[0] == \'A\') {\n if (d[b] != -1) {\n     d[b] = -1;\n     x++;\n     z += c[b];\n }\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    printf("%d %d", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')"
+2025-01-26 00:27:33,092	[INFO]	Step: 45
+2025-01-26 00:27:33,092	[INFO]	Stop Steps: 50
+2025-01-26 00:27:34,824	[DEBUG]	EXEC>  SUCCESS 3255485.8125
+2025-01-26 00:27:34,824	[INFO]	REF     SUCCESS               3255485.81 (--) [0 edit(s)]  
+2025-01-26 00:27:34,824	[INFO]	Best patch: 3_11_15
+2025-01-26 00:27:35,132	[DEBUG]	EXEC>  SUCCESS 1877999.8125
+2025-01-26 00:27:35,132	[INFO]	BEST    SUCCESS              *1877999.81 (57.69%) [0 edit(s)]  
+2025-01-26 00:27:35,132	[INFO]	Best patch step: 27
+2025-01-26 00:28:03,302	[INFO]	Step: 45
+2025-01-26 00:28:03,302	[INFO]	Stop Steps: 50
+2025-01-26 00:28:03,692	[DEBUG]	EXEC>  SUCCESS 1893878.5625
+2025-01-26 00:28:03,692	[INFO]	4-6     SUCCESS              +1893878.56 (58.17%) [1 edit(s)]  
+2025-01-26 00:28:03,692	[DEBUG]	patch(4-6)="LineLLMMutation(('source.cpp', 25), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        }\n        else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    printf("%d %d", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')"
+2025-01-26 00:28:03,692	[INFO]	Step: 46
+2025-01-26 00:28:03,692	[INFO]	Stop Steps: 50
+2025-01-26 00:28:03,959	[DEBUG]	EXEC>  SUCCESS 1890016.0
+2025-01-26 00:28:03,959	[INFO]	4-7     SUCCESS              +1890016.00 (58.06%) [1 edit(s)]  
+2025-01-26 00:28:03,960	[DEBUG]	patch(4-7)="LineLLMMutation(('source.cpp', 26), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (a[0] == \'A\') {\n if (d[b] != -1) {\n     d[b] = -1;\n     x++;\n     z += c[b];\n }\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    printf("%d %d", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')"
+2025-01-26 00:28:03,960	[INFO]	Step: 47
+2025-01-26 00:28:03,960	[INFO]	Stop Steps: 50
+2025-01-26 00:28:04,225	[DEBUG]	EXEC>  SUCCESS 1858622.375
+2025-01-26 00:28:04,226	[INFO]	4-8     SUCCESS              *1858622.38 (57.09%) [1 edit(s)]  
+2025-01-26 00:28:04,226	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (a[0] == \'A\' && d[b] != -1) {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    printf("%d %d\\n", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')"
+
+2025-01-26 00:28:04,226	[INFO]	Step: 48
+2025-01-26 00:28:04,226	[INFO]	Stop Steps: 50
+2025-01-26 00:28:04,531	[DEBUG]	EXEC>  SUCCESS 1859634.375
+2025-01-26 00:28:04,531	[INFO]	4-9     SUCCESS               1859634.38 (57.12%) [1 edit(s)]  
+2025-01-26 00:28:04,531	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    printf("%d %d\\n", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')"
+2025-01-26 00:28:04,531	[INFO]	Step: 49
+2025-01-26 00:28:04,531	[INFO]	Stop Steps: 50
+2025-01-26 00:28:04,844	[DEBUG]	EXEC>  SUCCESS 1881534.875
+2025-01-26 00:28:04,844	[INFO]	4-10    SUCCESS               1881534.88 (57.80%) [1 edit(s)]  
+2025-01-26 00:28:04,845	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int c[100005] = {0}, d[100005] = {0};\n    int m, n, b, x = 0, z = 0;\n\n    scanf("%d%d", &m, &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (d[b] == -1) continue;\n\n        if (a[0] == \'A\') {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n\n    if (n == 0)\n        printf("0 0");\n    else\n        printf("%d %d", x, z);\n}')"
+2025-01-26 00:28:04,845	[INFO]	Step: 50
+2025-01-26 00:28:04,845	[INFO]	Stop Steps: 50
+2025-01-26 00:28:04,845	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 00:28:04,845	[INFO]	Step: 50
+2025-01-26 00:28:04,845	[INFO]	Stop Steps: 50
+2025-01-26 00:28:05,136	[INFO]	~~~~ END ~~~~
+2025-01-26 00:28:05,136	[INFO]	Best patch step: 47
+2025-01-26 00:28:05,136	[INFO]	
+2025-01-26 00:28:05,136	[INFO]	==== REPORT ====
+2025-01-26 00:28:05,136	[INFO]	Termination: step budget
+2025-01-26 00:28:05,136	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0023_1737851118.log
+2025-01-26 00:28:05,136	[INFO]	Patch file: _magpie_logs/0023_1737851118.patch
+2025-01-26 00:28:05,136	[INFO]	Diff file: _magpie_logs/0023_1737851118.diff
+2025-01-26 00:28:05,136	[INFO]	Reference fitness: 3255485.81
+2025-01-26 00:28:05,136	[INFO]	Best fitness: 1858622.38
+2025-01-26 00:28:05,136	[INFO]	
+2025-01-26 00:28:05,137	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    char a[10];\n    int m, n, b, x = 0, z = 0;\n    scanf("%d%d", &m, &n);\n    int c[100005] = {0}, d[100005] = {0};\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d%s", &b, a);\n        if (a[0] == \'A\' && d[b] != -1) {\n d[b] = -1;\n x++;\n z += c[b];\n        } else if (a[0] == \'W\') {\n c[b]++;\n        }\n    }\n    printf("%d %d\\n", (n == 0) ? 0 : x, (n == 0) ? 0 : z);\n}')
+2025-01-26 00:28:05,137	[INFO]	
+2025-01-26 00:28:05,137	[INFO]	==== DIFF ====
+

@@ -1,0 +1,294 @@
+2025-01-26 14:16:08,594	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6719445697362528
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0176
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 14:16:08,594	[DEBUG]	
+2025-01-26 14:16:08,594	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 14:16:08,594	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 14:16:09,349	[DEBUG]	EXEC>  SUCCESS 2468534.0
+2025-01-26 14:16:09,350	[INFO]	WARM    SUCCESS               2468534.00 (--) [0 edit(s)]  
+2025-01-26 14:16:09,959	[DEBUG]	EXEC>  SUCCESS 3221991.75
+2025-01-26 14:16:09,959	[INFO]	WARM    SUCCESS               3221991.75 (--) [0 edit(s)]  
+2025-01-26 14:16:10,598	[DEBUG]	EXEC>  SUCCESS 2493494.5625
+2025-01-26 14:16:10,598	[INFO]	WARM    SUCCESS               2493494.56 (--) [0 edit(s)]  
+2025-01-26 14:16:11,082	[DEBUG]	EXEC>  SUCCESS 2474872.8125
+2025-01-26 14:16:11,082	[INFO]	WARM    SUCCESS               2474872.81 (--) [0 edit(s)]  
+2025-01-26 14:16:11,580	[DEBUG]	EXEC>  SUCCESS 2506115.0625
+2025-01-26 14:16:11,580	[INFO]	WARM    SUCCESS               2506115.06 (--) [0 edit(s)]  
+2025-01-26 14:16:11,580	[INFO]	REF     SUCCESS               2506115.06 (--) [0 edit(s)]  
+2025-01-26 14:16:11,580	[INFO]	
+2025-01-26 14:16:11,580	[INFO]	~~~~ START ~~~~
+2025-01-26 14:17:11,217	[DEBUG]	EXEC>  SUCCESS 1046882.6875
+2025-01-26 14:17:11,217	[INFO]	0-1     SUCCESS              *1046882.69 (41.77%) [1 edit(s)]  
+2025-01-26 14:17:11,217	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int i, j;\n    int m, n;\n    scanf("%d%d", &m, &n);\n    int k;\n    scanf("%d", &k);\n\n    for(i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n\n        for(j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n\n            if(p == \'J\') {\n                a[i][j + 1] = a[i][j] + 1;\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'O\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j] + 1;\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'I\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j] + 1;\n            }\n        }\n    }\n\n    for(i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 14:17:12,354	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:12,354	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int i, j;\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r - 1][s] - a[p - 1][q], b[r - 1][s] - b[p - 1][q], c[r - 1][s] - c[p - 1][q]);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:13,489	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:13,489	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n\nusing namespace std;\n\nstruct Counts {\n    int J, O, I;\n};\n\nCounts a[1001][1001];\n\nint main() {\n    int i, j, m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(i = 0; i < m; ++i) {\n        a[i][0] = {0, 0, 0};\n        for(j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j];\n            if(p == \'J\') a[i][j + 1].J++;\n            else if(p == \'O\') a[i][j + 1].O++;\n            else if(p == \'I\') a[i][j + 1].I++;\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r][s].J - a[p][q].J, a[r][s].O - a[p][q].O, a[r][s].I - a[p][q].I);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:16,969	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:16,969	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n    vector<vector<int>> a(m, vector<int>(n + 1, 0));\n    vector<vector<int>> b(m, vector<int>(n + 1, 0));\n    vector<vector<int>> c(m, vector<int>(n + 1, 0));\n\n    for(int i = 0; i < m; ++i) {\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r - 1][s] - a[p - 1][q], b[r - 1][s] - b[p - 1][q], c[r - 1][s] - c[p - 1][q]);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:20,302	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:20,302	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    char input[2002000]; // allocate enough space for input\n    scanf("%d%d%d\\n%s", &m, &n, &k, input);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p = input[i * n + j]; // read from pre-stored input\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r - 1][s] - a[p - 1][q], b[r - 1][s] - b[p - 1][q], c[r - 1][s] - c[p - 1][q]);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:21,400	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 14:17:21,400	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n\nusing namespace std;\n\nint countJ[1001][1001], countO[1001][1001], countI[1001][1001];\n\nint main() {\n    int rows, cols, queries;\n    scanf("%d%d%d", &rows, &cols, &queries);\n\n    for(int i = 0; i < rows; ++i) {\n        countJ[i][0] = countO[i][0] = countI[i][0] = 0;\n\n        for(int j = 0; j < cols; ++j) {\n            char type;\n            scanf(" %c", &type);\n            countJ[i][j + 1] = countJ[i][j] + (type == \'J\');\n            countO[i][j + 1] = countO[i][j] + (type == \'O\');\n            countI[i][j + 1] = countI[i][j] + (type == \'I\');\n        }\n    }\n\n    for(int q = 0; q < queries; ++q) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", countJ[r - 1][s] - countJ[p - 1][q], countO[r - 1][s] - countO[p - 1][q], countI[r - 1][s] - countI[p - 1][q]);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:22,540	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:22,540	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            if(p == \'J\') a[i][j + 1] = a[i][j] + 1, b[i][j + 1] = b[i][j], c[i][j + 1] = c[i][j];\n            else if(p == \'O\') a[i][j + 1] = a[i][j], b[i][j + 1] = b[i][j] + 1, c[i][j + 1] = c[i][j];\n            else if(p == \'I\') a[i][j + 1] = a[i][j], b[i][j + 1] = b[i][j], c[i][j + 1] = c[i][j] + 1;\n            else a[i][j + 1] = a[i][j], b[i][j + 1] = b[i][j], c[i][j + 1] = c[i][j];\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r - 1][s] - a[p - 1][q], b[r - 1][s] - b[p - 1][q], c[r - 1][s] - c[p - 1][q]);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:23,675	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:23,675	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n\nusing namespace std;\n\nstruct Counts {\n    int J, O, I;\n};\n\nCounts a[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = {0, 0, 0};\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j];\n            if(p == \'J\') a[i][j + 1].J++;\n            else if(p == \'O\') a[i][j + 1].O++;\n            else if(p == \'I\') a[i][j + 1].I++;\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r][s].J - a[p][q].J, a[r][s].O - a[p][q].O, a[r][s].I - a[p][q].I);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:24,812	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:24,812	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n\nusing namespace std;\n\nstruct Counts {\n    int J, O, I;\n};\n\nCounts a[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = {0, 0, 0};\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j];\n            if(p == \'J\') a[i][j + 1].J++;\n            else if(p == \'O\') a[i][j + 1].O++;\n            else if(p == \'I\') a[i][j + 1].I++;\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r - 1][s].J - a[p - 1][q].J, a[r - 1][s].O - a[p - 1][q].O, a[r - 1][s].I - a[p - 1][q].I);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:25,947	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:17:25,947	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n\nusing namespace std;\n\nstruct Counts {\n    int J, O, I;\n};\n\nCounts a[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = {0, 0, 0};\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j];\n            if(p == \'J\') a[i][j + 1].J++;\n            else if(p == \'O\') a[i][j + 1].O++;\n            else if(p == \'I\') a[i][j + 1].I++;\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", a[r][s].J - a[p][q].J, a[r][s].O - a[p][q].O, a[r][s].I - a[p][q].I);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:17:26,948	[INFO]	Step: 10
+2025-01-26 14:17:26,948	[INFO]	Stop Steps: 50
+2025-01-26 14:17:28,555	[DEBUG]	EXEC>  SUCCESS 2474456.25
+2025-01-26 14:17:28,555	[INFO]	REF     SUCCESS               2474456.25 (--) [0 edit(s)]  
+2025-01-26 14:17:28,555	[INFO]	Best patch: 0
+2025-01-26 14:17:28,844	[DEBUG]	EXEC>  SUCCESS 1062198.3125
+2025-01-26 14:17:28,844	[INFO]	BEST    SUCCESS              *1062198.31 (42.93%) [0 edit(s)]  
+2025-01-26 14:17:28,844	[INFO]	Best patch step: 0
+2025-01-26 14:18:54,752	[INFO]	Step: 10
+2025-01-26 14:18:54,752	[INFO]	Stop Steps: 50
+2025-01-26 14:18:55,170	[DEBUG]	EXEC>  SUCCESS 1044109.0625
+2025-01-26 14:18:55,170	[INFO]	1-1     SUCCESS              *1044109.06 (42.20%) [1 edit(s)]  
+2025-01-26 14:18:55,171	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int i, j;\n    int m, n;\n    scanf("%d%d", &m, &n);\n    int k;\n    scanf("%d", &k);\n\n    for(i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n\n        for(j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n\n            if(p == \'J\') {\n                a[i][j + 1] = a[i][j] + 1;\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'O\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j] + 1;\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'I\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j] + 1;\n            }\n        }\n    }\n\n    for(i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 14:18:55,171	[INFO]	Step: 11
+2025-01-26 14:18:55,171	[INFO]	Stop Steps: 50
+2025-01-26 14:18:55,454	[DEBUG]	EXEC>  SUCCESS 1028270.9375
+2025-01-26 14:18:55,454	[INFO]	1-2     SUCCESS              *1028270.94 (41.56%) [1 edit(s)]  
+2025-01-26 14:18:55,454	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n    \n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 14:18:55,454	[INFO]	Step: 12
+2025-01-26 14:18:55,454	[INFO]	Stop Steps: 50
+2025-01-26 14:18:55,591	[INFO]	1-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:18:55,591	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p - 1; j < r - 1; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:18:55,591	[INFO]	Step: 13
+2025-01-26 14:18:55,591	[INFO]	Stop Steps: 50
+2025-01-26 14:18:55,885	[DEBUG]	EXEC>  SUCCESS 1026703.75
+2025-01-26 14:18:55,886	[INFO]	1-4     SUCCESS              *1026703.75 (41.49%) [1 edit(s)]  
+2025-01-26 14:18:55,886	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 14:18:55,886	[INFO]	Step: 14
+2025-01-26 14:18:55,886	[INFO]	Stop Steps: 50
+2025-01-26 14:18:56,020	[INFO]	1-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 14:18:56,020	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        printf("%d %d %d\\n", \n            a[r - 1][s] - a[p - 1][s] - (q > 0 ? a[r - 1][q - 1] - a[p - 1][q - 1] : 0),\n            b[r - 1][s] - b[p - 1][s] - (q > 0 ? b[r - 1][q - 1] - b[p - 1][q - 1] : 0),\n            c[r - 1][s] - c[p - 1][s] - (q > 0 ? c[r - 1][q - 1] - c[p - 1][q - 1] : 0)\n        );\n    }\n\n    return 0;\n}')"
+2025-01-26 14:18:56,020	[INFO]	Step: 15
+2025-01-26 14:18:56,020	[INFO]	Stop Steps: 50
+2025-01-26 14:18:56,165	[INFO]	1-6     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 14:18:56,165	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int i, j;\n    int m, n;\n    scanf("%d%d", &m, &n);\n    int k;\n    scanf("%d", &k);\n\n    for(i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n\n        for(j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n\n            if(p == \'J\') {\n                a[i][j + 1] = a[i][j] + 1;\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'O\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j] + 1;\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'I\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j] + 1;\n            }\n        }\n    }\n\n    for(i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n\nusing namespace std;\n\nint count[1001][3]; // Store counts for J, O, I in a single array\n\nint main() {\n    int m, n;\n    scanf("%d%d", &m, &n);\n    int k;\n    scanf("%d", &k);\n\n    for(int i = 0; i < m; ++i) {\n        count[i][0] = count[i][1] = count[i][2] = 0; // J, O, I counts\n\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n\n            if(p == \'J\') {\n                count[i][0]++;\n            } else if(p == \'O\') {\n                count[i][1]++;\n            } else if(p == \'I\') {\n                count[i][2]++;\n            }\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += count[j][0]; // J count\n            e += count[j][1]; // O count\n            f += count[j][2]; // I count\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:18:56,165	[INFO]	Step: 16
+2025-01-26 14:18:56,165	[INFO]	Stop Steps: 50
+2025-01-26 14:18:56,651	[DEBUG]	EXEC>  SUCCESS 2446874.125
+2025-01-26 14:18:56,651	[INFO]	1-7     SUCCESS               2446874.12 (98.89%) [1 edit(s)]  
+2025-01-26 14:18:56,651	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 11), "#include <iostream>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    cin >> m >> n >> k;\n\n    for (int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            cin >> p;\n            a[i][j + 1] = a[i][j];\n            b[i][j + 1] = b[i][j];\n            c[i][j + 1] = c[i][j];\n            if (p == 'J') {\n                a[i][j + 1]++;\n            } else if (p == 'O') {\n                b[i][j + 1]++;\n            } else if (p == 'I') {\n                c[i][j + 1]++;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        cin >> p >> q >> r >> s;\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n        for (int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n        cout << d << ' ' << e << ' ' << f << endl;\n    }\n\n    return 0;\n}")"
+2025-01-26 14:18:56,651	[INFO]	Step: 17
+2025-01-26 14:18:56,651	[INFO]	Stop Steps: 50
+2025-01-26 14:18:57,141	[DEBUG]	EXEC>  SUCCESS 2438687.1875
+2025-01-26 14:18:57,141	[INFO]	1-8     SUCCESS               2438687.19 (98.55%) [1 edit(s)]  
+2025-01-26 14:18:57,141	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 12), "#include <iostream>\nusing namespace std;\n\nint a[1001 * 1001], b[1001 * 1001], c[1001 * 1001];\n\nint index(int row, int col) {\n    return row * 1001 + col;\n}\n\nint main() {\n    int m, n, k;\n    cin >> m >> n >> k;\n\n    for (int i = 0; i < m; ++i) {\n        a[index(i, 0)] = b[index(i, 0)] = c[index(i, 0)] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            cin >> p;\n            a[index(i, j + 1)] = a[index(i, j)];\n            b[index(i, j + 1)] = b[index(i, j)];\n            c[index(i, j + 1)] = c[index(i, j)];\n            if (p == 'J') {\n                a[index(i, j + 1)]++;\n            } else if (p == 'O') {\n                b[index(i, j + 1)]++;\n            } else if (p == 'I') {\n                c[index(i, j + 1)]++;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        cin >> p >> q >> r >> s;\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n        for (int j = p; j < r; ++j) {\n            d += a[index(j, s)] - a[index(j, q)];\n            e += b[index(j, s)] - b[index(j, q)];\n            f += c[index(j, s)] - c[index(j, q)];\n        }\n        cout << d << ' ' << e << ' ' << f << endl;\n    }\n\n    return 0;\n}")"
+2025-01-26 14:18:57,141	[INFO]	Step: 18
+2025-01-26 14:18:57,141	[INFO]	Stop Steps: 50
+2025-01-26 14:18:57,627	[DEBUG]	EXEC>  SUCCESS 2459642.6875
+2025-01-26 14:18:57,627	[INFO]	1-9     SUCCESS               2459642.69 (99.40%) [1 edit(s)]  
+2025-01-26 14:18:57,628	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 13), "#include <iostream>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    cin >> m >> n >> k;\n\n    for (int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            cin >> p;\n            int prevA = a[i][j], prevB = b[i][j], prevC = c[i][j];\n            if (p == 'J') {\n                a[i][j + 1] = prevA + 1;\n                b[i][j + 1] = prevB;\n                c[i][j + 1] = prevC;\n            } else if (p == 'O') {\n                a[i][j + 1] = prevA;\n                b[i][j + 1] = prevB + 1;\n                c[i][j + 1] = prevC;\n            } else if (p == 'I') {\n                a[i][j + 1] = prevA;\n                b[i][j + 1] = prevB;\n                c[i][j + 1] = prevC + 1;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        cin >> p >> q >> r >> s;\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n        for (int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n        cout << d << ' ' << e << ' ' << f << endl;\n    }\n\n    return 0;\n}")"
+2025-01-26 14:18:57,628	[INFO]	Step: 19
+2025-01-26 14:18:57,628	[INFO]	Stop Steps: 50
+2025-01-26 14:18:58,144	[DEBUG]	EXEC>  SUCCESS 2580264.5625
+2025-01-26 14:18:58,144	[INFO]	1-10    SUCCESS               2580264.56 (104.28%) [1 edit(s)]  
+2025-01-26 14:18:58,144	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 14), "#include <iostream>\n#include <sstream>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    cin >> m >> n >> k;\n\n    for (int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            cin >> p;\n            a[i][j + 1] = a[i][j];\n            b[i][j + 1] = b[i][j];\n            c[i][j + 1] = c[i][j];\n            if (p == 'J') {\n                a[i][j + 1]++;\n            } else if (p == 'O') {\n                b[i][j + 1]++;\n            } else if (p == 'I') {\n                c[i][j + 1]++;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        cin >> p >> q >> r >> s;\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n        for (int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n        stringstream ss;\n        ss << d << ' ' << e << ' ' << f;\n        cout << ss.str() << endl;\n    }\n\n    return 0;\n}")"
+2025-01-26 14:18:58,144	[INFO]	Step: 20
+2025-01-26 14:18:58,144	[INFO]	Stop Steps: 50
+2025-01-26 14:18:59,640	[DEBUG]	EXEC>  SUCCESS 2438926.25
+2025-01-26 14:18:59,640	[INFO]	REF     SUCCESS               2438926.25 (--) [0 edit(s)]  
+2025-01-26 14:18:59,641	[INFO]	Best patch: 2
+2025-01-26 14:18:59,929	[DEBUG]	EXEC>  SUCCESS 1058496.1875
+2025-01-26 14:18:59,929	[INFO]	BEST    SUCCESS              *1058496.19 (43.40%) [0 edit(s)]  
+2025-01-26 14:18:59,929	[INFO]	Best patch step: 13
+2025-01-26 14:20:23,648	[INFO]	Step: 20
+2025-01-26 14:20:23,648	[INFO]	Stop Steps: 50
+2025-01-26 14:20:24,060	[DEBUG]	EXEC>  SUCCESS 1022386.875
+2025-01-26 14:20:24,060	[INFO]	2-1     SUCCESS              *1022386.88 (41.92%) [1 edit(s)]  
+2025-01-26 14:20:24,060	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 14:20:24,060	[INFO]	Step: 21
+2025-01-26 14:20:24,060	[INFO]	Stop Steps: 50
+2025-01-26 14:20:24,350	[DEBUG]	EXEC>  SUCCESS 1028594.1875
+2025-01-26 14:20:24,351	[INFO]	2-2     SUCCESS               1028594.19 (42.17%) [1 edit(s)]  
+2025-01-26 14:20:24,351	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n    \n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:24,351	[INFO]	Step: 22
+2025-01-26 14:20:24,351	[INFO]	Stop Steps: 50
+2025-01-26 14:20:24,646	[DEBUG]	EXEC>  SUCCESS 1044356.6875
+2025-01-26 14:20:24,646	[INFO]	2-3     SUCCESS               1044356.69 (42.82%) [1 edit(s)]  
+2025-01-26 14:20:24,646	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint a[1001 * 1001], b[1001 * 1001], c[1001 * 1001];\n\nint index(int row, int col) {\n    return row * 1001 + col;\n}\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k); // Using scanf for faster input\n\n    for (int i = 0; i < m; ++i) {\n        a[index(i, 0)] = b[index(i, 0)] = c[index(i, 0)] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            a[index(i, j + 1)] = a[index(i, j)];\n            b[index(i, j + 1)] = b[index(i, j)];\n            c[index(i, j + 1)] = c[index(i, j)];\n            if (p == \'J\') {\n                a[index(i, j + 1)]++;\n            } else if (p == \'O\') {\n                b[index(i, j + 1)]++;\n            } else if (p == \'I\') {\n                c[index(i, j + 1)]++;\n            }\n        }\n    }\n\n    while (k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for (int j = p; j < r; ++j) {\n            d += a[index(j, s)] - a[index(j, q)];\n            e += b[index(j, s)] - b[index(j, q)];\n            f += c[index(j, s)] - c[index(j, q)];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:24,646	[INFO]	Step: 23
+2025-01-26 14:20:24,646	[INFO]	Stop Steps: 50
+2025-01-26 14:20:24,945	[DEBUG]	EXEC>  SUCCESS 1060096.8125
+2025-01-26 14:20:24,946	[INFO]	2-4     SUCCESS               1060096.81 (43.47%) [1 edit(s)]  
+2025-01-26 14:20:24,946	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k); // Use scanf for efficient input\n\n    for (int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            if (p == \'J\') {\n                a[i][j + 1] = a[i][j] + 1;\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j];\n            } else if (p == \'O\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j] + 1;\n                c[i][j + 1] = c[i][j];\n            } else if (p == \'I\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j] + 1;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for (int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:24,946	[INFO]	Step: 24
+2025-01-26 14:20:24,946	[INFO]	Stop Steps: 50
+2025-01-26 14:20:25,251	[DEBUG]	EXEC>  SUCCESS 1037023.0625
+2025-01-26 14:20:25,251	[INFO]	2-5     SUCCESS               1037023.06 (42.52%) [1 edit(s)]  
+2025-01-26 14:20:25,251	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint a[1001 * 1001], b[1001 * 1001], c[1001 * 1001];\n\nint index(int row, int col) {\n    return row * 1001 + col;\n}\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for (int i = 0; i < m; ++i) {\n        a[index(i, 0)] = b[index(i, 0)] = c[index(i, 0)] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            a[index(i, j + 1)] = a[index(i, j)];\n            b[index(i, j + 1)] = b[index(i, j)];\n            c[index(i, j + 1)] = c[index(i, j)];\n            if (p == \'J\') {\n                a[index(i, j + 1)]++;\n            } else if (p == \'O\') {\n                b[index(i, j + 1)]++;\n            } else if (p == \'I\') {\n                c[index(i, j + 1)]++;\n            }\n        }\n    }\n\n    while (k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for (int j = p; j < r; ++j) {\n            d += a[index(j, s)] - a[index(j, q)];\n            e += b[index(j, s)] - b[index(j, q)];\n            f += c[index(j, s)] - c[index(j, q)];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:25,251	[INFO]	Step: 25
+2025-01-26 14:20:25,251	[INFO]	Stop Steps: 50
+2025-01-26 14:20:25,545	[DEBUG]	EXEC>  SUCCESS 1070289.8125
+2025-01-26 14:20:25,545	[INFO]	2-6     SUCCESS               1070289.81 (43.88%) [1 edit(s)]  
+2025-01-26 14:20:25,545	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k); // Efficient input\n\n    for (int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Space to skip whitespace\n            if (p == \'J\') {\n                a[i][j + 1] = a[i][j] + 1;\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j];\n            } else if (p == \'O\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j] + 1;\n                c[i][j + 1] = c[i][j];\n            } else if (p == \'I\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j] + 1;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for (int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:25,545	[INFO]	Step: 26
+2025-01-26 14:20:25,545	[INFO]	Stop Steps: 50
+2025-01-26 14:20:25,691	[INFO]	2-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 14:20:25,691	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint counts[1001][3]; // counts[rows][0] for J, counts[rows][1] for O, counts[rows][2] for I\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n\n    for(int i = 0; i < m; ++i) {\n        counts[i][0] = counts[i][1] = counts[i][2] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p);\n            counts[i][0] += (p == \'J\');\n            counts[i][1] += (p == \'O\');\n            counts[i][2] += (p == \'I\');\n        }\n    }\n\n    while(k--) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += counts[j][0] - (q > 0 ? counts[j][0] : 0);\n            e += counts[j][1] - (q > 0 ? counts[j][1] : 0);\n            f += counts[j][2] - (q > 0 ? counts[j][2] : 0);\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:25,691	[INFO]	Step: 27
+2025-01-26 14:20:25,691	[INFO]	Stop Steps: 50
+2025-01-26 14:20:25,982	[DEBUG]	EXEC>  SUCCESS 1051943.5
+2025-01-26 14:20:25,982	[INFO]	2-8     SUCCESS               1051943.50 (43.13%) [2 edit(s)]  
+2025-01-26 14:20:25,982	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n    \n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d%d", &m, &n, &k);\n    \n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n            a[i][j + 1] = a[i][j] + (p == \'J\');\n            b[i][j + 1] = b[i][j] + (p == \'O\');\n            c[i][j + 1] = c[i][j] + (p == \'I\');\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        // Optimization: Calculate the sums directly using the prefix arrays\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:25,982	[INFO]	Step: 28
+2025-01-26 14:20:25,982	[INFO]	Stop Steps: 50
+2025-01-26 14:20:26,282	[DEBUG]	EXEC>  SUCCESS 1027482.75
+2025-01-26 14:20:26,282	[INFO]	2-9     SUCCESS               1027482.75 (42.13%) [2 edit(s)]  
+2025-01-26 14:20:26,282	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int i, j;\n    int m, n;\n    scanf("%d%d", &m, &n);\n    int k;\n    scanf("%d", &k);\n\n    for(i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n\n        for(j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n\n            if(p == \'J\') {\n                a[i][j + 1] = a[i][j] + 1;\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'O\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j] + 1;\n                c[i][j + 1] = c[i][j];\n            } else if(p == \'I\') {\n                a[i][j + 1] = a[i][j];\n                b[i][j + 1] = b[i][j];\n                c[i][j + 1] = c[i][j] + 1;\n            }\n        }\n    }\n\n    for(i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n\nusing namespace std;\n\nint a[1001][1001], b[1001][1001], c[1001][1001];\n\nint main() {\n    int m, n, k;\n    scanf("%d%d", &m, &n);\n    scanf("%d", &k);\n\n    for(int i = 0; i < m; ++i) {\n        a[i][0] = b[i][0] = c[i][0] = 0;\n\n        for(int j = 0; j < n; ++j) {\n            char p;\n            scanf(" %c", &p); // Added space to skip whitespace\n\n            // Using a switch statement to handle the character processing\n            switch(p) {\n                case \'J\':\n                    a[i][j + 1] = a[i][j] + 1;\n                    b[i][j + 1] = b[i][j];\n                    c[i][j + 1] = c[i][j];\n                    break;\n                case \'O\':\n                    a[i][j + 1] = a[i][j];\n                    b[i][j + 1] = b[i][j] + 1;\n                    c[i][j + 1] = c[i][j];\n                    break;\n                case \'I\':\n                    a[i][j + 1] = a[i][j];\n                    b[i][j + 1] = b[i][j];\n                    c[i][j + 1] = c[i][j] + 1;\n                    break;\n            }\n        }\n    }\n\n    for(int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        scanf("%d%d%d%d", &p, &q, &r, &s);\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n\n        for(int j = p; j < r; ++j) {\n            d += a[j][s] - a[j][q];\n            e += b[j][s] - b[j][q];\n            f += c[j][s] - c[j][q];\n        }\n\n        printf("%d %d %d\\n", d, e, f);\n    }\n\n    return 0;\n}')"
+2025-01-26 14:20:26,282	[INFO]	Step: 29
+2025-01-26 14:20:26,282	[INFO]	Stop Steps: 50
+2025-01-26 14:20:26,646	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 14:20:26,646	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 12), "#include <iostream>\nusing namespace std;\n\nint a[1001 * 1001], b[1001 * 1001], c[1001 * 1001];\n\nint index(int row, int col) {\n    return row * 1001 + col;\n}\n\nint main() {\n    int m, n, k;\n    cin >> m >> n >> k;\n\n    for (int i = 0; i < m; ++i) {\n        a[index(i, 0)] = b[index(i, 0)] = c[index(i, 0)] = 0;\n        for (int j = 0; j < n; ++j) {\n            char p;\n            cin >> p;\n            a[index(i, j + 1)] = a[index(i, j)];\n            b[index(i, j + 1)] = b[index(i, j)];\n            c[index(i, j + 1)] = c[index(i, j)];\n            if (p == 'J') {\n                a[index(i, j + 1)]++;\n            } else if (p == 'O') {\n                b[index(i, j + 1)]++;\n            } else if (p == 'I') {\n                c[index(i, j + 1)]++;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        cin >> p >> q >> r >> s;\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n        for (int j = p; j < r; ++j) {\n            d += a[index(j, s)] - a[index(j, q)];\n            e += b[index(j, s)] - b[index(j, q)];\n            f += c[index(j, s)] - c[index(j, q)];\n        }\n        cout << d << ' ' << e << ' ' << f << endl;\n    }\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 18), "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int m, n, k;\n    cin >> m >> n >> k;\n\n    vector<int> a(m, 0), b(m, 0), c(m, 0); // Use vectors to manage memory better\n\n    for (int i = 0; i < m; ++i) {\n        for (int j = 0; j < n; ++j) {\n            char p;\n            cin >> p;\n            if (p == 'J') {\n                a[i]++;\n            } else if (p == 'O') {\n                b[i]++;\n            } else if (p == 'I') {\n                c[i]++;\n            }\n        }\n    }\n\n    for (int i = 0; i < k; ++i) {\n        int p, q, r, s;\n        cin >> p >> q >> r >> s;\n        --p; --q;\n        int d = 0, e = 0, f = 0;\n        for (int j = p; j < r; ++j) {\n            d += a[j]; // Directly accessing the counts for the entire row\n            e += b[j];\n            f += c[j];\n        }\n        cout << d << ' ' << e << ' ' << f << endl;\n    }\n\n    return 0;\n}")"
+2025-01-26 14:20:26,646	[INFO]	Step: 30
+2025-01-26 14:20:26,646	[INFO]	Stop Steps: 50
+2025-01-26 14:20:27,135	[DEBUG]	EXEC>  SUCCESS 2445709.5625
+2025-01-26 14:20:27,135	[INFO]	2-1     SUCCESS               2445709.56 (100.28%) [1 edit(s)]  
+2025-01-26 14:20:27,136	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 19), "#include<iostream>\n\nusing namespace std;\n\nint a[1001][1001],b[1001][1001],c[1001][1001];\n\nint main(){\n\n  int i,j;\n\n  int m,n;\n\n  cin>>m>>n;\n\n  int k;\n\n  cin>>k;\n\n  for(i=0;i<m;++i){\n\n    a[i][0]=b[i][0]=c[i][0]=0;\n\n    for(j=0;j<n;++j){\n\n      char p;\n\n      cin>>p;\n\n      if(false){\n\n      }else if(p=='J'){\n\n\ta[i][j+1]=a[i][j]+1;\n\n\tb[i][j+1]=b[i][j];\n\n\tc[i][j+1]=c[i][j];\n\n      }else if(p=='O'){\n\n\ta[i][j+1]=a[i][j];\n\n\tb[i][j+1]=b[i][j]+1;\n\n\tc[i][j+1]=c[i][j];\n\n      }else if(p=='I'){\n\n\ta[i][j+1]=a[i][j];\n\n\tb[i][j+1]=b[i][j];\n\n\tc[i][j+1]=c[i][j]+1;\n\n      }\n\n    }\n\n  }\n\n  for(i=0;i<k;++i){\n\n    int p,q,r,s;\n\n    cin>>p>>q>>r>>s;\n\n    --p;\n\n    --q;\n\n    int d=0,e=0,f=0;\n\n    for(j=p;j<r;++j){\n\n      d+=a[j][s]-a[j][q];\n\n      e+=b[j][s]-b[j][q];\n\n      f+=c[j][s]-c[j][q];\n\n    }\n\n    cout<<d<<' '<<e<<' '<<f<<endl;\n\n  }\n\n  return 0;\n\n}")"
+2025-01-26 14:20:27,136	[INFO]	Step: 31
+2025-01-26 14:20:27,136	[INFO]	Stop Steps: 50
+2025-01-26 14:20:28,633	[DEBUG]	EXEC>  SUCCESS 2511081.3125
+2025-01-26 14:20:28,633	[INFO]	REF     SUCCESS               2511081.31 (--) [0 edit(s)]  
+2025-01-26 14:20:28,633	[INFO]	Best patch: 2
+2025-01-26 14:20:28,925	[DEBUG]	EXEC>  SUCCESS 1064246.4375
+2025-01-26 14:20:28,925	[INFO]	BEST    SUCCESS              *1064246.44 (42.38%) [0 edit(s)]  
+2025-01-26 14:20:28,925	[INFO]	Best patch step: 20
+2025-01-26 14:21:46,428	[INFO]	~~~~ END ~~~~
+2025-01-26 14:21:46,428	[INFO]	Best patch step: 20

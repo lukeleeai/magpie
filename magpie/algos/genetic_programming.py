@@ -35,9 +35,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         self.config["offspring_mutation"] = 0.4
         self.config["batch_reset"] = True
 
-        self.node_history = defaultdict(
-            lambda: {"children": []}
-        )
+        self.node_history = defaultdict(lambda: {"children": []})
         self.prompts_dataset = PromptsDataset()
 
     def reset(self):
@@ -56,6 +54,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         self.config["uniform_rate"] = float(sec["uniform_rate"])
         self.dataset = config["software"]["path"].split("/")[-2]
         self.id = config["software"]["path"].split("/")[-1]
+        # self.llm_type = sec["llm_type"]
 
         print("Dataset: ", self.dataset)
         print("ID: ", self.id)
@@ -164,7 +163,9 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                         ):
                             self.report["best_fitness"] = run.fitness
                             self.report["best_patch"] = variant
-                            self.report["best_patch_step"] = self.stats["steps"]
+                            self.report["best_patch_step"] = self.stats[
+                                "steps"
+                            ]
                             best = True
                 self.hook_evaluation(variant, run, accept, best)
                 pop[variant] = run
@@ -217,10 +218,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     offsprings.extend(mutations)
 
                 # regrow
-                # mutations = self.mutate_original(
-                #     self.config["pop_size"] - len(offsprings)
-                # )
-                # offsprings.extend(mutations)
+                mutations = self.mutate_original(
+                    self.config["pop_size"] - len(offsprings)
+                )
+                offsprings.extend(mutations)
 
                 # replace
                 pop.clear()
@@ -252,7 +253,9 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                             ):
                                 self.report["best_fitness"] = run.fitness
                                 self.report["best_patch"] = variant
-                                self.report["best_patch_step"] = self.stats["steps"]
+                                self.report["best_patch_step"] = self.stats[
+                                    "steps"
+                                ]
                                 best = True
                     self.hook_evaluation(variant, run, accept, best)
                     pop[variant] = run
@@ -320,6 +323,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
     def __init__(self):
         super().__init__()
         self.name = "Genetic Programming (LLM)"
+        self.llm_type = "baseline"
         self.llm_mutator = LLMMutation()
         self.llm_crossover = LLMCrossover()
 

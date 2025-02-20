@@ -1,0 +1,436 @@
+2025-01-26 22:21:36,421	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8086197661566147
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0228
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 22:21:36,421	[DEBUG]	
+2025-01-26 22:21:36,421	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 22:21:36,421	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 22:21:37,503	[DEBUG]	EXEC>  SUCCESS 2398442.375
+2025-01-26 22:21:37,503	[INFO]	WARM    SUCCESS               2398442.38 (--) [0 edit(s)]  
+2025-01-26 22:21:37,986	[DEBUG]	EXEC>  SUCCESS 2363686.1875
+2025-01-26 22:21:37,986	[INFO]	WARM    SUCCESS               2363686.19 (--) [0 edit(s)]  
+2025-01-26 22:21:38,483	[DEBUG]	EXEC>  SUCCESS 2392876.4375
+2025-01-26 22:21:38,483	[INFO]	WARM    SUCCESS               2392876.44 (--) [0 edit(s)]  
+2025-01-26 22:21:38,971	[DEBUG]	EXEC>  SUCCESS 2437858.375
+2025-01-26 22:21:38,971	[INFO]	WARM    SUCCESS               2437858.38 (--) [0 edit(s)]  
+2025-01-26 22:21:39,457	[DEBUG]	EXEC>  SUCCESS 2370720.625
+2025-01-26 22:21:39,457	[INFO]	WARM    SUCCESS               2370720.62 (--) [0 edit(s)]  
+2025-01-26 22:21:39,457	[INFO]	REF     SUCCESS               2370720.62 (--) [0 edit(s)]  
+2025-01-26 22:21:39,458	[INFO]	
+2025-01-26 22:21:39,458	[INFO]	~~~~ START ~~~~
+2025-01-26 22:22:23,405	[DEBUG]	EXEC>  SUCCESS 971192.625
+2025-01-26 22:22:23,406	[INFO]	0-1     SUCCESS              *971192.62 (40.97%) [1 edit(s)]  
+2025-01-26 22:22:23,406	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                u = 1 << j;\n                if(i & u) s += a[j];\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:22:24,737	[DEBUG]	EXEC>  SUCCESS 949703.125
+2025-01-26 22:22:24,737	[INFO]	0-2     SUCCESS              *949703.12 (40.06%) [1 edit(s)]  
+2025-01-26 22:22:24,737	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:22:26,067	[DEBUG]	EXEC>  SUCCESS 957509.9375
+2025-01-26 22:22:26,068	[INFO]	0-3     SUCCESS               957509.94 (40.39%) [1 edit(s)]  
+2025-01-26 22:22:26,068	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            int diff = s - (t - s);\n            mn = min(mn, (diff < 0) ? -diff : diff);\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:27,398	[DEBUG]	EXEC>  SUCCESS 957432.375
+2025-01-26 22:22:27,398	[INFO]	0-4     SUCCESS               957432.38 (40.39%) [1 edit(s)]  
+2025-01-26 22:22:27,398	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:28,816	[DEBUG]	EXEC>  SUCCESS 2422471.3125
+2025-01-26 22:22:28,816	[INFO]	0-5     SUCCESS               2422471.31 (102.18%) [1 edit(s)]  
+2025-01-26 22:22:28,816	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        vector<int> a(n);\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:30,148	[DEBUG]	EXEC>  SUCCESS 965015.25
+2025-01-26 22:22:30,149	[INFO]	0-6     SUCCESS               965015.25 (40.71%) [1 edit(s)]  
+2025-01-26 22:22:30,149	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:31,592	[DEBUG]	EXEC>  SUCCESS 1224446.875
+2025-01-26 22:22:31,593	[INFO]	0-7     SUCCESS               1224446.88 (51.65%) [1 edit(s)]  
+2025-01-26 22:22:31,593	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j += 2) {\n                s += (i & (1 << j)) ? a[j] : 0;\n                if (j + 1 < n) {\n                    s += (i & (1 << (j + 1))) ? a[j + 1] : 0;\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:32,926	[DEBUG]	EXEC>  SUCCESS 965711.9375
+2025-01-26 22:22:32,926	[INFO]	0-8     SUCCESS               965711.94 (40.73%) [1 edit(s)]  
+2025-01-26 22:22:32,926	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:34,261	[DEBUG]	EXEC>  SUCCESS 958901.75
+2025-01-26 22:22:34,262	[INFO]	0-9     SUCCESS               958901.75 (40.45%) [1 edit(s)]  
+2025-01-26 22:22:34,262	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:35,596	[DEBUG]	EXEC>  SUCCESS 960034.4375
+2025-01-26 22:22:35,597	[INFO]	0-10    SUCCESS               960034.44 (40.50%) [1 edit(s)]  
+2025-01-26 22:22:35,597	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            int diff = abs(2 * s - t);\n            if (diff < mn) {\n                mn = diff;\n            }\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:22:36,597	[INFO]	Step: 10
+2025-01-26 22:22:36,597	[INFO]	Stop Steps: 50
+2025-01-26 22:22:38,217	[DEBUG]	EXEC>  SUCCESS 2382980.125
+2025-01-26 22:22:38,217	[INFO]	REF     SUCCESS               2382980.12 (--) [0 edit(s)]  
+2025-01-26 22:22:38,217	[INFO]	Best patch: 1
+2025-01-26 22:22:38,551	[DEBUG]	EXEC>  SUCCESS 962034.9375
+2025-01-26 22:22:38,551	[INFO]	BEST    SUCCESS              *962034.94 (40.37%) [0 edit(s)]  
+2025-01-26 22:22:38,551	[INFO]	Best patch step: 1
+2025-01-26 22:23:13,882	[INFO]	Step: 10
+2025-01-26 22:23:13,882	[INFO]	Stop Steps: 50
+2025-01-26 22:23:14,330	[DEBUG]	EXEC>  SUCCESS 960075.1875
+2025-01-26 22:23:14,330	[INFO]	1-1     SUCCESS              *960075.19 (40.29%) [1 edit(s)]  
+2025-01-26 22:23:14,330	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:23:14,330	[INFO]	Step: 11
+2025-01-26 22:23:14,330	[INFO]	Stop Steps: 50
+2025-01-26 22:23:14,654	[DEBUG]	EXEC>  SUCCESS 973380.875
+2025-01-26 22:23:14,654	[INFO]	1-2     SUCCESS               973380.88 (40.85%) [1 edit(s)]  
+2025-01-26 22:23:14,654	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:14,654	[INFO]	Step: 12
+2025-01-26 22:23:14,654	[INFO]	Stop Steps: 50
+2025-01-26 22:23:14,976	[DEBUG]	EXEC>  SUCCESS 967518.75
+2025-01-26 22:23:14,977	[INFO]	1-3     SUCCESS               967518.75 (40.60%) [1 edit(s)]  
+2025-01-26 22:23:14,977	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:14,977	[INFO]	Step: 13
+2025-01-26 22:23:14,977	[INFO]	Stop Steps: 50
+2025-01-26 22:23:15,309	[DEBUG]	EXEC>  SUCCESS 993695.9375
+2025-01-26 22:23:15,309	[INFO]	1-4     SUCCESS               993695.94 (41.70%) [1 edit(s)]  
+2025-01-26 22:23:15,309	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:15,309	[INFO]	Step: 14
+2025-01-26 22:23:15,309	[INFO]	Stop Steps: 50
+2025-01-26 22:23:15,631	[DEBUG]	EXEC>  SUCCESS 950745.875
+2025-01-26 22:23:15,631	[INFO]	1-5     SUCCESS              *950745.88 (39.90%) [1 edit(s)]  
+2025-01-26 22:23:15,631	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:23:15,631	[INFO]	Step: 15
+2025-01-26 22:23:15,631	[INFO]	Stop Steps: 50
+2025-01-26 22:23:15,952	[DEBUG]	EXEC>  SUCCESS 959897.5625
+2025-01-26 22:23:15,952	[INFO]	1-6     SUCCESS               959897.56 (40.28%) [1 edit(s)]  
+2025-01-26 22:23:15,952	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:15,952	[INFO]	Step: 16
+2025-01-26 22:23:15,952	[INFO]	Stop Steps: 50
+2025-01-26 22:23:16,405	[DEBUG]	EXEC>  SUCCESS 2421456.5625
+2025-01-26 22:23:16,405	[INFO]	1-7     SUCCESS               2421456.56 (101.61%) [2 edit(s)]  
+2025-01-26 22:23:16,406	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, totalSum;\n    \n    while(scanf("%d", &n) && n) {\n        vector<int> a(n);\n        totalSum = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            totalSum += a[i];\n        }\n\n        int halfSum = totalSum / 2;\n        vector<bool> dp(halfSum + 1, false);\n        dp[0] = true;\n\n        for(int i = 0; i < n; ++i) {\n            for(int j = halfSum; j >= a[i]; --j) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        for(int j = halfSum; j >= 0; --j) {\n            if(dp[j]) {\n                printf("%d\\n", totalSum - 2 * j);\n                break;\n            }\n        }\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:16,406	[INFO]	Step: 17
+2025-01-26 22:23:16,406	[INFO]	Stop Steps: 50
+2025-01-26 22:23:16,742	[DEBUG]	EXEC>  SUCCESS 2401443.5
+2025-01-26 22:23:16,742	[INFO]	1-8     SUCCESS               2401443.50 (100.77%) [2 edit(s)]  
+2025-01-26 22:23:16,742	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        // Instead of using a bitmask, use dynamic programming to find the closest subset sum\n        bool dp[1000001] = {false}; // Assuming the total sum is not more than 1000000\n        dp[0] = true; // Base case: zero sum is always possible\n\n        for(int i = 0; i < n; ++i) {\n            for(int j = t; j >= a[i]; --j) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        mn = inf;\n        for(int s = 0; s <= t; ++s) {\n            if(dp[s]) {\n                mn = min(mn, abs(2 * s - t));\n            }\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:16,742	[INFO]	Step: 18
+2025-01-26 22:23:16,742	[INFO]	Stop Steps: 50
+2025-01-26 22:23:17,078	[DEBUG]	EXEC>  SUCCESS 2385347.3125
+2025-01-26 22:23:17,079	[INFO]	1-9     SUCCESS               2385347.31 (100.10%) [2 edit(s)]  
+2025-01-26 22:23:17,079	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            int diff = s - (t - s);\n            mn = min(mn, (diff < 0) ? -diff : diff);\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        // New approach: Use dynamic programming to find the minimum difference\n        bool dp[1000001] = {false}; // Assuming total sum won\'t exceed 1 million\n        dp[0] = true;\n\n        for(int i = 0; i < n; ++i) {\n            for(int j = t; j >= a[i]; --j) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        for(int i = 0; i <= t; ++i) {\n            if(dp[i]) {\n                int diff = i - (t - i);\n                mn = min(mn, (diff < 0) ? -diff : diff);\n            }\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:23:17,079	[INFO]	Step: 19
+2025-01-26 22:23:17,079	[INFO]	Stop Steps: 50
+2025-01-26 22:23:17,410	[DEBUG]	EXEC>  SUCCESS 947301.625
+2025-01-26 22:23:17,411	[INFO]	1-10    SUCCESS              *947301.62 (39.75%) [2 edit(s)]  
+2025-01-26 22:23:17,411	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:23:17,411	[INFO]	Step: 20
+2025-01-26 22:23:17,411	[INFO]	Stop Steps: 50
+2025-01-26 22:23:17,898	[DEBUG]	EXEC>  SUCCESS 2436458.0
+2025-01-26 22:23:17,899	[INFO]	1-1     SUCCESS               2436458.00 (102.24%) [1 edit(s)]  
+2025-01-26 22:23:17,899	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n#include <algorithm>\n#include <cstdlib>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main()\n{\n  int n, mn, t, a[21], mask, s, u;\n\n  while(cin >> n && n){\n    t = 0;\n    mn = inf;\n\n    for(int i = 0; i < n; ++i){\n      cin >> a[i];\n      t += a[i];\n    }\n\n    mask = 1 << n;\n    for(int i = 0; i < mask; i++){\n      s = 0;\n      for(int j = 0; j < n; j++){\n        u = 1 << j;\n        if(i & u) s += a[j];\n      }\n      mn = min(mn, abs(s - (t - s)));\n    }\n\n    cout << mn << endl;\n  }\n\n  return 0;\n}')"
+2025-01-26 22:23:17,899	[INFO]	Step: 21
+2025-01-26 22:23:17,899	[INFO]	Stop Steps: 50
+2025-01-26 22:23:19,400	[DEBUG]	EXEC>  SUCCESS 2437858.875
+2025-01-26 22:23:19,400	[INFO]	REF     SUCCESS               2437858.88 (--) [0 edit(s)]  
+2025-01-26 22:23:19,400	[INFO]	Best patch: 8_13
+2025-01-26 22:23:19,733	[DEBUG]	EXEC>  SUCCESS 953037.9375
+2025-01-26 22:23:19,733	[INFO]	BEST    SUCCESS              *953037.94 (39.09%) [0 edit(s)]  
+2025-01-26 22:23:19,733	[INFO]	Best patch step: 19
+2025-01-26 22:25:41,309	[INFO]	Step: 21
+2025-01-26 22:25:41,309	[INFO]	Stop Steps: 50
+2025-01-26 22:25:41,767	[DEBUG]	EXEC>  SUCCESS 965052.75
+2025-01-26 22:25:41,767	[INFO]	2-2     SUCCESS              +965052.75 (39.59%) [2 edit(s)]  
+2025-01-26 22:25:41,767	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:41,767	[INFO]	Step: 22
+2025-01-26 22:25:41,767	[INFO]	Stop Steps: 50
+2025-01-26 22:25:42,091	[DEBUG]	EXEC>  SUCCESS 954163.4375
+2025-01-26 22:25:42,092	[INFO]	2-3     SUCCESS              +954163.44 (39.14%) [1 edit(s)]  
+2025-01-26 22:25:42,092	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:42,092	[INFO]	Step: 23
+2025-01-26 22:25:42,092	[INFO]	Stop Steps: 50
+2025-01-26 22:25:42,413	[DEBUG]	EXEC>  SUCCESS 971909.75
+2025-01-26 22:25:42,414	[INFO]	2-4     SUCCESS               971909.75 (39.87%) [1 edit(s)]  
+2025-01-26 22:25:42,414	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        // Iterate over all possible masks to find the minimum difference\n        for(int mask = 0; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:42,414	[INFO]	Step: 24
+2025-01-26 22:25:42,414	[INFO]	Stop Steps: 50
+2025-01-26 22:25:42,739	[DEBUG]	EXEC>  SUCCESS 967405.0625
+2025-01-26 22:25:42,739	[INFO]	2-5     SUCCESS               967405.06 (39.68%) [1 edit(s)]  
+2025-01-26 22:25:42,739	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:42,739	[INFO]	Step: 25
+2025-01-26 22:25:42,739	[INFO]	Stop Steps: 50
+2025-01-26 22:25:43,065	[DEBUG]	EXEC>  SUCCESS 995386.3125
+2025-01-26 22:25:43,065	[INFO]	2-6     SUCCESS               995386.31 (40.83%) [1 edit(s)]  
+2025-01-26 22:25:43,065	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 0; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:43,065	[INFO]	Step: 26
+2025-01-26 22:25:43,065	[INFO]	Stop Steps: 50
+2025-01-26 22:25:43,388	[DEBUG]	EXEC>  SUCCESS 945734.75
+2025-01-26 22:25:43,388	[INFO]	2-7     SUCCESS              *945734.75 (38.79%) [1 edit(s)]  
+2025-01-26 22:25:43,388	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:25:43,388	[INFO]	Step: 27
+2025-01-26 22:25:43,388	[INFO]	Stop Steps: 50
+2025-01-26 22:25:43,733	[DEBUG]	EXEC>  SUCCESS 959836.125
+2025-01-26 22:25:43,734	[INFO]	2-8     SUCCESS               959836.12 (39.37%) [3 edit(s)]  
+2025-01-26 22:25:43,734	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Use prefix sums to avoid recalculating sums for every mask\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Calculate the sum using the prefix sums\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:43,734	[INFO]	Step: 28
+2025-01-26 22:25:43,734	[INFO]	Stop Steps: 50
+2025-01-26 22:25:44,066	[DEBUG]	EXEC>  SUCCESS 2306154.375
+2025-01-26 22:25:44,066	[INFO]	2-9     SUCCESS               2306154.38 (94.60%) [2 edit(s)]  
+2025-01-26 22:25:44,066	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        bool dp[1000001] = {false}; // DP array to check achievable sums\n        dp[0] = true; // sum of 0 is always achievable\n\n        for(int i = 0; i < n; i++) {\n            for(int j = t; j >= a[i]; j--) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        int mn = inf;\n        for(int s = 0; s <= t; s++) {\n            if(dp[s]) {\n                mn = min(mn, abs(s - (t - s)));\n            }\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:44,067	[INFO]	Step: 29
+2025-01-26 22:25:44,067	[INFO]	Stop Steps: 50
+2025-01-26 22:25:44,565	[DEBUG]	EXEC>  SUCCESS 2529340.8125
+2025-01-26 22:25:44,565	[INFO]	2-10    SUCCESS               2529340.81 (103.75%) [2 edit(s)]  
+2025-01-26 22:25:44,566	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n;\n    \n    while(scanf("%d", &n) && n) {\n        vector<int> a(n);\n        int t = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int half = n / 2;\n        int size1 = 1 << half;\n        int size2 = 1 << (n - half);\n        vector<int> sums1(size1, 0), sums2(size2, 0);\n\n        // Calculate all possible sums for the first half\n        for(int mask = 0; mask < size1; mask++) {\n            for(int j = 0; j < half; j++) {\n                if(mask & (1 << j)) {\n                    sums1[mask] += a[j];\n                }\n            }\n        }\n\n        // Calculate all possible sums for the second half\n        for(int mask = 0; mask < size2; mask++) {\n            for(int j = 0; j < n - half; j++) {\n                if(mask & (1 << j)) {\n                    sums2[mask] += a[half + j];\n                }\n            }\n        }\n\n        sort(sums2.begin(), sums2.end());\n\n        int mn = inf;\n        // Find the minimum difference using two-pointer technique\n        for(int s1 : sums1) {\n            int s2_target = t / 2 - s1;\n            auto it = lower_bound(sums2.begin(), sums2.end(), s2_target);\n            if (it != sums2.end()) {\n                mn = min(mn, abs((s1 + *it) - (t - (s1 + *it))));\n            }\n            if (it != sums2.begin()) {\n                --it;\n                mn = min(mn, abs((s1 + *it) - (t - (s1 + *it))));\n            }\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:44,566	[INFO]	Step: 30
+2025-01-26 22:25:44,566	[INFO]	Stop Steps: 50
+2025-01-26 22:25:45,008	[DEBUG]	EXEC>  SUCCESS 2417994.75
+2025-01-26 22:25:45,008	[INFO]	2-1     SUCCESS               2417994.75 (99.19%) [2 edit(s)]  
+2025-01-26 22:25:45,008	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], mask, s, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        vector<int> a(n);\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int half = total / 2;\n        vector<bool> dp(half + 1, false);\n        dp[0] = true;\n\n        for(int i = 0; i < n; ++i) {\n            for(int j = half; j >= a[i]; --j) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        for(int j = half; j >= 0; --j) {\n            if(dp[j]) {\n                printf("%d\\n", total - 2 * j);\n                break;\n            }\n        }\n    }\n\n    return 0;\n}')"
+2025-01-26 22:25:45,008	[INFO]	Step: 31
+2025-01-26 22:25:45,008	[INFO]	Stop Steps: 50
+2025-01-26 22:25:45,495	[DEBUG]	EXEC>  SUCCESS 2446128.5625
+2025-01-26 22:25:45,495	[INFO]	2-2     SUCCESS               2446128.56 (100.34%) [1 edit(s)]  
+2025-01-26 22:25:45,495	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), "#include <iostream>\n#include <algorithm>\n#include <cstdlib>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21], s, u;\n\n    while(cin >> n && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            cin >> a[i];\n            t += a[i];\n        }\n\n        // Instead of calculating mask as '1<<n', we directly use a loop to iterate through subsets\n        for(int i = 0; i < (1 << n); i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                if(i & (1 << j)) \n                    s += a[j];\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        cout << mn << endl;\n    }\n\n    return 0;\n}")"
+2025-01-26 22:25:45,495	[INFO]	Step: 32
+2025-01-26 22:25:45,495	[INFO]	Stop Steps: 50
+2025-01-26 22:25:47,153	[DEBUG]	EXEC>  SUCCESS 3317885.6875
+2025-01-26 22:25:47,153	[INFO]	REF     SUCCESS               3317885.69 (--) [0 edit(s)]  
+2025-01-26 22:25:47,154	[INFO]	Best patch: 7
+2025-01-26 22:25:47,620	[DEBUG]	EXEC>  SUCCESS 970513.0625
+2025-01-26 22:25:47,621	[INFO]	BEST    SUCCESS              *970513.06 (29.25%) [0 edit(s)]  
+2025-01-26 22:25:47,621	[INFO]	Best patch step: 26
+2025-01-26 22:26:38,249	[INFO]	Step: 32
+2025-01-26 22:26:38,249	[INFO]	Stop Steps: 50
+2025-01-26 22:26:38,701	[DEBUG]	EXEC>  SUCCESS 956245.0625
+2025-01-26 22:26:38,702	[INFO]	3-3     SUCCESS              *956245.06 (28.82%) [1 edit(s)]  
+2025-01-26 22:26:38,702	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:26:38,702	[INFO]	Step: 33
+2025-01-26 22:26:38,702	[INFO]	Stop Steps: 50
+2025-01-26 22:26:39,024	[DEBUG]	EXEC>  SUCCESS 955184.8125
+2025-01-26 22:26:39,024	[INFO]	3-4     SUCCESS              *955184.81 (28.79%) [1 edit(s)]  
+2025-01-26 22:26:39,024	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:26:39,024	[INFO]	Step: 34
+2025-01-26 22:26:39,025	[INFO]	Stop Steps: 50
+2025-01-26 22:26:39,355	[DEBUG]	EXEC>  SUCCESS 951527.4375
+2025-01-26 22:26:39,356	[INFO]	3-5     SUCCESS              *951527.44 (28.68%) [1 edit(s)]  
+2025-01-26 22:26:39,356	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Use prefix sums to avoid recalculating sums for every mask\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Calculate the sum using the prefix sums\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:26:39,356	[INFO]	Step: 35
+2025-01-26 22:26:39,356	[INFO]	Stop Steps: 50
+2025-01-26 22:26:39,692	[DEBUG]	EXEC>  SUCCESS 977655.875
+2025-01-26 22:26:39,692	[INFO]	3-6     SUCCESS               977655.88 (29.47%) [1 edit(s)]  
+2025-01-26 22:26:39,692	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:39,692	[INFO]	Step: 36
+2025-01-26 22:26:39,692	[INFO]	Stop Steps: 50
+2025-01-26 22:26:40,022	[DEBUG]	EXEC>  SUCCESS 977873.6875
+2025-01-26 22:26:40,022	[INFO]	3-7     SUCCESS               977873.69 (29.47%) [1 edit(s)]  
+2025-01-26 22:26:40,022	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Use prefix sums to avoid recalculating sums for every mask\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        // Iterate through all masks to find the minimum\n        for(int mask = 0; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:40,022	[INFO]	Step: 37
+2025-01-26 22:26:40,022	[INFO]	Stop Steps: 50
+2025-01-26 22:26:40,353	[DEBUG]	EXEC>  SUCCESS 956726.25
+2025-01-26 22:26:40,354	[INFO]	3-8     SUCCESS               956726.25 (28.84%) [1 edit(s)]  
+2025-01-26 22:26:40,354	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:40,354	[INFO]	Step: 38
+2025-01-26 22:26:40,354	[INFO]	Stop Steps: 50
+2025-01-26 22:26:40,681	[DEBUG]	EXEC>  SUCCESS 948401.9375
+2025-01-26 22:26:40,681	[INFO]	3-9     SUCCESS              *948401.94 (28.58%) [2 edit(s)]  
+2025-01-26 22:26:40,681	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            // Optimize the inner loop using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:26:40,681	[INFO]	Step: 39
+2025-01-26 22:26:40,681	[INFO]	Stop Steps: 50
+2025-01-26 22:26:41,106	[DEBUG]	EXEC>  SUCCESS 2435474.25
+2025-01-26 22:26:41,106	[INFO]	3-10    SUCCESS               2435474.25 (73.40%) [2 edit(s)]  
+2025-01-26 22:26:41,106	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (i & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, t, a[21];\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        int half = t / 2;\n        vector<bool> dp(half + 1, false);\n        dp[0] = true;\n\n        for(int i = 0; i < n; ++i) {\n            for(int j = half; j >= a[i]; --j) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        for(int j = half; j >= 0; --j) {\n            if(dp[j]) {\n                printf("%d\\n", t - 2 * j);\n                break;\n            }\n        }\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:41,106	[INFO]	Step: 40
+2025-01-26 22:26:41,106	[INFO]	Stop Steps: 50
+2025-01-26 22:26:41,438	[DEBUG]	EXEC>  SUCCESS 959101.0625
+2025-01-26 22:26:41,438	[INFO]	3-1     SUCCESS               959101.06 (28.91%) [4 edit(s)]  
+2025-01-26 22:26:41,438	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Use prefix sums to avoid recalculating sums for every mask\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Calculate the sum using the prefix sums\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n\n        // Iterate only over all possible masks for subsets\n        for(int mask = 0; mask < (1 << n); mask++) {\n            int s = 0;\n            // Calculate the sum directly based on the mask\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:41,438	[INFO]	Step: 41
+2025-01-26 22:26:41,438	[INFO]	Stop Steps: 50
+2025-01-26 22:26:41,774	[DEBUG]	EXEC>  SUCCESS 977567.5
+2025-01-26 22:26:41,774	[INFO]	3-2     SUCCESS               977567.50 (29.46%) [3 edit(s)]  
+2025-01-26 22:26:41,774	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, t, mask, u;\n\n    while(scanf("%d", &n) && n) {\n        t = 0;\n        mn = inf;\n        int a[21];\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            t += a[i];\n        }\n\n        for(mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - t));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Directly computing the sum based on the mask using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Precompute prefix sums\n        int prefixSum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefixSum[i] = (i == 0) ? a[i] : prefixSum[i - 1] + a[i];\n        }\n\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Compute the sum based on the mask using prefix sums\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:41,774	[INFO]	Step: 42
+2025-01-26 22:26:41,774	[INFO]	Stop Steps: 50
+2025-01-26 22:26:42,268	[DEBUG]	EXEC>  SUCCESS 2580165.3125
+2025-01-26 22:26:42,269	[INFO]	3-3     SUCCESS               2580165.31 (77.77%) [1 edit(s)]  
+2025-01-26 22:26:42,269	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <iostream>\n\n#include <algorithm>\n\n#include <cstdlib>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main()\n{\n    int n, mn, t, a[21], mask, s, u;\n\n    while(cin >> n && n) {\n        t = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            cin >> a[i];\n            t += a[i];\n        }\n\n        mask = 1 << n;\n        for(int i = 0; i < mask; i++) {\n            s = 0;\n            for(int j = 0; j < n; j++) {\n                u = 1 << j;\n                if(i & u) s += a[j];\n            }\n            mn = min(mn, abs(s - (t - s)));\n        }\n\n        cout << mn << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:26:42,269	[INFO]	Step: 43
+2025-01-26 22:26:42,269	[INFO]	Stop Steps: 50
+2025-01-26 22:26:43,770	[DEBUG]	EXEC>  SUCCESS 2423457.125
+2025-01-26 22:26:43,770	[INFO]	REF     SUCCESS               2423457.12 (--) [0 edit(s)]  
+2025-01-26 22:26:43,770	[INFO]	Best patch: 7_20
+2025-01-26 22:26:44,094	[DEBUG]	EXEC>  SUCCESS 954525.75
+2025-01-26 22:26:44,095	[INFO]	BEST    SUCCESS              *954525.75 (39.39%) [0 edit(s)]  
+2025-01-26 22:26:44,095	[INFO]	Best patch step: 38
+2025-01-26 22:27:25,580	[INFO]	Step: 43
+2025-01-26 22:27:25,580	[INFO]	Stop Steps: 50
+2025-01-26 22:27:26,030	[DEBUG]	EXEC>  SUCCESS 957494.625
+2025-01-26 22:27:26,031	[INFO]	4-4     SUCCESS              +957494.62 (39.51%) [2 edit(s)]  
+2025-01-26 22:27:26,031	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            // Optimize the inner loop using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:27:26,031	[INFO]	Step: 44
+2025-01-26 22:27:26,031	[INFO]	Stop Steps: 50
+2025-01-26 22:27:26,361	[DEBUG]	EXEC>  SUCCESS 941166.375
+2025-01-26 22:27:26,361	[INFO]	4-5     SUCCESS              *941166.38 (38.84%) [1 edit(s)]  
+2025-01-26 22:27:26,361	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Use prefix sums to avoid recalculating sums for every mask\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Calculate the sum using the prefix sums\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 22:27:26,361	[INFO]	Step: 45
+2025-01-26 22:27:26,361	[INFO]	Stop Steps: 50
+2025-01-26 22:27:26,694	[DEBUG]	EXEC>  SUCCESS 989033.4375
+2025-01-26 22:27:26,694	[INFO]	4-6     SUCCESS               989033.44 (40.81%) [1 edit(s)]  
+2025-01-26 22:27:26,694	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        for(int mask = 0; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:27:26,694	[INFO]	Step: 46
+2025-01-26 22:27:26,694	[INFO]	Stop Steps: 50
+2025-01-26 22:27:27,029	[DEBUG]	EXEC>  SUCCESS 962296.9375
+2025-01-26 22:27:27,029	[INFO]	4-7     SUCCESS               962296.94 (39.71%) [1 edit(s)]  
+2025-01-26 22:27:27,029	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, mn, total;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:27:27,029	[INFO]	Step: 47
+2025-01-26 22:27:27,029	[INFO]	Stop Steps: 50
+2025-01-26 22:27:27,356	[DEBUG]	EXEC>  SUCCESS 961858.25
+2025-01-26 22:27:27,356	[INFO]	4-8     SUCCESS               961858.25 (39.69%) [1 edit(s)]  
+2025-01-26 22:27:27,356	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        for(int mask = 0; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:27:27,356	[INFO]	Step: 48
+2025-01-26 22:27:27,356	[INFO]	Stop Steps: 50
+2025-01-26 22:27:27,682	[DEBUG]	EXEC>  SUCCESS 994180.25
+2025-01-26 22:27:27,683	[INFO]	4-9     SUCCESS               994180.25 (41.02%) [1 edit(s)]  
+2025-01-26 22:27:27,683	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:27:27,683	[INFO]	Step: 49
+2025-01-26 22:27:27,683	[INFO]	Stop Steps: 50
+2025-01-26 22:27:28,019	[DEBUG]	EXEC>  SUCCESS 970931.875
+2025-01-26 22:27:28,020	[INFO]	4-10    SUCCESS               970931.88 (40.06%) [3 edit(s)]  
+2025-01-26 22:27:28,020	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            for(int j = 0; j < n; j++) {\n                s += (mask & (1 << j)) ? a[j] : 0;\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        for(int mask = 1; mask < (1 << n); mask++) {\n            int s = 0;\n            // Optimize the inner loop using bit manipulation\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(s - (total - s)));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total, mn;\n    int a[21];\n\n    while(scanf("%d", &n) && n) {\n        total = 0;\n        mn = inf;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        // Instead of checking each subset, we can use dynamic programming to find the minimum difference\n        bool dp[total + 1] = {false};\n        dp[0] = true;\n\n        for(int i = 0; i < n; ++i) {\n            for(int j = total; j >= a[i]; --j) {\n                dp[j] = dp[j] || dp[j - a[i]];\n            }\n        }\n\n        for(int s = 0; s <= total / 2; ++s) {\n            if(dp[s]) {\n                mn = min(mn, abs(total - 2 * s));\n            }\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')"
+2025-01-26 22:27:28,020	[INFO]	Step: 50
+2025-01-26 22:27:28,020	[INFO]	Stop Steps: 50
+2025-01-26 22:27:28,020	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 22:27:28,020	[INFO]	Step: 50
+2025-01-26 22:27:28,020	[INFO]	Stop Steps: 50
+2025-01-26 22:27:29,778	[INFO]	~~~~ END ~~~~
+2025-01-26 22:27:29,778	[INFO]	Best patch step: 44
+2025-01-26 22:27:29,778	[INFO]	
+2025-01-26 22:27:29,778	[INFO]	==== REPORT ====
+2025-01-26 22:27:29,779	[INFO]	Termination: step budget
+2025-01-26 22:27:29,779	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0228_1737930096.log
+2025-01-26 22:27:29,779	[INFO]	Patch file: _magpie_logs/0228_1737930096.patch
+2025-01-26 22:27:29,779	[INFO]	Diff file: _magpie_logs/0228_1737930096.diff
+2025-01-26 22:27:29,779	[INFO]	Reference fitness: 2423457.12
+2025-01-26 22:27:29,779	[INFO]	Best fitness: 941166.38
+2025-01-26 22:27:29,779	[INFO]	
+2025-01-26 22:27:29,779	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n#include <numeric>\n\nusing namespace std;\n\nconst int inf = 1000001;\n\nint main() {\n    int n, total;\n\n    while(scanf("%d", &n) && n) {\n        int a[21];\n        total = 0;\n\n        for(int i = 0; i < n; ++i) {\n            scanf("%d", &a[i]);\n            total += a[i];\n        }\n\n        int mn = inf;\n        // Use prefix sums to avoid recalculating sums for every mask\n        int prefix_sum[21] = {0};\n        for(int i = 0; i < n; ++i) {\n            prefix_sum[i] = (i > 0 ? prefix_sum[i - 1] : 0) + a[i];\n        }\n\n        // Iterate only over half of the masks to avoid duplicate calculations\n        for(int mask = 0; mask < (1 << (n - 1)); mask++) {\n            int s = 0;\n            // Calculate the sum using the prefix sums\n            for(int j = 0; j < n; j++) {\n                if(mask & (1 << j)) {\n                    s += a[j];\n                }\n            }\n            mn = min(mn, abs(2 * s - total));\n        }\n\n        printf("%d\\n", mn);\n    }\n\n    return 0;\n}')
+2025-01-26 22:27:29,779	[INFO]	
+2025-01-26 22:27:29,779	[INFO]	==== DIFF ====
+

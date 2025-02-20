@@ -1,0 +1,407 @@
+2025-01-27 01:26:21,813	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 9611890830998979
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0050
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-27 01:26:21,814	[DEBUG]	
+2025-01-27 01:26:21,814	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-27 01:26:21,814	[INFO]	~~~~ WARMUP ~~~~
+2025-01-27 01:26:23,907	[DEBUG]	EXEC>  SUCCESS 3588018.0625
+2025-01-27 01:26:23,907	[INFO]	WARM    SUCCESS               3588018.06 (--) [0 edit(s)]  
+2025-01-27 01:26:25,461	[DEBUG]	EXEC>  SUCCESS 3537409.25
+2025-01-27 01:26:25,461	[INFO]	WARM    SUCCESS               3537409.25 (--) [0 edit(s)]  
+2025-01-27 01:26:27,026	[DEBUG]	EXEC>  SUCCESS 3556963.8125
+2025-01-27 01:26:27,026	[INFO]	WARM    SUCCESS               3556963.81 (--) [0 edit(s)]  
+2025-01-27 01:26:28,576	[DEBUG]	EXEC>  SUCCESS 3565682.625
+2025-01-27 01:26:28,576	[INFO]	WARM    SUCCESS               3565682.62 (--) [0 edit(s)]  
+2025-01-27 01:26:30,124	[DEBUG]	EXEC>  SUCCESS 3551943.3125
+2025-01-27 01:26:30,124	[INFO]	WARM    SUCCESS               3551943.31 (--) [0 edit(s)]  
+2025-01-27 01:26:30,124	[INFO]	REF     SUCCESS               3551943.31 (--) [0 edit(s)]  
+2025-01-27 01:26:30,125	[INFO]	
+2025-01-27 01:26:30,125	[INFO]	~~~~ START ~~~~
+2025-01-27 01:26:56,200	[INFO]	0-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:26:56,201	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e2;\n\ndouble g[maxn][maxn],dp[maxn][maxn];\n\nint main(void){\n\n    int m,n;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++){\n\n        for(int j=0;j<n;j++){\n\n            scanf("%lf",&g[i][j]);\n\n        }\n\n    }\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n    return 0;\n\n}')"
+2025-01-27 01:26:57,481	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:26:57,481	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e2;\n\nfloat g[maxn][maxn],dp[maxn][maxn];\n\nint main(void){\n\n    int m,n;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++){\n\n        for(int j=0;j<n;j++){\n\n            scanf("%f",&g[i][j]);\n\n        }\n\n    }\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    float ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2f\\n",ans);\n\n    return 0;\n\n}')"
+2025-01-27 01:26:58,756	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:26:58,756	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e2;\n\ndouble g[maxn][maxn],dp[maxn][maxn];\n\nint main(void){\n\n    int m,n;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++){\n\n        for(int j=0;j<n;j++){\n\n            scanf("%lf",&g[i][j]);\n\n        }\n\n    }\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int j=0;j<n;j++){\n\n        for(int i=0;i<m;i++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:00,042	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:00,042	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e2;\n\ndouble g[maxn][maxn],dp[maxn][maxn];\n\nint main(void){\n\n    int m,n;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++){\n\n        for(int j=0;j<n;j++){\n\n            scanf("%lf",&g[i][j]);\n\n        }\n\n    }\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:01,326	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:01,326	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\n\ndouble dp[105][105],g[105][105];\n\nvoid solve(int n,int m){\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n}\n\nint main(void){\n\n    int n,m;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++)\n\n        for(int j=0;j<n;j++)\n\n            scanf("%lf",&g[i][j]);\n\n    solve(n,m);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:02,612	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:02,612	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\n\ndouble dp[105][105],g[105][105];\n\nvoid solve(int n,int m){\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n}\n\nint main(void){\n\n    int n,m;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++)\n\n        for(int j=0;j<n;j++)\n\n            scanf("%lf",&g[i][j]);\n\n    solve(n,m);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:03,925	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:03,926	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\n\ndouble dp[105][105],g[105][105];\n\nvoid solve(int n,int m){\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n}\n\nint main(void){\n\n    int n,m;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++)\n\n        for(int j=0;j<n;j++)\n\n            scanf("%lf",&g[i][j]);\n\n    solve(n,m);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:05,208	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:05,208	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include<cstdio>\n#include<cstring>\n#include<algorithm>\nusing namespace std;\ntypedef long long li;\n\ndouble dp[105][105],g[105][105];\n\nvoid solve(int n,int m){\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n}\n\nint main(void){\n\n    int n,m;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++)\n\n        for(int j=0;j<n;j++)\n\n            scanf("%lf",&g[i][j]);\n\n    solve(n,m);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:06,488	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:06,488	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n\n#include <cstring>\n\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long li;\n\ndouble dp[105][105],g[105][105];\n\nvoid solve(int n,int m){\n\n    for(int i=0;i<n;i++){\n\n        dp[0][i]=1;\n\n    }\n\n    for(int i=0;i<m;i++){\n\n        for(int j=0;j<n;j++){\n\n            for(int k=0;k<n;k++){\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n            }\n\n        }\n\n    }\n\n    double ans=0;\n\n    for(int i=0;i<n;i++){\n\n        ans=max(dp[m][i],ans);\n\n    }\n\n    printf("%.2lf\\n",ans);\n\n}\n\nint main(void){\n\n    int n,m;\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++)\n\n        for(int j=0;j<n;j++)\n\n            scanf("%lf",&g[i][j]);\n\n    solve(n,m);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:07,764	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:07,764	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include<cstdio>\n\n#include<cstring>\n\n#include<algorithm>\n\nusing namespace std;\n\ntypedef long long li;\n\nint n,m;\n\ndouble dp[105][105],g[105][105];\n\nint main(void){\n\n    scanf("%d%d",&n,&m);\n\n    for(int i=0;i<n;i++)\n\n        for(int j=0;j<n;j++)\n\n            scanf("%lf",&g[i][j]);\n\n    for(int i=0;i<n;i++)\n\n        dp[0][i]=1.;\n\n    for(int i=0;i<m;i++)\n\n        for(int j=0;j<n;j++)\n\n            for(int k=0;k<n;k++)\n\n                dp[i+1][j]=max(dp[i+1][j],dp[i][k]*g[k][j]);\n\n    double ans=0;\n\n    for(int i=0;i<n;i++)\n\n        ans=max(dp[m][i],ans);\n\n    printf("%.2lf\\n",ans);\n\n    return 0;\n\n}')"
+2025-01-27 01:27:08,765	[INFO]	Step: 10
+2025-01-27 01:27:08,765	[INFO]	Stop Steps: 50
+2025-01-27 01:27:11,465	[DEBUG]	EXEC>  SUCCESS 3532857.1875
+2025-01-27 01:27:11,466	[INFO]	REF     SUCCESS               3532857.19 (--) [0 edit(s)]  
+2025-01-27 01:27:11,466	[INFO]	Best patch step: None
+2025-01-27 01:27:33,748	[INFO]	Step: 10
+2025-01-27 01:27:33,748	[INFO]	Stop Steps: 50
+2025-01-27 01:27:35,061	[INFO]	1-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:35,062	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 0), "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    int a = 0, z = 0;\n    for(int i = 0; i < s.size(); i++) {\n        if (s[i] == 'A') {\n            a = i;\n            break;\n        }\n    }\n    for(int i = s.size() - 1; i >= a; i--) {\n        if (s[i] == 'Z') {\n                z = i;\n                break;\n        }\n    }\n    cout << z - a + 1 << endl;\n}")"
+2025-01-27 01:27:35,062	[INFO]	Step: 11
+2025-01-27 01:27:35,062	[INFO]	Stop Steps: 50
+2025-01-27 01:27:35,313	[INFO]	1-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:35,314	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e5;\nchar str[200005];\n\nint main(void) {\n    scanf("%s", str);\n    int ans = 0;\n    int a=-1;\n    for(int i=0; str[i]; i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans, i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\\n", ans + 1);\n}')"
+2025-01-27 01:27:35,314	[INFO]	Step: 12
+2025-01-27 01:27:35,314	[INFO]	Stop Steps: 50
+2025-01-27 01:27:35,566	[INFO]	1-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:35,566	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long li;\nconst int maxn = 1e5;\nchar str[200005];\n\nint main(void) {\n    scanf("%s", str);\n    int ans = 0;\n    int a=-1;\n    for(int i=0; str[i]; i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans, i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\\n", ans + 1);\n}')"
+2025-01-27 01:27:35,566	[INFO]	Step: 13
+2025-01-27 01:27:35,567	[INFO]	Stop Steps: 50
+2025-01-27 01:27:36,859	[INFO]	1-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:36,859	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 3), "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    int a = 0, z = 0;\n    for(int i = 0; i < s.size(); i++) {\n        if (s[i] == 'A') {\n            a = i;\n            break;\n        }\n    }\n    for(int i = s.size() - 1; i >= a; i--) {\n        if (s[i] == 'Z') {\n                z = i;\n                break;\n        }\n    }\n    cout << z - a + 1 << endl;\n}")"
+2025-01-27 01:27:36,860	[INFO]	Step: 14
+2025-01-27 01:27:36,860	[INFO]	Stop Steps: 50
+2025-01-27 01:27:38,493	[DEBUG]	EXEC>  SUCCESS 3356616.8125
+2025-01-27 01:27:38,493	[INFO]	1-5     SUCCESS              *3356616.81 (95.01%) [1 edit(s)]  
+2025-01-27 01:27:38,493	[DEBUG]	patch(1-5)="LineLLMMutation(('source.cpp', 10), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+
+2025-01-27 01:27:38,494	[INFO]	Step: 15
+2025-01-27 01:27:38,494	[INFO]	Stop Steps: 50
+2025-01-27 01:27:40,156	[DEBUG]	EXEC>  SUCCESS 3309662.3125
+2025-01-27 01:27:40,157	[INFO]	1-6     SUCCESS              *3309662.31 (93.68%) [1 edit(s)]  
+2025-01-27 01:27:40,157	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+
+2025-01-27 01:27:40,157	[INFO]	Step: 16
+2025-01-27 01:27:40,157	[INFO]	Stop Steps: 50
+2025-01-27 01:27:41,830	[DEBUG]	EXEC>  SUCCESS 3383031.875
+2025-01-27 01:27:41,830	[INFO]	1-7     SUCCESS               3383031.88 (95.76%) [1 edit(s)]  
+2025-01-27 01:27:41,830	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 12), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:27:41,831	[INFO]	Step: 17
+2025-01-27 01:27:41,831	[INFO]	Stop Steps: 50
+2025-01-27 01:27:43,125	[INFO]	1-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:27:43,125	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 13), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.3f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:27:43,125	[INFO]	Step: 18
+2025-01-27 01:27:43,126	[INFO]	Stop Steps: 50
+2025-01-27 01:27:44,660	[DEBUG]	EXEC>  SUCCESS 3355677.4375
+2025-01-27 01:27:44,661	[INFO]	1-9     SUCCESS               3355677.44 (94.98%) [1 edit(s)]  
+2025-01-27 01:27:44,661	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 14), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:27:44,661	[INFO]	Step: 19
+2025-01-27 01:27:44,661	[INFO]	Stop Steps: 50
+2025-01-27 01:27:46,236	[DEBUG]	EXEC>  SUCCESS 3343559.4375
+2025-01-27 01:27:46,236	[INFO]	1-10    SUCCESS               3343559.44 (94.64%) [1 edit(s)]  
+2025-01-27 01:27:46,236	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 15), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:27:46,236	[INFO]	Step: 20
+2025-01-27 01:27:46,236	[INFO]	Stop Steps: 50
+2025-01-27 01:27:48,792	[DEBUG]	EXEC>  SUCCESS 3536039.8125
+2025-01-27 01:27:48,792	[INFO]	REF     SUCCESS               3536039.81 (--) [0 edit(s)]  
+2025-01-27 01:27:48,792	[INFO]	Best patch: 11
+2025-01-27 01:27:50,347	[DEBUG]	EXEC>  SUCCESS 3289548.0
+2025-01-27 01:27:50,347	[INFO]	BEST    SUCCESS              *3289548.00 (93.03%) [0 edit(s)]  
+2025-01-27 01:27:50,348	[INFO]	Best patch step: 15
+2025-01-27 01:28:17,755	[INFO]	Step: 20
+2025-01-27 01:28:17,755	[INFO]	Stop Steps: 50
+2025-01-27 01:28:19,441	[DEBUG]	EXEC>  SUCCESS 3315965.375
+2025-01-27 01:28:19,442	[INFO]	2-1     SUCCESS              +3315965.38 (93.78%) [1 edit(s)]  
+2025-01-27 01:28:19,442	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:19,442	[INFO]	Step: 21
+2025-01-27 01:28:19,442	[INFO]	Stop Steps: 50
+2025-01-27 01:28:20,986	[DEBUG]	EXEC>  SUCCESS 3335894.375
+2025-01-27 01:28:20,987	[INFO]	2-2     SUCCESS               3335894.38 (94.34%) [1 edit(s)]  
+2025-01-27 01:28:20,987	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 15), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:20,987	[INFO]	Step: 22
+2025-01-27 01:28:20,987	[INFO]	Stop Steps: 50
+2025-01-27 01:28:22,282	[INFO]	2-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:28:22,283	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(~scanf("%d%d", &n, &m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:22,283	[INFO]	Step: 23
+2025-01-27 01:28:22,283	[INFO]	Stop Steps: 50
+2025-01-27 01:28:23,592	[INFO]	2-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:28:23,593	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(~scanf("%d%d", &n, &m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:23,593	[INFO]	Step: 24
+2025-01-27 01:28:23,593	[INFO]	Stop Steps: 50
+2025-01-27 01:28:25,126	[DEBUG]	EXEC>  SUCCESS 3369580.0625
+2025-01-27 01:28:25,127	[INFO]	2-5     SUCCESS               3369580.06 (95.29%) [1 edit(s)]  
+2025-01-27 01:28:25,127	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:25,127	[INFO]	Step: 25
+2025-01-27 01:28:25,127	[INFO]	Stop Steps: 50
+2025-01-27 01:28:26,417	[INFO]	2-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:28:26,417	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(~scanf("%d%d", &n, &m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:26,417	[INFO]	Step: 26
+2025-01-27 01:28:26,417	[INFO]	Stop Steps: 50
+2025-01-27 01:28:26,934	[DEBUG]	EXEC>  SUCCESS 1349022.8125
+2025-01-27 01:28:26,935	[INFO]	2-7     SUCCESS              *1349022.81 (38.15%) [2 edit(s)]  
+2025-01-27 01:28:26,935	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 16), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+
+2025-01-27 01:28:26,935	[INFO]	Step: 27
+2025-01-27 01:28:26,935	[INFO]	Stop Steps: 50
+2025-01-27 01:28:27,377	[DEBUG]	EXEC>  SUCCESS 1426701.125
+2025-01-27 01:28:27,377	[INFO]	2-8     SUCCESS               1426701.12 (40.35%) [2 edit(s)]  
+2025-01-27 01:28:27,377	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 15), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 17), '#include<cstdio>\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        for(int i=0;i<110;i++)\n\n            for(int j=0;j<110;j++)\n\n                dp[i][j]=-1;\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = dp[i-1][k]*g[k][j]>dp[i][j]?dp[i-1][k]*g[k][j]:dp[i][j];\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = dp[m][i]>ans?dp[m][i]:ans;\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:27,377	[INFO]	Step: 28
+2025-01-27 01:28:27,377	[INFO]	Stop Steps: 50
+2025-01-27 01:28:27,536	[INFO]	2-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-27 01:28:27,537	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 14), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:27,537	[INFO]	Step: 29
+2025-01-27 01:28:27,537	[INFO]	Stop Steps: 50
+2025-01-27 01:28:28,863	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 01:28:28,863	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 10), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 19), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                dp[i][j]=-1;\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:28,864	[INFO]	Step: 30
+2025-01-27 01:28:28,864	[INFO]	Stop Steps: 50
+2025-01-27 01:28:29,742	[DEBUG]	EXEC>  SUCCESS 3526857.1875
+2025-01-27 01:28:29,743	[INFO]	2-1     SUCCESS               3526857.19 (99.74%) [1 edit(s)]  
+2025-01-27 01:28:29,743	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 20), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\ntypedef pair<int,int> pii;\n\n#define rep(i,n) for(ll i=0;i<(ll)(n);i++)\n\n#define all(a)  (a).begin(),(a).end()\n\n#define pb push_back\n\n#define INF 999999999\n\n\n\nint main(){\n\n    double g[110][110];\n\n    rep(i,110)rep(j,110)g[i][j]=-1;\n\n    int n,m;\n\n    while(cin>>n>>m){\n\n        if(n==0&&m==0)break;\n\n        rep(i,n){\n\n            rep(j,n){\n\n                cin>>g[i][j];\n\n            }\n\n        }\n\n\n\n\n\n        double dp[110][110];\n\n        rep(i,110)rep(j,110)dp[i][j] = -1;\n\n        rep(i,n)dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++){\n\n            for(int j=0;j<n;j++){\n\n                for(int k=0;k<n;k++){\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n                }\n\n            }\n\n        }\n\n        double ans = -1;\n\n        rep(i,n){\n\n            ans = max(ans,dp[m][i]);\n\n        }\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:28:29,743	[INFO]	Step: 31
+2025-01-27 01:28:29,743	[INFO]	Stop Steps: 50
+2025-01-27 01:28:32,288	[DEBUG]	EXEC>  SUCCESS 3559528.6875
+2025-01-27 01:28:32,289	[INFO]	REF     SUCCESS               3559528.69 (--) [0 edit(s)]  
+2025-01-27 01:28:32,289	[INFO]	Best patch: 11_16
+2025-01-27 01:28:32,785	[DEBUG]	EXEC>  SUCCESS 1346634.25
+2025-01-27 01:28:32,785	[INFO]	BEST    SUCCESS              *1346634.25 (37.83%) [0 edit(s)]  
+2025-01-27 01:28:32,785	[INFO]	Best patch step: 26
+2025-01-27 01:28:59,746	[INFO]	Step: 31
+2025-01-27 01:28:59,747	[INFO]	Stop Steps: 50
+2025-01-27 01:29:00,400	[DEBUG]	EXEC>  SUCCESS 1374424.0
+2025-01-27 01:29:00,401	[INFO]	3-2     SUCCESS              +1374424.00 (38.61%) [2 edit(s)]  
+2025-01-27 01:29:00,401	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 16), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:00,402	[INFO]	Step: 32
+2025-01-27 01:29:00,402	[INFO]	Stop Steps: 50
+2025-01-27 01:29:00,860	[DEBUG]	EXEC>  SUCCESS 1420343.75
+2025-01-27 01:29:00,860	[INFO]	3-3     SUCCESS               1420343.75 (39.90%) [2 edit(s)]  
+2025-01-27 01:29:00,861	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 15), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 17), '#include<cstdio>\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        for(int i=0;i<110;i++)\n\n            for(int j=0;j<110;j++)\n\n                dp[i][j]=-1;\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = dp[i-1][k]*g[k][j]>dp[i][j]?dp[i-1][k]*g[k][j]:dp[i][j];\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = dp[m][i]>ans?dp[m][i]:ans;\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:00,861	[INFO]	Step: 33
+2025-01-27 01:29:00,861	[INFO]	Stop Steps: 50
+2025-01-27 01:29:01,379	[DEBUG]	EXEC>  SUCCESS 1375136.5
+2025-01-27 01:29:01,379	[INFO]	3-4     SUCCESS               1375136.50 (38.63%) [1 edit(s)]  
+2025-01-27 01:29:01,379	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 8), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:01,379	[INFO]	Step: 34
+2025-01-27 01:29:01,380	[INFO]	Stop Steps: 50
+2025-01-27 01:29:01,840	[DEBUG]	EXEC>  SUCCESS 1447397.6875
+2025-01-27 01:29:01,840	[INFO]	3-5     SUCCESS               1447397.69 (40.66%) [1 edit(s)]  
+2025-01-27 01:29:01,840	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 9), '#include<cstdio>\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        for(int i=0;i<110;i++)\n\n            for(int j=0;j<110;j++)\n\n                dp[i][j]=-1;\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = dp[i-1][k]*g[k][j]>dp[i][j]?dp[i-1][k]*g[k][j]:dp[i][j];\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = dp[m][i]>ans?dp[m][i]:ans;\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:01,840	[INFO]	Step: 35
+2025-01-27 01:29:01,840	[INFO]	Stop Steps: 50
+2025-01-27 01:29:03,378	[DEBUG]	EXEC>  SUCCESS 3298681.5
+2025-01-27 01:29:03,378	[INFO]	3-6     SUCCESS               3298681.50 (92.67%) [1 edit(s)]  
+2025-01-27 01:29:03,379	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 10), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:03,379	[INFO]	Step: 36
+2025-01-27 01:29:03,379	[INFO]	Stop Steps: 50
+2025-01-27 01:29:04,920	[DEBUG]	EXEC>  SUCCESS 3358495.25
+2025-01-27 01:29:04,921	[INFO]	3-7     SUCCESS               3358495.25 (94.35%) [1 edit(s)]  
+2025-01-27 01:29:04,921	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:04,921	[INFO]	Step: 37
+2025-01-27 01:29:04,921	[INFO]	Stop Steps: 50
+2025-01-27 01:29:05,435	[DEBUG]	EXEC>  SUCCESS 1286760.875
+2025-01-27 01:29:05,435	[INFO]	3-8     SUCCESS              *1286760.88 (36.15%) [3 edit(s)]  
+2025-01-27 01:29:05,435	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 16), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 21), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        for(int i=0;i<=m;i++) // Changed this line to use a nested loop for clarity and speed.\n            for(int j=0;j<n;j++)\n                dp[i][j] = -1; // Initialize with -1.\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+
+2025-01-27 01:29:05,436	[INFO]	Step: 38
+2025-01-27 01:29:05,436	[INFO]	Stop Steps: 50
+2025-01-27 01:29:05,890	[DEBUG]	EXEC>  SUCCESS 1534404.4375
+2025-01-27 01:29:05,891	[INFO]	3-9     SUCCESS               1534404.44 (43.11%) [3 edit(s)]  
+2025-01-27 01:29:05,891	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 15), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 17), '#include<cstdio>\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        for(int i=0;i<110;i++)\n\n            for(int j=0;j<110;j++)\n\n                dp[i][j]=-1;\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = dp[i-1][k]*g[k][j]>dp[i][j]?dp[i-1][k]*g[k][j]:dp[i][j];\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = dp[m][i]>ans?dp[m][i]:ans;\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 22), '#include<cstdio>\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        for(int i=0;i<11000;i++)\n\n            dp[i/110][i%110]=-1;\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = dp[i-1][k]*g[k][j]>dp[i][j]?dp[i-1][k]*g[k][j]:dp[i][j];\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = dp[m][i]>ans?dp[m][i]:ans;\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:05,891	[INFO]	Step: 39
+2025-01-27 01:29:05,891	[INFO]	Stop Steps: 50
+2025-01-27 01:29:06,402	[DEBUG]	EXEC>  SUCCESS 1346204.125
+2025-01-27 01:29:06,403	[INFO]	3-10    SUCCESS               1346204.12 (37.82%) [2 edit(s)]  
+2025-01-27 01:29:06,403	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 23), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:06,403	[INFO]	Step: 40
+2025-01-27 01:29:06,403	[INFO]	Stop Steps: 50
+2025-01-27 01:29:06,774	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 01:29:06,775	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 15), '#include "bits/stdc++.h"\n\nusing namespace std;\n\ndouble g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%lf",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        double ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 24), '#include<cstdio>\n#include<cstring>\n#include<cmath>\n#include<algorithm>\nusing namespace std;\n\nconst int maxn=105;\n\ndouble g[maxn][maxn],dp[maxn][maxn];\n\nint main(){\n\n\tint n,m;\n\n\twhile(scanf("%d%d",&n,&m),n+m){\n\n\t\tfor(int i=0;i<n;i++)\n\n\t\t\tfor(int j=0;j<n;j++)\n\n\t\t\t\tscanf("%lf",&g[i][j]);\n\n\t\tmemset(dp,-1,sizeof(dp));\n\n\t\tfor(int i=0;i<n;i++)\n\n\t\t\tdp[1][i]=1.0;\n\n\n\n\t\tfor(int i=2;i<=m;i++)\n\n\t\t\tfor(int j=0;j<n;j++)\n\n\t\t\t\tfor(int k=0;k<n;k++)\n\n\t\t\t\t\tdp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n\t\tdouble ans = 0;\n\n\t\tfor(int i=0;i<n;i++)\n\n\t\t\tans = max(ans,dp[m][i]);\n\n\t\tprintf("%.2lf\\n",ans);\n\n\t}\n\n}')"
+2025-01-27 01:29:06,775	[INFO]	Step: 41
+2025-01-27 01:29:06,775	[INFO]	Stop Steps: 50
+2025-01-27 01:29:07,282	[DEBUG]	EXEC>  SUCCESS 1602468.9375
+2025-01-27 01:29:07,283	[INFO]	3-2     SUCCESS               1602468.94 (45.02%) [1 edit(s)]  
+2025-01-27 01:29:07,283	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n\n#include <algorithm>\n\nusing namespace std;\n\n#define rep(i,n) for(int i=0;i<(n);i++)\n\n\n\nint main(){\n\n    double g[110][110];\n\n    rep(i,110)rep(j,110)g[i][j]=-1;\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)==2){\n\n        if(n==0&&m==0)break;\n\n        rep(i,n){\n\n            rep(j,n){\n\n                scanf("%lf",&g[i][j]);\n\n            }\n\n        }\n\n\n\n\n\n        double dp[110][110];\n\n        rep(i,110)rep(j,110)dp[i][j] = -1;\n\n        rep(i,n)dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++){\n\n            for(int j=0;j<n;j++){\n\n                for(int k=0;k<n;k++){\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n                }\n\n            }\n\n        }\n\n        double ans = -1;\n\n        rep(i,n){\n\n            ans = max(ans,dp[m][i]);\n\n        }\n\n        printf("%.2lf\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:07,283	[INFO]	Step: 42
+2025-01-27 01:29:07,283	[INFO]	Stop Steps: 50
+2025-01-27 01:29:09,939	[DEBUG]	EXEC>  SUCCESS 3565662.3125
+2025-01-27 01:29:09,939	[INFO]	REF     SUCCESS               3565662.31 (--) [0 edit(s)]  
+2025-01-27 01:29:09,940	[INFO]	Best patch: 11_16_21
+2025-01-27 01:29:10,459	[DEBUG]	EXEC>  SUCCESS 1301620.125
+2025-01-27 01:29:10,459	[INFO]	BEST    SUCCESS              *1301620.12 (36.50%) [0 edit(s)]  
+2025-01-27 01:29:10,459	[INFO]	Best patch step: 37
+2025-01-27 01:29:39,108	[INFO]	Step: 42
+2025-01-27 01:29:39,108	[INFO]	Stop Steps: 50
+2025-01-27 01:29:39,742	[DEBUG]	EXEC>  SUCCESS 1293453.125
+2025-01-27 01:29:39,742	[INFO]	4-3     SUCCESS              *1293453.12 (36.28%) [3 edit(s)]  
+2025-01-27 01:29:39,743	[DEBUG]	patch(4-3)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 16), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 21), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        for(int i=0;i<=m;i++) // Changed this line to use a nested loop for clarity and speed.\n            for(int j=0;j<n;j++)\n                dp[i][j] = -1; // Initialize with -1.\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+
+2025-01-27 01:29:39,743	[INFO]	Step: 43
+2025-01-27 01:29:39,743	[INFO]	Stop Steps: 50
+2025-01-27 01:29:40,243	[DEBUG]	EXEC>  SUCCESS 1353313.375
+2025-01-27 01:29:40,243	[INFO]	4-4     SUCCESS               1353313.38 (37.95%) [2 edit(s)]  
+2025-01-27 01:29:40,243	[DEBUG]	patch(4-4)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 23), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:40,243	[INFO]	Step: 44
+2025-01-27 01:29:40,243	[INFO]	Stop Steps: 50
+2025-01-27 01:29:40,765	[DEBUG]	EXEC>  SUCCESS 1291996.4375
+2025-01-27 01:29:40,765	[INFO]	4-5     SUCCESS              *1291996.44 (36.23%) [1 edit(s)]  
+2025-01-27 01:29:40,766	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 12), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        for(int i=0;i<=m;i++) // Changed this line to use a nested loop for clarity and speed.\n            for(int j=0;j<n;j++)\n\n                dp[i][j] = -1; // Initialize with -1.\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+
+2025-01-27 01:29:40,766	[INFO]	Step: 45
+2025-01-27 01:29:40,766	[INFO]	Stop Steps: 50
+2025-01-27 01:29:41,275	[DEBUG]	EXEC>  SUCCESS 1360216.3125
+2025-01-27 01:29:41,275	[INFO]	4-6     SUCCESS               1360216.31 (38.15%) [1 edit(s)]  
+2025-01-27 01:29:41,276	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 13), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:41,276	[INFO]	Step: 46
+2025-01-27 01:29:41,276	[INFO]	Stop Steps: 50
+2025-01-27 01:29:41,790	[DEBUG]	EXEC>  SUCCESS 1344195.8125
+2025-01-27 01:29:41,791	[INFO]	4-7     SUCCESS               1344195.81 (37.70%) [1 edit(s)]  
+2025-01-27 01:29:41,791	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 14), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:41,791	[INFO]	Step: 47
+2025-01-27 01:29:41,791	[INFO]	Stop Steps: 50
+2025-01-27 01:29:42,290	[DEBUG]	EXEC>  SUCCESS 1359497.625
+2025-01-27 01:29:42,291	[INFO]	4-8     SUCCESS               1359497.62 (38.13%) [1 edit(s)]  
+2025-01-27 01:29:42,291	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 15), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:42,291	[INFO]	Step: 48
+2025-01-27 01:29:42,291	[INFO]	Stop Steps: 50
+2025-01-27 01:29:42,814	[DEBUG]	EXEC>  SUCCESS 1306335.0
+2025-01-27 01:29:42,814	[INFO]	4-9     SUCCESS               1306335.00 (36.64%) [4 edit(s)]  
+2025-01-27 01:29:42,815	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 16), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 21), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        for(int i=0;i<=m;i++) // Changed this line to use a nested loop for clarity and speed.\n            for(int j=0;j<n;j++)\n                dp[i][j] = -1; // Initialize with -1.\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 26), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        for(int i=0;i<=m;i++) // Use a single loop for initialization.\n            fill(dp[i], dp[i] + n, -1); // Initialize with -1 using fill.\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:42,815	[INFO]	Step: 49
+2025-01-27 01:29:42,815	[INFO]	Stop Steps: 50
+2025-01-27 01:29:43,325	[DEBUG]	EXEC>  SUCCESS 1359822.6875
+2025-01-27 01:29:43,325	[INFO]	4-10    SUCCESS               1359822.69 (38.14%) [3 edit(s)]  
+2025-01-27 01:29:43,325	[DEBUG]	patch(4-10)="LineLLMMutation(('source.cpp', 11), '#include "bits/stdc++.h"\n\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(cin>>n>>m&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                cin>>g[i][j];\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 23), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}') | LineLLMMutation(('source.cpp', 27), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        fill(dp[0],dp[0]+110*110,-1);\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = 0; // Initial value changed from -1 to 0 for clarity\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')"
+2025-01-27 01:29:43,325	[INFO]	Step: 50
+2025-01-27 01:29:43,325	[INFO]	Stop Steps: 50
+2025-01-27 01:29:43,325	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-27 01:29:43,325	[INFO]	Step: 50
+2025-01-27 01:29:43,325	[INFO]	Stop Steps: 50
+2025-01-27 01:29:46,208	[INFO]	~~~~ END ~~~~
+2025-01-27 01:29:46,208	[INFO]	Best patch step: 44
+2025-01-27 01:29:46,208	[INFO]	
+2025-01-27 01:29:46,208	[INFO]	==== REPORT ====
+2025-01-27 01:29:46,209	[INFO]	Termination: step budget
+2025-01-27 01:29:46,209	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0050_1737941181.log
+2025-01-27 01:29:46,209	[INFO]	Patch file: _magpie_logs/0050_1737941181.patch
+2025-01-27 01:29:46,209	[INFO]	Diff file: _magpie_logs/0050_1737941181.diff
+2025-01-27 01:29:46,209	[INFO]	Reference fitness: 3565662.31
+2025-01-27 01:29:46,209	[INFO]	Best fitness: 1291996.44
+2025-01-27 01:29:46,209	[INFO]	
+2025-01-27 01:29:46,210	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 12), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\nfloat g[110][110], dp[110][110];\n\nint main(){\n\n    int n,m;\n\n    while(scanf("%d%d",&n,&m)&&(n||m)){\n\n        for(int i=0;i<n;i++)\n\n            for(int j=0;j<n;j++)\n\n                scanf("%f",&g[i][j]);\n\n        for(int i=0;i<=m;i++) // Changed this line to use a nested loop for clarity and speed.\n            for(int j=0;j<n;j++)\n\n                dp[i][j] = -1; // Initialize with -1.\n\n        for(int i=0;i<n;i++)\n\n            dp[1][i]=1.0;\n\n\n\n        for(int i=2;i<=m;i++)\n\n            for(int j=0;j<n;j++)\n\n                for(int k=0;k<n;k++)\n\n                    dp[i][j] = max(dp[i][j],dp[i-1][k]*g[k][j]);\n\n        float ans = -1;\n\n        for(int i=0;i<n;i++)\n\n            ans = max(ans,dp[m][i]);\n\n        printf("%.2f\\n",ans);\n\n    }\n\n}')
+2025-01-27 01:29:46,211	[INFO]	
+2025-01-27 01:29:46,211	[INFO]	==== DIFF ====
+

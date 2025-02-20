@@ -1,0 +1,244 @@
+2025-01-27 00:26:16,381	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 4220625767148698
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0252
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-27 00:26:16,381	[DEBUG]	
+2025-01-27 00:26:16,381	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-27 00:26:16,382	[INFO]	~~~~ WARMUP ~~~~
+2025-01-27 00:26:17,087	[DEBUG]	EXEC>  SUCCESS 5584821.625
+2025-01-27 00:26:17,087	[INFO]	WARM    SUCCESS               5584821.62 (--) [0 edit(s)]  
+2025-01-27 00:26:17,530	[DEBUG]	EXEC>  SUCCESS 5575855.75
+2025-01-27 00:26:17,530	[INFO]	WARM    SUCCESS               5575855.75 (--) [0 edit(s)]  
+2025-01-27 00:26:17,976	[DEBUG]	EXEC>  SUCCESS 5572235.375
+2025-01-27 00:26:17,976	[INFO]	WARM    SUCCESS               5572235.38 (--) [0 edit(s)]  
+2025-01-27 00:26:18,422	[DEBUG]	EXEC>  SUCCESS 5587152.6875
+2025-01-27 00:26:18,422	[INFO]	WARM    SUCCESS               5587152.69 (--) [0 edit(s)]  
+2025-01-27 00:26:18,861	[DEBUG]	EXEC>  SUCCESS 5584041.8125
+2025-01-27 00:26:18,861	[INFO]	WARM    SUCCESS               5584041.81 (--) [0 edit(s)]  
+2025-01-27 00:26:18,861	[INFO]	REF     SUCCESS               5584041.81 (--) [0 edit(s)]  
+2025-01-27 00:26:18,862	[INFO]	
+2025-01-27 00:26:18,862	[INFO]	~~~~ START ~~~~
+2025-01-27 00:26:46,113	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:46,113	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble distSquared(double x1, double y1, double x2, double y2){\n    return (x1-x2) * (x1-x2) + (y1-y2) * (y1-y2);\n}\n\ndouble g(double x_, double y_){\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double d2 = distSquared(x_, y_, x[i], y[i]);\n        t = max(t, sqrt(d2) / v[i]);\n    }\n    return t;\n}')"
+2025-01-27 00:26:47,274	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:47,275	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble calculate(double x_, double y_, bool computeDistance){\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double d = sqrt((x_ - x[i]) * (x_ - x[i]) + (y_ - y[i]) * (y_ - y[i]));\n        if (computeDistance) t = max(t, d / v[i]);\n    }\n    return computeDistance ? t : d;\n}\n\ndouble g(double x_, double y_){\n    return calculate(x_, y_, true);\n}')"
+2025-01-27 00:26:48,477	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:48,477	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\ndouble gCache[101][101];\n\ndouble g(double x_, double y_){\n    if (gCache[(int)x_][(int)y_] != -1) return gCache[(int)x_][(int)y_];\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double d = sqrt((x_ - x[i]) * (x_ - x[i]) + (y_ - y[i]) * (y_ - y[i]));\n        t = max(t, d / v[i]);\n    }\n    return gCache[(int)x_][(int)y_] = t;\n}')"
+2025-01-27 00:26:49,688	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:49,689	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble g(double x_, double y_){\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double d = sqrt((x_ - x[i]) * (x_ - x[i]) + (y_ - y[i]) * (y_ - y[i]));\n        t = max(t, d / v[i]);\n    }\n    return t;\n}\n\ndouble f(double x, double low=0, double high=100){\n    while (high - low > 1e-9){\n        double a = (low * 2 + high) / 3;\n        double b = (low + high * 2) / 3;\n        if(g(x, a) < g(x, b)) high = b;\n        else low = a;\n    }\n    return g(x, (low + high) / 2);\n}')"
+2025-01-27 00:26:50,849	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:50,849	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\nint main(){\n    while(scanf("%d", &N) && N){\n        for(int i=0; i < N; i++){\n            scanf("%lf %lf %lf", &x[i], &y[i], &v[i]);\n        }\n        double ans = search();\n        printf("%.8f\\n", ans);\n    }\n}')"
+2025-01-27 00:26:52,149	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:52,150	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\nint main(){\n    while(cin >> N && N){\n        for(int i=0; i < N; i++){\n            cin >> x[i] >> y[i] >> v[i];\n        }\n        double ans = search();\n        cout << fixed << setprecision(8) << ans << endl;\n    }\n}')"
+2025-01-27 00:26:53,534	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:53,534	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\nvector<double> x(101), y(101), v(101);\n\ndouble g(double x_, double y_){\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double d = sqrt((x_ - x[i]) * (x_ - x[i]) + (y_ - y[i]) * (y_ - y[i]));\n        t = max(t, d / v[i]);\n    }\n    return t;\n}')"
+2025-01-27 00:26:54,736	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:54,736	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble calculateDistance(double x1, double y1, double x2, double y2){\n    return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));\n}\n\ndouble g(double x_, double y_){\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double d = calculateDistance(x_, y_, x[i], y[i]);\n        t = max(t, d / v[i]);\n    }\n    return t;\n}')"
+2025-01-27 00:26:55,937	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:55,938	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble g(double x_, double y_){\n    double t = 0;\n    for(int i=0; i < N; i++){\n        double dSquared = (x_ - x[i]) * (x_ - x[i]) + (y_ - y[i]) * (y_ - y[i]);\n        t = max(t, sqrt(dSquared) / v[i]);\n    }\n    return t;\n}')"
+2025-01-27 00:26:57,313	[INFO]	0-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:26:57,313	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n#include <thread>\n#include <vector>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble g(double x_, double y_){\n    vector<double> times(N);\n    auto compute = [&](int i) {\n        double d = sqrt((x_ - x[i]) * (x_ - x[i]) + (y_ - y[i]) * (y_ - y[i]));\n        times[i] = d / v[i];\n    };\n    vector<thread> threads;\n    for(int i = 0; i < N; ++i) {\n        threads.emplace_back(compute, i);\n    }\n    for(auto& t : threads) {\n        t.join();\n    }\n    return *max_element(times.begin(), times.end());\n}')"
+2025-01-27 00:26:58,313	[INFO]	Step: 10
+2025-01-27 00:26:58,313	[INFO]	Stop Steps: 50
+2025-01-27 00:26:59,879	[DEBUG]	EXEC>  SUCCESS 5579994.9375
+2025-01-27 00:26:59,879	[INFO]	REF     SUCCESS               5579994.94 (--) [0 edit(s)]  
+2025-01-27 00:26:59,879	[INFO]	Best patch step: None
+2025-01-27 00:28:07,540	[INFO]	Step: 10
+2025-01-27 00:28:07,541	[INFO]	Stop Steps: 50
+2025-01-27 00:28:07,713	[INFO]	1-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:28:07,713	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nchar str[200005];\nint main() {\n    scanf("%s", str);\n    int ans = 0, a = -1;\n    for (int i = 0; str[i]; i++) {\n        if (str[i] == \'Z\') {\n            if (a != -1)\n                ans = max(ans, i - a);\n        } else if (str[i] == \'A\' && a == -1) {\n            a = i;\n        }\n    }\n    printf("%d\\n", ans + 1);\n    return 0;\n}')"
+2025-01-27 00:28:07,713	[INFO]	Step: 11
+2025-01-27 00:28:07,713	[INFO]	Stop Steps: 50
+2025-01-27 00:28:07,878	[INFO]	1-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:28:07,878	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int maxn = 200005;\nchar str[maxn];\nint main() {\n    scanf("%s", str);\n    int a = -1, maxDistance = 0;\n    for (int i = 0; str[i]; i++) {\n        if (str[i] == \'A\' && a == -1) {\n            a = i;\n        } else if (str[i] == \'Z\' && a != -1) {\n            maxDistance = max(maxDistance, i - a);\n        }\n    }\n    printf("%d\\n", maxDistance + 1);\n    return 0;\n}')"
+2025-01-27 00:28:07,878	[INFO]	Step: 12
+2025-01-27 00:28:07,878	[INFO]	Stop Steps: 50
+2025-01-27 00:28:08,047	[INFO]	1-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:28:08,047	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\nconst int maxn = 1e5;\nint n, a[maxn], b[maxn];\n\nint main() {\n    scanf("%d", &n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d%d", &a[i], &b[i]);\n    }\n    ll ans = 0;\n    for (int i = n - 1; i >= 0; --i) {\n        ll cur = a[i] + ans;\n        ll tar = (cur + b[i] - 1) / b[i] * b[i];\n        ans += tar - cur;\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-27 00:28:08,047	[INFO]	Step: 13
+2025-01-27 00:28:08,047	[INFO]	Stop Steps: 50
+2025-01-27 00:28:08,213	[INFO]	1-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:28:08,213	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int maxn = 200005;\nchar str[maxn];\nint main() {\n    scanf("%s", str);\n    int a = -1, maxDistance = 0;\n    for (int i = 0; str[i]; i++) {\n        if (str[i] == \'A\' && a == -1) {\n            a = i;\n        } else if (str[i] == \'Z\' && a != -1) {\n            maxDistance = max(maxDistance, i - a);\n        }\n    }\n    printf("%d\\n", maxDistance + 1);\n    return 0;\n}')"
+2025-01-27 00:28:08,213	[INFO]	Step: 14
+2025-01-27 00:28:08,213	[INFO]	Stop Steps: 50
+2025-01-27 00:28:08,416	[INFO]	1-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:28:08,417	[DEBUG]	patch(1-5)="LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble dist_squared(double x1, double y1, double x2, double y2) {\n    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);\n}\n\ndouble g(double x_, double y_) {\n    double t = 0;\n    for (int i = 0; i < N; i++) {\n        double d_squared = dist_squared(x_, y_, x[i], y[i]);\n        t = max(t, sqrt(d_squared) / v[i]);\n    }\n    return t;\n}')"
+2025-01-27 00:28:08,417	[INFO]	Step: 15
+2025-01-27 00:28:08,417	[INFO]	Stop Steps: 50
+2025-01-27 00:28:08,586	[INFO]	1-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:28:08,586	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble dist_squared(double x1, double y1, double x2, double y2) {\n    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);\n}\n\ndouble g(double x_, double y_) {\n    double t = 0;\n    for (int i = 0; i < N; i++) {\n        double d_squared = dist_squared(x_, y_, x[i], y[i]);\n        t = max(t, sqrt(d_squared) / v[i]);\n    }\n    return t;\n}\n\nint main() {\n    while (scanf("%d", &N) && N != 0) {\n        for (int i = 0; i < N; i++) {\n            scanf("%lf %lf %lf", &x[i], &y[i], &v[i]);\n        }\n        double ans = search();\n        printf("%.8f\\n", ans);\n    }\n}')"
+2025-01-27 00:28:08,586	[INFO]	Step: 16
+2025-01-27 00:28:08,586	[INFO]	Stop Steps: 50
+2025-01-27 00:28:08,746	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:28:08,746	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\ndouble g(double x_, double y_) {\n    double t = 0;\n    double dist[101];\n    for (int i = 0; i < N; i++) {\n        dist[i] = dist_squared(x_, y_, x[i], y[i]);\n        t = max(t, sqrt(dist[i]) / v[i]);\n    }\n    return t;\n}')"
+2025-01-27 00:28:08,746	[INFO]	Step: 17
+2025-01-27 00:28:08,746	[INFO]	Stop Steps: 50
+2025-01-27 00:28:08,949	[INFO]	1-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:28:08,949	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nstruct Point {\n    double x, y, v;\n};\n\nint N;\nPoint points[101];\n\ndouble dist_squared(double x1, double y1, double x2, double y2) {\n    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);\n}\n\ndouble g(double x_, double y_) {\n    double t = 0;\n    for (int i = 0; i < N; i++) {\n        double d_squared = dist_squared(x_, y_, points[i].x, points[i].y);\n        t = max(t, sqrt(d_squared) / points[i].v);\n    }\n    return t;\n}')"
+2025-01-27 00:28:08,949	[INFO]	Step: 18
+2025-01-27 00:28:08,949	[INFO]	Stop Steps: 50
+2025-01-27 00:28:09,108	[INFO]	1-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:28:09,108	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint N;\nPoint points[101];\n\ndouble f(double x, double low=0, double high=100) {\n    while (high - low > 1e-9) {\n        double a = (low * 2 + high) / 3;\n        double b = (low + high * 2) / 3;\n        if (g(x, a) < g(x, b)) {\n            high = b;\n        } else {\n            low = a;\n        }\n    }\n    return g(x, (low + high) / 2);\n}')"
+2025-01-27 00:28:09,108	[INFO]	Step: 19
+2025-01-27 00:28:09,108	[INFO]	Stop Steps: 50
+2025-01-27 00:28:09,270	[INFO]	1-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:28:09,270	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nint N;\nPoint points[101];\n\ndouble search(double low=0, double high=100) {\n    while (high - low > 1e-9) {\n        double mid = (low + high) / 2;\n        if (f(low) < f(high)) {\n            high = mid;\n        } else {\n            low = mid;\n        }\n    }\n    return f((low + high) / 2);\n}')"
+2025-01-27 00:28:09,270	[INFO]	Step: 20
+2025-01-27 00:28:09,270	[INFO]	Stop Steps: 50
+2025-01-27 00:28:10,839	[DEBUG]	EXEC>  SUCCESS 5603353.0625
+2025-01-27 00:28:10,839	[INFO]	REF     SUCCESS               5603353.06 (--) [0 edit(s)]  
+2025-01-27 00:28:10,839	[INFO]	Best patch step: None
+2025-01-27 00:29:02,900	[INFO]	Step: 20
+2025-01-27 00:29:02,900	[INFO]	Stop Steps: 50
+2025-01-27 00:29:03,312	[INFO]	2-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:29:03,312	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    vector<int> arr(n);\n    for (int i = 0; i < n; ++i) {\n        cin >> arr[i];\n    }\n    sort(arr.begin(), arr.end()); // Optimized processing from Parent 2\n    return 0;\n}')"
+2025-01-27 00:29:03,312	[INFO]	Step: 21
+2025-01-27 00:29:03,312	[INFO]	Stop Steps: 50
+2025-01-27 00:29:03,780	[INFO]	2-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:29:03,780	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    vector<int> arr(n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d", &arr[i]);\n    }\n    // Some optimized processing logic here\n    return 0;\n}')"
+2025-01-27 00:29:03,781	[INFO]	Step: 22
+2025-01-27 00:29:03,781	[INFO]	Stop Steps: 50
+2025-01-27 00:29:04,135	[INFO]	2-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:29:04,135	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    vector<int> arr(n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d", &arr[i]);\n    }\n    // Implement optimized logic here\n    return 0;\n}')"
+2025-01-27 00:29:04,135	[INFO]	Step: 23
+2025-01-27 00:29:04,135	[INFO]	Stop Steps: 50
+2025-01-27 00:29:04,427	[INFO]	2-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:29:04,427	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    vector<int> arr(n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d", &arr[i]);\n    }\n    // Example of optimized processing logic\n    sort(arr.begin(), arr.end());\n    return 0;\n}')"
+2025-01-27 00:29:04,427	[INFO]	Step: 24
+2025-01-27 00:29:04,427	[INFO]	Stop Steps: 50
+2025-01-27 00:29:04,536	[INFO]	2-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:29:04,537	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\n// 2点間の距離の二乗\ndouble dist_squared(double x1, double y1, double x2, double y2) {\n    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);\n}\n\n// (x_,y_) => (x[i],y[i]) (0 <= i < N)の移動時間で最大のものを返す.\ndouble g(double x_, double y_) {\n    double t = 0;\n    for(int i = 0; i < N; i++) {\n        double d_squared = dist_squared(x_, y_, x[i], y[i]);\n        t = max(t, sqrt(d_squared) / v[i]);\n    }\n    return t;\n}\n\ndouble f(double x, double low = 0, double high = 100) {\n    // ...\n}\n\ndouble search(double low = 0, double high = 100) {\n    // ...\n}\n\nint main() {\n    // ...\n}')"
+2025-01-27 00:29:04,537	[INFO]	Step: 25
+2025-01-27 00:29:04,537	[INFO]	Stop Steps: 50
+2025-01-27 00:29:04,648	[INFO]	2-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:29:04,648	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint N;\ndouble x[101], y[101], v[101];\n\n// 2点間の距離\ndouble dist(double x1, double y1, double x2, double y2) {\n    return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));\n}\n\ndouble g(double x_, double y_) {\n    // ...\n}\n\ndouble f(double x, double low = 0, double high = 100) {\n    for (int i = 0; i < 50; i++) { // Reduced iterations\n        double a = (low * 2 + high) / 3;\n        double b = (low + high * 2) / 3;\n        if (g(x, a) < g(x, b)) {\n            high = b;\n        } else {\n            low = a;\n        }\n    }\n    return g(x, (low + high) / 2);\n}\n\ndouble search(double low = 0, double high = 100) {\n    // ...\n}\n\nint main() {\n    // ...\n}')"
+2025-01-27 00:29:04,648	[INFO]	Step: 26
+2025-01-27 00:29:04,648	[INFO]	Stop Steps: 50
+2025-01-27 00:29:28,394	[INFO]	~~~~ END ~~~~
+2025-01-27 00:29:28,394	[INFO]	Best patch step: None
+2025-01-27 00:29:28,395	[INFO]	
+2025-01-27 00:29:28,395	[INFO]	==== REPORT ====
+2025-01-27 00:29:28,395	[INFO]	Termination: keyboard interrupt
+2025-01-27 00:29:28,395	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0252_1737937576.log

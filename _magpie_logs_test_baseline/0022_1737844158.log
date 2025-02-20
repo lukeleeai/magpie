@@ -1,0 +1,424 @@
+2025-01-25 22:29:18,285	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 1049027481444580
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0022
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-25 22:29:18,285	[DEBUG]	
+2025-01-25 22:29:18,286	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-25 22:29:18,286	[INFO]	~~~~ WARMUP ~~~~
+2025-01-25 22:29:19,185	[DEBUG]	EXEC>  SUCCESS 4058525.5
+2025-01-25 22:29:19,186	[INFO]	WARM    SUCCESS               4058525.50 (--) [0 edit(s)]  
+2025-01-25 22:29:19,755	[DEBUG]	EXEC>  SUCCESS 4082282.625
+2025-01-25 22:29:19,755	[INFO]	WARM    SUCCESS               4082282.62 (--) [0 edit(s)]  
+2025-01-25 22:29:20,329	[DEBUG]	EXEC>  SUCCESS 4085869.3125
+2025-01-25 22:29:20,330	[INFO]	WARM    SUCCESS               4085869.31 (--) [0 edit(s)]  
+2025-01-25 22:29:20,898	[DEBUG]	EXEC>  SUCCESS 4082236.4375
+2025-01-25 22:29:20,899	[INFO]	WARM    SUCCESS               4082236.44 (--) [0 edit(s)]  
+2025-01-25 22:29:21,473	[DEBUG]	EXEC>  SUCCESS 4090417.0
+2025-01-25 22:29:21,473	[INFO]	WARM    SUCCESS               4090417.00 (--) [0 edit(s)]  
+2025-01-25 22:29:21,473	[INFO]	REF     SUCCESS               4090417.00 (--) [0 edit(s)]  
+2025-01-25 22:29:21,473	[INFO]	
+2025-01-25 22:29:21,473	[INFO]	~~~~ START ~~~~
+2025-01-25 22:29:39,022	[DEBUG]	EXEC>  SUCCESS 952435.3125
+2025-01-25 22:29:39,023	[INFO]	0-1     SUCCESS              *952435.31 (23.28%) [1 edit(s)]  
+2025-01-25 22:29:39,023	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+
+2025-01-25 22:29:40,359	[DEBUG]	EXEC>  SUCCESS 942994.625
+2025-01-25 22:29:40,359	[INFO]	0-2     SUCCESS              *942994.62 (23.05%) [1 edit(s)]  
+2025-01-25 22:29:40,360	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+
+2025-01-25 22:29:41,698	[DEBUG]	EXEC>  SUCCESS 958578.0
+2025-01-25 22:29:41,699	[INFO]	0-3     SUCCESS               958578.00 (23.43%) [1 edit(s)]  
+2025-01-25 22:29:41,699	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:43,040	[DEBUG]	EXEC>  SUCCESS 965849.9375
+2025-01-25 22:29:43,040	[INFO]	0-4     SUCCESS               965849.94 (23.61%) [1 edit(s)]  
+2025-01-25 22:29:43,040	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:44,382	[DEBUG]	EXEC>  SUCCESS 970236.8125
+2025-01-25 22:29:44,382	[INFO]	0-5     SUCCESS               970236.81 (23.72%) [1 edit(s)]  
+2025-01-25 22:29:44,383	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d%d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:45,725	[DEBUG]	EXEC>  SUCCESS 950357.625
+2025-01-25 22:29:45,725	[INFO]	0-6     SUCCESS               950357.62 (23.23%) [1 edit(s)]  
+2025-01-25 22:29:45,725	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:47,065	[DEBUG]	EXEC>  SUCCESS 960333.0625
+2025-01-25 22:29:47,065	[INFO]	0-7     SUCCESS               960333.06 (23.48%) [1 edit(s)]  
+2025-01-25 22:29:47,066	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:48,403	[DEBUG]	EXEC>  SUCCESS 953976.9375
+2025-01-25 22:29:48,403	[INFO]	0-8     SUCCESS               953976.94 (23.32%) [1 edit(s)]  
+2025-01-25 22:29:48,403	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#define THRESHOLD 10\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= THRESHOLD)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:49,750	[DEBUG]	EXEC>  SUCCESS 956770.1875
+2025-01-25 22:29:49,750	[INFO]	0-9     SUCCESS               956770.19 (23.39%) [1 edit(s)]  
+2025-01-25 22:29:49,750	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    int sum = a + b;\n    if (sum >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", sum);\n    return 0;\n}')"
+2025-01-25 22:29:51,093	[DEBUG]	EXEC>  SUCCESS 962779.75
+2025-01-25 22:29:51,093	[INFO]	0-10    SUCCESS               962779.75 (23.54%) [1 edit(s)]  
+2025-01-25 22:29:51,093	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:29:52,093	[INFO]	Step: 10
+2025-01-25 22:29:52,094	[INFO]	Stop Steps: 50
+2025-01-25 22:29:53,687	[DEBUG]	EXEC>  SUCCESS 4122659.5625
+2025-01-25 22:29:53,687	[INFO]	REF     SUCCESS               4122659.56 (--) [0 edit(s)]  
+2025-01-25 22:29:53,687	[INFO]	Best patch: 1
+2025-01-25 22:29:54,030	[DEBUG]	EXEC>  SUCCESS 961447.125
+2025-01-25 22:29:54,030	[INFO]	BEST    SUCCESS              *961447.12 (23.32%) [0 edit(s)]  
+2025-01-25 22:29:54,030	[INFO]	Best patch step: 1
+2025-01-25 22:30:16,031	[INFO]	Step: 10
+2025-01-25 22:30:16,031	[INFO]	Stop Steps: 50
+2025-01-25 22:30:16,569	[DEBUG]	EXEC>  SUCCESS 942038.8125
+2025-01-25 22:30:16,570	[INFO]	1-1     SUCCESS              *942038.81 (22.85%) [1 edit(s)]  
+2025-01-25 22:30:16,570	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+
+2025-01-25 22:30:16,570	[INFO]	Step: 11
+2025-01-25 22:30:16,570	[INFO]	Stop Steps: 50
+2025-01-25 22:30:16,911	[DEBUG]	EXEC>  SUCCESS 937247.1875
+2025-01-25 22:30:16,912	[INFO]	1-2     SUCCESS              *937247.19 (22.73%) [1 edit(s)]  
+2025-01-25 22:30:16,912	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}')"
+
+2025-01-25 22:30:16,912	[INFO]	Step: 12
+2025-01-25 22:30:16,912	[INFO]	Stop Steps: 50
+2025-01-25 22:30:17,253	[DEBUG]	EXEC>  SUCCESS 946622.3125
+2025-01-25 22:30:17,253	[INFO]	1-3     SUCCESS               946622.31 (22.96%) [1 edit(s)]  
+2025-01-25 22:30:17,253	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Use a ternary operator for compactness, keeping the threshold check from Parent 1\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:17,254	[INFO]	Step: 13
+2025-01-25 22:30:17,254	[INFO]	Stop Steps: 50
+2025-01-25 22:30:17,607	[DEBUG]	EXEC>  SUCCESS 961685.375
+2025-01-25 22:30:17,607	[INFO]	1-4     SUCCESS               961685.38 (23.33%) [1 edit(s)]  
+2025-01-25 22:30:17,607	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#define THRESHOLD 10\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Retain the structure of Parent 3 while incorporating the threshold from Parent 4\n    if (a + b >= THRESHOLD)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:17,607	[INFO]	Step: 14
+2025-01-25 22:30:17,608	[INFO]	Stop Steps: 50
+2025-01-25 22:30:17,948	[DEBUG]	EXEC>  SUCCESS 961316.3125
+2025-01-25 22:30:17,948	[INFO]	1-5     SUCCESS               961316.31 (23.32%) [1 edit(s)]  
+2025-01-25 22:30:17,948	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Combine the error handling of Parent 1 with the compact input handling of Parent 2\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:17,948	[INFO]	Step: 15
+2025-01-25 22:30:17,948	[INFO]	Stop Steps: 50
+2025-01-25 22:30:18,288	[DEBUG]	EXEC>  SUCCESS 951629.0
+2025-01-25 22:30:18,288	[INFO]	1-6     SUCCESS               951629.00 (23.08%) [1 edit(s)]  
+2025-01-25 22:30:18,288	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#define THRESHOLD 10\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Utilize the threshold and a ternary operator for concise output\n    printf((a + b >= THRESHOLD) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:18,288	[INFO]	Step: 16
+2025-01-25 22:30:18,288	[INFO]	Stop Steps: 50
+2025-01-25 22:30:18,645	[DEBUG]	EXEC>  SUCCESS 943063.8125
+2025-01-25 22:30:18,645	[INFO]	1-7     SUCCESS               943063.81 (22.88%) [2 edit(s)]  
+2025-01-25 22:30:18,645	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:18,645	[INFO]	Step: 17
+2025-01-25 22:30:18,645	[INFO]	Stop Steps: 50
+2025-01-25 22:30:19,021	[DEBUG]	EXEC>  SUCCESS 989048.125
+2025-01-25 22:30:19,021	[INFO]	1-8     SUCCESS               989048.12 (23.99%) [2 edit(s)]  
+2025-01-25 22:30:19,021	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) {\n        puts("error");\n    } else {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}')"
+2025-01-25 22:30:19,021	[INFO]	Step: 18
+2025-01-25 22:30:19,021	[INFO]	Stop Steps: 50
+2025-01-25 22:30:19,611	[DEBUG]	EXEC>  SUCCESS 2624604.8125
+2025-01-25 22:30:19,611	[INFO]	1-9     SUCCESS               2624604.81 (63.66%) [2 edit(s)]  
+2025-01-25 22:30:19,611	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    if (a + b >= 10)\n        cout << "error" << endl;\n    else\n        cout << a + b << endl;\n    return 0;\n}')"
+2025-01-25 22:30:19,611	[INFO]	Step: 19
+2025-01-25 22:30:19,611	[INFO]	Stop Steps: 50
+2025-01-25 22:30:20,174	[DEBUG]	EXEC>  SUCCESS 2451848.0
+2025-01-25 22:30:20,174	[INFO]	1-10    SUCCESS               2451848.00 (59.47%) [2 edit(s)]  
+2025-01-25 22:30:20,175	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#define THRESHOLD 10\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= THRESHOLD)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#define THRESHOLD 10\nusing namespace std;\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    if (a + b >= THRESHOLD)\n        cout << "error" << endl;\n    else\n        cout << a + b << endl;\n    return 0;\n}')"
+2025-01-25 22:30:20,175	[INFO]	Step: 20
+2025-01-25 22:30:20,175	[INFO]	Stop Steps: 50
+2025-01-25 22:30:21,773	[DEBUG]	EXEC>  SUCCESS 4084575.25
+2025-01-25 22:30:21,773	[INFO]	REF     SUCCESS               4084575.25 (--) [0 edit(s)]  
+2025-01-25 22:30:21,773	[INFO]	Best patch: 5
+2025-01-25 22:30:22,113	[DEBUG]	EXEC>  SUCCESS 947903.0625
+2025-01-25 22:30:22,113	[INFO]	BEST    SUCCESS              *947903.06 (23.21%) [0 edit(s)]  
+2025-01-25 22:30:22,113	[INFO]	Best patch step: 11
+2025-01-25 22:30:43,605	[INFO]	Step: 20
+2025-01-25 22:30:43,605	[INFO]	Stop Steps: 50
+2025-01-25 22:30:44,057	[DEBUG]	EXEC>  SUCCESS 951917.6875
+2025-01-25 22:30:44,058	[INFO]	2-1     SUCCESS              +951917.69 (23.31%) [1 edit(s)]  
+2025-01-25 22:30:44,058	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:44,058	[INFO]	Step: 21
+2025-01-25 22:30:44,058	[INFO]	Stop Steps: 50
+2025-01-25 22:30:44,388	[DEBUG]	EXEC>  SUCCESS 947545.375
+2025-01-25 22:30:44,388	[INFO]	2-2     SUCCESS              *947545.38 (23.20%) [1 edit(s)]  
+2025-01-25 22:30:44,388	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+
+2025-01-25 22:30:44,388	[INFO]	Step: 22
+2025-01-25 22:30:44,388	[INFO]	Stop Steps: 50
+2025-01-25 22:30:44,719	[DEBUG]	EXEC>  SUCCESS 963238.125
+2025-01-25 22:30:44,720	[INFO]	2-3     SUCCESS               963238.12 (23.58%) [1 edit(s)]  
+2025-01-25 22:30:44,720	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:44,720	[INFO]	Step: 23
+2025-01-25 22:30:44,720	[INFO]	Stop Steps: 50
+2025-01-25 22:30:45,063	[DEBUG]	EXEC>  SUCCESS 977123.0
+2025-01-25 22:30:45,063	[INFO]	2-4     SUCCESS               977123.00 (23.92%) [1 edit(s)]  
+2025-01-25 22:30:45,063	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:45,063	[INFO]	Step: 24
+2025-01-25 22:30:45,063	[INFO]	Stop Steps: 50
+2025-01-25 22:30:45,395	[DEBUG]	EXEC>  SUCCESS 947064.75
+2025-01-25 22:30:45,395	[INFO]	2-5     SUCCESS              *947064.75 (23.19%) [1 edit(s)]  
+2025-01-25 22:30:45,395	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) \n        printf("error\\n");\n    else \n        printf("%d\\n", a + b);\n    return 0;\n}')"
+
+2025-01-25 22:30:45,395	[INFO]	Step: 25
+2025-01-25 22:30:45,395	[INFO]	Stop Steps: 50
+2025-01-25 22:30:45,735	[DEBUG]	EXEC>  SUCCESS 988956.6875
+2025-01-25 22:30:45,735	[INFO]	2-6     SUCCESS               988956.69 (24.21%) [1 edit(s)]  
+2025-01-25 22:30:45,735	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:45,735	[INFO]	Step: 26
+2025-01-25 22:30:45,735	[INFO]	Stop Steps: 50
+2025-01-25 22:30:46,078	[DEBUG]	EXEC>  SUCCESS 962282.75
+2025-01-25 22:30:46,078	[INFO]	2-7     SUCCESS               962282.75 (23.56%) [2 edit(s)]  
+2025-01-25 22:30:46,078	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}')"
+2025-01-25 22:30:46,078	[INFO]	Step: 27
+2025-01-25 22:30:46,078	[INFO]	Stop Steps: 50
+2025-01-25 22:30:46,411	[DEBUG]	EXEC>  SUCCESS 947578.8125
+2025-01-25 22:30:46,411	[INFO]	2-8     SUCCESS               947578.81 (23.20%) [2 edit(s)]  
+2025-01-25 22:30:46,411	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", (a + b >= 10) ? 0 : a + b);\n    return 0;\n}')"
+2025-01-25 22:30:46,411	[INFO]	Step: 28
+2025-01-25 22:30:46,411	[INFO]	Stop Steps: 50
+2025-01-25 22:30:47,663	[DEBUG]	EXEC>  SUCCESS 2516092.8125
+2025-01-25 22:30:47,663	[INFO]	2-9     SUCCESS               2516092.81 (61.60%) [3 edit(s)]  
+2025-01-25 22:30:47,663	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false); // Disable synchronization with C I/O\n    cin.tie(nullptr); // Untie cin from cout for faster I/O\n    int a, b;\n    cin >> a >> b; // Use cin instead of scanf\n    if (a + b >= 10)\n        cout << "error\\n"; // Use cout instead of printf\n    else\n        cout << a + b << \'\\n\'; // Use cout instead of printf\n    return 0;\n}')"
+2025-01-25 22:30:47,663	[INFO]	Step: 29
+2025-01-25 22:30:47,663	[INFO]	Stop Steps: 50
+2025-01-25 22:30:47,814	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-25 22:30:47,814	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Use a ternary operator for compactness, keeping the threshold check from Parent 1\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Directly print the result and handle the error case without conditional formatting\n    printf("%s%d\\n", (a + b >= 10) ? "error\\n" : "", a + b);\n    return 0;\n}')"
+2025-01-25 22:30:47,814	[INFO]	Step: 30
+2025-01-25 22:30:47,814	[INFO]	Stop Steps: 50
+2025-01-25 22:30:49,416	[DEBUG]	EXEC>  SUCCESS 4079904.375
+2025-01-25 22:30:49,416	[INFO]	REF     SUCCESS               4079904.38 (--) [0 edit(s)]  
+2025-01-25 22:30:49,416	[INFO]	Best patch: 6
+2025-01-25 22:30:49,754	[DEBUG]	EXEC>  SUCCESS 945393.9375
+2025-01-25 22:30:49,754	[INFO]	BEST    SUCCESS              *945393.94 (23.17%) [0 edit(s)]  
+2025-01-25 22:30:49,754	[INFO]	Best patch step: 24
+2025-01-25 22:31:05,527	[INFO]	Step: 30
+2025-01-25 22:31:05,527	[INFO]	Stop Steps: 50
+2025-01-25 22:31:05,994	[DEBUG]	EXEC>  SUCCESS 955442.9375
+2025-01-25 22:31:05,995	[INFO]	3-1     SUCCESS              +955442.94 (23.42%) [1 edit(s)]  
+2025-01-25 22:31:05,995	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) \n        printf("error\\n");\n    else \n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:05,995	[INFO]	Step: 31
+2025-01-25 22:31:05,995	[INFO]	Stop Steps: 50
+2025-01-25 22:31:06,333	[DEBUG]	EXEC>  SUCCESS 953983.9375
+2025-01-25 22:31:06,333	[INFO]	3-2     SUCCESS              +953983.94 (23.38%) [1 edit(s)]  
+2025-01-25 22:31:06,333	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:06,333	[INFO]	Step: 32
+2025-01-25 22:31:06,333	[INFO]	Stop Steps: 50
+2025-01-25 22:31:06,675	[DEBUG]	EXEC>  SUCCESS 980983.0
+2025-01-25 22:31:06,675	[INFO]	3-3     SUCCESS               980983.00 (24.04%) [1 edit(s)]  
+2025-01-25 22:31:06,675	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", (a + b >= 10) ? 0 : a + b);\n    return 0;\n}')"
+2025-01-25 22:31:06,675	[INFO]	Step: 33
+2025-01-25 22:31:06,675	[INFO]	Stop Steps: 50
+2025-01-25 22:31:07,018	[DEBUG]	EXEC>  SUCCESS 973897.5625
+2025-01-25 22:31:07,018	[INFO]	3-4     SUCCESS               973897.56 (23.87%) [1 edit(s)]  
+2025-01-25 22:31:07,018	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:07,019	[INFO]	Step: 34
+2025-01-25 22:31:07,019	[INFO]	Stop Steps: 50
+2025-01-25 22:31:07,352	[DEBUG]	EXEC>  SUCCESS 960050.6875
+2025-01-25 22:31:07,352	[INFO]	3-5     SUCCESS               960050.69 (23.53%) [1 edit(s)]  
+2025-01-25 22:31:07,352	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:07,353	[INFO]	Step: 35
+2025-01-25 22:31:07,353	[INFO]	Stop Steps: 50
+2025-01-25 22:31:07,689	[DEBUG]	EXEC>  SUCCESS 967086.125
+2025-01-25 22:31:07,690	[INFO]	3-6     SUCCESS               967086.12 (23.70%) [1 edit(s)]  
+2025-01-25 22:31:07,690	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) \n        printf("error\\n");\n    else \n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:07,690	[INFO]	Step: 36
+2025-01-25 22:31:07,690	[INFO]	Stop Steps: 50
+2025-01-25 22:31:07,840	[INFO]	3-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-25 22:31:07,840	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) \n        printf("error\\n");\n    else \n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    // Using faster input method\n    scanf("%d%d", &a, &b);\n    // Using a conditional operator to streamline the output process\n    printf("%s%d\\n", (a + b >= 10) ? "error\\n" : "", (a + b < 10) ? a + b : 0);\n    return 0;\n}')"
+2025-01-25 22:31:07,840	[INFO]	Step: 37
+2025-01-25 22:31:07,840	[INFO]	Stop Steps: 50
+2025-01-25 22:31:07,914	[INFO]	3-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 22:31:07,914	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    // Combine the conditional check and output in one statement\n    printf("%s\\n", (a + b >= 10) ? "error" : to_string(a + b).c_str());\n    return 0;\n}')"
+2025-01-25 22:31:07,915	[INFO]	Step: 38
+2025-01-25 22:31:07,915	[INFO]	Stop Steps: 50
+2025-01-25 22:31:08,257	[DEBUG]	EXEC>  SUCCESS 946651.9375
+2025-01-25 22:31:08,257	[INFO]	3-9     SUCCESS              +946651.94 (23.20%) [3 edit(s)]  
+2025-01-25 22:31:08,257	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", (a + b >= 10) ? 0 : a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    int sum = a + b;\n    if (sum >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", sum);\n    }\n    return 0;\n}')"
+2025-01-25 22:31:08,257	[INFO]	Step: 39
+2025-01-25 22:31:08,257	[INFO]	Stop Steps: 50
+2025-01-25 22:31:08,591	[DEBUG]	EXEC>  SUCCESS 964949.8125
+2025-01-25 22:31:08,592	[INFO]	3-10    SUCCESS               964949.81 (23.65%) [2 edit(s)]  
+2025-01-25 22:31:08,592	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}')"
+2025-01-25 22:31:08,592	[INFO]	Step: 40
+2025-01-25 22:31:08,592	[INFO]	Stop Steps: 50
+2025-01-25 22:31:10,306	[DEBUG]	EXEC>  SUCCESS 4089374.4375
+2025-01-25 22:31:10,306	[INFO]	REF     SUCCESS               4089374.44 (--) [0 edit(s)]  
+2025-01-25 22:31:10,306	[INFO]	Best patch: 6
+2025-01-25 22:31:10,645	[DEBUG]	EXEC>  SUCCESS 994472.9375
+2025-01-25 22:31:10,646	[INFO]	BEST    SUCCESS              *994472.94 (24.32%) [0 edit(s)]  
+2025-01-25 22:31:10,646	[INFO]	Best patch step: 24
+2025-01-25 22:31:31,081	[INFO]	Step: 40
+2025-01-25 22:31:31,082	[INFO]	Stop Steps: 50
+2025-01-25 22:31:31,544	[DEBUG]	EXEC>  SUCCESS 941105.9375
+2025-01-25 22:31:31,544	[INFO]	4-1     SUCCESS              *941105.94 (23.01%) [3 edit(s)]  
+2025-01-25 22:31:31,544	[DEBUG]	patch(4-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", (a + b >= 10) ? 0 : a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    int sum = a + b;\n    if (sum >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", sum);\n    }\n    return 0;\n}')"
+
+2025-01-25 22:31:31,544	[INFO]	Step: 41
+2025-01-25 22:31:31,544	[INFO]	Stop Steps: 50
+2025-01-25 22:31:31,878	[DEBUG]	EXEC>  SUCCESS 982504.4375
+2025-01-25 22:31:31,878	[INFO]	4-2     SUCCESS               982504.44 (24.03%) [1 edit(s)]  
+2025-01-25 22:31:31,879	[DEBUG]	patch(4-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:31,879	[INFO]	Step: 42
+2025-01-25 22:31:31,879	[INFO]	Stop Steps: 50
+2025-01-25 22:31:32,209	[DEBUG]	EXEC>  SUCCESS 948317.875
+2025-01-25 22:31:32,210	[INFO]	4-3     SUCCESS               948317.88 (23.19%) [1 edit(s)]  
+2025-01-25 22:31:32,210	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", a + b);\n    }\n    return 0;\n}')"
+2025-01-25 22:31:32,210	[INFO]	Step: 43
+2025-01-25 22:31:32,210	[INFO]	Stop Steps: 50
+2025-01-25 22:31:32,545	[DEBUG]	EXEC>  SUCCESS 952416.8125
+2025-01-25 22:31:32,545	[INFO]	4-4     SUCCESS               952416.81 (23.29%) [1 edit(s)]  
+2025-01-25 22:31:32,545	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:32,545	[INFO]	Step: 44
+2025-01-25 22:31:32,545	[INFO]	Stop Steps: 50
+2025-01-25 22:31:32,881	[DEBUG]	EXEC>  SUCCESS 960466.0
+2025-01-25 22:31:32,882	[INFO]	4-5     SUCCESS               960466.00 (23.49%) [1 edit(s)]  
+2025-01-25 22:31:32,882	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) \n        printf("error\\n");\n    else \n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:32,882	[INFO]	Step: 45
+2025-01-25 22:31:32,882	[INFO]	Stop Steps: 50
+2025-01-25 22:31:33,217	[DEBUG]	EXEC>  SUCCESS 951931.6875
+2025-01-25 22:31:33,217	[INFO]	4-6     SUCCESS               951931.69 (23.28%) [1 edit(s)]  
+2025-01-25 22:31:33,217	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:33,217	[INFO]	Step: 46
+2025-01-25 22:31:33,217	[INFO]	Stop Steps: 50
+2025-01-25 22:31:33,768	[DEBUG]	EXEC>  SUCCESS 2488825.375
+2025-01-25 22:31:33,769	[INFO]	4-7     SUCCESS               2488825.38 (60.86%) [4 edit(s)]  
+2025-01-25 22:31:33,769	[DEBUG]	patch(4-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", (a + b >= 10) ? 0 : a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    int sum = a + b;\n    if (sum >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", sum);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    int sum = a + b;\n    if (sum >= 10) {\n        cout << "error" << endl;\n    } else {\n        cout << sum << endl;\n    }\n    return 0;\n}')"
+2025-01-25 22:31:33,769	[INFO]	Step: 47
+2025-01-25 22:31:33,769	[INFO]	Stop Steps: 50
+2025-01-25 22:31:34,102	[DEBUG]	EXEC>  SUCCESS 949889.25
+2025-01-25 22:31:34,103	[INFO]	4-8     SUCCESS               949889.25 (23.23%) [2 edit(s)]  
+2025-01-25 22:31:34,103	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        puts("error");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:34,103	[INFO]	Step: 48
+2025-01-25 22:31:34,103	[INFO]	Stop Steps: 50
+2025-01-25 22:31:34,176	[INFO]	4-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 22:31:34,176	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10) \n        printf("error\\n");\n    else \n        printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf("%s\\n", (a + b >= 10) ? "error" : to_string(a + b).c_str());\n    return 0;\n}')"
+2025-01-25 22:31:34,176	[INFO]	Step: 49
+2025-01-25 22:31:34,176	[INFO]	Stop Steps: 50
+2025-01-25 22:31:34,327	[INFO]	4-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-25 22:31:34,328	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    (a + b >= 10) ? printf("error\\n") : printf("%d\\n", a + b);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf("%s%d\\n", (a + b >= 10) ? "error\\n" : "", a + b);\n    return 0;\n}')"
+2025-01-25 22:31:34,328	[INFO]	Step: 50
+2025-01-25 22:31:34,328	[INFO]	Stop Steps: 50
+2025-01-25 22:31:34,328	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-25 22:31:34,635	[INFO]	~~~~ END ~~~~
+2025-01-25 22:31:34,635	[INFO]	Best patch step: 40
+2025-01-25 22:31:34,635	[INFO]	
+2025-01-25 22:31:34,635	[INFO]	==== REPORT ====
+2025-01-25 22:31:34,636	[INFO]	Termination: step budget
+2025-01-25 22:31:34,636	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0022_1737844158.log
+2025-01-25 22:31:34,636	[INFO]	Patch file: _magpie_logs/0022_1737844158.patch
+2025-01-25 22:31:34,636	[INFO]	Diff file: _magpie_logs/0022_1737844158.diff
+2025-01-25 22:31:34,636	[INFO]	Reference fitness: 4089374.44
+2025-01-25 22:31:34,636	[INFO]	Best fitness: 941105.94
+2025-01-25 22:31:34,636	[INFO]	
+2025-01-25 22:31:34,636	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    if (a + b >= 10)\n        printf("error\\n");\n    else\n        printf("%d\\n", a + b);\n    return 0;\n}') + LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf((a + b >= 10) ? "error\\n" : "%d\\n", (a + b >= 10) ? 0 : a + b);\n    return 0;\n}') + LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    int sum = a + b;\n    if (sum >= 10) {\n        printf("error\\n");\n    } else {\n        printf("%d\\n", sum);\n    }\n    return 0;\n}')
+2025-01-25 22:31:34,637	[INFO]	
+2025-01-25 22:31:34,637	[INFO]	==== DIFF ====
+

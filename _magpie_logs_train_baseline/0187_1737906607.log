@@ -1,0 +1,418 @@
+2025-01-26 15:50:07,232	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6470704152856573
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0187
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 15:50:07,232	[DEBUG]	
+2025-01-26 15:50:07,232	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 15:50:07,232	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 15:50:08,281	[DEBUG]	EXEC>  SUCCESS 2468494.4375
+2025-01-26 15:50:08,281	[INFO]	WARM    SUCCESS               2468494.44 (--) [0 edit(s)]  
+2025-01-26 15:50:08,879	[DEBUG]	EXEC>  SUCCESS 2388601.3125
+2025-01-26 15:50:08,879	[INFO]	WARM    SUCCESS               2388601.31 (--) [0 edit(s)]  
+2025-01-26 15:50:09,474	[DEBUG]	EXEC>  SUCCESS 2443929.5
+2025-01-26 15:50:09,475	[INFO]	WARM    SUCCESS               2443929.50 (--) [0 edit(s)]  
+2025-01-26 15:50:10,062	[DEBUG]	EXEC>  SUCCESS 2389699.0
+2025-01-26 15:50:10,062	[INFO]	WARM    SUCCESS               2389699.00 (--) [0 edit(s)]  
+2025-01-26 15:50:10,652	[DEBUG]	EXEC>  SUCCESS 2400229.1875
+2025-01-26 15:50:10,653	[INFO]	WARM    SUCCESS               2400229.19 (--) [0 edit(s)]  
+2025-01-26 15:50:10,653	[INFO]	REF     SUCCESS               2400229.19 (--) [0 edit(s)]  
+2025-01-26 15:50:10,653	[INFO]	
+2025-01-26 15:50:10,653	[INFO]	~~~~ START ~~~~
+2025-01-26 15:51:48,658	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:48,659	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    char s[200005];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        vi l(n);\n        l[0] = 1;\n\n        for(int i = 0; i < n - 1; i++) {\n            if(s[i + 1] == s[i]) l[i + 1] = l[i] + 1;\n            else l[i + 1] = 1;\n        }\n\n        int ans = 0;\n        for(int i = 1; i < n - 1; i++) {\n            if(s[i] == \'O\' && s[i + 1] != \'O\' && i + l[i] < n && i - l[i] >= 0 \n               && l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && s[i + l[i]] == \'I\' \n               && s[i - l[i]] == \'J\') {\n                ans = max(ans, l[i]);\n            }\n        }\n        printf("%d\\n", ans);\n    }\n}')"
+2025-01-26 15:51:49,724	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:49,724	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        int l[MAX_SIZE] = {0};\n        l[0] = 1;\n\n        for(int i = 0; i < n - 1; i++) {\n            if(s[i + 1] == s[i]) l[i + 1] = l[i] + 1;\n            else l[i + 1] = 1;\n        }\n\n        int ans = 0;\n        for(int i = 1; i < n - 1; i++) {\n            if(s[i] == \'O\' && s[i + 1] != \'O\' && i + l[i] < n \n               && i - l[i] >= 0 && l[i + l[i]] >= l[i] \n               && l[i - l[i]] >= l[i] && s[i + l[i]] == \'I\' \n               && s[i - l[i]] == \'J\') {\n                ans = max(ans, l[i]);\n            }\n        }\n        printf("%d\\n", ans);\n    }\n}')"
+2025-01-26 15:51:50,789	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:50,789	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        int l[MAX_SIZE] = {0};\n        l[0] = 1;\n        int ans = 0;\n\n        for(int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\') {\n                if(l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] \n                   && s[i + l[i]] == \'I\' && s[i - l[i]] == \'J\') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        printf("%d\\n", ans);\n    }\n}')"
+2025-01-26 15:51:51,856	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:51,857	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        int l[MAX_SIZE] = {0};\n        l[0] = 1;\n        int ans = 0;\n\n        for(int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\') {\n                if(l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] \n                   && s[i + l[i]] == \'I\' && s[i - l[i]] == \'J\') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        printf("%d\\n", ans);\n    }\n}')"
+2025-01-26 15:51:52,921	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:52,921	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        int l[MAX_SIZE] = {0};\n        l[0] = 1;\n        int ans = 0;\n\n        for(int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\' && \n               i + l[i] < n && i - l[i] >= 0 && \n               l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n               s[i + l[i]] == \'I\' && s[i - l[i]] == \'J\') {\n                ans = max(ans, l[i]);\n            }\n        }\n        printf("%d\\n", ans);\n    }\n}')"
+2025-01-26 15:51:53,986	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:53,987	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        int l[MAX_SIZE] = {0};\n        l[0] = 1;\n        int ans = 0;\n\n        for(int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        for(int i = 1; i < n - 1; i++) {\n            if(s[i] == \'O\' && s[i + 1] != \'O\') {\n                int left = i - l[i], right = i + l[i];\n                if(left >= 0 && right < n && \n                   l[right] >= l[i] && l[left] >= l[i] && \n                   s[right] == \'I\' && s[left] == \'J\') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        printf("%d\\n", ans);\n    }\n}')"
+2025-01-26 15:51:55,051	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:55,052	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s);\n        int max_length = 0, current_length = 1;\n\n        for(int i = 1; i < n; i++) {\n            if(s[i] == s[i - 1]) current_length++;\n            else current_length = 1;\n\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\') {\n                int left = i - current_length, right = i + current_length;\n                if(left >= 0 && right < n && \n                   s[right] == \'I\' && s[left] == \'J\') {\n                    max_length = max(max_length, current_length);\n                }\n            }\n        }\n        printf("%d\\n", max_length);\n    }\n}')"
+2025-01-26 15:51:56,117	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:56,118	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s), max_length = 0, current_length = 1;\n\n        for(int i = 1; i < n; i++) {\n            current_length = (s[i] == s[i - 1]) ? current_length + 1 : 1;\n\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\') {\n                int left = i - current_length, right = i + current_length;\n                if(left >= 0 && right < n && \n                   s[right] == \'I\' && s[left] == \'J\') {\n                    max_length = max(max_length, current_length);\n                }\n            }\n        }\n        printf("%d\\n", max_length);\n    }\n}')"
+2025-01-26 15:51:57,226	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:57,226	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s), max_length = 0, current_length = 1;\n\n        for(int i = 1; i < n; i++) {\n            current_length = (s[i] == s[i - 1]) ? current_length + 1 : 1;\n\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\') {\n                int left = i - current_length, right = i + current_length;\n                if(left >= 0 && right < n && \n                   s[right] == \'I\' && s[left] == \'J\') {\n                    max_length = max(max_length, current_length);\n                }\n            }\n        }\n        printf("%d\\n", max_length);\n    }\n}')"
+2025-01-26 15:51:58,292	[INFO]	0-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:51:58,292	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define MAX_SIZE 200005\n\ninline bool isValid(int left, int right, int l[], char s[]) {\n    return left >= 0 && right < MAX_SIZE && l[right] >= l[left] && s[right] == \'I\' && s[left] == \'J\';\n}\n\nint main() {\n    char s[MAX_SIZE];\n    while(scanf("%s", s) != EOF) {\n        int n = strlen(s), max_length = 0, current_length = 1;\n        int l[MAX_SIZE] = {0};\n\n        for(int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n\n            if(i > 1 && s[i] == \'O\' && s[i - 1] != \'O\') {\n                int left = i - l[i], right = i + l[i];\n                if(isValid(left, right, l, s)) {\n                    max_length = max(max_length, l[i]);\n                }\n            }\n        }\n        printf("%d\\n", max_length);\n    }\n}')"
+2025-01-26 15:51:59,293	[INFO]	Step: 10
+2025-01-26 15:51:59,293	[INFO]	Stop Steps: 50
+2025-01-26 15:52:01,087	[DEBUG]	EXEC>  SUCCESS 2390816.375
+2025-01-26 15:52:01,087	[INFO]	REF     SUCCESS               2390816.38 (--) [0 edit(s)]  
+2025-01-26 15:52:01,087	[INFO]	Best patch step: None
+2025-01-26 15:52:35,042	[INFO]	Step: 10
+2025-01-26 15:52:35,042	[INFO]	Stop Steps: 50
+2025-01-26 15:52:35,096	[INFO]	1-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:52:35,096	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 0), '**')"
+2025-01-26 15:52:35,096	[INFO]	Step: 11
+2025-01-26 15:52:35,096	[INFO]	Stop Steps: 50
+2025-01-26 15:52:35,146	[INFO]	1-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:52:35,146	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 1), '**')"
+2025-01-26 15:52:35,146	[INFO]	Step: 12
+2025-01-26 15:52:35,146	[INFO]	Stop Steps: 50
+2025-01-26 15:52:35,198	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:52:35,198	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 2), '**')"
+2025-01-26 15:52:35,198	[INFO]	Step: 13
+2025-01-26 15:52:35,198	[INFO]	Stop Steps: 50
+2025-01-26 15:52:35,247	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:52:35,247	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 3), '**')"
+2025-01-26 15:52:35,247	[INFO]	Step: 14
+2025-01-26 15:52:35,247	[INFO]	Stop Steps: 50
+2025-01-26 15:52:35,883	[DEBUG]	EXEC>  SUCCESS 2368470.625
+2025-01-26 15:52:35,884	[INFO]	1-5     SUCCESS              *2368470.62 (99.07%) [1 edit(s)]  
+2025-01-26 15:52:35,884	[DEBUG]	patch(1-5)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+
+2025-01-26 15:52:35,884	[INFO]	Step: 15
+2025-01-26 15:52:35,884	[INFO]	Stop Steps: 50
+2025-01-26 15:52:36,412	[DEBUG]	EXEC>  SUCCESS 2376868.875
+2025-01-26 15:52:36,412	[INFO]	1-6     SUCCESS               2376868.88 (99.42%) [1 edit(s)]  
+2025-01-26 15:52:36,412	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:52:36,412	[INFO]	Step: 16
+2025-01-26 15:52:36,412	[INFO]	Stop Steps: 50
+2025-01-26 15:52:36,465	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:52:36,465	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 12), '```cpp')"
+2025-01-26 15:52:36,465	[INFO]	Step: 17
+2025-01-26 15:52:36,465	[INFO]	Stop Steps: 50
+2025-01-26 15:52:38,057	[DEBUG]	EXEC>  SUCCESS 2374906.5625
+2025-01-26 15:52:38,057	[INFO]	REF     SUCCESS               2374906.56 (--) [0 edit(s)]  
+2025-01-26 15:52:38,057	[INFO]	Best patch: 10
+2025-01-26 15:52:38,582	[DEBUG]	EXEC>  SUCCESS 2380539.0625
+2025-01-26 15:52:38,582	[INFO]	BEST    SUCCESS               2380539.06 (100.24%) [0 edit(s)]  
+2025-01-26 15:52:38,582	[INFO]	Best patch step: 14
+2025-01-26 15:53:22,927	[INFO]	Step: 17
+2025-01-26 15:53:22,927	[INFO]	Stop Steps: 50
+2025-01-26 15:53:23,563	[DEBUG]	EXEC>  SUCCESS 2397444.9375
+2025-01-26 15:53:23,563	[INFO]	2-8     SUCCESS              +2397444.94 (100.95%) [1 edit(s)]  
+2025-01-26 15:53:23,563	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:23,563	[INFO]	Step: 18
+2025-01-26 15:53:23,563	[INFO]	Stop Steps: 50
+2025-01-26 15:53:24,088	[DEBUG]	EXEC>  SUCCESS 2395201.4375
+2025-01-26 15:53:24,088	[INFO]	2-9     SUCCESS              +2395201.44 (100.85%) [1 edit(s)]  
+2025-01-26 15:53:24,088	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:24,088	[INFO]	Step: 19
+2025-01-26 15:53:24,088	[INFO]	Stop Steps: 50
+2025-01-26 15:53:24,617	[DEBUG]	EXEC>  SUCCESS 2411444.5
+2025-01-26 15:53:24,618	[INFO]	2-10    SUCCESS               2411444.50 (101.54%) [1 edit(s)]  
+2025-01-26 15:53:24,618	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 4), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:24,618	[INFO]	Step: 20
+2025-01-26 15:53:24,618	[INFO]	Stop Steps: 50
+2025-01-26 15:53:25,138	[DEBUG]	EXEC>  SUCCESS 2420735.5625
+2025-01-26 15:53:25,138	[INFO]	2-1     SUCCESS               2420735.56 (101.93%) [1 edit(s)]  
+2025-01-26 15:53:25,138	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 5), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:25,139	[INFO]	Step: 21
+2025-01-26 15:53:25,139	[INFO]	Stop Steps: 50
+2025-01-26 15:53:25,660	[DEBUG]	EXEC>  SUCCESS 2398376.25
+2025-01-26 15:53:25,661	[INFO]	2-2     SUCCESS               2398376.25 (100.99%) [1 edit(s)]  
+2025-01-26 15:53:25,661	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 6), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && \n                i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:25,661	[INFO]	Step: 22
+2025-01-26 15:53:25,661	[INFO]	Stop Steps: 50
+2025-01-26 15:53:26,179	[DEBUG]	EXEC>  SUCCESS 2387403.5
+2025-01-26 15:53:26,180	[INFO]	2-3     SUCCESS              +2387403.50 (100.53%) [1 edit(s)]  
+2025-01-26 15:53:26,180	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 7), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:26,180	[INFO]	Step: 23
+2025-01-26 15:53:26,180	[INFO]	Stop Steps: 50
+2025-01-26 15:53:26,664	[DEBUG]	EXEC>  SUCCESS 2363436.5
+2025-01-26 15:53:26,664	[INFO]	2-4     SUCCESS              *2363436.50 (99.52%) [2 edit(s)]  
+2025-01-26 15:53:26,664	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    int left_length = 0, right_length = 0;\n                    for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+
+2025-01-26 15:53:26,664	[INFO]	Step: 24
+2025-01-26 15:53:26,664	[INFO]	Stop Steps: 50
+2025-01-26 15:53:27,181	[DEBUG]	EXEC>  SUCCESS 2394589.9375
+2025-01-26 15:53:27,181	[INFO]	2-5     SUCCESS               2394589.94 (100.83%) [2 edit(s)]  
+2025-01-26 15:53:27,181	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 14), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int currentLength = 1; // to track current length of consecutive characters\n        l[0] = 1;\n\n        // Single pass to compute lengths of consecutive characters\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                currentLength++;\n                l[i] = currentLength;\n            } else {\n                currentLength = 1;\n                l[i] = currentLength;\n            }\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:53:27,181	[INFO]	Step: 25
+2025-01-26 15:53:27,181	[INFO]	Stop Steps: 50
+2025-01-26 15:53:27,322	[INFO]	2-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 15:53:27,322	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    char s[200005]; // large enough buffer for input\n    scanf("%s", s);\n    \n    int n = strlen(s);\n    vi l(n);\n    l[0] = 1;\n\n    for(int i = 1; i < n; ++i) {\n        l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n    }\n\n    int ans = 0;\n\n    for(int i = 1; i < n - 1; ++i) {\n        if(s[i] == \'O\' && s[i + 1] != \'O\' && i + l[i] < n && i - l[i] >= 0 && \n           l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && s[i + l[i]] == \'I\' && s[i - l[i]] == \'J\') {\n            ans = max(ans, l[i]);\n        }\n    }\n\n    printf("%d\\n", ans);\n    return 0;\n}')"
+2025-01-26 15:53:27,322	[INFO]	Step: 26
+2025-01-26 15:53:27,322	[INFO]	Stop Steps: 50
+2025-01-26 15:53:27,722	[DEBUG]	EXEC>  SUCCESS 2646555.9375
+2025-01-26 15:53:27,722	[INFO]	2-7     SUCCESS               2646555.94 (111.44%) [1 edit(s)]  
+2025-01-26 15:53:27,722	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    char s[200005]; // large enough buffer for input\n    scanf("%s", s);\n    \n    int n = 0;\n    while (s[n] != \'\\0\') n++; // manual string length calculation\n\n    vi l(n);\n    l[0] = 1;\n\n    for(int i = 1; i < n; ++i) {\n        l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n    }\n\n    int ans = 0;\n\n    for(int i = 1; i < n - 1; ++i) {\n        if(s[i] == \'O\' && s[i + 1] != \'O\' && i + l[i] < n && i - l[i] >= 0 && \n           l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && s[i + l[i]] == \'I\' && s[i - l[i]] == \'J\') {\n            ans = max(ans, l[i]);\n        }\n    }\n\n    printf("%d\\n", ans);\n    return 0;\n}')"
+2025-01-26 15:53:27,722	[INFO]	Step: 27
+2025-01-26 15:53:27,723	[INFO]	Stop Steps: 50
+2025-01-26 15:53:29,327	[DEBUG]	EXEC>  SUCCESS 2411074.625
+2025-01-26 15:53:29,327	[INFO]	REF     SUCCESS               2411074.62 (--) [0 edit(s)]  
+2025-01-26 15:53:29,327	[INFO]	Best patch: 10_13
+2025-01-26 15:53:29,804	[DEBUG]	EXEC>  SUCCESS 2389236.75
+2025-01-26 15:53:29,804	[INFO]	BEST    SUCCESS              *2389236.75 (99.09%) [0 edit(s)]  
+2025-01-26 15:53:29,804	[INFO]	Best patch step: 23
+2025-01-26 15:54:28,198	[INFO]	Step: 27
+2025-01-26 15:54:28,199	[INFO]	Stop Steps: 50
+2025-01-26 15:54:28,813	[DEBUG]	EXEC>  SUCCESS 2412361.5625
+2025-01-26 15:54:28,813	[INFO]	3-8     SUCCESS              +2412361.56 (100.05%) [2 edit(s)]  
+2025-01-26 15:54:28,813	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    int left_length = 0, right_length = 0;\n                    for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:28,813	[INFO]	Step: 28
+2025-01-26 15:54:28,813	[INFO]	Stop Steps: 50
+2025-01-26 15:54:29,345	[DEBUG]	EXEC>  SUCCESS 2475583.0
+2025-01-26 15:54:29,345	[INFO]	3-9     SUCCESS               2475583.00 (102.68%) [1 edit(s)]  
+2025-01-26 15:54:29,345	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 7), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:29,345	[INFO]	Step: 29
+2025-01-26 15:54:29,345	[INFO]	Stop Steps: 50
+2025-01-26 15:54:29,866	[DEBUG]	EXEC>  SUCCESS 2445585.4375
+2025-01-26 15:54:29,866	[INFO]	3-10    SUCCESS               2445585.44 (101.43%) [1 edit(s)]  
+2025-01-26 15:54:29,866	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 8), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int currentLength = 1; // to track current length of consecutive characters\n        l[0] = 1;\n\n        // Compute lengths of consecutive characters\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:29,866	[INFO]	Step: 30
+2025-01-26 15:54:29,866	[INFO]	Stop Steps: 50
+2025-01-26 15:54:30,397	[DEBUG]	EXEC>  SUCCESS 2455549.1875
+2025-01-26 15:54:30,398	[INFO]	3-1     SUCCESS               2455549.19 (101.84%) [1 edit(s)]  
+2025-01-26 15:54:30,398	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 9), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        int currentLength = 1; // to track current length of consecutive characters\n\n        // Calculate lengths of consecutive characters\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:30,398	[INFO]	Step: 31
+2025-01-26 15:54:30,398	[INFO]	Stop Steps: 50
+2025-01-26 15:54:30,929	[DEBUG]	EXEC>  SUCCESS 2382909.9375
+2025-01-26 15:54:30,930	[INFO]	3-2     SUCCESS              *2382909.94 (98.83%) [1 edit(s)]  
+2025-01-26 15:54:30,930	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1; // Initializing the first element\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+
+2025-01-26 15:54:30,930	[INFO]	Step: 32
+2025-01-26 15:54:30,930	[INFO]	Stop Steps: 50
+2025-01-26 15:54:31,454	[DEBUG]	EXEC>  SUCCESS 2465467.8125
+2025-01-26 15:54:31,455	[INFO]	3-3     SUCCESS               2465467.81 (102.26%) [1 edit(s)]  
+2025-01-26 15:54:31,455	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1; // Length of the first character\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1; // Calculate lengths\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:31,455	[INFO]	Step: 33
+2025-01-26 15:54:31,455	[INFO]	Stop Steps: 50
+2025-01-26 15:54:31,942	[DEBUG]	EXEC>  SUCCESS 2437137.9375
+2025-01-26 15:54:31,942	[INFO]	3-4     SUCCESS               2437137.94 (101.08%) [3 edit(s)]  
+2025-01-26 15:54:31,942	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    int left_length = 0, right_length = 0;\n                    for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 17), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1, left_length = 0, right_length = 0;\n        \n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    // Count left_length\n                    left_length = 1; // include the previous character\n                    for (int j = i - 2; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    \n                    // Count right_length\n                    right_length = 0;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    \n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:31,942	[INFO]	Step: 34
+2025-01-26 15:54:31,942	[INFO]	Stop Steps: 50
+2025-01-26 15:54:32,447	[DEBUG]	EXEC>  SUCCESS 3508393.25
+2025-01-26 15:54:32,448	[INFO]	3-5     SUCCESS               3508393.25 (145.51%) [2 edit(s)]  
+2025-01-26 15:54:32,448	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 7), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 18), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef int vi[200005]; // Change to a fixed-size array to avoid dynamic allocation.\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l; // Declare the array\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:32,448	[INFO]	Step: 35
+2025-01-26 15:54:32,448	[INFO]	Stop Steps: 50
+2025-01-26 15:54:32,934	[DEBUG]	EXEC>  SUCCESS 2434587.875
+2025-01-26 15:54:32,934	[INFO]	3-6     SUCCESS               2434587.88 (100.98%) [3 edit(s)]  
+2025-01-26 15:54:32,935	[DEBUG]	patch(3-6)="LineLLMMutation(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 14), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int currentLength = 1; // to track current length of consecutive characters\n        l[0] = 1;\n\n        // Single pass to compute lengths of consecutive characters\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                currentLength++;\n                l[i] = currentLength;\n            } else {\n                currentLength = 1;\n                l[i] = currentLength;\n            }\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 19), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int currentLength = 1; // to track current length of consecutive characters\n        int ans = 0;\n\n        // Single pass to compute lengths of consecutive characters and check conditions\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                currentLength++;\n            } else {\n                if (s[i - 1] == 'O' && s[i] != 'O' && i - currentLength >= 1 && i < n) {\n                    int left = i - currentLength - 1, right = i;\n                    if (left >= 0 && right < n && s[right] == 'I' && s[left] == 'J') {\n                        ans = max(ans, currentLength);\n                    }\n                }\n                currentLength = 1; // Reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:32,935	[INFO]	Step: 36
+2025-01-26 15:54:32,935	[INFO]	Stop Steps: 50
+2025-01-26 15:54:33,457	[DEBUG]	EXEC>  SUCCESS 2387114.1875
+2025-01-26 15:54:33,458	[INFO]	3-7     SUCCESS               2387114.19 (99.01%) [2 edit(s)]  
+2025-01-26 15:54:33,458	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 20), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int count = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                count++;\n            } else {\n                count = 1;\n            }\n            l[i] = count;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:54:33,458	[INFO]	Step: 37
+2025-01-26 15:54:33,458	[INFO]	Stop Steps: 50
+2025-01-26 15:54:34,052	[DEBUG]	EXEC>  SUCCESS 2381823.75
+2025-01-26 15:54:34,053	[INFO]	3-8     SUCCESS              *2381823.75 (98.79%) [1 edit(s)]  
+2025-01-26 15:54:34,053	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 21), '#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <cstdio>\n#include <cstring>\n#include <ctime>\n#include <string>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n#include <sstream>\n#include <utility>\n\nusing namespace std;\n\ntypedef long long ll;\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\n#define all(c) (c).begin(), (c).end()\n#define loop(i,a,b) for(ll i=a; i<ll(b); i++)\n#define rep(i,b) loop(i,0,b)\n#define each(e,c) for(auto&e:c)\n#define pb push_back\n#define eb emplace_back\n#define mp make_pair\n#define mt make_tuple\n#define lb lower_bound\n#define ub upper_bound\n\n#ifdef DEBUG\n#define dump(...) (cerr<<#__VA_ARGS__<<" = "<<(DUMP(),__VA_ARGS__).str()<<" ["<<__LINE__<<"]"<<endl)\nstruct DUMP:ostringstream{template<class T>DUMP &operator,(const T&t){if(this->tellp())*this<<", ";*this<<t;return *this;}};\n#else\n#define dump(...)\n#endif\n\ntemplate<class T> ostream& operator<<(ostream& os, vector<T> const& v){\n    rep(i,v.size()) os << v[i] << (i+1==v.size()?"":" ");\n    return os;\n}\n\nint main(){\n    string s;\n    while(cin>>s){\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        rep(i,n-1){\n            if(s[i+1]==s[i]) l[i+1]=l[i]+1;\n            else l[i+1] = 1;\n        }\n        int ans = 0;\n        dump(s);\n        dump(l);\n        loop(i,1,n-1){\n            if(s[i]==\'O\' && s[i+1]!=\'O\' && i+l[i]<n && i-l[i] >= 0 && l[i+l[i]]>=l[i] && l[i-l[i]]>=l[i] && s[i+l[i]]==\'I\' && s[i-l[i]]==\'J\'){\n                ans = max(ans,l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}')"
+
+2025-01-26 15:54:34,053	[INFO]	Step: 38
+2025-01-26 15:54:34,053	[INFO]	Stop Steps: 50
+2025-01-26 15:54:35,652	[DEBUG]	EXEC>  SUCCESS 2391088.3125
+2025-01-26 15:54:35,652	[INFO]	REF     SUCCESS               2391088.31 (--) [0 edit(s)]  
+2025-01-26 15:54:35,652	[INFO]	Best patch: 21
+2025-01-26 15:54:36,237	[DEBUG]	EXEC>  SUCCESS 2375322.5
+2025-01-26 15:54:36,237	[INFO]	BEST    SUCCESS              *2375322.50 (99.34%) [0 edit(s)]  
+2025-01-26 15:54:36,237	[INFO]	Best patch step: 37
+2025-01-26 15:55:26,872	[INFO]	Step: 38
+2025-01-26 15:55:26,872	[INFO]	Stop Steps: 50
+2025-01-26 15:55:27,587	[DEBUG]	EXEC>  SUCCESS 2410247.0
+2025-01-26 15:55:27,588	[INFO]	4-9     SUCCESS              +2410247.00 (100.80%) [1 edit(s)]  
+2025-01-26 15:55:27,588	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 21), '#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <cstdio>\n#include <cstring>\n#include <ctime>\n#include <string>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n#include <sstream>\n#include <utility>\n\nusing namespace std;\n\ntypedef long long ll;\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\n#define all(c) (c).begin(), (c).end()\n#define loop(i,a,b) for(ll i=a; i<ll(b); i++)\n#define rep(i,b) loop(i,0,b)\n#define each(e,c) for(auto&e:c)\n#define pb push_back\n#define eb emplace_back\n#define mp make_pair\n#define mt make_tuple\n#define lb lower_bound\n#define ub upper_bound\n\n#ifdef DEBUG\n#define dump(...) (cerr<<#__VA_ARGS__<<" = "<<(DUMP(),__VA_ARGS__).str()<<" ["<<__LINE__<<"]"<<endl)\nstruct DUMP:ostringstream{template<class T>DUMP &operator,(const T&t){if(this->tellp())*this<<", ";*this<<t;return *this;}};\n#else\n#define dump(...)\n#endif\n\ntemplate<class T> ostream& operator<<(ostream& os, vector<T> const& v){\n    rep(i,v.size()) os << v[i] << (i+1==v.size()?"":" ");\n    return os;\n}\n\nint main(){\n    string s;\n    while(cin>>s){\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        rep(i,n-1){\n            if(s[i+1]==s[i]) l[i+1]=l[i]+1;\n            else l[i+1] = 1;\n        }\n        int ans = 0;\n        dump(s);\n        dump(l);\n        loop(i,1,n-1){\n            if(s[i]==\'O\' && s[i+1]!=\'O\' && i+l[i]<n && i-l[i] >= 0 && l[i+l[i]]>=l[i] && l[i-l[i]]>=l[i] && s[i+l[i]]==\'I\' && s[i-l[i]]==\'J\'){\n                ans = max(ans,l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}')"
+2025-01-26 15:55:27,588	[INFO]	Step: 39
+2025-01-26 15:55:27,588	[INFO]	Stop Steps: 50
+2025-01-26 15:55:28,108	[DEBUG]	EXEC>  SUCCESS 2447859.5625
+2025-01-26 15:55:28,108	[INFO]	4-10    SUCCESS               2447859.56 (102.37%) [1 edit(s)]  
+2025-01-26 15:55:28,108	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1; // Initializing the first element\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:28,108	[INFO]	Step: 40
+2025-01-26 15:55:28,108	[INFO]	Stop Steps: 50
+2025-01-26 15:55:28,640	[DEBUG]	EXEC>  SUCCESS 2403322.9375
+2025-01-26 15:55:28,640	[INFO]	4-1     SUCCESS              +2403322.94 (100.51%) [1 edit(s)]  
+2025-01-26 15:55:28,640	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 12), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:28,640	[INFO]	Step: 41
+2025-01-26 15:55:28,640	[INFO]	Stop Steps: 50
+2025-01-26 15:55:28,963	[INFO]	4-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 15:55:28,964	[DEBUG]	patch(4-2)="LineLLMCrossover(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size(), ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            current_length = (s[i] == s[i - 1]) ? current_length + 1 : 1;\n            if (s[i - 1] == 'O' && s[i] != 'O') {\n                int left_length = 0, right_length = current_length;\n                for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                if (right_length >= left_length && left_length > 0) {\n                    ans = max(ans, left_length);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:28,964	[INFO]	Step: 42
+2025-01-26 15:55:28,964	[INFO]	Stop Steps: 50
+2025-01-26 15:55:29,488	[DEBUG]	EXEC>  SUCCESS 2442478.9375
+2025-01-26 15:55:29,489	[INFO]	4-3     SUCCESS               2442478.94 (102.15%) [1 edit(s)]  
+2025-01-26 15:55:29,489	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 14), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int count = 1;\n        l[0] = 1;\n\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:29,489	[INFO]	Step: 43
+2025-01-26 15:55:29,489	[INFO]	Stop Steps: 50
+2025-01-26 15:55:30,017	[DEBUG]	EXEC>  SUCCESS 2446235.375
+2025-01-26 15:55:30,017	[INFO]	4-4     SUCCESS               2446235.38 (102.31%) [1 edit(s)]  
+2025-01-26 15:55:30,017	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 15), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:30,017	[INFO]	Step: 44
+2025-01-26 15:55:30,017	[INFO]	Stop Steps: 50
+2025-01-26 15:55:30,544	[DEBUG]	EXEC>  SUCCESS 2404796.8125
+2025-01-26 15:55:30,544	[INFO]	4-5     SUCCESS               2404796.81 (100.57%) [2 edit(s)]  
+2025-01-26 15:55:30,544	[DEBUG]	patch(4-5)="LineLLMMutation(('source.cpp', 21), '#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <cstdio>\n#include <cstring>\n#include <ctime>\n#include <string>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n#include <sstream>\n#include <utility>\n\nusing namespace std;\n\ntypedef long long ll;\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\n#define all(c) (c).begin(), (c).end()\n#define loop(i,a,b) for(ll i=a; i<ll(b); i++)\n#define rep(i,b) loop(i,0,b)\n#define each(e,c) for(auto&e:c)\n#define pb push_back\n#define eb emplace_back\n#define mp make_pair\n#define mt make_tuple\n#define lb lower_bound\n#define ub upper_bound\n\n#ifdef DEBUG\n#define dump(...) (cerr<<#__VA_ARGS__<<" = "<<(DUMP(),__VA_ARGS__).str()<<" ["<<__LINE__<<"]"<<endl)\nstruct DUMP:ostringstream{template<class T>DUMP &operator,(const T&t){if(this->tellp())*this<<", ";*this<<t;return *this;}};\n#else\n#define dump(...)\n#endif\n\ntemplate<class T> ostream& operator<<(ostream& os, vector<T> const& v){\n    rep(i,v.size()) os << v[i] << (i+1==v.size()?"":" ");\n    return os;\n}\n\nint main(){\n    string s;\n    while(cin>>s){\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        rep(i,n-1){\n            if(s[i+1]==s[i]) l[i+1]=l[i]+1;\n            else l[i+1] = 1;\n        }\n        int ans = 0;\n        dump(s);\n        dump(l);\n        loop(i,1,n-1){\n            if(s[i]==\'O\' && s[i+1]!=\'O\' && i+l[i]<n && i-l[i] >= 0 && l[i+l[i]]>=l[i] && l[i-l[i]]>=l[i] && s[i+l[i]]==\'I\' && s[i-l[i]]==\'J\'){\n                ans = max(ans,l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}') | LineLLMMutation(('source.cpp', 22), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main(){\n    string s;\n    while(cin >> s){\n        int n = s.size();\n        vi l(n, 1);\n        int ans = 0;\n\n        for (int i = 1; i < n; ++i) {\n            if (s[i] == s[i - 1]) {\n                l[i] = l[i - 1] + 1;\n            }\n        }\n\n        for (int i = 1; i < n - 1; ++i) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int len = l[i];\n                if (i + len < n && i - len >= 0 && \n                    l[i + len] >= len && l[i - len] >= len && \n                    s[i + len] == 'I' && s[i - len] == 'J') {\n                    ans = max(ans, len);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:30,544	[INFO]	Step: 45
+2025-01-26 15:55:30,544	[INFO]	Stop Steps: 50
+2025-01-26 15:55:31,050	[DEBUG]	EXEC>  SUCCESS 3447183.0
+2025-01-26 15:55:31,050	[INFO]	4-6     SUCCESS               3447183.00 (144.17%) [2 edit(s)]  
+2025-01-26 15:55:31,050	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1; // Initializing the first element\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 23), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int l[200005]; // Using a fixed-size array instead of vector\n        l[0] = 1; // Initializing the first element\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:31,050	[INFO]	Step: 46
+2025-01-26 15:55:31,050	[INFO]	Stop Steps: 50
+2025-01-26 15:55:31,411	[INFO]	4-7     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 15:55:31,411	[DEBUG]	patch(4-7)="LineLLMMutation(('source.cpp', 11), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 20), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int count = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                count++;\n            } else {\n                count = 1;\n            }\n            l[i] = count;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i], right = i + l[i];\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 24), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        int count = 0;  // Changed initialization of count to 0\n        for (int i = 0; i < n; i++) {\n            if (i > 0 && s[i] == s[i - 1]) {\n                count++;\n            } else {\n                count = 1;\n            }\n            l[i] = count;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O') {\n                int left = i - l[i] + 1;  // Adjusted index for left\n                int right = i + l[i] - 1; // Adjusted index for right\n                if (left >= 0 && right < n && l[right] >= l[i] && l[left] >= l[i] && \n                    s[right] == 'I' && s[left] == 'J') {\n                    ans = max(ans, l[i]);\n                }\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+2025-01-26 15:55:31,411	[INFO]	Step: 47
+2025-01-26 15:55:31,411	[INFO]	Stop Steps: 50
+2025-01-26 15:55:31,887	[DEBUG]	EXEC>  SUCCESS 2357848.1875
+2025-01-26 15:55:31,887	[INFO]	4-8     SUCCESS              *2357848.19 (98.61%) [3 edit(s)]  
+2025-01-26 15:55:31,887	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    int left_length = 0, right_length = 0;\n                    for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 25), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1, left_length = 0, right_length = 0;\n        \n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O') {\n                    left_length = 1; // Reset left_length for 'O'\n                    for (int j = i - 2; j >= 0 && s[j] == 'O'; j--) left_length++;\n                }\n                right_length = (s[i] == s[i + 1]) ? 2 : 1; // Check next character\n                for (int j = i + 1; j < n && s[j] == s[i]; j++) right_length++;\n                \n                if (right_length >= left_length && left_length > 0) {\n                    ans = max(ans, left_length);\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+
+2025-01-26 15:55:31,887	[INFO]	Step: 48
+2025-01-26 15:55:31,887	[INFO]	Stop Steps: 50
+2025-01-26 15:55:32,483	[DEBUG]	EXEC>  SUCCESS 2372002.0625
+2025-01-26 15:55:32,484	[INFO]	4-9     SUCCESS               2372002.06 (99.20%) [1 edit(s)]  
+2025-01-26 15:55:32,484	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 26), '#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n\n#include <cstdio>\n\n#include <cstring>\n\n#include <ctime>\n\n#include <string>\n\n#include <vector>\n\n#include <algorithm>\n\n#include <cmath>\n\n#include <sstream>\n\n#include <utility>\n\nusing namespace std;\n\ntypedef long long ll;\n\ntypedef vector<int> vi;\n\ntypedef vector<vi> vvi;\n\ntypedef pair<int,int> pii;\n\n#define all(c) (c).begin(), (c).end()\n\n#define loop(i,a,b) for(ll i=a; i<ll(b); i++)\n\n#define rep(i,b) loop(i,0,b)\n\n#define each(e,c) for(auto&e:c)\n\n#define pb push_back\n\n#define eb emplace_back\n\n#define mp make_pair\n\n#define mt make_tuple\n\n#define lb lower_bound\n\n#define ub upper_bound\n\n#ifdef DEBUG\n\n#define dump(...) (cerr<<#__VA_ARGS__<<" = "<<(DUMP(),__VA_ARGS__).str()<<" ["<<__LINE__<<"]"<<endl)\n\nstruct DUMP:ostringstream{template<class T>DUMP &operator,(const T&t){if(this->tellp())*this<<", ";*this<<t;return *this;}};\n\n#else\n\n#define dump(...)\n\n#endif\n\ntemplate<class T> ostream& operator<<(ostream& os, vector<T> const& v){\n\n    rep(i,v.size()) os << v[i] << (i+1==v.size()?"":" ");\n\n    return os;\n\n}\n\n\n\nint main(){\n\n    string s;\n\n    while(cin>>s){\n\n    int n = s.size();\n\n    vi l(n);\n\n    l[0] = 1;\n\n    rep(i,n-1){\n\n        if(s[i+1]==s[i]) l[i+1]=l[i]+1;\n\n        else l[i+1] = 1;\n\n    }\n\n    int ans = 0;\n\n    dump(s);\n\n    dump(l);\n\n    loop(i,1,n-1){\n\n        if(s[i]==\'O\' && s[i+1]!=\'O\' && i+l[i]<n && i-l[i] >= 0 && l[i+l[i]]>=l[i] && l[i-l[i]]>=l[i] && s[i+l[i]]==\'I\' && s[i-l[i]]==\'J\'){\n\n            ans = max(ans,l[i]);\n\n        }\n\n    }\n\n    cout << ans << endl;\n\n}\n\n}')"
+2025-01-26 15:55:32,484	[INFO]	Step: 49
+2025-01-26 15:55:32,484	[INFO]	Stop Steps: 50
+2025-01-26 15:55:34,094	[DEBUG]	EXEC>  SUCCESS 2371045.375
+2025-01-26 15:55:34,095	[INFO]	REF     SUCCESS               2371045.38 (--) [0 edit(s)]  
+2025-01-26 15:55:34,095	[INFO]	Best patch: 10_13_25
+2025-01-26 15:55:34,573	[DEBUG]	EXEC>  SUCCESS 2399469.375
+2025-01-26 15:55:34,573	[INFO]	BEST    SUCCESS               2399469.38 (101.20%) [0 edit(s)]  
+2025-01-26 15:55:34,573	[INFO]	Best patch step: 47
+2025-01-26 15:56:20,822	[INFO]	Step: 49
+2025-01-26 15:56:20,822	[INFO]	Stop Steps: 50
+2025-01-26 15:56:21,421	[DEBUG]	EXEC>  SUCCESS 2358240.3125
+2025-01-26 15:56:21,421	[INFO]	5-10    SUCCESS              *2358240.31 (99.46%) [3 edit(s)]  
+2025-01-26 15:56:21,422	[DEBUG]	patch(5-10)="LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    int left_length = 0, right_length = 0;\n                    for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}") | LineLLMMutation(('source.cpp', 25), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1, left_length = 0, right_length = 0;\n        \n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O') {\n                    left_length = 1; // Reset left_length for 'O'\n                    for (int j = i - 2; j >= 0 && s[j] == 'O'; j--) left_length++;\n                }\n                right_length = (s[i] == s[i + 1]) ? 2 : 1; // Check next character\n                for (int j = i + 1; j < n && s[j] == s[i]; j++) right_length++;\n                \n                if (right_length >= left_length && left_length > 0) {\n                    ans = max(ans, left_length);\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")"
+
+2025-01-26 15:56:21,422	[INFO]	Step: 50
+2025-01-26 15:56:21,422	[INFO]	Stop Steps: 50
+2025-01-26 15:56:21,422	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 15:56:21,422	[INFO]	Step: 50
+2025-01-26 15:56:21,422	[INFO]	Stop Steps: 50
+2025-01-26 15:56:22,386	[INFO]	~~~~ END ~~~~
+2025-01-26 15:56:22,387	[INFO]	Best patch step: 49
+2025-01-26 15:56:22,387	[INFO]	
+2025-01-26 15:56:22,387	[INFO]	==== REPORT ====
+2025-01-26 15:56:22,387	[INFO]	Termination: step budget
+2025-01-26 15:56:22,387	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0187_1737906607.log
+2025-01-26 15:56:22,387	[INFO]	Patch file: _magpie_logs/0187_1737906607.patch
+2025-01-26 15:56:22,387	[INFO]	Diff file: _magpie_logs/0187_1737906607.diff
+2025-01-26 15:56:22,387	[INFO]	Reference fitness: 2371045.38
+2025-01-26 15:56:22,387	[INFO]	Best fitness: 2358240.31
+2025-01-26 15:56:22,387	[INFO]	
+2025-01-26 15:56:22,388	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 10), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        vi l(n);\n        l[0] = 1;\n        for (int i = 1; i < n; i++) {\n            l[i] = (s[i] == s[i - 1]) ? l[i - 1] + 1 : 1;\n        }\n        int ans = 0;\n        for (int i = 1; i < n - 1; i++) {\n            if (s[i] == 'O' && s[i + 1] != 'O' && i + l[i] < n && i - l[i] >= 0 && \n                l[i + l[i]] >= l[i] && l[i - l[i]] >= l[i] && \n                s[i + l[i]] == 'I' && s[i - l[i]] == 'J') {\n                ans = max(ans, l[i]);\n            }\n        }\n        cout << ans << endl;\n    }\n}") + LineLLMMutation(('source.cpp', 13), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1;\n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O' && i - 1 > 0 && s[i] != 'O') {\n                    int left_length = 0, right_length = 0;\n                    for (int j = i - 1; j >= 0 && s[j] == s[i - 1]; j--) left_length++;\n                    for (int j = i; j < n && s[j] == s[i]; j++) right_length++;\n                    if (right_length >= left_length && left_length > 0) {\n                        ans = max(ans, left_length);\n                    }\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}") + LineLLMMutation(('source.cpp', 25), "#define _CRT_SECURE_NO_WARNINGS\n\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    while (cin >> s) {\n        int n = s.size();\n        int ans = 0, current_length = 1, left_length = 0, right_length = 0;\n        \n        for (int i = 1; i < n; i++) {\n            if (s[i] == s[i - 1]) {\n                current_length++;\n            } else {\n                if (s[i - 1] == 'O') {\n                    left_length = 1; // Reset left_length for 'O'\n                    for (int j = i - 2; j >= 0 && s[j] == 'O'; j--) left_length++;\n                }\n                right_length = (s[i] == s[i + 1]) ? 2 : 1; // Check next character\n                for (int j = i + 1; j < n && s[j] == s[i]; j++) right_length++;\n                \n                if (right_length >= left_length && left_length > 0) {\n                    ans = max(ans, left_length);\n                }\n                current_length = 1; // reset for new character\n            }\n        }\n        cout << ans << endl;\n    }\n}")
+2025-01-26 15:56:22,388	[INFO]	
+2025-01-26 15:56:22,388	[INFO]	==== DIFF ====
+

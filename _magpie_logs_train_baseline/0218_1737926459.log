@@ -1,0 +1,429 @@
+2025-01-26 21:20:59,636	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7156736688580883
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0218
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 21:20:59,636	[DEBUG]	
+2025-01-26 21:20:59,636	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 21:20:59,636	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 21:21:00,583	[DEBUG]	EXEC>  SUCCESS 2377707.25
+2025-01-26 21:21:00,583	[INFO]	WARM    SUCCESS               2377707.25 (--) [0 edit(s)]  
+2025-01-26 21:21:01,149	[DEBUG]	EXEC>  SUCCESS 2353047.0
+2025-01-26 21:21:01,149	[INFO]	WARM    SUCCESS               2353047.00 (--) [0 edit(s)]  
+2025-01-26 21:21:01,728	[DEBUG]	EXEC>  SUCCESS 2418012.5625
+2025-01-26 21:21:01,728	[INFO]	WARM    SUCCESS               2418012.56 (--) [0 edit(s)]  
+2025-01-26 21:21:02,299	[DEBUG]	EXEC>  SUCCESS 2384929.0625
+2025-01-26 21:21:02,299	[INFO]	WARM    SUCCESS               2384929.06 (--) [0 edit(s)]  
+2025-01-26 21:21:02,873	[DEBUG]	EXEC>  SUCCESS 2370876.5625
+2025-01-26 21:21:02,874	[INFO]	WARM    SUCCESS               2370876.56 (--) [0 edit(s)]  
+2025-01-26 21:21:02,874	[INFO]	REF     SUCCESS               2370876.56 (--) [0 edit(s)]  
+2025-01-26 21:21:02,874	[INFO]	
+2025-01-26 21:21:02,874	[INFO]	~~~~ START ~~~~
+2025-01-26 21:21:38,461	[DEBUG]	EXEC>  SUCCESS 954630.125
+2025-01-26 21:21:38,461	[INFO]	0-1     SUCCESS              *954630.12 (40.26%) [1 edit(s)]  
+2025-01-26 21:21:38,461	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:21:39,792	[DEBUG]	EXEC>  SUCCESS 957276.0
+2025-01-26 21:21:39,792	[INFO]	0-2     SUCCESS               957276.00 (40.38%) [1 edit(s)]  
+2025-01-26 21:21:39,792	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    array<int, 100> s;\n    int b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:41,122	[DEBUG]	EXEC>  SUCCESS 957574.25
+2025-01-26 21:21:41,122	[INFO]	0-3     SUCCESS               957574.25 (40.39%) [1 edit(s)]  
+2025-01-26 21:21:41,122	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b[100], m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:42,295	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 21:21:42,295	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        bool possible = true;\n        for (i = 0; i < n && possible; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n                if (s[j] < 0) {\n                    possible = false;\n                    break;\n                }\n            }\n        }\n\n        printf(possible ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:43,692	[DEBUG]	EXEC>  SUCCESS 2394337.75
+2025-01-26 21:21:43,692	[INFO]	0-5     SUCCESS               2394337.75 (100.99%) [1 edit(s)]  
+2025-01-26 21:21:43,692	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        vector<int> s(m);\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:44,864	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 21:21:44,864	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        bool possible = true;\n        for (i = 0; i < n && possible; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n                if (s[j] < 0) {\n                    possible = false;\n                    break;\n                }\n            }\n        }\n\n        printf(possible ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:46,037	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 21:21:46,037	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        bool possible = true;\n        for (i = 0; i < n && possible; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n                if (s[j] < 0) {\n                    possible = false;\n                    break;\n                }\n            }\n        }\n\n        printf("%s\\n", possible ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:47,370	[DEBUG]	EXEC>  SUCCESS 941151.125
+2025-01-26 21:21:47,370	[INFO]	0-8     SUCCESS              *941151.12 (39.70%) [1 edit(s)]  
+2025-01-26 21:21:47,370	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:21:48,703	[DEBUG]	EXEC>  SUCCESS 950787.9375
+2025-01-26 21:21:48,703	[INFO]	0-9     SUCCESS               950787.94 (40.10%) [1 edit(s)]  
+2025-01-26 21:21:48,703	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:50,183	[DEBUG]	EXEC>  SUCCESS 2410245.875
+2025-01-26 21:21:50,183	[INFO]	0-10    SUCCESS               2410245.88 (101.66%) [1 edit(s)]  
+2025-01-26 21:21:50,183	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <iostream>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    int i, j, m, n;\n\n    while (cin >> n >> m && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            cin >> s[i];\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                cin >> b;\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        cout << (i == m ? "Yes" : "No") << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 21:21:51,183	[INFO]	Step: 10
+2025-01-26 21:21:51,184	[INFO]	Stop Steps: 50
+2025-01-26 21:21:52,759	[DEBUG]	EXEC>  SUCCESS 2364519.5625
+2025-01-26 21:21:52,759	[INFO]	REF     SUCCESS               2364519.56 (--) [0 edit(s)]  
+2025-01-26 21:21:52,759	[INFO]	Best patch: 7
+2025-01-26 21:21:53,079	[DEBUG]	EXEC>  SUCCESS 960256.125
+2025-01-26 21:21:53,079	[INFO]	BEST    SUCCESS              *960256.12 (40.61%) [0 edit(s)]  
+2025-01-26 21:21:53,079	[INFO]	Best patch step: 7
+2025-01-26 21:22:43,916	[INFO]	Step: 10
+2025-01-26 21:22:43,916	[INFO]	Stop Steps: 50
+2025-01-26 21:22:44,369	[DEBUG]	EXEC>  SUCCESS 952522.0
+2025-01-26 21:22:44,369	[INFO]	1-1     SUCCESS              *952522.00 (40.28%) [1 edit(s)]  
+2025-01-26 21:22:44,369	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:22:44,369	[INFO]	Step: 11
+2025-01-26 21:22:44,369	[INFO]	Stop Steps: 50
+2025-01-26 21:22:44,693	[DEBUG]	EXEC>  SUCCESS 956798.375
+2025-01-26 21:22:44,693	[INFO]	1-2     SUCCESS               956798.38 (40.46%) [1 edit(s)]  
+2025-01-26 21:22:44,693	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:44,693	[INFO]	Step: 12
+2025-01-26 21:22:44,693	[INFO]	Stop Steps: 50
+2025-01-26 21:22:45,014	[DEBUG]	EXEC>  SUCCESS 947775.5
+2025-01-26 21:22:45,014	[INFO]	1-3     SUCCESS              *947775.50 (40.08%) [1 edit(s)]  
+2025-01-26 21:22:45,014	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:22:45,014	[INFO]	Step: 13
+2025-01-26 21:22:45,014	[INFO]	Stop Steps: 50
+2025-01-26 21:22:45,350	[DEBUG]	EXEC>  SUCCESS 999247.375
+2025-01-26 21:22:45,350	[INFO]	1-4     SUCCESS               999247.38 (42.26%) [1 edit(s)]  
+2025-01-26 21:22:45,350	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:45,350	[INFO]	Step: 14
+2025-01-26 21:22:45,350	[INFO]	Stop Steps: 50
+2025-01-26 21:22:45,676	[DEBUG]	EXEC>  SUCCESS 948845.5
+2025-01-26 21:22:45,676	[INFO]	1-5     SUCCESS               948845.50 (40.13%) [1 edit(s)]  
+2025-01-26 21:22:45,676	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:45,676	[INFO]	Step: 15
+2025-01-26 21:22:45,676	[INFO]	Stop Steps: 50
+2025-01-26 21:22:45,994	[DEBUG]	EXEC>  SUCCESS 962845.6875
+2025-01-26 21:22:45,995	[INFO]	1-6     SUCCESS               962845.69 (40.72%) [1 edit(s)]  
+2025-01-26 21:22:45,995	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf(check_possible(s, m) ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:45,995	[INFO]	Step: 16
+2025-01-26 21:22:45,995	[INFO]	Stop Steps: 50
+2025-01-26 21:22:46,432	[DEBUG]	EXEC>  SUCCESS 2402329.5
+2025-01-26 21:22:46,432	[INFO]	1-7     SUCCESS               2402329.50 (101.60%) [2 edit(s)]  
+2025-01-26 21:22:46,432	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int i, j, m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        vector<int> s(m);\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        vector<int> b(n * m);\n        for (i = 0; i < n * m; i++)\n            scanf("%d", &b[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                s[j] -= b[i * m + j];\n            }\n        }\n\n        printf("%s\\n", check_possible(s.data(), m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:46,433	[INFO]	Step: 17
+2025-01-26 21:22:46,433	[INFO]	Stop Steps: 50
+2025-01-26 21:22:46,752	[DEBUG]	EXEC>  SUCCESS 958384.875
+2025-01-26 21:22:46,752	[INFO]	1-8     SUCCESS               958384.88 (40.53%) [2 edit(s)]  
+2025-01-26 21:22:46,752	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Combine the two loops into one to reduce overhead\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                // Directly subtracting from s[j] while scanning b\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:46,752	[INFO]	Step: 18
+2025-01-26 21:22:46,752	[INFO]	Stop Steps: 50
+2025-01-26 21:22:47,074	[DEBUG]	EXEC>  SUCCESS 951500.0
+2025-01-26 21:22:47,074	[INFO]	1-9     SUCCESS               951500.00 (40.24%) [2 edit(s)]  
+2025-01-26 21:22:47,074	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = true;\n        for (int i = 0; i < m; i++) {\n            if (s[i] < 0) {\n                isValid = false;\n                break;\n            }\n        }\n\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:47,074	[INFO]	Step: 19
+2025-01-26 21:22:47,074	[INFO]	Stop Steps: 50
+2025-01-26 21:22:47,411	[DEBUG]	EXEC>  SUCCESS 951324.875
+2025-01-26 21:22:47,411	[INFO]	1-10    SUCCESS               951324.88 (40.23%) [2 edit(s)]  
+2025-01-26 21:22:47,412	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    array<int, 100> s;\n    int b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s;\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool allNonNegative = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(allNonNegative ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:22:47,412	[INFO]	Step: 20
+2025-01-26 21:22:47,412	[INFO]	Stop Steps: 50
+2025-01-26 21:22:47,979	[DEBUG]	EXEC>  SUCCESS 2366320.625
+2025-01-26 21:22:47,979	[INFO]	1-1     SUCCESS               2366320.62 (100.08%) [1 edit(s)]  
+2025-01-26 21:22:47,979	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include<vector>\n\n#include<list>\n\n#include<algorithm>\n\n#include<iostream>\n\n#include<string>\n\n#include<cstdio>\n\n#include<cstdlib>\n\n#include<cstring>\n\n#include<cmath>\n\nusing namespace std;\n\nint main(){\n\n  int i,j;\n\n  int s[100],b,m,n;\n\n  while(cin>>n>>m&&n+m){\n\n    for(i=0;i<m;i++)\n\n      cin>>s[i];\n\n    for(i=0;i<n;i++){\n\n      for(j=0;j<m;j++){\n\n\tcin>>b;\n\n\ts[j]-=b;\n\n      }\n\n    }\n\n    for(i=0;i<m;i++){\n\n      if(s[i]<0)\n\n\tbreak;\n\n    }\n\n    if(i==m)\n\n      cout<<"Yes"<<endl;\n\n    else\n\n      cout<<"No"<<endl;\n\n  }\n\n  return 0;\n\n}')"
+2025-01-26 21:22:47,979	[INFO]	Step: 21
+2025-01-26 21:22:47,979	[INFO]	Stop Steps: 50
+2025-01-26 21:22:49,557	[DEBUG]	EXEC>  SUCCESS 2378059.625
+2025-01-26 21:22:49,557	[INFO]	REF     SUCCESS               2378059.62 (--) [0 edit(s)]  
+2025-01-26 21:22:49,558	[INFO]	Best patch: 0
+2025-01-26 21:22:49,876	[DEBUG]	EXEC>  SUCCESS 950464.8125
+2025-01-26 21:22:49,877	[INFO]	BEST    SUCCESS              *950464.81 (39.97%) [0 edit(s)]  
+2025-01-26 21:22:49,877	[INFO]	Best patch step: 12
+2025-01-26 21:23:27,422	[INFO]	Step: 21
+2025-01-26 21:23:27,422	[INFO]	Stop Steps: 50
+2025-01-26 21:23:27,872	[DEBUG]	EXEC>  SUCCESS 946862.0
+2025-01-26 21:23:27,872	[INFO]	2-2     SUCCESS              *946862.00 (39.82%) [1 edit(s)]  
+2025-01-26 21:23:27,872	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:23:27,872	[INFO]	Step: 22
+2025-01-26 21:23:27,872	[INFO]	Stop Steps: 50
+2025-01-26 21:23:28,196	[DEBUG]	EXEC>  SUCCESS 957314.4375
+2025-01-26 21:23:28,196	[INFO]	2-3     SUCCESS               957314.44 (40.26%) [1 edit(s)]  
+2025-01-26 21:23:28,196	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:28,197	[INFO]	Step: 23
+2025-01-26 21:23:28,197	[INFO]	Stop Steps: 50
+2025-01-26 21:23:28,527	[DEBUG]	EXEC>  SUCCESS 951382.375
+2025-01-26 21:23:28,527	[INFO]	2-4     SUCCESS               951382.38 (40.01%) [1 edit(s)]  
+2025-01-26 21:23:28,528	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        bool allNonNegative = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(allNonNegative ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:28,528	[INFO]	Step: 24
+2025-01-26 21:23:28,528	[INFO]	Stop Steps: 50
+2025-01-26 21:23:28,868	[DEBUG]	EXEC>  SUCCESS 959097.75
+2025-01-26 21:23:28,868	[INFO]	2-5     SUCCESS               959097.75 (40.33%) [1 edit(s)]  
+2025-01-26 21:23:28,868	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        // Check if all values in s are non-negative\n        bool isValid = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:28,868	[INFO]	Step: 25
+2025-01-26 21:23:28,868	[INFO]	Stop Steps: 50
+2025-01-26 21:23:29,198	[DEBUG]	EXEC>  SUCCESS 949905.125
+2025-01-26 21:23:29,198	[INFO]	2-6     SUCCESS               949905.12 (39.94%) [1 edit(s)]  
+2025-01-26 21:23:29,198	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf(all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; }) ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:29,198	[INFO]	Step: 26
+2025-01-26 21:23:29,198	[INFO]	Stop Steps: 50
+2025-01-26 21:23:29,529	[DEBUG]	EXEC>  SUCCESS 940871.75
+2025-01-26 21:23:29,529	[INFO]	2-7     SUCCESS              *940871.75 (39.56%) [1 edit(s)]  
+2025-01-26 21:23:29,530	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool isValid = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:23:29,530	[INFO]	Step: 27
+2025-01-26 21:23:29,530	[INFO]	Stop Steps: 50
+2025-01-26 21:23:29,854	[DEBUG]	EXEC>  SUCCESS 956703.0625
+2025-01-26 21:23:29,854	[INFO]	2-8     SUCCESS               956703.06 (40.23%) [2 edit(s)]  
+2025-01-26 21:23:29,854	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0}; // Initialize array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:29,854	[INFO]	Step: 28
+2025-01-26 21:23:29,854	[INFO]	Stop Steps: 50
+2025-01-26 21:23:30,247	[DEBUG]	EXEC>  SUCCESS 2398044.1875
+2025-01-26 21:23:30,247	[INFO]	2-9     SUCCESS               2398044.19 (100.84%) [2 edit(s)]  
+2025-01-26 21:23:30,247	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        int i = 0;\n        for (; i < m; i++) {\n            if (s[i] < 0) break;\n        }\n\n        printf(i == m ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        vector<int> s(m); // Use vector for dynamic sizing\n\n        for (int& val : s) // Range-based for loop for cleaner syntax\n            scanf("%d", &val);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        // Check if all elements are non-negative in a single loop\n        bool allNonNegative = true;\n        for (int i = 0; i < m; i++) {\n            if (s[i] < 0) {\n                allNonNegative = false;\n                break;\n            }\n        }\n\n        printf(allNonNegative ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:30,247	[INFO]	Step: 29
+2025-01-26 21:23:30,247	[INFO]	Stop Steps: 50
+2025-01-26 21:23:30,570	[DEBUG]	EXEC>  SUCCESS 953702.875
+2025-01-26 21:23:30,570	[INFO]	2-10    SUCCESS               953702.88 (40.10%) [3 edit(s)]  
+2025-01-26 21:23:30,571	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    array<int, 100> s;\n    int b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s;\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool allNonNegative = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(allNonNegative ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s{};\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Instead of using two separate loops, we can read values directly into an array\n        for (int i = 0; i < n * m; i++) {\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool allNonNegative = true;\n        for (int i = 0; i < m; i++) {\n            if (s[i] < 0) {\n                allNonNegative = false;\n                break;\n            }\n        }\n        \n        printf(allNonNegative ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:30,571	[INFO]	Step: 30
+2025-01-26 21:23:30,571	[INFO]	Stop Steps: 50
+2025-01-26 21:23:30,907	[DEBUG]	EXEC>  SUCCESS 944942.0
+2025-01-26 21:23:30,907	[INFO]	2-1     SUCCESS               944942.00 (39.74%) [3 edit(s)]  
+2025-01-26 21:23:30,908	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = true;\n        for (int i = 0; i < m; i++) {\n            if (s[i] < 0) {\n                isValid = false;\n                break;\n            }\n        }\n\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100]; // Use static to avoid unnecessary zeroing every iteration\n        fill(s, s + m, 0); // Initialize the array to zero using std::fill\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = all_of(s, s + m, [](int x) { return x >= 0; }); // Use std::all_of for clarity\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:23:30,908	[INFO]	Step: 31
+2025-01-26 21:23:30,908	[INFO]	Stop Steps: 50
+2025-01-26 21:23:31,486	[DEBUG]	EXEC>  SUCCESS 2463957.5
+2025-01-26 21:23:31,486	[INFO]	2-2     SUCCESS               2463957.50 (103.61%) [1 edit(s)]  
+2025-01-26 21:23:31,486	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include<vector>\n#include<list>\n#include<algorithm>\n#include<iostream>\n#include<string>\n#include<cstdio>\n#include<cstdlib>\n#include<cstring>\n#include<cmath>\n\nusing namespace std;\n\nint main(){\n  int i,j;\n  int s[100],b,m,n;\n\n  while(cin>>n>>m&&n+m){\n    for(i=0;i<m;i++)\n      cin>>s[i];\n\n    for(i=0;i<n;i++){\n      for(j=0;j<m;j++){\n        cin>>b;\n        s[j]-=b;\n      }\n    }\n\n    for(i=0;i<m;i++){\n      if(s[i]<0)\n        break;\n    }\n\n    if(i==m)\n      cout<<"Yes"<<endl;\n    else\n      cout<<"No"<<endl;\n  }\n\n  return 0;\n}')"
+2025-01-26 21:23:31,486	[INFO]	Step: 32
+2025-01-26 21:23:31,486	[INFO]	Stop Steps: 50
+2025-01-26 21:23:33,065	[DEBUG]	EXEC>  SUCCESS 2375003.6875
+2025-01-26 21:23:33,065	[INFO]	REF     SUCCESS               2375003.69 (--) [0 edit(s)]  
+2025-01-26 21:23:33,065	[INFO]	Best patch: 7
+2025-01-26 21:23:33,393	[DEBUG]	EXEC>  SUCCESS 951459.0625
+2025-01-26 21:23:33,393	[INFO]	BEST    SUCCESS              *951459.06 (40.06%) [0 edit(s)]  
+2025-01-26 21:23:33,393	[INFO]	Best patch step: 26
+2025-01-26 21:24:14,695	[INFO]	Step: 32
+2025-01-26 21:24:14,696	[INFO]	Stop Steps: 50
+2025-01-26 21:24:15,154	[DEBUG]	EXEC>  SUCCESS 952686.0625
+2025-01-26 21:24:15,155	[INFO]	3-3     SUCCESS              +952686.06 (40.11%) [1 edit(s)]  
+2025-01-26 21:24:15,155	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool isValid = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:15,155	[INFO]	Step: 33
+2025-01-26 21:24:15,155	[INFO]	Stop Steps: 50
+2025-01-26 21:24:15,488	[DEBUG]	EXEC>  SUCCESS 964547.5625
+2025-01-26 21:24:15,488	[INFO]	3-4     SUCCESS               964547.56 (40.61%) [3 edit(s)]  
+2025-01-26 21:24:15,488	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = true;\n        for (int i = 0; i < m; i++) {\n            if (s[i] < 0) {\n                isValid = false;\n                break;\n            }\n        }\n\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100]; // Use static to avoid unnecessary zeroing every iteration\n        fill(s, s + m, 0); // Initialize the array to zero using std::fill\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = all_of(s, s + m, [](int x) { return x >= 0; }); // Use std::all_of for clarity\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:15,488	[INFO]	Step: 34
+2025-01-26 21:24:15,488	[INFO]	Stop Steps: 50
+2025-01-26 21:24:15,819	[DEBUG]	EXEC>  SUCCESS 971327.0
+2025-01-26 21:24:15,819	[INFO]	3-5     SUCCESS               971327.00 (40.90%) [1 edit(s)]  
+2025-01-26 21:24:15,819	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100]; // Use static to avoid unnecessary zeroing every iteration\n        fill(s, s + m, 0); // Initialize the array to zero\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:15,819	[INFO]	Step: 35
+2025-01-26 21:24:15,819	[INFO]	Stop Steps: 50
+2025-01-26 21:24:16,148	[DEBUG]	EXEC>  SUCCESS 942529.4375
+2025-01-26 21:24:16,149	[INFO]	3-6     SUCCESS              *942529.44 (39.69%) [1 edit(s)]  
+2025-01-26 21:24:16,149	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s.data(), m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+
+2025-01-26 21:24:16,149	[INFO]	Step: 36
+2025-01-26 21:24:16,149	[INFO]	Stop Steps: 50
+2025-01-26 21:24:16,477	[DEBUG]	EXEC>  SUCCESS 958348.5625
+2025-01-26 21:24:16,477	[INFO]	3-7     SUCCESS               958348.56 (40.35%) [1 edit(s)]  
+2025-01-26 21:24:16,477	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100]; // Use static to avoid unnecessary zeroing every iteration\n        fill(s, s + m, 0); // Initialize the array to zero\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        bool isValid = all_of(s, s + m, [](int x) { return x >= 0; });\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:16,477	[INFO]	Step: 37
+2025-01-26 21:24:16,477	[INFO]	Stop Steps: 50
+2025-01-26 21:24:16,805	[DEBUG]	EXEC>  SUCCESS 984734.5625
+2025-01-26 21:24:16,805	[INFO]	3-8     SUCCESS               984734.56 (41.46%) [1 edit(s)]  
+2025-01-26 21:24:16,805	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100] = {0}; // Use static to avoid unnecessary zeroing every iteration\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        bool isValid = all_of(s, s + m, [](int x) { return x >= 0; });\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:16,805	[INFO]	Step: 38
+2025-01-26 21:24:16,805	[INFO]	Stop Steps: 50
+2025-01-26 21:24:17,226	[DEBUG]	EXEC>  SUCCESS 2397230.25
+2025-01-26 21:24:17,226	[INFO]	3-9     SUCCESS               2397230.25 (100.94%) [2 edit(s)]  
+2025-01-26 21:24:17,227	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool isValid = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        vector<int> s(m, 0); // Use vector for dynamic sizing and initialization\n\n        // Read all values into the array in one go\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Use a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool isValid = all_of(s.begin(), s.end(), [](int x) { return x >= 0; });\n        \n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:17,227	[INFO]	Step: 39
+2025-01-26 21:24:17,227	[INFO]	Stop Steps: 50
+2025-01-26 21:24:17,557	[DEBUG]	EXEC>  SUCCESS 958849.25
+2025-01-26 21:24:17,557	[INFO]	3-10    SUCCESS               958849.25 (40.37%) [4 edit(s)]  
+2025-01-26 21:24:17,557	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int i, j;\n    int s[100], b, m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (i = 0; i < n; i++) {\n            for (j = 0; j < m; j++) {\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        for (i = 0; i < m; i++) {\n            if (s[i] < 0)\n                break;\n        }\n\n        if (i == m)\n            printf("Yes\\n");\n        else\n            printf("No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = true;\n        for (int i = 0; i < m; i++) {\n            if (s[i] < 0) {\n                isValid = false;\n                break;\n            }\n        }\n\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100]; // Use static to avoid unnecessary zeroing every iteration\n        fill(s, s + m, 0); // Initialize the array to zero using std::fill\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            int b[100] = {0}; // Temporary array to store inputs\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = all_of(s, s + m, [](int x) { return x >= 0; }); // Use std::all_of for clarity\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        static int s[100]; // Use static to avoid unnecessary zeroing every iteration\n        fill(s, s + m, 0); // Initialize the array to zero using std::fill\n        int b[100] = {0}; // Move the declaration of the temporary array outside the loop\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                scanf("%d", &b[j]);\n                s[j] -= b[j];\n            }\n        }\n\n        bool isValid = all_of(s, s + m, [](int x) { return x >= 0; }); // Use std::all_of for clarity\n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:17,557	[INFO]	Step: 40
+2025-01-26 21:24:17,557	[INFO]	Stop Steps: 50
+2025-01-26 21:24:17,876	[DEBUG]	EXEC>  SUCCESS 957314.8125
+2025-01-26 21:24:17,876	[INFO]	3-1     SUCCESS               957314.81 (40.31%) [2 edit(s)]  
+2025-01-26 21:24:17,876	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100];\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0};  // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n * m; i++) { // Combine loops into a single loop to save iterations\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b; // Use modulo to access the correct index\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:17,876	[INFO]	Step: 41
+2025-01-26 21:24:17,876	[INFO]	Stop Steps: 50
+2025-01-26 21:24:18,205	[DEBUG]	EXEC>  SUCCESS 948182.6875
+2025-01-26 21:24:18,206	[INFO]	3-2     SUCCESS               948182.69 (39.92%) [2 edit(s)]  
+2025-01-26 21:24:18,206	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf(all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; }) ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s;  // Declare the array here for better scope management\n        scanf("%d", &s[0]); // Read the first element\n        for (int i = 1; i < m; i++)\n            scanf("%d", &s[i]);  // Read the remaining elements\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        // Use a custom loop to check if all elements are non-negative\n        bool valid = true;\n        for (int j = 0; j < m; j++) {\n            if (s[j] < 0) {\n                valid = false;\n                break;\n            }\n        }\n        printf(valid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:24:18,206	[INFO]	Step: 42
+2025-01-26 21:24:18,206	[INFO]	Stop Steps: 50
+2025-01-26 21:24:18,774	[DEBUG]	EXEC>  SUCCESS 2372326.25
+2025-01-26 21:24:18,774	[INFO]	3-3     SUCCESS               2372326.25 (99.89%) [1 edit(s)]  
+2025-01-26 21:24:18,774	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include<vector>\n#include<list>\n#include<algorithm>\n#include<iostream>\n#include<string>\n#include<cstdio>\n#include<cstdlib>\n#include<cstring>\n#include<cmath>\n\nusing namespace std;\n\nint main(){\n    int i, j;\n    int s[100], b, m, n;\n    while(cin >> n >> m && n + m) {\n        for(i = 0; i < m; i++)\n            cin >> s[i];\n\n        for(i = 0; i < n; i++) {\n            for(j = 0; j < m; j++) {\n                cin >> b;\n                s[j] -= b;\n            }\n        }\n\n        for(i = 0; i < m; i++) {\n            if(s[i] < 0)\n                break;\n        }\n\n        if(i == m)\n            cout << "Yes" << endl;\n        else\n            cout << "No" << endl;\n    }\n    return 0;\n}')"
+2025-01-26 21:24:18,774	[INFO]	Step: 43
+2025-01-26 21:24:18,774	[INFO]	Stop Steps: 50
+2025-01-26 21:24:20,353	[DEBUG]	EXEC>  SUCCESS 2376581.75
+2025-01-26 21:24:20,353	[INFO]	REF     SUCCESS               2376581.75 (--) [0 edit(s)]  
+2025-01-26 21:24:20,353	[INFO]	Best patch: 9
+2025-01-26 21:24:20,682	[DEBUG]	EXEC>  SUCCESS 941034.8125
+2025-01-26 21:24:20,682	[INFO]	BEST    SUCCESS              *941034.81 (39.60%) [0 edit(s)]  
+2025-01-26 21:24:20,682	[INFO]	Best patch step: 35
+2025-01-26 21:25:05,009	[INFO]	Step: 43
+2025-01-26 21:25:05,009	[INFO]	Stop Steps: 50
+2025-01-26 21:25:05,460	[DEBUG]	EXEC>  SUCCESS 962781.125
+2025-01-26 21:25:05,460	[INFO]	4-4     SUCCESS              +962781.12 (40.51%) [1 edit(s)]  
+2025-01-26 21:25:05,460	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s.data(), m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:05,460	[INFO]	Step: 44
+2025-01-26 21:25:05,460	[INFO]	Stop Steps: 50
+2025-01-26 21:25:05,783	[DEBUG]	EXEC>  SUCCESS 947096.9375
+2025-01-26 21:25:05,783	[INFO]	4-5     SUCCESS              +947096.94 (39.85%) [2 edit(s)]  
+2025-01-26 21:25:05,783	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    array<int, 100> s;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf(all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; }) ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s;  // Declare the array here for better scope management\n        scanf("%d", &s[0]); // Read the first element\n        for (int i = 1; i < m; i++)\n            scanf("%d", &s[i]);  // Read the remaining elements\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        // Use a custom loop to check if all elements are non-negative\n        bool valid = true;\n        for (int j = 0; j < m; j++) {\n            if (s[j] < 0) {\n                valid = false;\n                break;\n            }\n        }\n        printf(valid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:05,783	[INFO]	Step: 45
+2025-01-26 21:25:05,784	[INFO]	Stop Steps: 50
+2025-01-26 21:25:06,111	[DEBUG]	EXEC>  SUCCESS 945203.875
+2025-01-26 21:25:06,111	[INFO]	4-6     SUCCESS              +945203.88 (39.77%) [1 edit(s)]  
+2025-01-26 21:25:06,111	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        // Using a single loop to read and subtract values\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool isValid = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        \n        printf(isValid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:06,111	[INFO]	Step: 46
+2025-01-26 21:25:06,111	[INFO]	Stop Steps: 50
+2025-01-26 21:25:06,433	[DEBUG]	EXEC>  SUCCESS 941752.3125
+2025-01-26 21:25:06,434	[INFO]	4-7     SUCCESS              +941752.31 (39.63%) [1 edit(s)]  
+2025-01-26 21:25:06,434	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s.data(), m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:06,434	[INFO]	Step: 47
+2025-01-26 21:25:06,434	[INFO]	Stop Steps: 50
+2025-01-26 21:25:06,758	[DEBUG]	EXEC>  SUCCESS 942323.0625
+2025-01-26 21:25:06,758	[INFO]	4-8     SUCCESS               942323.06 (39.65%) [1 edit(s)]  
+2025-01-26 21:25:06,758	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        int s[100] = {0};  // Initialize the array to zero\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n * m; i++) { // Combine loops into a single loop to save iterations\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b; // Use modulo to access the correct index\n        }\n\n        printf("%s\\n", check_possible(s, m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:06,758	[INFO]	Step: 48
+2025-01-26 21:25:06,758	[INFO]	Stop Steps: 50
+2025-01-26 21:25:07,088	[DEBUG]	EXEC>  SUCCESS 946055.5
+2025-01-26 21:25:07,088	[INFO]	4-9     SUCCESS               946055.50 (39.81%) [1 edit(s)]  
+2025-01-26 21:25:07,089	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s;  // Declare the array here for better scope management\n        scanf("%d", &s[0]); // Read the first element\n        for (int i = 1; i < m; i++)\n            scanf("%d", &s[i]);  // Read the remaining elements\n\n        for (int i = 0; i < n * m; i++) {\n            int b;\n            scanf("%d", &b);\n            s[i % m] -= b;\n        }\n\n        // Check if all values in s are non-negative\n        bool valid = all_of(s.begin(), s.begin() + m, [](int x) { return x >= 0; });\n        printf(valid ? "Yes\\n" : "No\\n");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:07,089	[INFO]	Step: 49
+2025-01-26 21:25:07,089	[INFO]	Stop Steps: 50
+2025-01-26 21:25:07,517	[DEBUG]	EXEC>  SUCCESS 2403753.125
+2025-01-26 21:25:07,517	[INFO]	4-10    SUCCESS               2403753.12 (101.14%) [2 edit(s)]  
+2025-01-26 21:25:07,518	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s.data(), m) ? "Yes" : "No");\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](const vector<int>& s) {\n        return all_of(s.begin(), s.end(), [](int x) { return x >= 0; });\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        vector<int> s(m, 0); // Using a dynamic array instead of a fixed-size array\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b; // Directly modify the vector\n            }\n        }\n\n        printf("%s\\n", check_possible(s) ? "Yes" : "No");\n    }\n\n    return 0;\n}')"
+2025-01-26 21:25:07,518	[INFO]	Step: 50
+2025-01-26 21:25:07,518	[INFO]	Stop Steps: 50
+2025-01-26 21:25:07,518	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 21:25:07,518	[INFO]	Step: 50
+2025-01-26 21:25:07,518	[INFO]	Stop Steps: 50
+2025-01-26 21:25:09,367	[INFO]	~~~~ END ~~~~
+2025-01-26 21:25:09,367	[INFO]	Best patch step: 35
+2025-01-26 21:25:09,367	[INFO]	
+2025-01-26 21:25:09,367	[INFO]	==== REPORT ====
+2025-01-26 21:25:09,368	[INFO]	Termination: step budget
+2025-01-26 21:25:09,368	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0218_1737926459.log
+2025-01-26 21:25:09,368	[INFO]	Patch file: _magpie_logs/0218_1737926459.patch
+2025-01-26 21:25:09,368	[INFO]	Diff file: _magpie_logs/0218_1737926459.diff
+2025-01-26 21:25:09,368	[INFO]	Reference fitness: 2376581.75
+2025-01-26 21:25:09,368	[INFO]	Best fitness: 941034.81
+2025-01-26 21:25:09,368	[INFO]	
+2025-01-26 21:25:09,368	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int m, n;\n\n    auto check_possible = [](int s[], int m) {\n        for (int i = 0; i < m; ++i)\n            if (s[i] < 0) return false;\n        return true;\n    };\n\n    while (scanf("%d %d", &n, &m) == 2 && (n + m)) {\n        array<int, 100> s = {0}; // Initialize the array to zero\n\n        for (int i = 0; i < m; i++)\n            scanf("%d", &s[i]);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                int b;\n                scanf("%d", &b);\n                s[j] -= b;\n            }\n        }\n\n        printf("%s\\n", check_possible(s.data(), m) ? "Yes" : "No");\n    }\n\n    return 0;\n}')
+2025-01-26 21:25:09,368	[INFO]	
+2025-01-26 21:25:09,368	[INFO]	==== DIFF ====
+

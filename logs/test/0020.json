@@ -1,0 +1,229 @@
+{
+    "(4)": {
+        "children": [
+            {
+                "fitness": 3334174.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nvector<int> memo(100004, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k && i + j < n; ++j) {\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    memo.resize(n, -1); // Resize memo to n\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the memoization array with -1, which could be optimized by reducing the size of the array to n and using a more efficient way to handle the base cases."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k && i + j < n; ++j) {\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3282259.1875
+        ]
+    },
+    "(8)": {
+        "children": [
+            {
+                "fitness": 2916728.5625,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nvector<int> memo(maxn, -1); // Using a vector for better dynamic handling\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the memoization array with -1, which could be optimized by using a more efficient data structure to avoid unnecessary initializations and improve cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2852913.8125
+        ]
+    },
+    "(8_10)": {
+        "children": [
+            {
+                "fitness": 2805267.4375,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn]; // Using a fixed-size array for performance improvement\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1); // Initialize memo array\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the memoization vector, which could be optimized by using a fixed-size array to reduce overhead since the size is known at compile time."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nvector<int> memo(maxn, -1); // Using a vector for better dynamic handling\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2851067.375
+        ]
+    },
+    "(8_10_19x8x8_10)": {
+        "children": [
+            {
+                "fitness": 2844476.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Combine the memoization technique from Parent 1 (fitness: 2811180.3125) with the input handling from Parent 2 (fitness: 2857523.5625)."
+            },
+            {
+                "fitness": 2870082.6875,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nvector<int> memo(maxn, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 2 (fitness: 2857523.5625) with the memoization optimization from Parent 3 (fitness: 2916728.5625)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8_10_19",
+            "8",
+            "8_10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn]; // Using a fixed-size array for performance improvement\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1); // Initialize memo array\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nvector<int> memo(maxn, -1); // Using a vector for better dynamic handling\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2811180.3125,
+            2857523.5625,
+            2916728.5625
+        ]
+    },
+    "(8x4x3x2)": {
+        "children": [
+            {
+                "fitness": 3315765.0625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n, k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j >= n) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Combine the cost function from Parent 1 (fitness: 2852913.8125) with the main logic from Parent 4 (fitness: 3289498.75)."
+            },
+            {
+                "fitness": 3364220.4375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n, k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + 100004, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Merge the array initialization from Parent 2 (fitness: 3282259.1875) with the optimized cost function from Parent 3 (fitness: 3285903.9375)."
+            },
+            {
+                "fitness": 3349497.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n, k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int start) {\n    fill(memo, memo + 100004, -1);\n    queue<int> q;\n    q.push(start);\n    memo[start] = 0;\n\n    while (!q.empty()) {\n        int i = q.front();\n        q.pop();\n        for (int j = 1; j <= k; ++j) {\n if (i + j >= n) break;\n int temp_cost = abs(arr[i + j] - arr[i]) + (memo[i] == -1 ? 0 : memo[i]);\n if (memo[i + j] == -1 || temp_cost < memo[i + j]) {\n     memo[i + j] = temp_cost;\n     q.push(i + j);\n }\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (int i = 0; i < n; ++i) cin >> arr[i];\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Integrate the array handling from Parent 3 (fitness: 3285903.9375) with the queue optimization from Parent 4 (fitness: 3289498.75), improving the initialization process."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "4",
+            "3",
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k && i + j < n; ++j) {\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1); // Optimized initialization\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int start) {\n    fill(memo, memo + 100004, -1);\n    queue<int> q;\n    q.push(start);\n    memo[start] = 0;\n\n    while (!q.empty()) {\n        int i = q.front();\n        q.pop();\n        for (int j = 1; j <= k; ++j) {\n if (i + j >= n) break;\n int temp_cost = abs(arr[i + j] - arr[i]) + (memo[i] == -1 ? 0 : memo[i]);\n if (memo[i + j] == -1 || temp_cost < memo[i + j]) {\n     memo[i + j] = temp_cost;\n     q.push(i + j);\n }\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (int i = 0; i < n; ++i) cin >> arr[i];\n    cout << cost(0) << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2852913.8125,
+            3282259.1875,
+            3285903.9375,
+            3289498.75
+        ]
+    },
+    "(8x8_10x0x4_11)": {
+        "children": [
+            {
+                "fitness": 2945371.875,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nvector<int> memo(maxn, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 1 (fitness: 2809365.5) with the memoization strategy from Parent 2 (fitness: 2887572.75)."
+            },
+            {
+                "fitness": 3288685.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n, k;\nvector<int> arr(100004, 0);\nvector<int> memo(100004, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k && i + j < n; ++j) {\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Integrate the array handling from Parent 3 (fitness: 3315765.0625) with the cost function from Parent 4 (fitness: 3334174.4375)."
+            },
+            {
+                "fitness": 3394229.0625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nvector<int> arr(maxn);\nvector<int> memo(maxn, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Merge the cost function from Parent 1 (fitness: 2809365.5) with the input handling from Parent 4 (fitness: 3334174.4375) to streamline the process."
+            },
+            {
+                "fitness": 3317219.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nvector<int> arr(maxn);\nvector<int> memo(maxn, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j >= n) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Combine the performance optimizations from Parent 2 (fitness: 2887572.75) with the array handling from Parent 3 (fitness: 3315765.0625) to enhance efficiency."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "8_10",
+            "0",
+            "4_11"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+            "#include <iostream>\n#include <cstdio>\n#include <cmath>\n#include <vector>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nvector<int> memo(maxn, -1); // Using a vector for better dynamic handling\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n, k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j >= n) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nvector<int> memo(100004, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k && i + j < n; ++j) {\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    memo.resize(n, -1); // Resize memo to n\n    cout << cost(0) << endl;\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2809365.5,
+            2887572.75,
+            3315765.0625,
+            3334174.4375
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 3325880.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nvector<int> memo(100004, -1);\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the inclusion of the header files; replacing `<stdc++.h>` with specific headers could reduce compilation time and improve performance."
+            },
+            {
+                "fitness": 3314738.6875,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `vector` for `memo`, which could be optimized by using a static array since the size is known at compile time."
+            },
+            {
+                "fitness": 3289498.75,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int start) {\n    fill(memo, memo + 100004, -1);\n    queue<int> q;\n    q.push(start);\n    memo[start] = 0;\n\n    while (!q.empty()) {\n        int i = q.front();\n        q.pop();\n        for (int j = 1; j <= k; ++j) {\n if (i + j >= n) break;\n int temp_cost = abs(arr[i + j] - arr[i]) + (memo[i] == -1 ? 0 : memo[i]);\n if (memo[i + j] == -1 || temp_cost < memo[i + j]) {\n     memo[i + j] = temp_cost;\n     q.push(i + j);\n }\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (int i = 0; i < n; ++i) cin >> arr[i];\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the recursive function `cost(int i)` which could be optimized by using an iterative approach to avoid stack overflow and reduce function call overhead."
+            },
+            {
+                "fitness": 3285903.9375,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1); // Optimized initialization\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `memo` vector. By using a single loop to initialize instead of relying on the default constructor, we can reduce overhead and improve performance."
+            },
+            {
+                "fitness": 3364545.625,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k && i + j < n; ++j) {\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the conditional checks in the `cost` function which can be optimized by reducing redundant checks and improving the logic flow."
+            },
+            {
+                "fitness": 3302819.25,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\ninline int my_abs(int x) {\n    return (x < 0) ? -x : x;\n}\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return my_abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = my_abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    cin >> n >> k;\n    for(int i = 0; i < n; ++i) cin >> arr[i];\n    fill(memo, memo + 100004, -1);\n    cout << cost(0) << endl;\n    return 0;\n}\n",
+                "strategy": "Focus on the use of `abs` function which can be replaced with a custom inline function for better performance in scenarios where it is called frequently."
+            },
+            {
+                "fitness": 3359722.3125,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstdio>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + 100004, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Focus on the way input is handled; switching from `cin` to `scanf` could improve input performance significantly."
+            },
+            {
+                "fitness": 2932987.75,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 100004;\nint n, k;\nint arr[maxn];\nint memo[maxn];\n\nint cost(int i) {\n    if(i >= n - 1) return 0;\n    if(i == n - 2) return abs(arr[n - 2] - arr[n - 1]);\n\n    if(memo[i] == -1) {\n        for(int j = 1; j <= k; ++j) {\n if(i + j > n - 1) break;\n int temp = abs(arr[i + j] - arr[i]) + cost(i + j);\n memo[i] = (memo[i] == -1) ? temp : min(memo[i], temp);\n        }\n    }\n    return memo[i];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for(int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    fill(memo, memo + maxn, -1);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `arr` vector; using a fixed-size array instead of a vector could reduce overhead and improve performance."
+            },
+            {
+                "fitness": 3614570.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n;\nint k;\nvector<int> arr(100004, 0);\nint memo[100004];\n\nint cost(int start) {\n    fill(memo, memo + 100004, -1);\n    queue<int> q;\n    q.push(start);\n    memo[start] = 0;\n\n    while (!q.empty()) {\n        int i = q.front();\n        q.pop();\n        for (int j = 1; j <= k; ++j) {\n if (i + j >= n) break;\n int temp_cost = abs(arr[i + j] - arr[i]) + (memo[i] == -1 ? 0 : memo[i]);\n if (memo[i + j] == -1 || temp_cost < memo[i + j]) {\n     memo[i + j] = temp_cost;\n     q.push(i + j);\n }\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    scanf(\"%d %d\", &n, &k);\n    for (int i = 0; i < n; ++i) scanf(\"%d\", &arr[i]);\n    printf(\"%d\\n\", cost(0));\n    return 0;\n}\n",
+                "strategy": "Focus on the `cost` function which has recursive calls; converting it to an iterative version could help mitigate stack overflow risks and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include \"stdc++.h\"\n\nusing namespace std;\n\n\n\nint n;\n\nint k;\n\nvector<int> arr(100004, 0);\n\nvector<int> memo(100004, -1);\n\n\n\nint cost(int i) {\n\n\tif(i>=n-1) return 0;\n\n\tif(i==n-2) return abs(arr[n-2]-arr[n-1]);\n\n\n\n\tif(memo[i]==-1)\n\n\t{\n\n\t\tfor(int j=1; j<=k; ++j)\n\n\t\t{\n\n\t\t\tif(i+j>n-1) break;\n\n\t\t\tint temp = abs(arr[i+j]-arr[i]) + cost(i+j);\n\n\t\t\tmemo[i] = (memo[i]==-1) ? temp : min(memo[i], temp);\n\n\t\t}\n\n\t}\n\n\treturn memo[i];\n\n}\n\n\n\n\n\nint main() {\n\n\n\n\tcin >> n >> k;\n\n\tfor(int i=0; i<n; ++i) cin >> arr[i];\n\n\n\n\tcout << cost(0) << endl;\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3289981.125
+        ]
+    }
+}

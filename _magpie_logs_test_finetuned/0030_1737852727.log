@@ -1,0 +1,421 @@
+2025-01-26 00:52:07,885	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5735101711034860
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0030
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 00:52:07,886	[DEBUG]	
+2025-01-26 00:52:07,886	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 00:52:07,886	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 00:52:08,859	[DEBUG]	EXEC>  SUCCESS 2330930.375
+2025-01-26 00:52:08,859	[INFO]	WARM    SUCCESS               2330930.38 (--) [0 edit(s)]  
+2025-01-26 00:52:09,582	[DEBUG]	EXEC>  SUCCESS 2323049.75
+2025-01-26 00:52:09,582	[INFO]	WARM    SUCCESS               2323049.75 (--) [0 edit(s)]  
+2025-01-26 00:52:10,317	[DEBUG]	EXEC>  SUCCESS 2416714.9375
+2025-01-26 00:52:10,318	[INFO]	WARM    SUCCESS               2416714.94 (--) [0 edit(s)]  
+2025-01-26 00:52:11,049	[DEBUG]	EXEC>  SUCCESS 2307847.5
+2025-01-26 00:52:11,050	[INFO]	WARM    SUCCESS               2307847.50 (--) [0 edit(s)]  
+2025-01-26 00:52:11,784	[DEBUG]	EXEC>  SUCCESS 2337279.625
+2025-01-26 00:52:11,784	[INFO]	WARM    SUCCESS               2337279.62 (--) [0 edit(s)]  
+2025-01-26 00:52:11,784	[INFO]	REF     SUCCESS               2337279.62 (--) [0 edit(s)]  
+2025-01-26 00:52:11,784	[INFO]	
+2025-01-26 00:52:11,784	[INFO]	~~~~ START ~~~~
+2025-01-26 00:52:25,345	[DEBUG]	EXEC>  SUCCESS 952933.6875
+2025-01-26 00:52:25,345	[INFO]	0-1     SUCCESS              *952933.69 (40.77%) [1 edit(s)]  
+2025-01-26 00:52:25,345	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+
+2025-01-26 00:52:26,619	[DEBUG]	EXEC>  SUCCESS 937187.375
+2025-01-26 00:52:26,619	[INFO]	0-2     SUCCESS              *937187.38 (40.10%) [1 edit(s)]  
+2025-01-26 00:52:26,619	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+
+2025-01-26 00:52:27,896	[DEBUG]	EXEC>  SUCCESS 958750.9375
+2025-01-26 00:52:27,896	[INFO]	0-3     SUCCESS               958750.94 (41.02%) [1 edit(s)]  
+2025-01-26 00:52:27,896	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:29,197	[DEBUG]	EXEC>  SUCCESS 950206.9375
+2025-01-26 00:52:29,197	[INFO]	0-4     SUCCESS               950206.94 (40.65%) [1 edit(s)]  
+2025-01-26 00:52:29,198	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <array>\n#include <cstring>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    printf("%c%d%c\\n", a[0], (int)strlen(a.data()) - 2, a[strlen(a.data()) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:30,472	[DEBUG]	EXEC>  SUCCESS 962358.25
+2025-01-26 00:52:30,472	[INFO]	0-5     SUCCESS               962358.25 (41.17%) [1 edit(s)]  
+2025-01-26 00:52:30,472	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = strlen(a);\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:31,748	[DEBUG]	EXEC>  SUCCESS 955772.6875
+2025-01-26 00:52:31,748	[INFO]	0-6     SUCCESS               955772.69 (40.89%) [1 edit(s)]  
+2025-01-26 00:52:31,748	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:33,022	[DEBUG]	EXEC>  SUCCESS 936192.9375
+2025-01-26 00:52:33,022	[INFO]	0-7     SUCCESS              *936192.94 (40.05%) [1 edit(s)]  
+2025-01-26 00:52:33,022	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+
+2025-01-26 00:52:34,299	[DEBUG]	EXEC>  SUCCESS 954680.4375
+2025-01-26 00:52:34,300	[INFO]	0-8     SUCCESS               954680.44 (40.85%) [1 edit(s)]  
+2025-01-26 00:52:34,300	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_SIZE = 10000001;\nchar a[MAX_SIZE];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:35,576	[DEBUG]	EXEC>  SUCCESS 962039.1875
+2025-01-26 00:52:35,576	[INFO]	0-9     SUCCESS               962039.19 (41.16%) [1 edit(s)]  
+2025-01-26 00:52:35,576	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:36,851	[DEBUG]	EXEC>  SUCCESS 955467.8125
+2025-01-26 00:52:36,851	[INFO]	0-10    SUCCESS               955467.81 (40.88%) [1 edit(s)]  
+2025-01-26 00:52:36,851	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ninline int getLength(const char* str) {\n    return strlen(str);\n}\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], getLength(a) - 2, a[getLength(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:37,852	[INFO]	Step: 10
+2025-01-26 00:52:37,852	[INFO]	Stop Steps: 50
+2025-01-26 00:52:39,592	[DEBUG]	EXEC>  SUCCESS 2326089.4375
+2025-01-26 00:52:39,592	[INFO]	REF     SUCCESS               2326089.44 (--) [0 edit(s)]  
+2025-01-26 00:52:39,592	[INFO]	Best patch: 6
+2025-01-26 00:52:39,851	[DEBUG]	EXEC>  SUCCESS 951906.3125
+2025-01-26 00:52:39,851	[INFO]	BEST    SUCCESS              *951906.31 (40.92%) [0 edit(s)]  
+2025-01-26 00:52:39,851	[INFO]	Best patch step: 6
+2025-01-26 00:52:57,841	[INFO]	Step: 10
+2025-01-26 00:52:57,841	[INFO]	Stop Steps: 50
+2025-01-26 00:52:58,181	[DEBUG]	EXEC>  SUCCESS 947489.25
+2025-01-26 00:52:58,181	[INFO]	1-1     SUCCESS              *947489.25 (40.73%) [1 edit(s)]  
+2025-01-26 00:52:58,181	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+
+2025-01-26 00:52:58,181	[INFO]	Step: 11
+2025-01-26 00:52:58,181	[INFO]	Stop Steps: 50
+2025-01-26 00:52:58,440	[DEBUG]	EXEC>  SUCCESS 958020.9375
+2025-01-26 00:52:58,440	[INFO]	1-2     SUCCESS               958020.94 (41.19%) [1 edit(s)]  
+2025-01-26 00:52:58,440	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:58,440	[INFO]	Step: 12
+2025-01-26 00:52:58,440	[INFO]	Stop Steps: 50
+2025-01-26 00:52:58,522	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:52:58,523	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>')"
+2025-01-26 00:52:58,523	[INFO]	Step: 13
+2025-01-26 00:52:58,523	[INFO]	Stop Steps: 50
+2025-01-26 00:52:58,608	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:52:58,608	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>')"
+2025-01-26 00:52:58,609	[INFO]	Step: 14
+2025-01-26 00:52:58,609	[INFO]	Stop Steps: 50
+2025-01-26 00:52:58,691	[INFO]	1-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:52:58,692	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>')"
+2025-01-26 00:52:58,692	[INFO]	Step: 15
+2025-01-26 00:52:58,692	[INFO]	Stop Steps: 50
+2025-01-26 00:52:58,775	[INFO]	1-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:52:58,775	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>')"
+2025-01-26 00:52:58,775	[INFO]	Step: 16
+2025-01-26 00:52:58,775	[INFO]	Stop Steps: 50
+2025-01-26 00:52:59,037	[DEBUG]	EXEC>  SUCCESS 970401.5
+2025-01-26 00:52:59,037	[INFO]	1-7     SUCCESS               970401.50 (41.72%) [2 edit(s)]  
+2025-01-26 00:52:59,037	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the variable instead of calling strlen again\n    return 0;\n}')"
+2025-01-26 00:52:59,038	[INFO]	Step: 17
+2025-01-26 00:52:59,038	[INFO]	Stop Steps: 50
+2025-01-26 00:52:59,307	[DEBUG]	EXEC>  SUCCESS 939004.0
+2025-01-26 00:52:59,307	[INFO]	1-8     SUCCESS              *939004.00 (40.37%) [2 edit(s)]  
+2025-01-26 00:52:59,307	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store the length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the stored length\n    return 0;\n}')"
+
+2025-01-26 00:52:59,307	[INFO]	Step: 18
+2025-01-26 00:52:59,307	[INFO]	Stop Steps: 50
+2025-01-26 00:52:59,589	[DEBUG]	EXEC>  SUCCESS 948027.125
+2025-01-26 00:52:59,589	[INFO]	1-9     SUCCESS               948027.12 (40.76%) [2 edit(s)]  
+2025-01-26 00:52:59,589	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <array>\n#include <cstring>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    printf("%c%d%c\\n", a[0], (int)strlen(a.data()) - 2, a[strlen(a.data()) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]);\n    return 0;\n}')"
+2025-01-26 00:52:59,589	[INFO]	Step: 19
+2025-01-26 00:52:59,589	[INFO]	Stop Steps: 50
+2025-01-26 00:52:59,852	[DEBUG]	EXEC>  SUCCESS 938783.1875
+2025-01-26 00:52:59,852	[INFO]	1-10    SUCCESS              *938783.19 (40.36%) [2 edit(s)]  
+2025-01-26 00:52:59,852	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the variable instead of recalculating\n    return 0;\n}')"
+
+2025-01-26 00:52:59,852	[INFO]	Step: 20
+2025-01-26 00:52:59,852	[INFO]	Stop Steps: 50
+2025-01-26 00:53:00,112	[DEBUG]	EXEC>  SUCCESS 980237.875
+2025-01-26 00:53:00,112	[INFO]	1-1     SUCCESS               980237.88 (42.14%) [1 edit(s)]  
+2025-01-26 00:53:00,112	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:00,112	[INFO]	Step: 21
+2025-01-26 00:53:00,112	[INFO]	Stop Steps: 50
+2025-01-26 00:53:01,855	[DEBUG]	EXEC>  SUCCESS 2298000.9375
+2025-01-26 00:53:01,856	[INFO]	REF     SUCCESS               2298000.94 (--) [0 edit(s)]  
+2025-01-26 00:53:01,856	[INFO]	Best patch: 0_13
+2025-01-26 00:53:02,119	[DEBUG]	EXEC>  SUCCESS 961501.0
+2025-01-26 00:53:02,119	[INFO]	BEST    SUCCESS              *961501.00 (41.84%) [0 edit(s)]  
+2025-01-26 00:53:02,119	[INFO]	Best patch step: 19
+2025-01-26 00:53:17,213	[INFO]	Step: 21
+2025-01-26 00:53:17,213	[INFO]	Stop Steps: 50
+2025-01-26 00:53:17,601	[DEBUG]	EXEC>  SUCCESS 963338.25
+2025-01-26 00:53:17,601	[INFO]	2-2     SUCCESS              +963338.25 (41.92%) [2 edit(s)]  
+2025-01-26 00:53:17,601	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the variable instead of recalculating\n    return 0;\n}')"
+2025-01-26 00:53:17,602	[INFO]	Step: 22
+2025-01-26 00:53:17,602	[INFO]	Stop Steps: 50
+2025-01-26 00:53:17,862	[DEBUG]	EXEC>  SUCCESS 945212.8125
+2025-01-26 00:53:17,863	[INFO]	2-3     SUCCESS              *945212.81 (41.13%) [2 edit(s)]  
+2025-01-26 00:53:17,863	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store the length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the stored length\n    return 0;\n}')"
+
+2025-01-26 00:53:17,863	[INFO]	Step: 23
+2025-01-26 00:53:17,863	[INFO]	Stop Steps: 50
+2025-01-26 00:53:18,121	[DEBUG]	EXEC>  SUCCESS 948224.375
+2025-01-26 00:53:18,121	[INFO]	2-4     SUCCESS               948224.38 (41.26%) [1 edit(s)]  
+2025-01-26 00:53:18,123	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the variable instead of recalculating\n    return 0;\n}')"
+2025-01-26 00:53:18,123	[INFO]	Step: 24
+2025-01-26 00:53:18,123	[INFO]	Stop Steps: 50
+2025-01-26 00:53:18,198	[INFO]	2-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:53:18,199	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int len = (int)strlen(a.data()); // Use array\'s data for input\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:18,199	[INFO]	Step: 25
+2025-01-26 00:53:18,199	[INFO]	Stop Steps: 50
+2025-01-26 00:53:18,477	[DEBUG]	EXEC>  SUCCESS 940084.6875
+2025-01-26 00:53:18,477	[INFO]	2-6     SUCCESS              *940084.69 (40.91%) [1 edit(s)]  
+2025-01-26 00:53:18,477	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length\n    return 0;\n}')"
+
+2025-01-26 00:53:18,477	[INFO]	Step: 26
+2025-01-26 00:53:18,477	[INFO]	Stop Steps: 50
+2025-01-26 00:53:18,775	[DEBUG]	EXEC>  SUCCESS 941064.375
+2025-01-26 00:53:18,775	[INFO]	2-7     SUCCESS               941064.38 (40.95%) [1 edit(s)]  
+2025-01-26 00:53:18,776	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}')"
+2025-01-26 00:53:18,776	[INFO]	Step: 27
+2025-01-26 00:53:18,776	[INFO]	Stop Steps: 50
+2025-01-26 00:53:19,039	[DEBUG]	EXEC>  SUCCESS 975559.125
+2025-01-26 00:53:19,039	[INFO]	2-8     SUCCESS               975559.12 (42.45%) [3 edit(s)]  
+2025-01-26 00:53:19,039	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the variable instead of recalculating\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the variable instead of recalculating\n    return 0;\n}')"
+2025-01-26 00:53:19,039	[INFO]	Step: 28
+2025-01-26 00:53:19,039	[INFO]	Stop Steps: 50
+2025-01-26 00:53:19,156	[INFO]	2-9     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 00:53:19,156	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store the length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the stored length\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = sizeof(a) / sizeof(a[0]) - 1; // Use the size of the array instead of strlen\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the calculated length\n    return 0;\n}')"
+2025-01-26 00:53:19,156	[INFO]	Step: 29
+2025-01-26 00:53:19,156	[INFO]	Stop Steps: 50
+2025-01-26 00:53:19,210	[INFO]	2-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:53:19,210	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = strlen(a);  // Store the length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]);  // Use the stored length\n    return 0;\n}\n\nFitness score: 931233.6875')"
+2025-01-26 00:53:19,210	[INFO]	Step: 30
+2025-01-26 00:53:19,210	[INFO]	Stop Steps: 50
+2025-01-26 00:53:19,285	[INFO]	2-1     COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-01-26 00:53:19,285	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <array>\n#include <cstring>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    printf("%c%d%c\\n", a[0], (int)strlen(a.data()) - 2, a[strlen(a.data()) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <array>\n#include <cstring> // Include for strlen\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = strlen(a.data()); // Use strlen to calculate length\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]);\n    return 0;\n}\n\nFitness score: 877999.1875')"
+2025-01-26 00:53:19,285	[INFO]	Step: 31
+2025-01-26 00:53:19,285	[INFO]	Stop Steps: 50
+2025-01-26 00:53:19,547	[DEBUG]	EXEC>  SUCCESS 944610.9375
+2025-01-26 00:53:19,547	[INFO]	2-2     SUCCESS               944610.94 (41.11%) [1 edit(s)]  
+2025-01-26 00:53:19,547	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:19,547	[INFO]	Step: 32
+2025-01-26 00:53:19,547	[INFO]	Stop Steps: 50
+2025-01-26 00:53:21,287	[DEBUG]	EXEC>  SUCCESS 2340952.875
+2025-01-26 00:53:21,287	[INFO]	REF     SUCCESS               2340952.88 (--) [0 edit(s)]  
+2025-01-26 00:53:21,287	[INFO]	Best patch: 6
+2025-01-26 00:53:21,583	[DEBUG]	EXEC>  SUCCESS 938947.1875
+2025-01-26 00:53:21,583	[INFO]	BEST    SUCCESS              *938947.19 (40.11%) [0 edit(s)]  
+2025-01-26 00:53:21,583	[INFO]	Best patch step: 25
+2025-01-26 00:53:40,502	[INFO]	Step: 32
+2025-01-26 00:53:40,502	[INFO]	Stop Steps: 50
+2025-01-26 00:53:40,912	[DEBUG]	EXEC>  SUCCESS 944960.75
+2025-01-26 00:53:40,912	[INFO]	3-3     SUCCESS              +944960.75 (40.37%) [1 edit(s)]  
+2025-01-26 00:53:40,913	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length\n    return 0;\n}')"
+2025-01-26 00:53:40,913	[INFO]	Step: 33
+2025-01-26 00:53:40,913	[INFO]	Stop Steps: 50
+2025-01-26 00:53:41,195	[DEBUG]	EXEC>  SUCCESS 939207.0
+2025-01-26 00:53:41,195	[INFO]	3-4     SUCCESS              +939207.00 (40.12%) [1 edit(s)]  
+2025-01-26 00:53:41,196	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}')"
+2025-01-26 00:53:41,196	[INFO]	Step: 34
+2025-01-26 00:53:41,196	[INFO]	Stop Steps: 50
+2025-01-26 00:53:41,281	[INFO]	3-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:53:41,281	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>')"
+2025-01-26 00:53:41,281	[INFO]	Step: 35
+2025-01-26 00:53:41,281	[INFO]	Stop Steps: 50
+2025-01-26 00:53:41,372	[INFO]	3-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:53:41,372	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>')"
+2025-01-26 00:53:41,372	[INFO]	Step: 36
+2025-01-26 00:53:41,372	[INFO]	Stop Steps: 50
+2025-01-26 00:53:41,452	[INFO]	3-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:53:41,453	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>')"
+2025-01-26 00:53:41,453	[INFO]	Step: 37
+2025-01-26 00:53:41,453	[INFO]	Stop Steps: 50
+2025-01-26 00:53:41,534	[INFO]	3-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:53:41,535	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>')"
+2025-01-26 00:53:41,535	[INFO]	Step: 38
+2025-01-26 00:53:41,535	[INFO]	Stop Steps: 50
+2025-01-26 00:53:41,815	[DEBUG]	EXEC>  SUCCESS 939791.6875
+2025-01-26 00:53:41,815	[INFO]	3-9     SUCCESS               939791.69 (40.15%) [2 edit(s)]  
+2025-01-26 00:53:41,815	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <array>\n#include <cstring> // Include for strlen\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = strlen(a.data()); // Use strlen for better performance\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use calculated length\n    return 0;\n}')"
+2025-01-26 00:53:41,815	[INFO]	Step: 39
+2025-01-26 00:53:41,815	[INFO]	Stop Steps: 50
+2025-01-26 00:53:42,102	[DEBUG]	EXEC>  SUCCESS 947407.375
+2025-01-26 00:53:42,102	[INFO]	3-10    SUCCESS               947407.38 (40.47%) [2 edit(s)]  
+2025-01-26 00:53:42,103	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <array>\n#include <cstring> // Include for strlen\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = strlen(a.data()); // Use strlen to calculate length\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use calculated length in output\n    return 0;\n}')"
+2025-01-26 00:53:42,103	[INFO]	Step: 40
+2025-01-26 00:53:42,103	[INFO]	Stop Steps: 50
+2025-01-26 00:53:42,363	[DEBUG]	EXEC>  SUCCESS 940427.8125
+2025-01-26 00:53:42,363	[INFO]	3-1     SUCCESS               940427.81 (40.17%) [2 edit(s)]  
+2025-01-26 00:53:42,363	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:42,363	[INFO]	Step: 41
+2025-01-26 00:53:42,363	[INFO]	Stop Steps: 50
+2025-01-26 00:53:42,487	[INFO]	3-2     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 00:53:42,487	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    int len = (int)strlen(a); // Store the length in a variable\n    printf("%c%d%c\\n", a[0], len - 2, a[len - 1]); // Use the stored length\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%d%c\\n", a[0], (int)(a - a + 10000000) - 2, a[(int)(a - a + 10000000) - 1]); // Use pointer arithmetic to determine length\n    return 0;\n}')"
+2025-01-26 00:53:42,487	[INFO]	Step: 42
+2025-01-26 00:53:42,487	[INFO]	Stop Steps: 50
+2025-01-26 00:53:42,746	[DEBUG]	EXEC>  SUCCESS 940200.5
+2025-01-26 00:53:42,746	[INFO]	3-3     SUCCESS               940200.50 (40.16%) [1 edit(s)]  
+2025-01-26 00:53:42,747	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    printf("%c%ld%c\\n", a[0], strlen(a) - 2, a[strlen(a) - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:42,747	[INFO]	Step: 43
+2025-01-26 00:53:42,747	[INFO]	Stop Steps: 50
+2025-01-26 00:53:43,016	[DEBUG]	EXEC>  SUCCESS 969091.6875
+2025-01-26 00:53:43,016	[INFO]	3-4     SUCCESS               969091.69 (41.40%) [1 edit(s)]  
+2025-01-26 00:53:43,016	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    long len = strlen(a);\n    printf("%c%ld%c\\n", a[0], len - 2, a[len - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:43,016	[INFO]	Step: 44
+2025-01-26 00:53:43,016	[INFO]	Stop Steps: 50
+2025-01-26 00:53:43,275	[DEBUG]	EXEC>  SUCCESS 973910.1875
+2025-01-26 00:53:43,276	[INFO]	3-5     SUCCESS               973910.19 (41.60%) [1 edit(s)]  
+2025-01-26 00:53:43,276	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nchar a[10000001];\n\nint main() {\n    scanf("%s", a);\n    long len = strlen(a);\n    printf("%c%ld%c\\n", a[0], len - 2, a[len - 1]);\n    return 0;\n}')"
+2025-01-26 00:53:43,276	[INFO]	Step: 45
+2025-01-26 00:53:43,276	[INFO]	Stop Steps: 50
+2025-01-26 00:53:45,009	[DEBUG]	EXEC>  SUCCESS 2314113.125
+2025-01-26 00:53:45,009	[INFO]	REF     SUCCESS               2314113.12 (--) [0 edit(s)]  
+2025-01-26 00:53:45,009	[INFO]	Best patch: 6
+2025-01-26 00:53:45,290	[DEBUG]	EXEC>  SUCCESS 955014.375
+2025-01-26 00:53:45,290	[INFO]	BEST    SUCCESS              *955014.38 (41.27%) [0 edit(s)]  
+2025-01-26 00:53:45,290	[INFO]	Best patch step: 25
+2025-01-26 00:54:02,430	[INFO]	Step: 45
+2025-01-26 00:54:02,430	[INFO]	Stop Steps: 50
+2025-01-26 00:54:02,836	[DEBUG]	EXEC>  SUCCESS 956113.25
+2025-01-26 00:54:02,836	[INFO]	4-6     SUCCESS              +956113.25 (41.32%) [1 edit(s)]  
+2025-01-26 00:54:02,836	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}')"
+2025-01-26 00:54:02,836	[INFO]	Step: 46
+2025-01-26 00:54:02,836	[INFO]	Stop Steps: 50
+2025-01-26 00:54:03,123	[DEBUG]	EXEC>  SUCCESS 940740.6875
+2025-01-26 00:54:03,123	[INFO]	4-7     SUCCESS              *940740.69 (40.65%) [2 edit(s)]  
+2025-01-26 00:54:03,123	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <array>\n#include <cstring> // Include for strlen\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = strlen(a.data()); // Use strlen for better performance\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use calculated length\n    return 0;\n}')"
+
+2025-01-26 00:54:03,123	[INFO]	Step: 47
+2025-01-26 00:54:03,123	[INFO]	Stop Steps: 50
+2025-01-26 00:54:03,415	[DEBUG]	EXEC>  SUCCESS 990223.1875
+2025-01-26 00:54:03,416	[INFO]	4-8     SUCCESS               990223.19 (42.79%) [1 edit(s)]  
+2025-01-26 00:54:03,416	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <array>\n#include <cstring>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = strlen(a.data()); // Use strlen for better performance\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use calculated length\n    return 0;\n}')"
+2025-01-26 00:54:03,416	[INFO]	Step: 48
+2025-01-26 00:54:03,416	[INFO]	Stop Steps: 50
+2025-01-26 00:54:03,697	[DEBUG]	EXEC>  SUCCESS 933976.3125
+2025-01-26 00:54:03,697	[INFO]	4-9     SUCCESS              *933976.31 (40.36%) [1 edit(s)]  
+2025-01-26 00:54:03,697	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}')"
+
+2025-01-26 00:54:03,698	[INFO]	Step: 49
+2025-01-26 00:54:03,698	[INFO]	Stop Steps: 50
+2025-01-26 00:54:03,983	[DEBUG]	EXEC>  SUCCESS 962979.1875
+2025-01-26 00:54:03,984	[INFO]	4-10    SUCCESS               962979.19 (41.61%) [1 edit(s)]  
+2025-01-26 00:54:03,984	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <array>\n#include <cstring>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%ld%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}')"
+2025-01-26 00:54:03,984	[INFO]	Step: 50
+2025-01-26 00:54:03,984	[INFO]	Stop Steps: 50
+2025-01-26 00:54:03,984	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 00:54:03,984	[INFO]	Step: 50
+2025-01-26 00:54:03,984	[INFO]	Stop Steps: 50
+2025-01-26 00:54:04,439	[INFO]	~~~~ END ~~~~
+2025-01-26 00:54:04,439	[INFO]	Best patch step: 48
+2025-01-26 00:54:04,439	[INFO]	
+2025-01-26 00:54:04,439	[INFO]	==== REPORT ====
+2025-01-26 00:54:04,439	[INFO]	Termination: step budget
+2025-01-26 00:54:04,439	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0030_1737852727.log
+2025-01-26 00:54:04,439	[INFO]	Patch file: _magpie_logs/0030_1737852727.patch
+2025-01-26 00:54:04,439	[INFO]	Diff file: _magpie_logs/0030_1737852727.diff
+2025-01-26 00:54:04,439	[INFO]	Reference fitness: 2314113.12
+2025-01-26 00:54:04,439	[INFO]	Best fitness: 933976.31
+2025-01-26 00:54:04,439	[INFO]	
+2025-01-26 00:54:04,440	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <array>\nusing namespace std;\n\narray<char, 10000001> a;\n\nint main() {\n    scanf("%s", a.data());\n    int length = 0;\n    while (a[length] != \'\\0\') length++; // Calculate length manually\n    printf("%c%d%c\\n", a[0], length - 2, a[length - 1]); // Use manual length in output\n    return 0;\n}')
+2025-01-26 00:54:04,440	[INFO]	
+2025-01-26 00:54:04,440	[INFO]	==== DIFF ====
+

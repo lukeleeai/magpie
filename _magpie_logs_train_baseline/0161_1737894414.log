@@ -1,0 +1,428 @@
+2025-01-26 12:26:54,148	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 3439522414111997
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0161
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 12:26:54,148	[DEBUG]	
+2025-01-26 12:26:54,148	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 12:26:54,148	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 12:26:55,182	[DEBUG]	EXEC>  SUCCESS 4509527.6875
+2025-01-26 12:26:55,182	[INFO]	WARM    SUCCESS               4509527.69 (--) [0 edit(s)]  
+2025-01-26 12:26:55,667	[DEBUG]	EXEC>  SUCCESS 4601009.25
+2025-01-26 12:26:55,667	[INFO]	WARM    SUCCESS               4601009.25 (--) [0 edit(s)]  
+2025-01-26 12:26:56,152	[DEBUG]	EXEC>  SUCCESS 4531799.5
+2025-01-26 12:26:56,152	[INFO]	WARM    SUCCESS               4531799.50 (--) [0 edit(s)]  
+2025-01-26 12:26:56,636	[DEBUG]	EXEC>  SUCCESS 4539614.9375
+2025-01-26 12:26:56,636	[INFO]	WARM    SUCCESS               4539614.94 (--) [0 edit(s)]  
+2025-01-26 12:26:57,128	[DEBUG]	EXEC>  SUCCESS 4546107.75
+2025-01-26 12:26:57,128	[INFO]	WARM    SUCCESS               4546107.75 (--) [0 edit(s)]  
+2025-01-26 12:26:57,128	[INFO]	REF     SUCCESS               4546107.75 (--) [0 edit(s)]  
+2025-01-26 12:26:57,129	[INFO]	
+2025-01-26 12:26:57,129	[INFO]	~~~~ START ~~~~
+2025-01-26 12:28:15,366	[DEBUG]	EXEC>  SUCCESS 3207585.1875
+2025-01-26 12:28:15,367	[INFO]	0-1     SUCCESS              *3207585.19 (70.56%) [1 edit(s)]  
+2025-01-26 12:28:15,367	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N, M[MAX], d[MAX];\n\n    while (scanf("%d", &n) != EOF) {\n        scanf("%d", &m);\n        for (int i = 0; i < MAX; i++) {\n            M[i] = 0;\n            d[i] = 0;\n        }\n\n        d[0] = 0;\n\n        for (int i = 1; i < n; i++) {\n            scanf("%lld", &N);\n            d[i] += d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &M[i]);\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now];\n            } else {\n                sum += d[now] - d[now + M[i]];\n            }\n\n            now = now + M[i];\n        }\n\n        printf("%lld\\n", sum % 100000);\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:28:17,022	[DEBUG]	EXEC>  SUCCESS 2711356.4375
+2025-01-26 12:28:17,022	[INFO]	0-2     SUCCESS              *2711356.44 (59.64%) [1 edit(s)]  
+2025-01-26 12:28:17,022	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n    \n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        d[0] = 0;\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] += d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now];\n            } else {\n                sum += d[now] - d[now + M[i]];\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:28:18,537	[DEBUG]	EXEC>  SUCCESS 2345515.25
+2025-01-26 12:28:18,538	[INFO]	0-3     SUCCESS              *2345515.25 (51.59%) [1 edit(s)]  
+2025-01-26 12:28:18,538	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n    \n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now];\n            } else {\n                sum += d[now] - d[now + M[i]];\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:28:20,056	[DEBUG]	EXEC>  SUCCESS 2423862.4375
+2025-01-26 12:28:20,056	[INFO]	0-4     SUCCESS               2423862.44 (53.32%) [1 edit(s)]  
+2025-01-26 12:28:20,056	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:21,704	[DEBUG]	EXEC>  SUCCESS 2509090.3125
+2025-01-26 12:28:21,704	[INFO]	0-5     SUCCESS               2509090.31 (55.19%) [1 edit(s)]  
+2025-01-26 12:28:21,705	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <numeric>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:23,223	[DEBUG]	EXEC>  SUCCESS 2386081.8125
+2025-01-26 12:28:23,223	[INFO]	0-6     SUCCESS               2386081.81 (52.49%) [1 edit(s)]  
+2025-01-26 12:28:23,223	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:24,762	[DEBUG]	EXEC>  SUCCESS 2451573.125
+2025-01-26 12:28:24,762	[INFO]	0-7     SUCCESS               2451573.12 (53.93%) [1 edit(s)]  
+2025-01-26 12:28:24,763	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <algorithm>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        fill(d.begin(), d.end(), 0);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:26,287	[DEBUG]	EXEC>  SUCCESS 2377033.6875
+2025-01-26 12:28:26,287	[INFO]	0-8     SUCCESS               2377033.69 (52.29%) [1 edit(s)]  
+2025-01-26 12:28:26,287	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:27,800	[DEBUG]	EXEC>  SUCCESS 2389178.0625
+2025-01-26 12:28:27,801	[INFO]	0-9     SUCCESS               2389178.06 (52.55%) [1 edit(s)]  
+2025-01-26 12:28:27,801	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:29,318	[DEBUG]	EXEC>  SUCCESS 2426212.0625
+2025-01-26 12:28:29,318	[INFO]	0-10    SUCCESS               2426212.06 (53.37%) [1 edit(s)]  
+2025-01-26 12:28:29,318	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:28:30,318	[INFO]	Step: 10
+2025-01-26 12:28:30,319	[INFO]	Stop Steps: 50
+2025-01-26 12:28:31,819	[DEBUG]	EXEC>  SUCCESS 4707048.0
+2025-01-26 12:28:31,820	[INFO]	REF     SUCCESS               4707048.00 (--) [0 edit(s)]  
+2025-01-26 12:28:31,820	[INFO]	Best patch: 2
+2025-01-26 12:28:32,478	[DEBUG]	EXEC>  SUCCESS 2389264.125
+2025-01-26 12:28:32,478	[INFO]	BEST    SUCCESS              *2389264.12 (50.76%) [0 edit(s)]  
+2025-01-26 12:28:32,478	[INFO]	Best patch step: 2
+2025-01-26 12:29:28,520	[INFO]	Step: 10
+2025-01-26 12:29:28,521	[INFO]	Stop Steps: 50
+2025-01-26 12:29:29,313	[DEBUG]	EXEC>  SUCCESS 2405183.5625
+2025-01-26 12:29:29,314	[INFO]	1-1     SUCCESS              +2405183.56 (51.10%) [1 edit(s)]  
+2025-01-26 12:29:29,314	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n    \n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now];\n            } else {\n                sum += d[now] - d[now + M[i]];\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:29,314	[INFO]	Step: 11
+2025-01-26 12:29:29,314	[INFO]	Stop Steps: 50
+2025-01-26 12:29:29,829	[DEBUG]	EXEC>  SUCCESS 2402250.9375
+2025-01-26 12:29:29,829	[INFO]	1-2     SUCCESS              +2402250.94 (51.04%) [1 edit(s)]  
+2025-01-26 12:29:29,830	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:29,830	[INFO]	Step: 12
+2025-01-26 12:29:29,830	[INFO]	Stop Steps: 50
+2025-01-26 12:29:30,345	[DEBUG]	EXEC>  SUCCESS 2401050.875
+2025-01-26 12:29:30,345	[INFO]	1-3     SUCCESS              +2401050.88 (51.01%) [1 edit(s)]  
+2025-01-26 12:29:30,345	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:30,345	[INFO]	Step: 13
+2025-01-26 12:29:30,345	[INFO]	Stop Steps: 50
+2025-01-26 12:29:30,858	[DEBUG]	EXEC>  SUCCESS 2359138.3125
+2025-01-26 12:29:30,858	[INFO]	1-4     SUCCESS              *2359138.31 (50.12%) [1 edit(s)]  
+2025-01-26 12:29:30,858	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:29:30,858	[INFO]	Step: 14
+2025-01-26 12:29:30,859	[INFO]	Stop Steps: 50
+2025-01-26 12:29:31,369	[DEBUG]	EXEC>  SUCCESS 2382298.375
+2025-01-26 12:29:31,369	[INFO]	1-5     SUCCESS               2382298.38 (50.61%) [1 edit(s)]  
+2025-01-26 12:29:31,369	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:31,369	[INFO]	Step: 15
+2025-01-26 12:29:31,369	[INFO]	Stop Steps: 50
+2025-01-26 12:29:31,876	[DEBUG]	EXEC>  SUCCESS 2488148.5
+2025-01-26 12:29:31,876	[INFO]	1-6     SUCCESS               2488148.50 (52.86%) [1 edit(s)]  
+2025-01-26 12:29:31,876	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:31,876	[INFO]	Step: 16
+2025-01-26 12:29:31,876	[INFO]	Stop Steps: 50
+2025-01-26 12:29:32,390	[DEBUG]	EXEC>  SUCCESS 2432641.4375
+2025-01-26 12:29:32,390	[INFO]	1-7     SUCCESS               2432641.44 (51.68%) [2 edit(s)]  
+2025-01-26 12:29:32,390	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n    \n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now];\n            } else {\n                sum += d[now] - d[now + M[i]];\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n    \n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> data(n + m); // Combined vector for both M and d\n        long long int sum = 0, now = 0;\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            data[i + m] = data[i - 1 + m] + N; // Store d in the second half\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> data[i]; // Store M in the first half\n        }\n\n        for (int i = 0; i < m; i++) {\n            if (data[i] >= 0) {\n                sum += data[now + data[i] + m] - data[now + m];\n            } else {\n                sum += data[now + m] - data[now + data[i] + m];\n            }\n            now += data[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:32,390	[INFO]	Step: 17
+2025-01-26 12:29:32,390	[INFO]	Stop Steps: 50
+2025-01-26 12:29:32,737	[INFO]	1-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 12:29:32,737	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> M(m), d(n);\n        \n        // Start accumulating from the first element to avoid unnecessary operations\n        cin >> d[0]; // Read the first element directly\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:32,737	[INFO]	Step: 18
+2025-01-26 12:29:32,737	[INFO]	Stop Steps: 50
+2025-01-26 12:29:33,244	[DEBUG]	EXEC>  SUCCESS 2381156.5
+2025-01-26 12:29:33,244	[INFO]	1-9     SUCCESS               2381156.50 (50.59%) [2 edit(s)]  
+2025-01-26 12:29:33,244	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<int> M(m), d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        \n        for (int i = 1; i < n; i++) {\n            int N;\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now]; // Use prefix sum for positive M[i]\n            } else {\n                sum += d[now] - d[now + M[i]]; // Use prefix sum for negative M[i]\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:33,244	[INFO]	Step: 19
+2025-01-26 12:29:33,245	[INFO]	Stop Steps: 50
+2025-01-26 12:29:33,760	[DEBUG]	EXEC>  SUCCESS 2375618.5
+2025-01-26 12:29:33,760	[INFO]	1-10    SUCCESS               2375618.50 (50.47%) [2 edit(s)]  
+2025-01-26 12:29:33,760	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:33,760	[INFO]	Step: 20
+2025-01-26 12:29:33,760	[INFO]	Stop Steps: 50
+2025-01-26 12:29:34,243	[DEBUG]	EXEC>  SUCCESS 4427172.8125
+2025-01-26 12:29:34,244	[INFO]	1-1     SUCCESS               4427172.81 (94.05%) [1 edit(s)]  
+2025-01-26 12:29:34,244	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include<iostream>\n#define MAX 100500\nusing namespace std;\n\nint main(void){\n    int n, m;\n    long long int N, M[MAX] = {0}, d[MAX] = {0}; // Initialization combined\n\n    while(cin >> n ){\n        cin >> m;\n\n        d[0] = 0;\n        for(int i = 1; i < n; i++){\n            cin >> N;\n            d[i] += d[i-1] + N;\n        }\n\n        for(int i = 0; i < m; i++) cin >> M[i];\n\n        long long int sum = 0, now = 0;\n\n        for(int i = 0; i < m; i++){\n            if(M[i] >= 0){\n                sum += d[now + M[i]] - d[now];\n            } else {\n                sum += d[now] - d[now + M[i]];\n            }\n            now = now + M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:34,244	[INFO]	Step: 21
+2025-01-26 12:29:34,244	[INFO]	Stop Steps: 50
+2025-01-26 12:29:34,736	[DEBUG]	EXEC>  SUCCESS 4454656.9375
+2025-01-26 12:29:34,736	[INFO]	1-2     SUCCESS               4454656.94 (94.64%) [1 edit(s)]  
+2025-01-26 12:29:34,736	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 15), '#include<iostream>\n#define MAX 100500\nusing namespace std;\n\nint main(void){\n    int n, m;\n    long long int N, M[MAX], d[MAX] = {0}; // Initialize d array to zero\n\n    while(cin >> n ){\n        cin >> m;\n\n        for(int i = 0; i < n; i++){\n            if (i > 0) cin >> N; // Only read N if i > 0\n            d[i] = (i > 0) ? d[i - 1] + N : 0; // Update d[i] based on previous value\n        }\n\n        for(int i = 0; i < m; i++) cin >> M[i];\n\n        long long int sum = 0, now = 0;\n\n        for(int i = 0; i < m; i++){\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:34,736	[INFO]	Step: 22
+2025-01-26 12:29:34,736	[INFO]	Stop Steps: 50
+2025-01-26 12:29:35,226	[DEBUG]	EXEC>  SUCCESS 4440634.375
+2025-01-26 12:29:35,226	[INFO]	1-3     SUCCESS               4440634.38 (94.34%) [1 edit(s)]  
+2025-01-26 12:29:35,226	[DEBUG]	patch(1-3)="LineLLMMutation(('source.cpp', 16), '#include<iostream>\n#define MAX 100500\nusing namespace std;\n\nint main(void){\n    int n, m;\n    long long int N, M[MAX], d[MAX] = {0};\n\n    while(cin >> n ){\n        cin >> m;\n\n        for(int i = 1; i < n; i++){\n            cin >> N;\n            d[i] = d[i-1] + N;\n        }\n\n        for(int i = 0; i < m; i++) cin >> M[i];\n\n        long long int sum = 0, now = 0;\n\n        for(int i = 0; i < m; i++){\n            long long int delta = (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            sum += delta;\n            now += M[i];\n        }\n\n        cout << (sum % 100000 + 100000) % 100000 << endl; // Ensure non-negative output\n    }\n\n    return 0;\n}')"
+2025-01-26 12:29:35,226	[INFO]	Step: 23
+2025-01-26 12:29:35,226	[INFO]	Stop Steps: 50
+2025-01-26 12:29:36,725	[DEBUG]	EXEC>  SUCCESS 4701768.625
+2025-01-26 12:29:36,725	[INFO]	REF     SUCCESS               4701768.62 (--) [0 edit(s)]  
+2025-01-26 12:29:36,725	[INFO]	Best patch: 1
+2025-01-26 12:29:37,229	[DEBUG]	EXEC>  SUCCESS 2415991.875
+2025-01-26 12:29:37,229	[INFO]	BEST    SUCCESS              *2415991.88 (51.38%) [0 edit(s)]  
+2025-01-26 12:29:37,229	[INFO]	Best patch step: 13
+2025-01-26 12:30:29,773	[INFO]	Step: 23
+2025-01-26 12:30:29,773	[INFO]	Stop Steps: 50
+2025-01-26 12:30:30,409	[DEBUG]	EXEC>  SUCCESS 2389775.75
+2025-01-26 12:30:30,409	[INFO]	2-4     SUCCESS              *2389775.75 (50.83%) [1 edit(s)]  
+2025-01-26 12:30:30,409	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:30:30,409	[INFO]	Step: 24
+2025-01-26 12:30:30,409	[INFO]	Stop Steps: 50
+2025-01-26 12:30:30,924	[DEBUG]	EXEC>  SUCCESS 2375216.9375
+2025-01-26 12:30:30,925	[INFO]	2-5     SUCCESS              *2375216.94 (50.52%) [2 edit(s)]  
+2025-01-26 12:30:30,925	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:30:30,925	[INFO]	Step: 25
+2025-01-26 12:30:30,925	[INFO]	Stop Steps: 50
+2025-01-26 12:30:31,441	[DEBUG]	EXEC>  SUCCESS 2439745.5
+2025-01-26 12:30:31,441	[INFO]	2-6     SUCCESS               2439745.50 (51.89%) [1 edit(s)]  
+2025-01-26 12:30:31,441	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:31,441	[INFO]	Step: 26
+2025-01-26 12:30:31,441	[INFO]	Stop Steps: 50
+2025-01-26 12:30:31,954	[DEBUG]	EXEC>  SUCCESS 2428537.25
+2025-01-26 12:30:31,955	[INFO]	2-7     SUCCESS               2428537.25 (51.65%) [1 edit(s)]  
+2025-01-26 12:30:31,955	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> M(m), d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:31,955	[INFO]	Step: 27
+2025-01-26 12:30:31,955	[INFO]	Stop Steps: 50
+2025-01-26 12:30:32,478	[DEBUG]	EXEC>  SUCCESS 2420349.375
+2025-01-26 12:30:32,478	[INFO]	2-8     SUCCESS               2420349.38 (51.48%) [1 edit(s)]  
+2025-01-26 12:30:32,478	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        vector<long long int> M(m);\n        long long int sum = 0, now = 0;\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:32,478	[INFO]	Step: 28
+2025-01-26 12:30:32,478	[INFO]	Stop Steps: 50
+2025-01-26 12:30:32,990	[DEBUG]	EXEC>  SUCCESS 2369987.9375
+2025-01-26 12:30:32,990	[INFO]	2-9     SUCCESS              *2369987.94 (50.41%) [1 edit(s)]  
+2025-01-26 12:30:32,990	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Efficiently read all N values in one loop\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:30:32,990	[INFO]	Step: 29
+2025-01-26 12:30:32,990	[INFO]	Stop Steps: 50
+2025-01-26 12:30:33,112	[INFO]	2-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 12:30:33,112	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (scanf("%d", &n) != EOF) {\n        scanf("%d", &m);\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            scanf("%lld", &N);\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &M[i]);\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        printf("%lld\\n", sum % 100000);\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:33,112	[INFO]	Step: 30
+2025-01-26 12:30:33,112	[INFO]	Stop Steps: 50
+2025-01-26 12:30:33,634	[DEBUG]	EXEC>  SUCCESS 2369427.0
+2025-01-26 12:30:33,635	[INFO]	2-1     SUCCESS              *2369427.00 (50.39%) [3 edit(s)]  
+2025-01-26 12:30:33,635	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:30:33,635	[INFO]	Step: 31
+2025-01-26 12:30:33,635	[INFO]	Stop Steps: 50
+2025-01-26 12:30:33,865	[INFO]	2-2     COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-01-26 12:30:33,865	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<int> M(m), d(n);\n        \n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<int> M(m), d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        \n        for (int i = 1; i < n; i++) {\n            int N;\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += d[now + M[i]] - d[now]; // Use prefix sum for positive M[i]\n            } else {\n                sum += d[now] - d[now + M[i]]; // Use prefix sum for negative M[i]\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<int> M(m);\n        long long sum = 0; // Use long long to prevent overflow\n        long long current_sum = 0; // Track the cumulative sum directly\n        \n        for (int i = 1; i < n; i++) {\n            int N;\n            cin >> N;\n            current_sum += N; // Update current sum directly\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        int now = 0;\n\n        for (int i = 0; i < m; i++) {\n            if (M[i] >= 0) {\n                sum += current_sum - (now > 0 ? d[now - 1] : 0); // Calculate sum based on current position\n            } else {\n                sum -= current_sum; // Adjust the sum for negative M[i]\n            }\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:33,865	[INFO]	Step: 32
+2025-01-26 12:30:33,865	[INFO]	Stop Steps: 50
+2025-01-26 12:30:34,377	[DEBUG]	EXEC>  SUCCESS 2429228.6875
+2025-01-26 12:30:34,377	[INFO]	2-3     SUCCESS               2429228.69 (51.67%) [2 edit(s)]  
+2025-01-26 12:30:34,377	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> data(n + m), sum(n + 1, 0);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            sum[i] = sum[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> data[n + i];\n        }\n\n        long long int total_sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            long long int idx = now + data[n + i];\n            total_sum += (data[n + i] >= 0) ? (sum[idx] - sum[now]) : (sum[now] - sum[idx]);\n            now += data[n + i];\n        }\n\n        cout << total_sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:34,377	[INFO]	Step: 33
+2025-01-26 12:30:34,377	[INFO]	Stop Steps: 50
+2025-01-26 12:30:34,893	[DEBUG]	EXEC>  SUCCESS 2389877.0625
+2025-01-26 12:30:34,893	[INFO]	2-4     SUCCESS               2389877.06 (50.83%) [1 edit(s)]  
+2025-01-26 12:30:34,893	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 21), '#include<iostream>\n#include<vector>\n\nusing namespace std;\n\nint main(void){\n    int n, m;\n    while(cin >> n ){\n        cin >> m;\n\n        vector<long long int> M(m), d(n); // Use vectors to dynamically allocate size\n        d[0] = 0;\n\n        for(int i = 1 ; i < n; i++){\n            long long int N;\n            cin >> N;\n            d[i] += d[i-1] + N;\n        }\n\n        for(int i = 0 ; i < m ; i++) cin >> M[i];\n\n        long long int sum = 0, now = 0;\n\n        for(int i = 0 ; i < m ; i++){\n            if(M[i] >= 0){\n                sum += d[now + M[i]] - d[now];\n            }\n            else{\n                sum += d[now] - d[now + M[i]];\n            }\n            now = now + M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:34,893	[INFO]	Step: 34
+2025-01-26 12:30:34,893	[INFO]	Stop Steps: 50
+2025-01-26 12:30:35,243	[INFO]	2-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 12:30:35,243	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 22), '#include<iostream>\n#include<vector>\n\nusing namespace std;\n\nint main(void){\n    int n, m;\n    while(cin >> n ){\n        cin >> m;\n\n        vector<long long int> M(m), d(n);\n        d[0] = 0;\n\n        for(int i = 0; i < n; i++){\n            long long int N;\n            cin >> N;\n            if (i > 0) d[i] = d[i-1] + N; // Calculate prefix sum directly\n        }\n\n        for(int i = 0 ; i < m ; i++) cin >> M[i];\n\n        long long int sum = 0, now = 0;\n\n        for(int i = 0 ; i < m ; i++){\n            if(M[i] >= 0){\n                sum += d[now + M[i]] - d[now];\n            }\n            else{\n                sum += d[now] - d[now + M[i]];\n            }\n            now = now + M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:35,243	[INFO]	Step: 35
+2025-01-26 12:30:35,243	[INFO]	Stop Steps: 50
+2025-01-26 12:30:35,595	[INFO]	2-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 12:30:35,595	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 23), '#include<iostream>\n#include<vector>\n\nusing namespace std;\n\nint main(void){\n    int n, m;\n    while(cin >> n ){\n        cin >> m;\n\n        vector<long long int> M(m), d(n);\n        d[0] = 0;\n\n        for(int i = 0; i < n; i++){\n            long long int N;\n            cin >> N;\n            if (i > 0) d[i] = d[i-1] + N;\n        }\n\n        // Read all M values in a single line\n        for(int i = 0 ; i < m ; i++) cin >> M[i];\n\n        long long int sum = 0, now = 0;\n\n        for(int i = 0 ; i < m ; i++){\n            if(M[i] >= 0){\n                sum += d[now + M[i]] - d[now];\n            }\n            else{\n                sum += d[now] - d[now + M[i]];\n            }\n            now = now + M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:30:35,595	[INFO]	Step: 36
+2025-01-26 12:30:35,595	[INFO]	Stop Steps: 50
+2025-01-26 12:30:37,097	[DEBUG]	EXEC>  SUCCESS 4636998.6875
+2025-01-26 12:30:37,097	[INFO]	REF     SUCCESS               4636998.69 (--) [0 edit(s)]  
+2025-01-26 12:30:37,097	[INFO]	Best patch: 8_13_18
+2025-01-26 12:30:37,605	[DEBUG]	EXEC>  SUCCESS 2387822.5
+2025-01-26 12:30:37,606	[INFO]	BEST    SUCCESS              *2387822.50 (51.50%) [0 edit(s)]  
+2025-01-26 12:30:37,606	[INFO]	Best patch step: 30
+2025-01-26 12:31:21,789	[INFO]	Step: 36
+2025-01-26 12:31:21,789	[INFO]	Stop Steps: 50
+2025-01-26 12:31:22,490	[DEBUG]	EXEC>  SUCCESS 2368396.9375
+2025-01-26 12:31:22,491	[INFO]	3-7     SUCCESS              *2368396.94 (51.08%) [3 edit(s)]  
+2025-01-26 12:31:22,491	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:31:22,491	[INFO]	Step: 37
+2025-01-26 12:31:22,491	[INFO]	Stop Steps: 50
+2025-01-26 12:31:23,004	[DEBUG]	EXEC>  SUCCESS 2382208.25
+2025-01-26 12:31:23,004	[INFO]	3-8     SUCCESS               2382208.25 (51.37%) [1 edit(s)]  
+2025-01-26 12:31:23,004	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Efficiently read all N values in one loop\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:23,004	[INFO]	Step: 38
+2025-01-26 12:31:23,004	[INFO]	Stop Steps: 50
+2025-01-26 12:31:23,354	[INFO]	3-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 12:31:23,354	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1\n        long long int sum = 0, now = 0;\n\n        // Efficiently read all N values in one loop\n        for (int i = 1; i <= n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:23,354	[INFO]	Step: 39
+2025-01-26 12:31:23,354	[INFO]	Stop Steps: 50
+2025-01-26 12:31:23,871	[DEBUG]	EXEC>  SUCCESS 2458159.9375
+2025-01-26 12:31:23,871	[INFO]	3-10    SUCCESS               2458159.94 (53.01%) [1 edit(s)]  
+2025-01-26 12:31:23,871	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with size n\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum efficiently\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:23,871	[INFO]	Step: 40
+2025-01-26 12:31:23,871	[INFO]	Stop Steps: 50
+2025-01-26 12:31:24,223	[INFO]	3-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 12:31:24,223	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 10), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1\n        long long int sum = 0, now = 0;\n\n        // Efficiently read all N values in one loop\n        for (int i = 1; i <= n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:24,223	[INFO]	Step: 41
+2025-01-26 12:31:24,223	[INFO]	Stop Steps: 50
+2025-01-26 12:31:24,745	[DEBUG]	EXEC>  SUCCESS 2432563.125
+2025-01-26 12:31:24,746	[INFO]	3-2     SUCCESS               2432563.12 (52.46%) [1 edit(s)]  
+2025-01-26 12:31:24,746	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 11), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with size n\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:24,746	[INFO]	Step: 42
+2025-01-26 12:31:24,746	[INFO]	Stop Steps: 50
+2025-01-26 12:31:25,269	[DEBUG]	EXEC>  SUCCESS 2366564.8125
+2025-01-26 12:31:25,270	[INFO]	3-3     SUCCESS              *2366564.81 (51.04%) [4 edit(s)]  
+2025-01-26 12:31:25,270	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#include <numeric>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values and calculate prefix sums using accumulate\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:31:25,270	[INFO]	Step: 43
+2025-01-26 12:31:25,270	[INFO]	Stop Steps: 50
+2025-01-26 12:31:25,623	[INFO]	3-4     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 12:31:25,623	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Efficiently read all N values in one loop\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Efficiently read all N values in one loop\n        for (int i = 1; i <= n; i++) { // Change < to <= to include the last value\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : (d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:25,623	[INFO]	Step: 44
+2025-01-26 12:31:25,624	[INFO]	Stop Steps: 50
+2025-01-26 12:31:26,157	[DEBUG]	EXEC>  SUCCESS 2387817.6875
+2025-01-26 12:31:26,157	[INFO]	3-5     SUCCESS               2387817.69 (51.49%) [3 edit(s)]  
+2025-01-26 12:31:26,157	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 26), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Reserve space for M vector to avoid multiple reallocations\n        vector<long long int> M;\n        M.reserve(m);\n        for (int i = 0; i < m; i++) {\n            long long int value;\n            cin >> value;\n            M.push_back(value);\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:26,158	[INFO]	Step: 45
+2025-01-26 12:31:26,158	[INFO]	Stop Steps: 50
+2025-01-26 12:31:26,507	[INFO]	3-6     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 12:31:26,507	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 27), '#include <iostream>\n#include <vector>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m);\n        long long int d = 0;  // Cumulative sum variable\n\n        for (int i = 0; i < n; i++) {\n            if (i > 0) {\n                cin >> N;\n                d += N;  // Update cumulative sum directly\n            }\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            long long int idx = now + M[i];\n            sum += (M[i] >= 0) ? (d - (now > 0 ? d - N : 0)) : abs(d - (now > 0 ? d - N : 0));\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:31:26,507	[INFO]	Step: 46
+2025-01-26 12:31:26,507	[INFO]	Stop Steps: 50
+2025-01-26 12:31:27,002	[DEBUG]	EXEC>  SUCCESS 4566933.6875
+2025-01-26 12:31:27,002	[INFO]	3-7     SUCCESS               4566933.69 (98.49%) [1 edit(s)]  
+2025-01-26 12:31:27,002	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 28), '#include<iostream>\n\n#define MAX 100500\n\nusing namespace std;\n\nint main(void){\n\n  int n,m;\n  long long int N, M[MAX],d[MAX];\n\n  while(cin >> n ){\n    cin >> m;\n\n    for(int i = 0 ; i < MAX ; i++){\n      M[i] = 0;\n      d[i] = 0;\n    }\n\n    d[0] = 0;\n\n    for(int i = 1 ; i < n; i++){\n      cin >> N;\n      d[i] += d[i-1] + N;\n    }\n\n    for(int i = 0 ; i < m ; i++) cin >> M[i];\n\n    long long int sum = 0,now = 0;\n\n    for(int i = 0 ; i < m ; i++){\n      if(M[i] >= 0){\n        sum += d[now + M[i]] - d[now];\n      }\n      else{\n        sum += d[now] - d[now + M[i]];\n      }\n\n      now = now + M[i];\n    }\n\n    cout << sum % 100000 << endl;\n  }\n\n  return 0;\n}')"
+2025-01-26 12:31:27,002	[INFO]	Step: 47
+2025-01-26 12:31:27,002	[INFO]	Stop Steps: 50
+2025-01-26 12:31:28,501	[DEBUG]	EXEC>  SUCCESS 4525906.75
+2025-01-26 12:31:28,501	[INFO]	REF     SUCCESS               4525906.75 (--) [0 edit(s)]  
+2025-01-26 12:31:28,501	[INFO]	Best patch: 8_13_18_24
+2025-01-26 12:31:29,010	[DEBUG]	EXEC>  SUCCESS 2458879.75
+2025-01-26 12:31:29,010	[INFO]	BEST    SUCCESS              *2458879.75 (54.33%) [0 edit(s)]  
+2025-01-26 12:31:29,010	[INFO]	Best patch step: 42
+2025-01-26 12:34:02,686	[INFO]	Step: 47
+2025-01-26 12:34:02,686	[INFO]	Stop Steps: 50
+2025-01-26 12:34:03,385	[DEBUG]	EXEC>  SUCCESS 2371378.0625
+2025-01-26 12:34:03,385	[INFO]	4-8     SUCCESS              *2371378.06 (52.40%) [4 edit(s)]  
+2025-01-26 12:34:03,385	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#include <numeric>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values and calculate prefix sums using accumulate\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:34:03,385	[INFO]	Step: 48
+2025-01-26 12:34:03,385	[INFO]	Stop Steps: 50
+2025-01-26 12:34:03,893	[DEBUG]	EXEC>  SUCCESS 2419934.9375
+2025-01-26 12:34:03,893	[INFO]	4-9     SUCCESS               2419934.94 (53.47%) [3 edit(s)]  
+2025-01-26 12:34:03,893	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n) {\n        cin >> m;\n        vector<long long int> M(m), d(n);\n\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        long long int sum = 0, now = 0;\n\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n);\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N;\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n, 0); // Initialize vector with 0\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Calculate prefix sums\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 12:34:03,893	[INFO]	Step: 49
+2025-01-26 12:34:03,893	[INFO]	Stop Steps: 50
+2025-01-26 12:34:04,420	[DEBUG]	EXEC>  SUCCESS 2364621.6875
+2025-01-26 12:34:04,420	[INFO]	4-10    SUCCESS              *2364621.69 (52.25%) [1 edit(s)]  
+2025-01-26 12:34:04,420	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')"
+
+2025-01-26 12:34:04,420	[INFO]	Step: 50
+2025-01-26 12:34:04,420	[INFO]	Stop Steps: 50
+2025-01-26 12:34:04,421	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 12:34:04,421	[INFO]	Step: 50
+2025-01-26 12:34:04,421	[INFO]	Stop Steps: 50
+2025-01-26 12:34:05,139	[INFO]	~~~~ END ~~~~
+2025-01-26 12:34:05,139	[INFO]	Best patch step: 49
+2025-01-26 12:34:05,139	[INFO]	
+2025-01-26 12:34:05,139	[INFO]	==== REPORT ====
+2025-01-26 12:34:05,139	[INFO]	Termination: step budget
+2025-01-26 12:34:05,139	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0161_1737894414.log
+2025-01-26 12:34:05,139	[INFO]	Patch file: _magpie_logs/0161_1737894414.patch
+2025-01-26 12:34:05,139	[INFO]	Diff file: _magpie_logs/0161_1737894414.diff
+2025-01-26 12:34:05,140	[INFO]	Reference fitness: 4525906.75
+2025-01-26 12:34:05,140	[INFO]	Best fitness: 2364621.69
+2025-01-26 12:34:05,140	[INFO]	
+2025-01-26 12:34:05,140	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cstdlib>\n#define MAX 100500\n\nusing namespace std;\n\nint main(void) {\n    int n, m;\n    long long int N;\n\n    while (cin >> n >> m) {\n        vector<long long int> d(n + 1, 0); // Initialize d with size n + 1 for easier prefix sum calculation\n        long long int sum = 0, now = 0;\n\n        // Read all N values in one loop for better cache efficiency\n        for (int i = 1; i < n; i++) {\n            cin >> N;\n            d[i] = d[i - 1] + N; // Build prefix sum array\n        }\n\n        // Use a single vector to read M values\n        vector<long long int> M(m);\n        for (int i = 0; i < m; i++) {\n            cin >> M[i];\n        }\n\n        // Calculate the sum in a single pass\n        for (int i = 0; i < m; i++) {\n            sum += (M[i] >= 0) ? (d[now + M[i]] - d[now]) : abs(d[now] - d[now + M[i]]);\n            now += M[i];\n        }\n\n        cout << sum % 100000 << endl;\n    }\n\n    return 0;\n}')
+2025-01-26 12:34:05,140	[INFO]	
+2025-01-26 12:34:05,140	[INFO]	==== DIFF ====
+

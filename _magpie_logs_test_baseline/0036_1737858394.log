@@ -1,0 +1,412 @@
+2025-01-26 02:26:34,889	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7471027507993083
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0036
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 02:26:34,889	[DEBUG]	
+2025-01-26 02:26:34,889	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 02:26:34,890	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 02:26:35,784	[DEBUG]	EXEC>  SUCCESS 7614279.1875
+2025-01-26 02:26:35,784	[INFO]	WARM    SUCCESS               7614279.19 (--) [0 edit(s)]  
+2025-01-26 02:26:36,322	[DEBUG]	EXEC>  SUCCESS 7395253.375
+2025-01-26 02:26:36,323	[INFO]	WARM    SUCCESS               7395253.38 (--) [0 edit(s)]  
+2025-01-26 02:26:36,871	[DEBUG]	EXEC>  SUCCESS 7511789.125
+2025-01-26 02:26:36,872	[INFO]	WARM    SUCCESS               7511789.12 (--) [0 edit(s)]  
+2025-01-26 02:26:37,411	[DEBUG]	EXEC>  SUCCESS 8072703.75
+2025-01-26 02:26:37,411	[INFO]	WARM    SUCCESS               8072703.75 (--) [0 edit(s)]  
+2025-01-26 02:26:37,959	[DEBUG]	EXEC>  SUCCESS 7608570.25
+2025-01-26 02:26:37,959	[INFO]	WARM    SUCCESS               7608570.25 (--) [0 edit(s)]  
+2025-01-26 02:26:37,959	[INFO]	REF     SUCCESS               7608570.25 (--) [0 edit(s)]  
+2025-01-26 02:26:37,959	[INFO]	
+2025-01-26 02:26:37,959	[INFO]	~~~~ START ~~~~
+2025-01-26 02:27:08,087	[DEBUG]	EXEC>  SUCCESS 6151836.5625
+2025-01-26 02:27:08,088	[INFO]	0-1     SUCCESS              *6151836.56 (80.85%) [1 edit(s)]  
+2025-01-26 02:27:08,088	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k; j++) {\n            if(i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+
+2025-01-26 02:27:09,240	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:09,240	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    fill(f, f + 1100000, INT_MAX);\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k; j++) {\n            if(i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:27:10,393	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:10,393	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    fill(f, f + 1100000, INT_MAX);\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k && i - j > 0; j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:27:11,545	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:11,545	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n\nusing namespace std;\n\nint n, k;\nlong long f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    fill(f, f + 1100000, LLONG_MAX);\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k && i - j > 0; j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:12,700	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:12,700	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n\nusing namespace std;\n\nint n, k;\nlong long f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    fill(f, f + 1100000, LLONG_MAX);\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i-1); j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:13,892	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:13,892	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    vector<long long> f(n + 1, LLONG_MAX), w(n + 1);\n    for(int i = 1; i <= n; i++) {\n        scanf("%lld", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i - 1); j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:15,086	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:15,086	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    vector<long long> f(n + 1, LLONG_MAX), w(n + 1);\n    for(int i = 1; i <= n; i++) {\n        scanf("%lld", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i - 1); j++) {\n            long long diff = w[i - j] - w[i];\n            f[i] = min(f[i], f[i - j] + (diff >= 0 ? diff : -diff));\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:16,279	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:16,279	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    vector<long long> arr(n + 1);\n    arr[0] = LLONG_MAX; // f[0]\n    for(int i = 1; i <= n; i++) {\n        scanf("%lld", &arr[i]); // filling w\n    }\n    long long *f = arr.data(); // f array points to arr\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i - 1); j++) {\n            long long diff = arr[i - j] - arr[i];\n            f[i] = min(f[i], f[i - j] + (diff >= 0 ? diff : -diff));\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:17,474	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:17,474	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    vector<long long> f(n + 1, LLONG_MAX), w(n + 1);\n    for(int i = 1; i <= n; i++) {\n        scanf("%lld", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        int j = 1;\n        while(j <= k && i - j > 0) {\n            long long diff = w[i - j] - w[i];\n            f[i] = min(f[i], f[i - j] + (diff >= 0 ? diff : -diff));\n            j++;\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:18,700	[INFO]	0-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 02:27:18,700	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    vector<long long> f(n + 1, LLONG_MAX), w(n + 1);\n    for(int i = 1; i <= n; i++) {\n        scanf("%lld", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i - 1); j++) {\n            long long diff = w[i - j] - w[i];\n            f[i] = min(f[i], f[i - j] + (diff >= 0 ? diff : -diff));\n        }\n    }\n    printf("%lld\\n", f[n]);\n}')"
+2025-01-26 02:27:19,700	[INFO]	Step: 10
+2025-01-26 02:27:19,700	[INFO]	Stop Steps: 50
+2025-01-26 02:27:21,368	[DEBUG]	EXEC>  SUCCESS 7537317.1875
+2025-01-26 02:27:21,368	[INFO]	REF     SUCCESS               7537317.19 (--) [0 edit(s)]  
+2025-01-26 02:27:21,368	[INFO]	Best patch: 0
+2025-01-26 02:27:21,754	[DEBUG]	EXEC>  SUCCESS 6067109.5
+2025-01-26 02:27:21,754	[INFO]	BEST    SUCCESS              *6067109.50 (80.49%) [0 edit(s)]  
+2025-01-26 02:27:21,754	[INFO]	Best patch step: 0
+2025-01-26 02:28:18,039	[INFO]	Step: 10
+2025-01-26 02:28:18,039	[INFO]	Stop Steps: 50
+2025-01-26 02:28:18,553	[DEBUG]	EXEC>  SUCCESS 6396810.375
+2025-01-26 02:28:18,553	[INFO]	1-1     SUCCESS              +6396810.38 (84.87%) [1 edit(s)]  
+2025-01-26 02:28:18,553	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k; j++) {\n            if(i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:18,553	[INFO]	Step: 11
+2025-01-26 02:28:18,553	[INFO]	Stop Steps: 50
+2025-01-26 02:28:24,245	[INFO]	1-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 02:28:24,245	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\ntypedef long long ll;\nconst int maxn = 1100000;\n\nint main() {\n    int n, k, f[maxn], w[maxn];\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k; j++) {\n            if(i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:24,245	[INFO]	Step: 12
+2025-01-26 02:28:24,245	[INFO]	Stop Steps: 50
+2025-01-26 02:28:24,674	[DEBUG]	EXEC>  SUCCESS 10748090.5625
+2025-01-26 02:28:24,675	[INFO]	1-3     SUCCESS               10748090.56 (142.60%) [1 edit(s)]  
+2025-01-26 02:28:24,675	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1e6 + 5; // Improved array size declaration\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    int f[maxn];\n    int w[maxn];\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k; j++) {\n            if(i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:24,675	[INFO]	Step: 13
+2025-01-26 02:28:24,675	[INFO]	Stop Steps: 50
+2025-01-26 02:28:30,354	[INFO]	1-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 02:28:30,354	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    int f[1100000], w[1100000];\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i - 1); j++) { // Added boundary check\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:30,354	[INFO]	Step: 14
+2025-01-26 02:28:30,354	[INFO]	Stop Steps: 50
+2025-01-26 02:28:30,867	[DEBUG]	EXEC>  SUCCESS 6060138.5
+2025-01-26 02:28:30,867	[INFO]	1-5     SUCCESS              *6060138.50 (80.40%) [1 edit(s)]  
+2025-01-26 02:28:30,867	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1100000;\nint f[maxn], w[maxn];\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k && i - j > 0; j++) { // Combined conditions\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+
+2025-01-26 02:28:30,867	[INFO]	Step: 15
+2025-01-26 02:28:30,867	[INFO]	Stop Steps: 50
+2025-01-26 02:28:31,268	[DEBUG]	EXEC>  SUCCESS 6185547.1875
+2025-01-26 02:28:31,268	[INFO]	1-6     SUCCESS               6185547.19 (82.07%) [2 edit(s)]  
+2025-01-26 02:28:31,268	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k; j++) {\n            if(i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <algorithm>\n\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= min(k, i - 1); j++) { // Optimize by limiting j to min(k, i - 1)\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:31,268	[INFO]	Step: 16
+2025-01-26 02:28:31,268	[INFO]	Stop Steps: 50
+2025-01-26 02:28:31,653	[DEBUG]	EXEC>  SUCCESS 6025850.5
+2025-01-26 02:28:31,653	[INFO]	1-7     SUCCESS              *6025850.50 (79.95%) [1 edit(s)]  
+2025-01-26 02:28:31,653	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+
+2025-01-26 02:28:31,653	[INFO]	Step: 17
+2025-01-26 02:28:31,653	[INFO]	Stop Steps: 50
+2025-01-26 02:28:32,205	[DEBUG]	EXEC>  SUCCESS 2384972.6875
+2025-01-26 02:28:32,205	[INFO]	1-8     SUCCESS              *2384972.69 (31.64%) [1 edit(s)]  
+2025-01-26 02:28:32,205	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+
+2025-01-26 02:28:32,206	[INFO]	Step: 18
+2025-01-26 02:28:32,206	[INFO]	Stop Steps: 50
+2025-01-26 02:28:32,589	[DEBUG]	EXEC>  SUCCESS 5997266.625
+2025-01-26 02:28:32,589	[INFO]	1-9     SUCCESS               5997266.62 (79.57%) [1 edit(s)]  
+2025-01-26 02:28:32,589	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:32,589	[INFO]	Step: 19
+2025-01-26 02:28:32,589	[INFO]	Stop Steps: 50
+2025-01-26 02:28:32,927	[INFO]	1-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 02:28:32,927	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <queue>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n    deque<int> dq; // Deque for maintaining the sliding window minimum\n\n    for (int i = 2; i <= n; i++) {\n        while (!dq.empty() && dq.front() < i - k) {\n            dq.pop_front(); // Remove elements out of the current window\n        }\n\n        if (!dq.empty()) {\n            f[i] = min(f[i], f[dq.front()] + abs(w[dq.front()] - w[i]));\n        }\n\n        while (!dq.empty() && f[dq.back()] >= f[i]) {\n            dq.pop_back(); // Maintain increasing order\n        }\n\n        dq.push_back(i); // Add current index\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:28:32,927	[INFO]	Step: 20
+2025-01-26 02:28:32,927	[INFO]	Stop Steps: 50
+2025-01-26 02:28:34,492	[DEBUG]	EXEC>  SUCCESS 7606322.125
+2025-01-26 02:28:34,492	[INFO]	REF     SUCCESS               7606322.12 (--) [0 edit(s)]  
+2025-01-26 02:28:34,492	[INFO]	Best patch: 12
+2025-01-26 02:28:35,031	[DEBUG]	EXEC>  SUCCESS 2353471.125
+2025-01-26 02:28:35,031	[INFO]	BEST    SUCCESS              *2353471.12 (30.94%) [0 edit(s)]  
+2025-01-26 02:28:35,031	[INFO]	Best patch step: 17
+2025-01-26 02:29:09,456	[INFO]	Step: 20
+2025-01-26 02:29:09,456	[INFO]	Stop Steps: 50
+2025-01-26 02:29:10,132	[DEBUG]	EXEC>  SUCCESS 2351817.5
+2025-01-26 02:29:10,133	[INFO]	2-1     SUCCESS              *2351817.50 (30.92%) [1 edit(s)]  
+2025-01-26 02:29:10,133	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+
+2025-01-26 02:29:10,133	[INFO]	Step: 21
+2025-01-26 02:29:10,133	[INFO]	Stop Steps: 50
+2025-01-26 02:29:10,518	[DEBUG]	EXEC>  SUCCESS 6199014.0
+2025-01-26 02:29:10,519	[INFO]	2-2     SUCCESS               6199014.00 (81.50%) [1 edit(s)]  
+2025-01-26 02:29:10,519	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:10,519	[INFO]	Step: 22
+2025-01-26 02:29:10,519	[INFO]	Stop Steps: 50
+2025-01-26 02:29:10,905	[DEBUG]	EXEC>  SUCCESS 6178165.3125
+2025-01-26 02:29:10,906	[INFO]	2-3     SUCCESS               6178165.31 (81.22%) [1 edit(s)]  
+2025-01-26 02:29:10,906	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:10,906	[INFO]	Step: 23
+2025-01-26 02:29:10,906	[INFO]	Stop Steps: 50
+2025-01-26 02:29:11,299	[DEBUG]	EXEC>  SUCCESS 6189828.9375
+2025-01-26 02:29:11,299	[INFO]	2-4     SUCCESS               6189828.94 (81.38%) [1 edit(s)]  
+2025-01-26 02:29:11,299	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1100000;\nint f[maxn], w[maxn];\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for(int j = 1; j <= k && i - j > 0; j++) { // Combined conditions\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:11,299	[INFO]	Step: 24
+2025-01-26 02:29:11,299	[INFO]	Stop Steps: 50
+2025-01-26 02:29:11,685	[DEBUG]	EXEC>  SUCCESS 6277145.9375
+2025-01-26 02:29:11,686	[INFO]	2-5     SUCCESS               6277145.94 (82.53%) [1 edit(s)]  
+2025-01-26 02:29:11,686	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1100000;\nint f[maxn], w[maxn];\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k && i - j > 0; j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:11,686	[INFO]	Step: 25
+2025-01-26 02:29:11,686	[INFO]	Stop Steps: 50
+2025-01-26 02:29:12,070	[DEBUG]	EXEC>  SUCCESS 6297435.4375
+2025-01-26 02:29:12,070	[INFO]	2-6     SUCCESS               6297435.44 (82.79%) [1 edit(s)]  
+2025-01-26 02:29:12,070	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1100000;\nint f[maxn], w[maxn];\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for(int j = 1; j <= k && i - j > 0; j++) { // Combined conditions\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:12,070	[INFO]	Step: 26
+2025-01-26 02:29:12,070	[INFO]	Stop Steps: 50
+2025-01-26 02:29:12,622	[DEBUG]	EXEC>  SUCCESS 2345016.4375
+2025-01-26 02:29:12,623	[INFO]	2-7     SUCCESS              *2345016.44 (30.83%) [2 edit(s)]  
+2025-01-26 02:29:12,623	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = start; j < i; j++) { // Change the inner loop to iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+
+2025-01-26 02:29:12,623	[INFO]	Step: 27
+2025-01-26 02:29:12,623	[INFO]	Stop Steps: 50
+2025-01-26 02:29:13,007	[DEBUG]	EXEC>  SUCCESS 6009652.625
+2025-01-26 02:29:13,008	[INFO]	2-8     SUCCESS               6009652.62 (79.01%) [2 edit(s)]  
+2025-01-26 02:29:13,008	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k && i - j > 0; j++) {\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:13,008	[INFO]	Step: 28
+2025-01-26 02:29:13,008	[INFO]	Stop Steps: 50
+2025-01-26 02:29:13,390	[DEBUG]	EXEC>  SUCCESS 6006636.4375
+2025-01-26 02:29:13,390	[INFO]	2-9     SUCCESS               6006636.44 (78.97%) [2 edit(s)]  
+2025-01-26 02:29:13,390	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Calculate the start index to limit the inner loop\n        for (int j = start; j < i; j++) { // Iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:13,390	[INFO]	Step: 29
+2025-01-26 02:29:13,390	[INFO]	Stop Steps: 50
+2025-01-26 02:29:13,786	[DEBUG]	EXEC>  SUCCESS 6317641.5
+2025-01-26 02:29:13,786	[INFO]	2-10    SUCCESS               6317641.50 (83.06%) [2 edit(s)]  
+2025-01-26 02:29:13,786	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1100000;\nint f[maxn], w[maxn];\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        for(int j = 1; j <= k && i - j > 0; j++) { // Combined conditions\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nconst int maxn = 1100000;\nint f[maxn], w[maxn];\n\nint main() {\n    int n, k;\n    scanf("%d %d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n    for(int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n    f[1] = 0;\n\n    for(int i = 2; i <= n; i++) {\n        // Optimize by checking only necessary j values\n        int start = max(1, i - k); // Start point for j\n        for(int j = start; j < i; j++) {\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:13,786	[INFO]	Step: 30
+2025-01-26 02:29:13,786	[INFO]	Stop Steps: 50
+2025-01-26 02:29:14,327	[DEBUG]	EXEC>  SUCCESS 7674172.1875
+2025-01-26 02:29:14,328	[INFO]	2-1     SUCCESS               7674172.19 (100.89%) [1 edit(s)]  
+2025-01-26 02:29:14,328	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 19), '#include<iostream>\n#include<cmath>\n#include<cstdio>\n#include<cstring>\n\nusing namespace std;\n\nint n,m,f[1100000],w[1100000],k;\n\nint main ()\n{\n\tcin>>n>>k;\n\tmemset(f,0x3f,sizeof(f));\n\tfor(int i=1;i<=n;i++)\n\t{\n\t\tcin>>w[i];\n\t}\n\tf[1]=0;\n\tfor(int i=2;i<=n;i++)\n\t{\n\t\tfor(int j=1;j<=k;j++)\n\t\t{\n\t\t\tif(i-j<=0) break;\n\t\t\tf[i]=min(f[i],f[i-j]+abs(w[i-j]-w[i]));\n\t\t}\n\t}\n\tcout<<f[n];\n}')"
+2025-01-26 02:29:14,328	[INFO]	Step: 31
+2025-01-26 02:29:14,328	[INFO]	Stop Steps: 50
+2025-01-26 02:29:15,877	[DEBUG]	EXEC>  SUCCESS 7518644.6875
+2025-01-26 02:29:15,877	[INFO]	REF     SUCCESS               7518644.69 (--) [0 edit(s)]  
+2025-01-26 02:29:15,877	[INFO]	Best patch: 12_15
+2025-01-26 02:29:16,419	[DEBUG]	EXEC>  SUCCESS 2357641.3125
+2025-01-26 02:29:16,419	[INFO]	BEST    SUCCESS              *2357641.31 (31.36%) [0 edit(s)]  
+2025-01-26 02:29:16,419	[INFO]	Best patch step: 26
+2025-01-26 02:29:58,327	[INFO]	Step: 31
+2025-01-26 02:29:58,327	[INFO]	Stop Steps: 50
+2025-01-26 02:29:59,009	[DEBUG]	EXEC>  SUCCESS 2385905.6875
+2025-01-26 02:29:59,009	[INFO]	3-2     SUCCESS              +2385905.69 (31.73%) [2 edit(s)]  
+2025-01-26 02:29:59,010	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = start; j < i; j++) { // Change the inner loop to iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:59,010	[INFO]	Step: 32
+2025-01-26 02:29:59,010	[INFO]	Stop Steps: 50
+2025-01-26 02:29:59,571	[DEBUG]	EXEC>  SUCCESS 2371056.1875
+2025-01-26 02:29:59,571	[INFO]	3-3     SUCCESS              +2371056.19 (31.54%) [1 edit(s)]  
+2025-01-26 02:29:59,572	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:29:59,572	[INFO]	Step: 33
+2025-01-26 02:29:59,572	[INFO]	Stop Steps: 50
+2025-01-26 02:30:00,143	[DEBUG]	EXEC>  SUCCESS 2360280.625
+2025-01-26 02:30:00,143	[INFO]	3-4     SUCCESS              +2360280.62 (31.39%) [1 edit(s)]  
+2025-01-26 02:30:00,143	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = 1; j <= k && start <= i - 1; j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i])); // Use inner loop from Parent 2\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:00,143	[INFO]	Step: 34
+2025-01-26 02:30:00,143	[INFO]	Stop Steps: 50
+2025-01-26 02:30:00,555	[DEBUG]	EXEC>  SUCCESS 6878344.6875
+2025-01-26 02:30:00,555	[INFO]	3-5     SUCCESS               6878344.69 (91.48%) [1 edit(s)]  
+2025-01-26 02:30:00,555	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        int start = max(1, i - k); // Calculate the start index to limit the inner loop\n        for (int j = start; j < i; j++) { // Iterate from start to i-1\n            min_value = min(min_value, f[j] + abs(w[j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:00,555	[INFO]	Step: 35
+2025-01-26 02:30:00,555	[INFO]	Stop Steps: 50
+2025-01-26 02:30:00,963	[DEBUG]	EXEC>  SUCCESS 6984735.6875
+2025-01-26 02:30:00,964	[INFO]	3-6     SUCCESS               6984735.69 (92.90%) [1 edit(s)]  
+2025-01-26 02:30:00,964	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k && i - j > 0; j++) { // Use inner loop from Parent 4\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:00,964	[INFO]	Step: 36
+2025-01-26 02:30:00,964	[INFO]	Stop Steps: 50
+2025-01-26 02:30:01,383	[DEBUG]	EXEC>  SUCCESS 7059260.375
+2025-01-26 02:30:01,384	[INFO]	3-7     SUCCESS               7059260.38 (93.89%) [1 edit(s)]  
+2025-01-26 02:30:01,384	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Determine the effective starting index\n        for (int j = start; j < i; j++) {\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i])); // Use the inner loop from Parent 1\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:01,384	[INFO]	Step: 37
+2025-01-26 02:30:01,384	[INFO]	Stop Steps: 50
+2025-01-26 02:30:01,847	[INFO]	3-8     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 02:30:01,847	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = start; j < i; j++) { // Change the inner loop to iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 20), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\n#include <deque>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n    deque<int> dq; // Deque to store indices for the minimum calculation\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k);\n        // Remove elements that are out of the range\n        while (!dq.empty() && dq.front() < start) {\n            dq.pop_front();\n        }\n        // Update the current cost using the front of the deque\n        if (!dq.empty()) {\n            f[i] = min(f[i], f[dq.front()] + abs(w[dq.front()] - w[i]));\n        }\n        // Maintain deque for future indices\n        while (!dq.empty() && f[dq.back()] >= f[i]) {\n            dq.pop_back();\n        }\n        dq.push_back(i);\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:01,847	[INFO]	Step: 38
+2025-01-26 02:30:01,848	[INFO]	Stop Steps: 50
+2025-01-26 02:30:02,324	[INFO]	3-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:30:02,324	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 21), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\n#include <deque>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n    deque<int> dq; // Deque to maintain the minimum values\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n    dq.push_back(1); // Initialize deque with the first index\n\n    for (int i = 2; i <= n; i++) {\n        // Remove elements that are out of the current window\n        while (!dq.empty() && dq.front() < i - k) {\n            dq.pop_front();\n        }\n        // Calculate the minimum using the front of the deque\n        f[i] = f[dq.front()] + abs(w[dq.front()] - w[i]);\n        \n        // Maintain the deque to keep track of indices for minimum f values\n        while (!dq.empty() && f[dq.back()] >= f[i]) {\n            dq.pop_back();\n        }\n        dq.push_back(i);\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:02,324	[INFO]	Step: 39
+2025-01-26 02:30:02,324	[INFO]	Stop Steps: 50
+2025-01-26 02:30:02,659	[INFO]	3-10    TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 02:30:02,659	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Calculate the start index to limit the inner loop\n        for (int j = start; j < i; j++) { // Iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <deque>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n    deque<int> dq; // Deque to maintain indices of the minimum elements\n\n    dq.push_back(1); // Start with the first index\n\n    for (int i = 2; i <= n; i++) {\n        // Remove indices that are out of the current window\n        while (!dq.empty() && dq.front() < i - k) {\n            dq.pop_front();\n        }\n\n        // The front of the deque contains the index of the minimum f[j] for j in [i-k, i-1]\n        f[i] = f[dq.front()] + abs(w[dq.front()] - w[i]);\n\n        // Maintain the deque in increasing order of f values\n        while (!dq.empty() && f[dq.back()] >= f[i]) {\n            dq.pop_back();\n        }\n\n        dq.push_back(i); // Add current index to the deque\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:02,659	[INFO]	Step: 40
+2025-01-26 02:30:02,659	[INFO]	Stop Steps: 50
+2025-01-26 02:30:02,997	[INFO]	3-1     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-26 02:30:02,997	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        for (int j = 1; j <= k && i - j > 0; j++) {\n            min_value = min(min_value, f[i - j] + abs(w[i - j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <cstring>\n#include <cmath>\n#include <deque>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    // Use a deque to maintain the minimum values efficiently\n    deque<int> dq;\n    dq.push_back(1); // Start with the first element\n\n    for (int i = 2; i <= n; i++) {\n        // Remove indices that are out of the window of k\n        while (!dq.empty() && dq.front() < i - k) {\n            dq.pop_front();\n        }\n\n        // The front of the deque is the minimum f value for the current window\n        f[i] = f[dq.front()] + abs(w[dq.front()] - w[i]);\n\n        // Maintain the deque for the next iterations\n        while (!dq.empty() && f[dq.back()] >= f[i]) {\n            dq.pop_back();\n        }\n        dq.push_back(i);\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:02,997	[INFO]	Step: 41
+2025-01-26 02:30:02,997	[INFO]	Stop Steps: 50
+2025-01-26 02:30:03,677	[DEBUG]	EXEC>  SUCCESS 7849004.5
+2025-01-26 02:30:03,677	[INFO]	3-2     SUCCESS               7849004.50 (104.39%) [1 edit(s)]  
+2025-01-26 02:30:03,677	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 24), '#include<iostream>\n#include<cmath>\n#include<cstdio>\n#include<cstring>\nusing namespace std;\n\nint n,m,f[1100000],w[1100000],k;\n\nint main ()\n{\n\tcin>>n>>k;\n\tmemset(f,0x3f,sizeof(f));\n\tfor(int i=1;i<=n;i++)\n\t{\n\t\tcin>>w[i];\n\t}\n\tf[1]=0;\n\tfor(int i=2;i<=n;i++)\n\t{\n\t\tfor(int j=1;j<=k;j++)\n\t\t{\n\t\t\tif(i-j<=0) break;\n\t\t\tf[i]=min(f[i],f[i-j]+abs(w[i-j]-w[i]));\n\t\t}\n\t}\n\tcout<<f[n];\n}')"
+2025-01-26 02:30:03,677	[INFO]	Step: 42
+2025-01-26 02:30:03,677	[INFO]	Stop Steps: 50
+2025-01-26 02:30:05,241	[DEBUG]	EXEC>  SUCCESS 8221892.5
+2025-01-26 02:30:05,241	[INFO]	REF     SUCCESS               8221892.50 (--) [0 edit(s)]  
+2025-01-26 02:30:05,241	[INFO]	Best patch: 12_15
+2025-01-26 02:30:05,793	[DEBUG]	EXEC>  SUCCESS 2353026.625
+2025-01-26 02:30:05,793	[INFO]	BEST    SUCCESS              *2353026.62 (28.62%) [0 edit(s)]  
+2025-01-26 02:30:05,793	[INFO]	Best patch step: 26
+2025-01-26 02:30:54,848	[INFO]	Step: 42
+2025-01-26 02:30:54,848	[INFO]	Stop Steps: 50
+2025-01-26 02:30:55,529	[DEBUG]	EXEC>  SUCCESS 2359307.25
+2025-01-26 02:30:55,529	[INFO]	4-3     SUCCESS              +2359307.25 (28.70%) [1 edit(s)]  
+2025-01-26 02:30:55,529	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = 1; j <= k && start <= i - 1; j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i])); // Use inner loop from Parent 2\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:55,529	[INFO]	Step: 43
+2025-01-26 02:30:55,529	[INFO]	Stop Steps: 50
+2025-01-26 02:30:56,094	[DEBUG]	EXEC>  SUCCESS 2399802.0
+2025-01-26 02:30:56,094	[INFO]	4-4     SUCCESS               2399802.00 (29.19%) [1 edit(s)]  
+2025-01-26 02:30:56,094	[DEBUG]	patch(4-4)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:56,094	[INFO]	Step: 44
+2025-01-26 02:30:56,094	[INFO]	Stop Steps: 50
+2025-01-26 02:30:56,865	[DEBUG]	EXEC>  SUCCESS 2414297.5
+2025-01-26 02:30:56,865	[INFO]	4-5     SUCCESS               2414297.50 (29.36%) [1 edit(s)]  
+2025-01-26 02:30:56,865	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = start; j < i; j++) { // Change the inner loop to iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:56,865	[INFO]	Step: 45
+2025-01-26 02:30:56,865	[INFO]	Stop Steps: 50
+2025-01-26 02:30:57,453	[DEBUG]	EXEC>  SUCCESS 7950123.4375
+2025-01-26 02:30:57,453	[INFO]	4-6     SUCCESS               7950123.44 (96.69%) [1 edit(s)]  
+2025-01-26 02:30:57,453	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int min_value = f[i]; // Store current minimum\n        int start = max(1, i - k); // Calculate the start index to limit the inner loop\n        for (int j = start; j < i; j++) { // Iterate from start to i-1\n            min_value = min(min_value, f[j] + abs(w[j] - w[i]));\n        }\n        f[i] = min_value; // Update once after loop\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:57,453	[INFO]	Step: 46
+2025-01-26 02:30:57,453	[INFO]	Stop Steps: 50
+2025-01-26 02:30:58,024	[DEBUG]	EXEC>  SUCCESS 2422301.25
+2025-01-26 02:30:58,024	[INFO]	4-7     SUCCESS               2422301.25 (29.46%) [1 edit(s)]  
+2025-01-26 02:30:58,024	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 14), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k && (i - j) > 0; j++) { // Optimize the inner loop with condition\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:58,024	[INFO]	Step: 47
+2025-01-26 02:30:58,024	[INFO]	Stop Steps: 50
+2025-01-26 02:30:58,431	[DEBUG]	EXEC>  SUCCESS 6407506.375
+2025-01-26 02:30:58,432	[INFO]	4-8     SUCCESS               6407506.38 (77.93%) [1 edit(s)]  
+2025-01-26 02:30:58,432	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\n#include <cmath>\nusing namespace std;\n\nint n, k, f[1100000], w[1100000];\n\nint main() {\n    scanf("%d%d", &n, &k);\n    memset(f, 0x3f, sizeof(f));\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Calculate the start index to limit the inner loop\n        for (int j = 1; j <= k && (start <= i - 1); j++) { // Optimize inner loop with condition\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:58,432	[INFO]	Step: 48
+2025-01-26 02:30:58,432	[INFO]	Stop Steps: 50
+2025-01-26 02:30:58,892	[INFO]	4-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:30:58,892	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = 1; j <= k && start <= i - 1; j++) {\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i])); // Use inner loop from Parent 2\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 25), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\n#include <deque> // Include deque for optimization\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n    \n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n    deque<int> dq; // Deque to store indices of `f`\n\n    for (int i = 2; i <= n; i++) {\n        // Remove indices that are out of the window\n        if (!dq.empty() && dq.front() < i - k) {\n            dq.pop_front();\n        }\n\n        // Update f[i] using the front of the deque\n        if (!dq.empty()) {\n            f[i] = f[dq.front()] + abs(w[dq.front()] - w[i]);\n        }\n\n        // Maintain the deque in increasing order of f values\n        while (!dq.empty() && f[dq.back()] >= f[i - 1]) {\n            dq.pop_back();\n        }\n        dq.push_back(i - 1);\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:58,892	[INFO]	Step: 49
+2025-01-26 02:30:58,892	[INFO]	Stop Steps: 50
+2025-01-26 02:30:59,362	[INFO]	4-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:30:59,362	[DEBUG]	patch(4-10)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') | LineLLMMutation(('source.cpp', 26), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\n#include <deque> // for the sliding window optimization\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        deque<int> dq; // a deque to store the indices of f values\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            while (!dq.empty() && dq.front() < i - j) {\n                dq.pop_front(); // remove elements out of the current window\n            }\n            // insert current index while maintaining the deque in increasing order of f values\n            while (!dq.empty() && f[dq.back()] >= f[i - j]) {\n                dq.pop_back();\n            }\n            dq.push_back(i - j);\n        }\n        // The minimum value for f[i] comes from the front of the deque\n        f[i] = min(f[i], f[dq.front()] + abs(w[dq.front()] - w[i]));\n    }\n\n    printf("%d\\n", f[n]);\n}')"
+2025-01-26 02:30:59,362	[INFO]	Step: 50
+2025-01-26 02:30:59,362	[INFO]	Stop Steps: 50
+2025-01-26 02:30:59,362	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 02:30:59,362	[INFO]	Step: 50
+2025-01-26 02:30:59,362	[INFO]	Stop Steps: 50
+2025-01-26 02:30:59,892	[INFO]	~~~~ END ~~~~
+2025-01-26 02:30:59,892	[INFO]	Best patch step: 26
+2025-01-26 02:30:59,892	[INFO]	
+2025-01-26 02:30:59,892	[INFO]	==== REPORT ====
+2025-01-26 02:30:59,892	[INFO]	Termination: step budget
+2025-01-26 02:30:59,892	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0036_1737858394.log
+2025-01-26 02:30:59,892	[INFO]	Patch file: _magpie_logs/0036_1737858394.patch
+2025-01-26 02:30:59,892	[INFO]	Diff file: _magpie_logs/0036_1737858394.diff
+2025-01-26 02:30:59,892	[INFO]	Reference fitness: 8221892.50
+2025-01-26 02:30:59,892	[INFO]	Best fitness: 2353026.62
+2025-01-26 02:30:59,892	[INFO]	
+2025-01-26 02:30:59,893	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        for (int j = 1; j <= k; j++) {\n            if (i - j <= 0) break;\n            f[i] = min(f[i], f[i - j] + abs(w[i - j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}') + LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <vector>\n#include <cmath>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int n, k;\n    scanf("%d%d", &n, &k);\n    vector<int> f(n + 1, 0x3f3f3f3f);\n    vector<int> w(n + 1);\n\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &w[i]);\n    }\n\n    f[1] = 0;\n\n    for (int i = 2; i <= n; i++) {\n        int start = max(1, i - k); // Optimize the starting index\n        for (int j = start; j < i; j++) { // Change the inner loop to iterate from start to i-1\n            f[i] = min(f[i], f[j] + abs(w[j] - w[i]));\n        }\n    }\n\n    printf("%d\\n", f[n]);\n}')
+2025-01-26 02:30:59,893	[INFO]	
+2025-01-26 02:30:59,893	[INFO]	==== DIFF ====
+

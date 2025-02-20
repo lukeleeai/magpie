@@ -1,0 +1,356 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 90352439.8125,
+                "new_code": "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N * 2 * MAX_N]; // Changed to single-dimensional array\n\nll memoize(int i, int j) {\n    if (memo[i * (2 * MAX_N) + j] != -1) return memo[i * (2 * MAX_N) + j]; // Updated index calculation\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i * (2 * MAX_N) + j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i * (2 * MAX_N) + j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo, memo + MAX_N * 2 * MAX_N, -1); // Updated fill for new memo array\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization array initialization, which could be optimized by using a single-dimensional array instead of a two-dimensional array to save space and improve cache performance."
+            },
+            {
+                "fitness": 93185096.375,
+                "new_code": "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nvoid initializeMemo() {\n    for (int i = 0; i < MAX_N; ++i) {\n        fill(memo[i], memo[i] + 2 * MAX_N, -1);\n    }\n}\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    initializeMemo();\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization function and the way memoization is initialized and accessed. The original code initializes the memo array to -1 for each call, which can be optimized by using a more efficient loop for initialization and reducing function calls to improve overall performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1185466.8125
+        ]
+    },
+    "(0x14x7x19)": {
+        "children": [
+            {
+                "fitness": 2478949.1875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<vector<ll>> memo;\n\nll memoize(int i, int j) {\n    if(memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    memo.resize(N, vector<ll>(2 * N, -1));\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++) {\n        for(int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Combine the efficient indexing method from Parent 1 with the dynamic memory allocation of Parent 4."
+            },
+            {
+                "fitness": 91209689.875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if(memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[MAX_N], -1);\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++) {\n        for(int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Integrate the memoization technique from Parent 2 with the improved array handling from Parent 3."
+            },
+            {
+                "fitness": 95084693.4375,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A;\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if(memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++) {\n        for(int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Utilize the optimized input/output methods from Parent 4 while incorporating the memoization logic from Parent 1."
+            },
+            {
+                "fitness": 91646554.125,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if(memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1) {\n        if(i == j) return memo[i][j] = A[i];\n        else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        if(i == j) return memo[i][j] = 0LL;\n        else if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n        else return memo[i][j] = memoize(i, j2);\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[MAX_N], -1);\n    \n    ll res = 0LL;\n    for(int i = 0; i < N; i++) {\n        for(int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Merge the efficient array handling from Parent 3 with the memoization approach from Parent 2, and enhance readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "14",
+            "7",
+            "19"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n    if(memo[i][j] != -1) return memo[i][j];\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1){\n        if(i == j) return memo[i][j] = A[i];\n        else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    }else{\n        if(i == j) return memo[i][j] = 0LL;\n        else if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n        else return memo[i][j] = memoize(i, j2);\n    }\n    return 0;\n}\n\nint main(){\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            memo[i][j] = memoize(i, j);\n        }\n    }\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            res = max(res, memo[i][j]);\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<vector<ll>> memo;\n\nll memoize(int i, int j) {\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1) {\n\t\tif(i == j) return memo[i][j] = A[i];\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\t} else {\n\t\tif(i == j) return memo[i][j] = 0LL;\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\t\telse return memo[i][j] = memoize(i, j2);\n\t}\n\n\treturn 0;\n}\n\nint main() {\n\tscanf(\"%d\", &N);\n\tA.resize(N);\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\tmemo.resize(N, vector<ll>(2 * N, -1));\n\n\tll res = 0LL;\n\tfor(int i = 0; i < N; i++) {\n\t\tfor(int j = 0; j < N; j++) {\n\t\t\tres = max(res, memoize(i, j));\n\t\t}\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\treturn 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1185466.8125,
+            1189337.3125,
+            1192285.625,
+            2448014.3125
+        ]
+    },
+    "(0x4x2x6)": {
+        "children": [
+            {
+                "fitness": 95169280.5625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Combine the robust memoization strategy from Parent 3 (fitness: 94458243.75) and the improved array handling from Parent 2 (fitness: 93898319.1875) to enhance performance while maintaining clarity in the code structure."
+            },
+            {
+                "fitness": 94664929.4375,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Utilize the efficient input handling from Parent 4 (fitness: 94891239.0625) while preserving the memoization structure from Parent 1 (fitness: 1217789.3125) to ensure lower memory overhead and improved performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "4",
+            "2",
+            "6"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    while (true) {\n        if (memo[i][j] != -1) return memo[i][j];\n\n        int i2 = (i == N - 1 ? 0 : i + 1);\n        int j2 = (j == 0 ? N - 1 : j - 1);\n        int itv = (i > j ? N + j - i : j - i);\n\n        if ((N - itv) % 2 == 1) {\n            if (i == j) return memo[i][j] = A[i];\n            else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n        } else {\n            if (i == j) return memo[i][j] = 0LL;\n            else if (A[i] > A[j]) {\n                i = i2;\n            } else {\n                j = j2;\n            }\n        }\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1217789.3125,
+            93898319.1875,
+            94458243.75,
+            94891239.0625
+        ]
+    },
+    "(14x0x2_12x6_13)": {
+        "children": [
+            {
+                "fitness": 42309452.625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    \n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = i; j < N; j++) {\n            res = max(res, memoize(i, j));\n            if (i != j) {\n                res = max(res, memoize(j, i));\n            }\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Combine the memoization function from Parent 1 with the direct calculation approach from Parent 3 to reduce redundant calculations."
+            },
+            {
+                "fitness": 41525368.125,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int itv = (i > j ? N + j - i : j - i);\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Merge the initialization and input handling from Parent 4 with the optimized memoization logic from Parent 2 for better readability and efficiency."
+            },
+            {
+                "fitness": 41483713.875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Integrate the vector usage from Parent 3 with the memoization of Parent 1 while simplifying the logic to avoid unnecessary calculations."
+            },
+            {
+                "fitness": 1192285.625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Combine the efficient array handling from Parent 4 with the memoization strategy from Parent 1, while optimizing the input handling for minimal overhead."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "14",
+            "0",
+            "2_12",
+            "6_13"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n    if(memo[i][j] != -1) return memo[i][j];\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1){\n        if(i == j) return memo[i][j] = A[i];\n        else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    }else{\n        if(i == j) return memo[i][j] = 0LL;\n        else if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n        else return memo[i][j] = memoize(i, j2);\n    }\n    return 0;\n}\n\nint main(){\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            memo[i][j] = memoize(i, j);\n        }\n    }\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            res = max(res, memo[i][j]);\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    \n    ll res = 0LL;\n    // Directly compute results without nested loops\n    for (int i = 0; i < N; i++) {\n        for (int j = i; j < N; j++) { // Start j from i to avoid redundant calculations\n            res = max(res, memoize(i, j));\n            if (i != j) { // Avoid recalculating for the same i, j pair\n                res = max(res, memoize(j, i));\n            }\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1)); // Reduced the second dimension to MAX_N\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    // Directly calculate the interval size\n    int itv = (i > j ? N + j - i : j - i);\n\n    // Instead of using i2 and j2, we can directly use modular arithmetic for better readability\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1176065.375,
+            1204344.1875,
+            42960026.5625,
+            43294504.1875
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 2459375.6875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<ll> memo;\n\nll memoize(int i, int j) {\n    if (memo[i * N + j] != -1) return memo[i * N + j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        if (i == j) return memo[i * N + j] = A[i];\n        else return memo[i * N + j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        if (i == j) return memo[i * N + j] = 0LL;\n        else if (A[i] > A[j]) return memo[i * N + j] = memoize(i2, j);\n        else return memo[i * N + j] = memoize(i, j2);\n    }\n\n    return 0;\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    memo.resize(N * N, -1); // Using a single-dimensional array for memoization\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization logic which can be optimized by reducing the dimensions of the memoization array and utilizing a single-dimensional array to store results for pairs of indices. This reduces memory usage and improves cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<vector<ll>> memo;\n\nll memoize(int i, int j) {\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1) {\n\t\tif(i == j) return memo[i][j] = A[i];\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\t} else {\n\t\tif(i == j) return memo[i][j] = 0LL;\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\t\telse return memo[i][j] = memoize(i, j2);\n\t}\n\n\treturn 0;\n}\n\nint main() {\n\tscanf(\"%d\", &N);\n\tA.resize(N);\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\tmemo.resize(N, vector<ll>(2 * N, -1));\n\n\tll res = 0LL;\n\tfor(int i = 0; i < N; i++) {\n\t\tfor(int j = 0; j < N; j++) {\n\t\t\tres = max(res, memoize(i, j));\n\t\t}\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\treturn 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2448014.3125
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 42960026.5625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    \n    ll res = 0LL;\n    // Directly compute results without nested loops\n    for (int i = 0; i < N; i++) {\n        for (int j = i; j < N; j++) { // Start j from i to avoid redundant calculations\n            res = max(res, memoize(i, j));\n            if (i != j) { // Avoid recalculating for the same i, j pair\n                res = max(res, memoize(j, i));\n            }\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the way the memoization is handled and the nested loops in the main function, which could be optimized by reducing unnecessary calculations and improving space complexity."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            94458243.75
+        ]
+    },
+    "(24)": {
+        "children": [
+            {
+                "fitness": 93265147.125,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\n\nll A[MAX_N];\n\nll memo[MAX_N * 2 * MAX_N];\n\nll memoize(int i, int j) {\n    int index = i * (2 * MAX_N) + j; // Flatten the two-dimensional array\n    if (memo[index] != -1) return memo[index];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        if (i == j) return memo[index] = A[i];\n        else return memo[index] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        if (i == j) return memo[index] = 0LL;\n        else if (A[i] > A[j]) return memo[index] = memoize(i2, j);\n        else return memo[index] = memoize(i, j2);\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n    fill(memo, memo + MAX_N * 2 * MAX_N, -1); // Fill the flattened memo array\n\n    ll res = 0LL;\n\n    for(int i = 0; i < N; i++) {\n        for(int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j)); // Calculate directly without the need for a memo array\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization process; by using a single-dimensional array instead of a two-dimensional array for memoization, we can reduce space complexity and potentially improve cache performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "24"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n\n#include<algorithm>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\n\nll A[MAX_N];\n\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1){\n\n\t\tif(i == j) return memo[i][j] = A[i];\n\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\n\t}else{\n\n\t\tif(i == j) return memo[i][j] = 0LL;\n\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\n\t\telse return memo[i][j] = memoize(i, j2);\n\n\t}\n\n\treturn 0;\n\n}\n\nint main(){\n\n\tscanf(\"%d\", &N);\n\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n\tfill(memo[0], memo[N], -1);\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tmemo[i][j] = memoize(i, j);\n\n\t\t}\n\n\t}\n\n\tll res = 0LL;\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tres = max(res, memo[i][j]);\n\n\t\t}\n\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            1199129.375
+        ]
+    },
+    "(24x14x0x19_23)": {
+        "children": [
+            {
+                "fitness": 2403105.625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<ll> memo;\n\nll memoize(int i, int j) {\n    if (memo[i * N + j] != -1) return memo[i * N + j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        if (i == j) return memo[i * N + j] = A[i];\n        else return memo[i * N + j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        if (i == j) return memo[i * N + j] = 0LL;\n        else if (A[i] > A[j]) return memo[i * N + j] = memoize(i2, j);\n        else return memo[i * N + j] = memoize(i, j2);\n    }\n\n    return 0;\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    memo.resize(N * N, -1); // Using a single-dimensional array for memoization\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Combine the memoization function from Parent 1 with the main structure of Parent 4, optimizing the storage of the memoization array."
+            },
+            {
+                "fitness": 1188246.5625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    \n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Merge the memoization logic from Parent 3 with the input handling of Parent 2 to improve efficiency in reading input."
+            },
+            {
+                "fitness": 2520599.5,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<vector<ll>> memo;\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        if (i == j) return memo[i][j] = A[i];\n        else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        if (i == j) return memo[i][j] = 0LL;\n        else if (A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n        else return memo[i][j] = memoize(i, j2);\n    }\n\n    return 0;\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    memo.resize(N, vector<ll>(2 * N, -1)); // 2D vector for memoization\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Integrate the optimized input handling from Parent 4 with the memoization logic from Parent 2, enhancing performance with dynamic vector allocation."
+            },
+            {
+                "fitness": 2485875.9375,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<ll> memo;\n\nll memoize(int i, int j) {\n    if (memo[i * N + j] != -1) return memo[i * N + j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i * N + j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i * N + j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    memo.resize(N * N, -1); // Using a single-dimensional array for memoization\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Fuse the memoization logic from Parent 1 with the dynamic array handling of Parent 4 to achieve an efficient solution that uses modern C++ features."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "24",
+            "14",
+            "0",
+            "19_23"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n\n#include<algorithm>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\n\nll A[MAX_N];\n\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1){\n\n\t\tif(i == j) return memo[i][j] = A[i];\n\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\n\t}else{\n\n\t\tif(i == j) return memo[i][j] = 0LL;\n\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\n\t\telse return memo[i][j] = memoize(i, j2);\n\n\t}\n\n\treturn 0;\n\n}\n\nint main(){\n\n\tscanf(\"%d\", &N);\n\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n\tfill(memo[0], memo[N], -1);\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tmemo[i][j] = memoize(i, j);\n\n\t\t}\n\n\t}\n\n\tll res = 0LL;\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tres = max(res, memo[i][j]);\n\n\t\t}\n\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\n\treturn 0;\n\n}\n",
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n    if(memo[i][j] != -1) return memo[i][j];\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1){\n        if(i == j) return memo[i][j] = A[i];\n        else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    }else{\n        if(i == j) return memo[i][j] = 0LL;\n        else if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n        else return memo[i][j] = memoize(i, j2);\n    }\n    return 0;\n}\n\nint main(){\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            memo[i][j] = memoize(i, j);\n        }\n    }\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            res = max(res, memo[i][j]);\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<ll> memo;\n\nll memoize(int i, int j) {\n    if (memo[i * N + j] != -1) return memo[i * N + j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        if (i == j) return memo[i * N + j] = A[i];\n        else return memo[i * N + j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        if (i == j) return memo[i * N + j] = 0LL;\n        else if (A[i] > A[j]) return memo[i * N + j] = memoize(i2, j);\n        else return memo[i * N + j] = memoize(i, j2);\n    }\n\n    return 0;\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    A.resize(N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    memo.resize(N * N, -1); // Using a single-dimensional array for memoization\n\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            1199129.375,
+            1210865.5,
+            1217716.0625,
+            2459375.6875
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 94602207.875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    \n    if (i == j) return memo[i][j] = A[i];\n    \n    int itv = (i > j ? N + j - i : j - i);\n    \n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (A[i] > A[j]) ? memoize(i2, j) : memoize(i, j2);\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization approach, which could be optimized by removing unnecessary checks and simplifying the logic for better performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    while (true) {\n        if (memo[i][j] != -1) return memo[i][j];\n\n        int i2 = (i == N - 1 ? 0 : i + 1);\n        int j2 = (j == 0 ? N - 1 : j - 1);\n        int itv = (i > j ? N + j - i : j - i);\n\n        if ((N - itv) % 2 == 1) {\n            if (i == j) return memo[i][j] = A[i];\n            else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n        } else {\n            if (i == j) return memo[i][j] = 0LL;\n            else if (A[i] > A[j]) {\n                i = i2;\n            } else {\n                j = j2;\n            }\n        }\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            93898319.1875
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 43294504.1875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1)); // Reduced the second dimension to MAX_N\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    // Directly calculate the interval size\n    int itv = (i > j ? N + j - i : j - i);\n\n    // Instead of using i2 and j2, we can directly use modular arithmetic for better readability\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization function, which can be optimized by reducing the size of the memoization table and avoiding redundant calculations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            94891239.0625
+        ]
+    },
+    "(6_13)": {
+        "children": [
+            {
+                "fitness": 41123253.3125,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> dp(MAX_N, vector<ll>(MAX_N, 0)); // Using dp instead of memoization\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n    ll res = 0LL;\n\n    // Filling the dp table iteratively\n    for (int len = 1; len <= N; len++) {\n        for (int i = 0; i < N; i++) {\n            int j = (i + len - 1) % N; // Calculate the end index in a circular manner\n            int itv = (i > j ? N + j - i : j - i);\n            if ((N - itv) % 2 == 1) {\n                dp[i][j] = (i == j) ? A[i] : max(dp[(i + 1) % N][j] + A[i], dp[i][(j - 1 + N) % N] + A[j]);\n            } else {\n                dp[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? dp[(i + 1) % N][j] : dp[i][(j - 1 + N) % N]);\n            }\n            res = max(res, dp[i][j]); // Update the result with the maximum found so far\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the memoization structure which can be optimized by using an iterative approach to avoid deep recursion and potentially reduce the overhead of function calls."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6_13"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(MAX_N, -1)); // Reduced the second dimension to MAX_N\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    // Directly calculate the interval size\n    int itv = (i > j ? N + j - i : j - i);\n\n    // Instead of using i2 and j2, we can directly use modular arithmetic for better readability\n    int i2 = (i + 1) % N;\n    int j2 = (j - 1 + N) % N;\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            43294504.1875
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 1217716.0625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Focus on the recursive function `memoize`, which could be optimized by using memoization directly without unnecessary checks."
+            },
+            {
+                "fitness": 95656138.25,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Optimize input/output operations by using `scanf` and `printf` instead of `cin` and `cout` as they are faster for large input sizes."
+            },
+            {
+                "fitness": 94591305.4375,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    while (true) {\n        if (memo[i][j] != -1) return memo[i][j];\n\n        int i2 = (i == N - 1 ? 0 : i + 1);\n        int j2 = (j == 0 ? N - 1 : j - 1);\n        int itv = (i > j ? N + j - i : j - i);\n\n        if ((N - itv) % 2 == 1) {\n            if (i == j) return memo[i][j] = A[i];\n            else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n        } else {\n            if (i == j) return memo[i][j] = 0LL;\n            else if (A[i] > A[j]) {\n                i = i2;\n            } else {\n                j = j2;\n            }\n        }\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Use an iterative approach instead of recursion to avoid function call overhead and stack overflow issues."
+            },
+            {
+                "fitness": 114285408.6875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if ((N - itv) % 2 == 1) {\n        return memo[i][j] = (i == j) ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    } else {\n        return memo[i][j] = (i == j) ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2));\n    }\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo.begin(), memo.end(), vector<ll>(2 * MAX_N, -1));\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Move the memoization initialization into the main function to ensure it is done only once, reducing code redundancy."
+            },
+            {
+                "fitness": 94891239.0625,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\nusing namespace std;\n\ntypedef long long int ll;\nstatic const int MAX_N = 2000;\n\nint N;\nvector<ll> A(MAX_N);\nvector<vector<ll>> memo(MAX_N, vector<ll>(2 * MAX_N, -1));\n\nll memoize(int i, int j) {\n    if (memo[i][j] != -1) return memo[i][j];\n\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    return memo[i][j] = (N - itv) % 2 == 1 ?\n        (i == j ? A[i] : max(memoize(i2, j) + A[i], memoize(i, j2) + A[j])) :\n        (i == j ? 0LL : (A[i] > A[j] ? memoize(i2, j) : memoize(i, j2)));\n}\n\nint main() {\n    scanf(\"%d\", &N);\n    for (int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    ll res = 0LL;\n    for (int i = 0; i < N; i++) {\n        for (int j = 0; j < N; j++) {\n            res = max(res, memoize(i, j));\n        }\n    }\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "Simplify the logic in the memoization function by using ternary operators to make it more concise and potentially faster."
+            },
+            {
+                "fitness": 1195176.875,
+                "new_code": "#include<cstdio>\n#include<algorithm>\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\nll A[MAX_N];\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n    if(memo[i][j] != -1) return memo[i][j];\n    int i2 = (i == N - 1 ? 0 : i + 1);\n    int j2 = (j == 0 ? N - 1 : j - 1);\n    int itv = (i > j ? N + j - i : j - i);\n\n    if((N - itv) % 2 == 1){\n        if(i == j) return memo[i][j] = A[i];\n        else return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n    }else{\n        if(i == j) return memo[i][j] = 0LL;\n        else if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n        else return memo[i][j] = memoize(i, j2);\n    }\n    return 0;\n}\n\nint main(){\n    scanf(\"%d\", &N);\n    for(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n    fill(memo[0], memo[N], -1);\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            memo[i][j] = memoize(i, j);\n        }\n    }\n\n    ll res = 0LL;\n    for(int i = 0; i < N; i++){\n        for(int j = 0; j < N; j++){\n            res = max(res, memo[i][j]);\n        }\n    }\n\n    printf(\"%lld\\n\", res);\n    return 0;\n}\n",
+                "strategy": "No mutations are required as the original code is already optimized for its intended functionality."
+            },
+            {
+                "fitness": 2448014.3125,
+                "new_code": "#include<cstdio>\n#include<algorithm>\n#include<vector>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nint N;\nvector<ll> A;\nvector<vector<ll>> memo;\n\nll memoize(int i, int j) {\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1) {\n\t\tif(i == j) return memo[i][j] = A[i];\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\t} else {\n\t\tif(i == j) return memo[i][j] = 0LL;\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\t\telse return memo[i][j] = memoize(i, j2);\n\t}\n\n\treturn 0;\n}\n\nint main() {\n\tscanf(\"%d\", &N);\n\tA.resize(N);\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\tmemo.resize(N, vector<ll>(2 * N, -1));\n\n\tll res = 0LL;\n\tfor(int i = 0; i < N; i++) {\n\t\tfor(int j = 0; j < N; j++) {\n\t\t\tres = max(res, memoize(i, j));\n\t\t}\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\treturn 0;\n}\n",
+                "strategy": "Focus on the initialization of the memo array, which could be optimized by using a dynamic array or a vector instead of a static fixed-size array."
+            },
+            {
+                "fitness": 1209104.75,
+                "new_code": "#include<cstdio>\n\n#include<algorithm>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\nint N;\n\nll A[MAX_N];\n\nll memo[MAX_N][2 * MAX_N];\n\nll memoize(int i, int j){\n\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1){\n\n\t\tif(i == j) return memo[i][j] = A[i];\n\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\n\t}else{\n\n\t\tif(i == j) return memo[i][j] = 0LL;\n\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\n\t\telse return memo[i][j] = memoize(i, j2);\n\n\t}\n\n\treturn 0;\n\n}\n\nint main(){\n\n\tscanf(\"%d\", &N);\n\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n\tfill(memo[0], memo[N], -1);\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tmemo[i][j] = memoize(i, j);\n\n\t\t}\n\n\t}\n\n\tll res = 0LL;\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tres = max(res, memo[i][j]);\n\n\t\t}\n\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\n\treturn 0;\n\n}\n",
+                "strategy": "No mutation applied as per the instruction to generate 0 mutations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include<cstdio>\n\n#include<algorithm>\n\nusing namespace std;\n\ntypedef long long int ll;\n\nstatic const int MAX_N = 2000;\n\n\n\nint N;\n\nll A[MAX_N];\n\nll memo[MAX_N][2 * MAX_N];\n\n\n\nll memoize(int i, int j){\n\n\tif(memo[i][j] != -1) return memo[i][j];\n\n\tint i2 = (i == N - 1 ? 0 : i + 1);\n\n\tint j2 = (j == 0 ? N - 1 : j - 1);\n\n\tint itv = (i > j ? N + j - i : j - i);\n\n\tif((N - itv) % 2 == 1){\n\n\t\tif(i == j) return memo[i][j] = A[i];\n\n\t\telse return memo[i][j] = max(memoize(i2, j) + A[i], memoize(i, j2) + A[j]);\n\n\t}else{\n\n\t\tif(i == j) return memo[i][j] = 0LL;\n\n\t\telse if(A[i] > A[j]) return memo[i][j] = memoize(i2, j);\n\n\t\telse return memo[i][j] = memoize(i, j2);\n\n\t}\n\n\treturn 0;\n\n}\n\n\n\nint main(){\n\n\tscanf(\"%d\", &N);\n\n\tfor(int i = 0; i < N; i++) scanf(\"%lld\", &A[i]);\n\n\tfill(memo[0], memo[N], -1);\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tmemo[i][j] = memoize(i, j);\n\n\t\t}\n\n\t}\n\n\tll res = 0LL;\n\n\tfor(int i = 0; i < N; i++){\n\n\t\tfor(int j = 0; j < N; j++){\n\n\t\t\tres = max(res, memo[i][j]);\n\n\t\t}\n\n\t}\n\n\tprintf(\"%lld\\n\", res);\n\n\treturn 0;\n\n}\n\n\n"
+        ],
+        "parent_fitnesses": [
+            1190403.9375
+        ]
+    }
+}

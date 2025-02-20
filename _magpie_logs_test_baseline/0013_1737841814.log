@@ -1,0 +1,418 @@
+2025-01-25 21:50:14,777	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 9457290373195130
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0013
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-25 21:50:14,777	[DEBUG]	
+2025-01-25 21:50:14,777	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-25 21:50:14,777	[INFO]	~~~~ WARMUP ~~~~
+2025-01-25 21:50:15,594	[DEBUG]	EXEC>  SUCCESS 2341218.0625
+2025-01-25 21:50:15,594	[INFO]	WARM    SUCCESS               2341218.06 (--) [0 edit(s)]  
+2025-01-25 21:50:16,115	[DEBUG]	EXEC>  SUCCESS 2336881.8125
+2025-01-25 21:50:16,115	[INFO]	WARM    SUCCESS               2336881.81 (--) [0 edit(s)]  
+2025-01-25 21:50:16,640	[DEBUG]	EXEC>  SUCCESS 2324254.625
+2025-01-25 21:50:16,640	[INFO]	WARM    SUCCESS               2324254.62 (--) [0 edit(s)]  
+2025-01-25 21:50:17,185	[DEBUG]	EXEC>  SUCCESS 2425253.9375
+2025-01-25 21:50:17,186	[INFO]	WARM    SUCCESS               2425253.94 (--) [0 edit(s)]  
+2025-01-25 21:50:17,733	[DEBUG]	EXEC>  SUCCESS 2360385.625
+2025-01-25 21:50:17,733	[INFO]	WARM    SUCCESS               2360385.62 (--) [0 edit(s)]  
+2025-01-25 21:50:17,733	[INFO]	REF     SUCCESS               2360385.62 (--) [0 edit(s)]  
+2025-01-25 21:50:17,733	[INFO]	
+2025-01-25 21:50:17,733	[INFO]	~~~~ START ~~~~
+2025-01-25 21:50:36,750	[DEBUG]	EXEC>  SUCCESS 943987.3125
+2025-01-25 21:50:36,750	[INFO]	0-1     SUCCESS              *943987.31 (39.99%) [1 edit(s)]  
+2025-01-25 21:50:36,750	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}')"
+
+2025-01-25 21:50:38,097	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:50:38,097	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, x;\n    cin >> k >> x;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i != x) cout << i << " ";\n    }\n    cout << x << " "; // Output x in the middle\n    cout << endl;\n\n    return 0;\n}')"
+2025-01-25 21:50:39,635	[DEBUG]	EXEC>  SUCCESS 2352381.3125
+2025-01-25 21:50:39,635	[INFO]	0-3     SUCCESS               2352381.31 (99.66%) [1 edit(s)]  
+2025-01-25 21:50:39,636	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, x;\n    cin >> k >> x;\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        cout << i << " ";\n    }\n\n    cout << endl;\n    return 0;\n}')"
+2025-01-25 21:50:40,965	[DEBUG]	EXEC>  SUCCESS 933022.4375
+2025-01-25 21:50:40,965	[INFO]	0-4     SUCCESS              *933022.44 (39.53%) [1 edit(s)]  
+2025-01-25 21:50:40,965	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}')"
+
+2025-01-25 21:50:42,319	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:50:42,319	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, x;\n    cin >> k >> x;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i != x) cout << i << " ";\n    }\n    cout << x << " "; // Output x in the middle\n    cout << endl;\n\n    return 0;\n}')"
+2025-01-25 21:50:43,795	[DEBUG]	EXEC>  SUCCESS 928587.1875
+2025-01-25 21:50:43,795	[INFO]	0-6     SUCCESS              *928587.19 (39.34%) [1 edit(s)]  
+2025-01-25 21:50:43,795	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    putchar(\'\\n\'); // Faster than endl\n    return 0;\n}')"
+
+2025-01-25 21:50:45,333	[DEBUG]	EXEC>  SUCCESS 2362731.75
+2025-01-25 21:50:45,333	[INFO]	0-7     SUCCESS               2362731.75 (100.10%) [1 edit(s)]  
+2025-01-25 21:50:45,333	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, x;\n    cin >> k >> x;\n    \n    int range[2 * k]; // Array to hold results\n    int idx = 0;\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        range[idx++] = i;\n    }\n\n    for (int i = 0; i < idx; i++) {\n        cout << range[i] << " ";\n    }\n    \n    cout << endl;\n    return 0;\n}')"
+2025-01-25 21:50:46,865	[DEBUG]	EXEC>  SUCCESS 2366612.1875
+2025-01-25 21:50:46,865	[INFO]	0-8     SUCCESS               2366612.19 (100.26%) [1 edit(s)]  
+2025-01-25 21:50:46,865	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), "#include <iostream>\nusing namespace std;\n\nint main() {\n    int k, x;\n    cin >> k >> x;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        cout << i << (i == x + (k - 1) ? '\\n' : ' ');\n    }\n    \n    return 0;\n}")"
+2025-01-25 21:50:48,447	[DEBUG]	EXEC>  SUCCESS 2428960.4375
+2025-01-25 21:50:48,447	[INFO]	0-9     SUCCESS               2428960.44 (102.91%) [1 edit(s)]  
+2025-01-25 21:50:48,447	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int k, x;\n    cin >> k >> x;\n    \n    vector<int> range;\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        range.push_back(i);\n    }\n\n    for (const int &num : range) {\n        cout << num << " ";\n    }\n    \n    cout << endl;\n    return 0;\n}')"
+2025-01-25 21:50:49,783	[DEBUG]	EXEC>  SUCCESS 951109.875
+2025-01-25 21:50:49,783	[INFO]	0-10    SUCCESS               951109.88 (40.29%) [1 edit(s)]  
+2025-01-25 21:50:49,783	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:50:50,784	[INFO]	Step: 10
+2025-01-25 21:50:50,784	[INFO]	Stop Steps: 50
+2025-01-25 21:50:52,454	[DEBUG]	EXEC>  SUCCESS 2476589.625
+2025-01-25 21:50:52,455	[INFO]	REF     SUCCESS               2476589.62 (--) [0 edit(s)]  
+2025-01-25 21:50:52,455	[INFO]	Best patch: 5
+2025-01-25 21:50:52,778	[DEBUG]	EXEC>  SUCCESS 947028.6875
+2025-01-25 21:50:52,778	[INFO]	BEST    SUCCESS              *947028.69 (38.24%) [0 edit(s)]  
+2025-01-25 21:50:52,778	[INFO]	Best patch step: 5
+2025-01-25 21:51:15,069	[INFO]	Step: 10
+2025-01-25 21:51:15,069	[INFO]	Stop Steps: 50
+2025-01-25 21:51:15,518	[DEBUG]	EXEC>  SUCCESS 949962.6875
+2025-01-25 21:51:15,519	[INFO]	1-1     SUCCESS              +949962.69 (38.36%) [1 edit(s)]  
+2025-01-25 21:51:15,519	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    putchar(\'\\n\'); // Faster than endl\n    return 0;\n}')"
+2025-01-25 21:51:15,519	[INFO]	Step: 11
+2025-01-25 21:51:15,519	[INFO]	Stop Steps: 50
+2025-01-25 21:51:15,842	[DEBUG]	EXEC>  SUCCESS 985873.375
+2025-01-25 21:51:15,842	[INFO]	1-2     SUCCESS               985873.38 (39.81%) [1 edit(s)]  
+2025-01-25 21:51:15,842	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}')"
+2025-01-25 21:51:15,842	[INFO]	Step: 12
+2025-01-25 21:51:15,842	[INFO]	Stop Steps: 50
+2025-01-25 21:51:16,167	[DEBUG]	EXEC>  SUCCESS 929283.5625
+2025-01-25 21:51:16,167	[INFO]	1-3     SUCCESS              *929283.56 (37.52%) [1 edit(s)]  
+2025-01-25 21:51:16,167	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+
+2025-01-25 21:51:16,167	[INFO]	Step: 13
+2025-01-25 21:51:16,167	[INFO]	Stop Steps: 50
+2025-01-25 21:51:16,497	[DEBUG]	EXEC>  SUCCESS 959332.25
+2025-01-25 21:51:16,498	[INFO]	1-4     SUCCESS               959332.25 (38.74%) [1 edit(s)]  
+2025-01-25 21:51:16,498	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:16,498	[INFO]	Step: 14
+2025-01-25 21:51:16,498	[INFO]	Stop Steps: 50
+2025-01-25 21:51:16,820	[DEBUG]	EXEC>  SUCCESS 946972.875
+2025-01-25 21:51:16,820	[INFO]	1-5     SUCCESS               946972.88 (38.24%) [1 edit(s)]  
+2025-01-25 21:51:16,820	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:16,820	[INFO]	Step: 15
+2025-01-25 21:51:16,820	[INFO]	Stop Steps: 50
+2025-01-25 21:51:17,147	[DEBUG]	EXEC>  SUCCESS 951577.875
+2025-01-25 21:51:17,147	[INFO]	1-6     SUCCESS               951577.88 (38.42%) [1 edit(s)]  
+2025-01-25 21:51:17,147	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:17,147	[INFO]	Step: 16
+2025-01-25 21:51:17,147	[INFO]	Stop Steps: 50
+2025-01-25 21:51:17,490	[DEBUG]	EXEC>  SUCCESS 953900.6875
+2025-01-25 21:51:17,490	[INFO]	1-7     SUCCESS               953900.69 (38.52%) [2 edit(s)]  
+2025-01-25 21:51:17,490	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    putchar(\'\\n\'); // Faster than endl\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    // Use an array to store the numbers and print them all at once\n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    int size = end - start + 1;\n\n    // Create a buffer for the output\n    char buffer[100]; // Adjust size as necessary\n    int offset = 0;\n\n    for (int i = start; i <= end; i++) {\n        offset += sprintf(buffer + offset, "%d ", i);\n    }\n    \n    // Print the entire range at once\n    fputs(buffer, stdout);\n    \n    putchar(\'\\n\'); // Faster than endl\n    return 0;\n}')"
+2025-01-25 21:51:17,490	[INFO]	Step: 17
+2025-01-25 21:51:17,490	[INFO]	Stop Steps: 50
+2025-01-25 21:51:17,813	[DEBUG]	EXEC>  SUCCESS 937932.8125
+2025-01-25 21:51:17,813	[INFO]	1-8     SUCCESS               937932.81 (37.87%) [2 edit(s)]  
+2025-01-25 21:51:17,813	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Print the entire range in one go\n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \');\n    }\n    return 0;\n}')"
+2025-01-25 21:51:17,813	[INFO]	Step: 18
+2025-01-25 21:51:17,814	[INFO]	Stop Steps: 50
+2025-01-25 21:51:18,137	[DEBUG]	EXEC>  SUCCESS 949239.6875
+2025-01-25 21:51:18,137	[INFO]	1-9     SUCCESS               949239.69 (38.33%) [2 edit(s)]  
+2025-01-25 21:51:18,138	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i < x) {\n            printf("%d ", i);\n        } else if (i > x) {\n            printf("%d ", i);\n        } else {\n            printf("%d ", i); // Print x once\n        }\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}')"
+2025-01-25 21:51:18,138	[INFO]	Step: 19
+2025-01-25 21:51:18,138	[INFO]	Stop Steps: 50
+2025-01-25 21:51:18,475	[DEBUG]	EXEC>  SUCCESS 966410.5625
+2025-01-25 21:51:18,475	[INFO]	1-10    SUCCESS               966410.56 (39.02%) [2 edit(s)]  
+2025-01-25 21:51:18,475	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += snprintf(buffer + pos, sizeof(buffer) - pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:18,475	[INFO]	Step: 20
+2025-01-25 21:51:18,475	[INFO]	Stop Steps: 50
+2025-01-25 21:51:20,022	[DEBUG]	EXEC>  SUCCESS 2425842.625
+2025-01-25 21:51:20,022	[INFO]	REF     SUCCESS               2425842.62 (--) [0 edit(s)]  
+2025-01-25 21:51:20,022	[INFO]	Best patch: 0
+2025-01-25 21:51:20,345	[DEBUG]	EXEC>  SUCCESS 960152.875
+2025-01-25 21:51:20,345	[INFO]	BEST    SUCCESS              *960152.88 (39.58%) [0 edit(s)]  
+2025-01-25 21:51:20,345	[INFO]	Best patch step: 12
+2025-01-25 21:51:46,716	[INFO]	Step: 20
+2025-01-25 21:51:46,716	[INFO]	Stop Steps: 50
+2025-01-25 21:51:47,166	[DEBUG]	EXEC>  SUCCESS 931393.1875
+2025-01-25 21:51:47,166	[INFO]	2-1     SUCCESS              *931393.19 (38.39%) [1 edit(s)]  
+2025-01-25 21:51:47,166	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+
+2025-01-25 21:51:47,166	[INFO]	Step: 21
+2025-01-25 21:51:47,166	[INFO]	Stop Steps: 50
+2025-01-25 21:51:47,487	[DEBUG]	EXEC>  SUCCESS 959351.0
+2025-01-25 21:51:47,487	[INFO]	2-2     SUCCESS               959351.00 (39.55%) [2 edit(s)]  
+2025-01-25 21:51:47,487	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Print the entire range in one go\n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \');\n    }\n    return 0;\n}')"
+2025-01-25 21:51:47,487	[INFO]	Step: 22
+2025-01-25 21:51:47,487	[INFO]	Stop Steps: 50
+2025-01-25 21:51:47,639	[INFO]	2-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:51:47,639	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    // Generate the range using efficient buffer handling\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d%c", i, (i == x + (k - 1)) ? \'\\n\' : \' \');\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:47,639	[INFO]	Step: 23
+2025-01-25 21:51:47,639	[INFO]	Stop Steps: 50
+2025-01-25 21:51:47,792	[INFO]	2-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:51:47,792	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    // Generate the range and store in buffer\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d%c", i, (i == x + (k - 1)) ? \'\\n\' : \' \');\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:47,792	[INFO]	Step: 24
+2025-01-25 21:51:47,792	[INFO]	Stop Steps: 50
+2025-01-25 21:51:47,945	[INFO]	2-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:51:47,945	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    // Efficiently build output range in buffer\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d%c", i, (i == x + (k - 1)) ? \'\\n\' : \' \');\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:47,945	[INFO]	Step: 25
+2025-01-25 21:51:47,945	[INFO]	Stop Steps: 50
+2025-01-25 21:51:48,106	[INFO]	2-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:51:48,106	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    // Construct the output range compactly\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d%c", i, (i == x + (k - 1)) ? \'\\n\' : \' \');\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:48,106	[INFO]	Step: 26
+2025-01-25 21:51:48,106	[INFO]	Stop Steps: 50
+2025-01-25 21:51:49,364	[INFO]	2-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-25 21:51:49,364	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    // Calculate the total size required for the output buffer\n    int totalSize = (2 * k - 1) * 4; // Each integer occupies up to 4 bytes + space\n    char buffer[totalSize];\n    char *ptr = buffer;\n\n    // Construct the output directly in one pass\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        ptr += sprintf(ptr, "%d ", i);\n    }\n    \n    // Remove the last space for cleaner output\n    if (ptr != buffer) {\n        *(ptr - 1) = \'\\0\'; // Null-terminate the string\n    }\n\n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:51:49,364	[INFO]	Step: 27
+2025-01-25 21:51:49,364	[INFO]	Stop Steps: 50
+2025-01-25 21:51:49,695	[DEBUG]	EXEC>  SUCCESS 940855.0
+2025-01-25 21:51:49,695	[INFO]	2-8     SUCCESS               940855.00 (38.78%) [3 edit(s)]  
+2025-01-25 21:51:49,695	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Print the entire range in one go\n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \');\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single printf to print the entire range\n    printf("%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        printf(" %d", i);\n    }\n    printf("\\n");\n    \n    return 0;\n}')"
+2025-01-25 21:51:49,695	[INFO]	Step: 28
+2025-01-25 21:51:49,695	[INFO]	Stop Steps: 50
+2025-01-25 21:51:50,015	[DEBUG]	EXEC>  SUCCESS 949214.5
+2025-01-25 21:51:50,015	[INFO]	2-9     SUCCESS               949214.50 (39.13%) [2 edit(s)]  
+2025-01-25 21:51:50,015	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Output each number directly\n    }\n    \n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}')"
+2025-01-25 21:51:50,015	[INFO]	Step: 29
+2025-01-25 21:51:50,015	[INFO]	Stop Steps: 50
+2025-01-25 21:51:50,337	[DEBUG]	EXEC>  SUCCESS 935517.25
+2025-01-25 21:51:50,337	[INFO]	2-10    SUCCESS               935517.25 (38.56%) [3 edit(s)]  
+2025-01-25 21:51:50,337	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i < x) {\n            printf("%d ", i);\n        } else if (i > x) {\n            printf("%d ", i);\n        } else {\n            printf("%d ", i); // Print x once\n        }\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Simplified printing logic\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}')"
+2025-01-25 21:51:50,337	[INFO]	Step: 30
+2025-01-25 21:51:50,338	[INFO]	Stop Steps: 50
+2025-01-25 21:51:51,871	[DEBUG]	EXEC>  SUCCESS 2359013.6875
+2025-01-25 21:51:51,871	[INFO]	REF     SUCCESS               2359013.69 (--) [0 edit(s)]  
+2025-01-25 21:51:51,871	[INFO]	Best patch: 0
+2025-01-25 21:51:52,189	[DEBUG]	EXEC>  SUCCESS 925356.5
+2025-01-25 21:51:52,190	[INFO]	BEST    SUCCESS              *925356.50 (39.23%) [0 edit(s)]  
+2025-01-25 21:51:52,190	[INFO]	Best patch step: 20
+2025-01-25 21:52:20,003	[INFO]	Step: 30
+2025-01-25 21:52:20,003	[INFO]	Stop Steps: 50
+2025-01-25 21:52:20,451	[DEBUG]	EXEC>  SUCCESS 940910.25
+2025-01-25 21:52:20,452	[INFO]	3-1     SUCCESS              +940910.25 (39.89%) [1 edit(s)]  
+2025-01-25 21:52:20,452	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:52:20,452	[INFO]	Step: 31
+2025-01-25 21:52:20,452	[INFO]	Stop Steps: 50
+2025-01-25 21:52:20,781	[DEBUG]	EXEC>  SUCCESS 949720.0625
+2025-01-25 21:52:20,781	[INFO]	3-2     SUCCESS               949720.06 (40.26%) [3 edit(s)]  
+2025-01-25 21:52:20,781	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i < x) {\n            printf("%d ", i);\n        } else if (i > x) {\n            printf("%d ", i);\n        } else {\n            printf("%d ", i); // Print x once\n        }\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Simplified printing logic\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}')"
+2025-01-25 21:52:20,781	[INFO]	Step: 32
+2025-01-25 21:52:20,781	[INFO]	Stop Steps: 50
+2025-01-25 21:52:21,117	[DEBUG]	EXEC>  SUCCESS 971663.375
+2025-01-25 21:52:21,117	[INFO]	3-3     SUCCESS               971663.38 (41.19%) [1 edit(s)]  
+2025-01-25 21:52:21,117	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single printf to print the entire range\n    printf("%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        printf(" %d", i);\n    }\n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}')"
+2025-01-25 21:52:21,117	[INFO]	Step: 33
+2025-01-25 21:52:21,117	[INFO]	Stop Steps: 50
+2025-01-25 21:52:21,270	[INFO]	3-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:52:21,271	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}')"
+2025-01-25 21:52:21,271	[INFO]	Step: 34
+2025-01-25 21:52:21,271	[INFO]	Stop Steps: 50
+2025-01-25 21:52:21,608	[DEBUG]	EXEC>  SUCCESS 950170.875
+2025-01-25 21:52:21,609	[INFO]	3-5     SUCCESS               950170.88 (40.28%) [1 edit(s)]  
+2025-01-25 21:52:21,609	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single printf to print all numbers\n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}')"
+2025-01-25 21:52:21,609	[INFO]	Step: 35
+2025-01-25 21:52:21,609	[INFO]	Stop Steps: 50
+2025-01-25 21:52:21,759	[INFO]	3-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:52:21,759	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}')"
+2025-01-25 21:52:21,759	[INFO]	Step: 36
+2025-01-25 21:52:21,759	[INFO]	Stop Steps: 50
+2025-01-25 21:52:22,088	[DEBUG]	EXEC>  SUCCESS 955939.125
+2025-01-25 21:52:22,089	[INFO]	3-7     SUCCESS               955939.12 (40.52%) [2 edit(s)]  
+2025-01-25 21:52:22,089	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n    \n    // Using snprintf to build the output more safely and efficiently\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += snprintf(buffer + pos, sizeof(buffer) - pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:52:22,089	[INFO]	Step: 37
+2025-01-25 21:52:22,089	[INFO]	Stop Steps: 50
+2025-01-25 21:52:22,418	[DEBUG]	EXEC>  SUCCESS 942092.625
+2025-01-25 21:52:22,418	[INFO]	3-8     SUCCESS               942092.62 (39.94%) [4 edit(s)]  
+2025-01-25 21:52:22,418	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i < x) {\n            printf("%d ", i);\n        } else if (i > x) {\n            printf("%d ", i);\n        } else {\n            printf("%d ", i); // Print x once\n        }\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Simplified printing logic\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[200];\n    int pos = 0;\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i); // Accumulate formatted output in a buffer\n    }\n    \n    puts(buffer); // Output the entire buffer at once\n    return 0;\n}')"
+2025-01-25 21:52:22,419	[INFO]	Step: 38
+2025-01-25 21:52:22,419	[INFO]	Stop Steps: 50
+2025-01-25 21:52:22,755	[DEBUG]	EXEC>  SUCCESS 948524.8125
+2025-01-25 21:52:22,755	[INFO]	3-9     SUCCESS               948524.81 (40.21%) [4 edit(s)]  
+2025-01-25 21:52:22,756	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Print the entire range in one go\n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \');\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single printf to print the entire range\n    printf("%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        printf(" %d", i);\n    }\n    printf("\\n");\n    \n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single buffer to construct the output\n    char buffer[200];\n    int pos = 0;\n    pos += sprintf(buffer + pos, "%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        pos += sprintf(buffer + pos, " %d", i);\n    }\n    printf("%s\\n", buffer);\n    \n    return 0;\n}')"
+2025-01-25 21:52:22,756	[INFO]	Step: 39
+2025-01-25 21:52:22,756	[INFO]	Stop Steps: 50
+2025-01-25 21:52:23,080	[DEBUG]	EXEC>  SUCCESS 949414.625
+2025-01-25 21:52:23,080	[INFO]	3-10    SUCCESS               949414.62 (40.25%) [3 edit(s)]  
+2025-01-25 21:52:23,080	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Output each number directly\n    }\n    \n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \'); // Use a conditional operator to manage newline\n    }\n    \n    return 0;\n}')"
+2025-01-25 21:52:23,080	[INFO]	Step: 40
+2025-01-25 21:52:23,080	[INFO]	Stop Steps: 50
+2025-01-25 21:52:24,622	[DEBUG]	EXEC>  SUCCESS 2363799.3125
+2025-01-25 21:52:24,622	[INFO]	REF     SUCCESS               2363799.31 (--) [0 edit(s)]  
+2025-01-25 21:52:24,622	[INFO]	Best patch: 0
+2025-01-25 21:52:24,948	[DEBUG]	EXEC>  SUCCESS 941228.375
+2025-01-25 21:52:24,948	[INFO]	BEST    SUCCESS              *941228.38 (39.82%) [0 edit(s)]  
+2025-01-25 21:52:24,948	[INFO]	Best patch step: 20
+2025-01-25 21:52:47,788	[INFO]	Step: 40
+2025-01-25 21:52:47,788	[INFO]	Stop Steps: 50
+2025-01-25 21:52:48,235	[DEBUG]	EXEC>  SUCCESS 948119.25
+2025-01-25 21:52:48,235	[INFO]	4-1     SUCCESS              +948119.25 (40.11%) [1 edit(s)]  
+2025-01-25 21:52:48,235	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:52:48,235	[INFO]	Step: 41
+2025-01-25 21:52:48,235	[INFO]	Stop Steps: 50
+2025-01-25 21:52:48,564	[DEBUG]	EXEC>  SUCCESS 940009.8125
+2025-01-25 21:52:48,564	[INFO]	4-2     SUCCESS              *940009.81 (39.77%) [4 edit(s)]  
+2025-01-25 21:52:48,566	[DEBUG]	patch(4-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i < x) {\n            printf("%d ", i);\n        } else if (i > x) {\n            printf("%d ", i);\n        } else {\n            printf("%d ", i); // Print x once\n        }\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Simplified printing logic\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[200];\n    int pos = 0;\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i); // Accumulate formatted output in a buffer\n    }\n    \n    puts(buffer); // Output the entire buffer at once\n    return 0;\n}')"
+
+2025-01-25 21:52:48,566	[INFO]	Step: 42
+2025-01-25 21:52:48,567	[INFO]	Stop Steps: 50
+2025-01-25 21:52:48,892	[DEBUG]	EXEC>  SUCCESS 932899.1875
+2025-01-25 21:52:48,892	[INFO]	4-3     SUCCESS              *932899.19 (39.47%) [1 edit(s)]  
+2025-01-25 21:52:48,892	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    char buffer[200];\n    int pos = 0;\n    pos += sprintf(buffer + pos, "%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        pos += sprintf(buffer + pos, " %d", i);\n    }\n    printf("%s\\n", buffer);\n    \n    return 0;\n}')"
+
+2025-01-25 21:52:48,892	[INFO]	Step: 43
+2025-01-25 21:52:48,892	[INFO]	Stop Steps: 50
+2025-01-25 21:52:49,046	[INFO]	4-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:52:49,047	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[200];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d%c", i, (i == x + (k - 1)) ? \'\\n\' : \' \'); // Conditional for newline\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:52:49,047	[INFO]	Step: 44
+2025-01-25 21:52:49,047	[INFO]	Stop Steps: 50
+2025-01-25 21:52:49,382	[DEBUG]	EXEC>  SUCCESS 949832.5
+2025-01-25 21:52:49,382	[INFO]	4-5     SUCCESS               949832.50 (40.18%) [1 edit(s)]  
+2025-01-25 21:52:49,382	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[200];\n    int pos = 0;\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    pos += sprintf(buffer + pos, "%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        pos += sprintf(buffer + pos, " %d", i);\n    }\n    printf("%s\\n", buffer);\n    \n    return 0;\n}')"
+2025-01-25 21:52:49,382	[INFO]	Step: 45
+2025-01-25 21:52:49,382	[INFO]	Stop Steps: 50
+2025-01-25 21:52:49,534	[INFO]	4-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 21:52:49,535	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[200];\n    int pos = 0;\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        pos += sprintf(buffer + pos, "%d%c", i, (i == end) ? \'\\n\' : \' \'); // Use conditional for managing newline\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}')"
+2025-01-25 21:52:49,535	[INFO]	Step: 46
+2025-01-25 21:52:49,535	[INFO]	Stop Steps: 50
+2025-01-25 21:52:49,857	[DEBUG]	EXEC>  SUCCESS 944359.875
+2025-01-25 21:52:49,858	[INFO]	4-7     SUCCESS               944359.88 (39.95%) [2 edit(s)]  
+2025-01-25 21:52:49,858	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    return 0;\n}')"
+2025-01-25 21:52:49,858	[INFO]	Step: 47
+2025-01-25 21:52:49,858	[INFO]	Stop Steps: 50
+2025-01-25 21:52:50,182	[DEBUG]	EXEC>  SUCCESS 950371.0625
+2025-01-25 21:52:50,182	[INFO]	4-8     SUCCESS               950371.06 (40.21%) [5 edit(s)]  
+2025-01-25 21:52:50,182	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x; i++) {\n        printf("%d ", i);\n    }\n    \n    for (int i = x + 1; i <= x + (k - 1); i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        if (i < x) {\n            printf("%d ", i);\n        } else if (i > x) {\n            printf("%d ", i);\n        } else {\n            printf("%d ", i); // Print x once\n        }\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Simplified printing logic\n    }\n    \n    puts(""); // A faster alternative to cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[200];\n    int pos = 0;\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i); // Accumulate formatted output in a buffer\n    }\n    \n    puts(buffer); // Output the entire buffer at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    // Directly calculate the required numbers without using sprintf for each iteration\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Output each number directly\n    }\n    \n    putchar(\'\\n\'); // Output a new line at the end\n    return 0;\n}')"
+2025-01-25 21:52:50,182	[INFO]	Step: 48
+2025-01-25 21:52:50,182	[INFO]	Stop Steps: 50
+2025-01-25 21:52:50,517	[DEBUG]	EXEC>  SUCCESS 935704.5
+2025-01-25 21:52:50,517	[INFO]	4-9     SUCCESS               935704.50 (39.58%) [5 edit(s)]  
+2025-01-25 21:52:50,517	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d ", i);\n    }\n    \n    puts(""); // Faster than cout << endl;\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Print the entire range in one go\n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \');\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single printf to print the entire range\n    printf("%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        printf(" %d", i);\n    }\n    printf("\\n");\n    \n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Using a single buffer to construct the output\n    char buffer[200];\n    int pos = 0;\n    pos += sprintf(buffer + pos, "%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        pos += sprintf(buffer + pos, " %d", i);\n    }\n    printf("%s\\n", buffer);\n    \n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Directly print the range using a loop without intermediate buffer\n    for (int i = start; i <= end; i++) {\n        if (i > start) {\n            printf(" "); // Print space before subsequent numbers\n        }\n        printf("%d", i);\n    }\n    printf("\\n");\n    \n    return 0;\n}')"
+2025-01-25 21:52:50,517	[INFO]	Step: 49
+2025-01-25 21:52:50,517	[INFO]	Stop Steps: 50
+2025-01-25 21:52:50,841	[DEBUG]	EXEC>  SUCCESS 952022.1875
+2025-01-25 21:52:50,841	[INFO]	4-10    SUCCESS               952022.19 (40.28%) [4 edit(s)]  
+2025-01-25 21:52:50,841	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    char buffer[1000];\n    int pos = 0;\n\n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        pos += sprintf(buffer + pos, "%d ", i);\n    }\n    \n    puts(buffer); // Output all at once\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    for (int i = x - (k - 1); i <= x + (k - 1); i++) {\n        printf("%d ", i); // Output each number directly\n    }\n    \n    putchar(\'\\n\'); // Ensure to end the output with a newline\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i == end) ? \'\\n\' : \' \'); // Use a conditional operator to manage newline\n    }\n    \n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    // Print all numbers in one go instead of using conditional within the loop\n    for (int i = start; i <= end; i++) {\n        printf("%d%c", i, (i < end) ? \' \' : \'\\n\'); // Optimize by moving the conditional to the printf\n    }\n    \n    return 0;\n}')"
+2025-01-25 21:52:50,841	[INFO]	Step: 50
+2025-01-25 21:52:50,841	[INFO]	Stop Steps: 50
+2025-01-25 21:52:50,841	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-25 21:52:51,116	[INFO]	~~~~ END ~~~~
+2025-01-25 21:52:51,116	[INFO]	Best patch step: 42
+2025-01-25 21:52:51,117	[INFO]	
+2025-01-25 21:52:51,117	[INFO]	==== REPORT ====
+2025-01-25 21:52:51,117	[INFO]	Termination: step budget
+2025-01-25 21:52:51,117	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0013_1737841814.log
+2025-01-25 21:52:51,117	[INFO]	Patch file: _magpie_logs/0013_1737841814.patch
+2025-01-25 21:52:51,117	[INFO]	Diff file: _magpie_logs/0013_1737841814.diff
+2025-01-25 21:52:51,117	[INFO]	Reference fitness: 2363799.31
+2025-01-25 21:52:51,117	[INFO]	Best fitness: 932899.19
+2025-01-25 21:52:51,117	[INFO]	
+2025-01-25 21:52:51,117	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int k, x;\n    scanf("%d %d", &k, &x);\n    \n    int start = x - (k - 1);\n    int end = x + (k - 1);\n    \n    char buffer[200];\n    int pos = 0;\n    pos += sprintf(buffer + pos, "%d", start);\n    for (int i = start + 1; i <= end; i++) {\n        pos += sprintf(buffer + pos, " %d", i);\n    }\n    printf("%s\\n", buffer);\n    \n    return 0;\n}')
+2025-01-25 21:52:51,118	[INFO]	
+2025-01-25 21:52:51,118	[INFO]	==== DIFF ====
+

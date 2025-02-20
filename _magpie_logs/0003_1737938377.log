@@ -1,0 +1,402 @@
+2025-01-27 00:39:37,352	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8728562848184282
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0003
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-27 00:39:37,352	[DEBUG]	
+2025-01-27 00:39:37,352	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-27 00:39:37,353	[INFO]	~~~~ WARMUP ~~~~
+2025-01-27 00:39:38,308	[DEBUG]	EXEC>  SUCCESS 4900804.4375
+2025-01-27 00:39:38,309	[INFO]	WARM    SUCCESS               4900804.44 (--) [0 edit(s)]  
+2025-01-27 00:39:38,888	[DEBUG]	EXEC>  SUCCESS 4850547.0
+2025-01-27 00:39:38,888	[INFO]	WARM    SUCCESS               4850547.00 (--) [0 edit(s)]  
+2025-01-27 00:39:39,464	[DEBUG]	EXEC>  SUCCESS 4869226.6875
+2025-01-27 00:39:39,465	[INFO]	WARM    SUCCESS               4869226.69 (--) [0 edit(s)]  
+2025-01-27 00:39:40,030	[DEBUG]	EXEC>  SUCCESS 5024371.3125
+2025-01-27 00:39:40,030	[INFO]	WARM    SUCCESS               5024371.31 (--) [0 edit(s)]  
+2025-01-27 00:39:40,606	[DEBUG]	EXEC>  SUCCESS 4877442.875
+2025-01-27 00:39:40,607	[INFO]	WARM    SUCCESS               4877442.88 (--) [0 edit(s)]  
+2025-01-27 00:39:40,607	[INFO]	REF     SUCCESS               4877442.88 (--) [0 edit(s)]  
+2025-01-27 00:39:40,607	[INFO]	
+2025-01-27 00:39:40,608	[INFO]	~~~~ START ~~~~
+2025-01-27 00:40:01,348	[INFO]	0-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:01,348	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include<stdio.h>\n\nint main(void)\n\n{\n\n\tlong long n,count;\n\n\tcount = n = 1000000;\n\n\twhile(n != 1)\n\n\t{\n\n\t\tif(n % 2 == 1)\n\n\t\t\tcount = count - n / 2 - n / 2 / 2;\n\n\t\tn--;\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:02,672	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:02,672	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\tcount = 1;\n\n\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t\tcount++;\n\n\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:06,336	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:06,336	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t\tflag[j + i + i] = true;\n\n\t\t\t\tflag[j + i + i + i + i] = true;\n\n\t\t\t\tflag[j + i + i + i + i + i + i] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\tcount = 1;\n\n\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t\tcount++;\n\n\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:07,667	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:07,667	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\ti = 3;\n\n\twhile(i <= p)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tj = i * i;\n\n\t\t\twhile(j <= 1000000)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t\tj = j + 2 * i;\n\n\t\t\t}\n\n\t\t}\n\n\t\ti = i + 2;\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\tcount = 1;\n\n\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t\tcount++;\n\n\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:08,982	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:08,982	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j < 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:10,436	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:10,436	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include<stdio.h>\n\n#include<math.h>\n\n#include<bitset>\n\nusing namespace std;\n\nbitset<1000001> flag;\n\nlong long n,count;\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:11,768	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:11,769	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:13,098	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:13,098	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:14,428	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:14,428	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include<stdio.h>\n\n#include<math.h>\n\nlong long n,count;\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,p;\n\n\tp = 1000;\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\tscanf("%lld",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:15,429	[INFO]	Step: 9
+2025-01-27 00:40:15,429	[INFO]	Stop Steps: 50
+2025-01-27 00:40:17,115	[DEBUG]	EXEC>  SUCCESS 4886119.4375
+2025-01-27 00:40:17,115	[INFO]	REF     SUCCESS               4886119.44 (--) [0 edit(s)]  
+2025-01-27 00:40:17,115	[INFO]	Best patch step: None
+2025-01-27 00:40:39,090	[INFO]	Step: 9
+2025-01-27 00:40:39,090	[INFO]	Stop Steps: 50
+2025-01-27 00:40:39,351	[INFO]	1-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:39,351	[DEBUG]	patch(1-10)="LineLLMCrossover(('source.cpp', 0), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\nchar str[200005];\nint main(){\n\tscanf("%s",str);\n\tint ans = 0;\n\tint a=-1;\n\tfor(int i=0;str[i];i++){\n\t\tif(str[i]==\'Z\'){\n\t\t\tif(a!=-1)\n\t\t\t\tans = max(ans,i-a);\n\t\t}else if(str[i]==\'A\' && a==-1)\n\t\t\ta = i;\n\t}\n\tprintf("%d\\n",ans+1);\n\treturn 0;\n}')"
+2025-01-27 00:40:39,351	[INFO]	Step: 10
+2025-01-27 00:40:39,351	[INFO]	Stop Steps: 50
+2025-01-27 00:40:41,814	[INFO]	1-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:41,814	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\nconst int maxn = 100000;\nint n, a[maxn], b[maxn];\nint main(void) {\n    scanf("%d", &n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d%d", a + i, b + i);\n    }\n    long long ans = 0;\n    for (int i = n - 1; i >= 0; --i) {\n        long long cur = a[i] + ans;\n        long long tar = (cur + b[i] - 1) / b[i] * b[i];\n        ans += tar - cur;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-27 00:40:41,814	[INFO]	Step: 11
+2025-01-27 00:40:41,814	[INFO]	Stop Steps: 50
+2025-01-27 00:40:42,070	[INFO]	1-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:40:42,070	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 2), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\nchar str[200005];\nint main(){\n\tscanf("%s",str);\n\tint ans = 0;\n\tint a=-1;\n\tfor(int i=0;str[i];i++){\n\t\tif(str[i]==\'Z\'){\n\t\t\tif(a!=-1)\n\t\t\t\tans = max(ans,i-a);\n\t\t}else if(str[i]==\'A\' && a==-1)\n\t\t\ta = i;\n\t}\n\tprintf("%d\\n",ans+1);\n\treturn 0;\n}')"
+2025-01-27 00:40:42,071	[INFO]	Step: 12
+2025-01-27 00:40:42,071	[INFO]	Stop Steps: 50
+2025-01-27 00:40:42,163	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:40:42,163	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\nconst int maxn = 100000;\nint n, a[maxn], b[maxn];\nint main(void) {\n    scanf("%d", &n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d%d", a + i, b + i);\n    }\n    int res = 0, p = -1;\n    for (int i = 0; i < n; ++i) {\n        if (a[i] <= i && i <= b[i]) {\n            p = i;\n        }\n        if (p != -1 && a[i] <= p && p <= b[i]) {\n            res = max(res, b[i] - a[i]);\n        }\n    }\n    printf("%d\\n", res);\n}')"
+2025-01-27 00:40:42,163	[INFO]	Step: 13
+2025-01-27 00:40:42,163	[INFO]	Stop Steps: 50
+2025-01-27 00:40:42,255	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 00:40:42,255	[DEBUG]	patch(1-4)="LineLLMMutation(('source.cpp', 9), '#include<stdio.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:42,255	[INFO]	Step: 14
+2025-01-27 00:40:42,256	[INFO]	Stop Steps: 50
+2025-01-27 00:40:42,968	[DEBUG]	EXEC>  SUCCESS 4866860.1875
+2025-01-27 00:40:42,969	[INFO]	1-5     SUCCESS              *4866860.19 (99.61%) [1 edit(s)]  
+2025-01-27 00:40:42,969	[DEBUG]	patch(1-5)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 00:40:42,969	[INFO]	Step: 15
+2025-01-27 00:40:42,969	[INFO]	Stop Steps: 50
+2025-01-27 00:40:43,540	[DEBUG]	EXEC>  SUCCESS 4923280.75
+2025-01-27 00:40:43,541	[INFO]	1-6     SUCCESS               4923280.75 (100.76%) [1 edit(s)]  
+2025-01-27 00:40:43,541	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 11), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:43,541	[INFO]	Step: 16
+2025-01-27 00:40:43,541	[INFO]	Stop Steps: 50
+2025-01-27 00:40:44,125	[DEBUG]	EXEC>  SUCCESS 4921497.0625
+2025-01-27 00:40:44,126	[INFO]	1-7     SUCCESS               4921497.06 (100.72%) [1 edit(s)]  
+2025-01-27 00:40:44,126	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 12), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:44,126	[INFO]	Step: 17
+2025-01-27 00:40:44,126	[INFO]	Stop Steps: 50
+2025-01-27 00:40:44,702	[DEBUG]	EXEC>  SUCCESS 4867373.6875
+2025-01-27 00:40:44,703	[INFO]	1-8     SUCCESS               4867373.69 (99.62%) [1 edit(s)]  
+2025-01-27 00:40:44,703	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 13), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:44,703	[INFO]	Step: 18
+2025-01-27 00:40:44,703	[INFO]	Stop Steps: 50
+2025-01-27 00:40:45,300	[DEBUG]	EXEC>  SUCCESS 4910213.0625
+2025-01-27 00:40:45,301	[INFO]	1-9     SUCCESS               4910213.06 (100.49%) [1 edit(s)]  
+2025-01-27 00:40:45,301	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 14), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:40:45,301	[INFO]	Step: 19
+2025-01-27 00:40:45,301	[INFO]	Stop Steps: 50
+2025-01-27 00:40:46,993	[DEBUG]	EXEC>  SUCCESS 4905881.8125
+2025-01-27 00:40:46,993	[INFO]	REF     SUCCESS               4905881.81 (--) [0 edit(s)]  
+2025-01-27 00:40:46,994	[INFO]	Best patch: 10
+2025-01-27 00:40:47,574	[DEBUG]	EXEC>  SUCCESS 4919207.125
+2025-01-27 00:40:47,574	[INFO]	BEST    SUCCESS               4919207.12 (100.27%) [0 edit(s)]  
+2025-01-27 00:40:47,575	[INFO]	Best patch step: 14
+2025-01-27 00:41:17,142	[INFO]	Step: 19
+2025-01-27 00:41:17,142	[INFO]	Stop Steps: 50
+2025-01-27 00:41:17,831	[DEBUG]	EXEC>  SUCCESS 4856776.25
+2025-01-27 00:41:17,832	[INFO]	2-10    SUCCESS              *4856776.25 (99.00%) [1 edit(s)]  
+2025-01-27 00:41:17,832	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 00:41:17,832	[INFO]	Step: 20
+2025-01-27 00:41:17,832	[INFO]	Stop Steps: 50
+2025-01-27 00:41:18,397	[DEBUG]	EXEC>  SUCCESS 4885740.6875
+2025-01-27 00:41:18,397	[INFO]	2-1     SUCCESS               4885740.69 (99.59%) [1 edit(s)]  
+2025-01-27 00:41:18,397	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 13), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:18,397	[INFO]	Step: 21
+2025-01-27 00:41:18,397	[INFO]	Stop Steps: 50
+2025-01-27 00:41:18,972	[DEBUG]	EXEC>  SUCCESS 4859100.75
+2025-01-27 00:41:18,972	[INFO]	2-2     SUCCESS               4859100.75 (99.05%) [1 edit(s)]  
+2025-01-27 00:41:18,972	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 4), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:18,972	[INFO]	Step: 22
+2025-01-27 00:41:18,972	[INFO]	Stop Steps: 50
+2025-01-27 00:41:19,552	[DEBUG]	EXEC>  SUCCESS 5074027.8125
+2025-01-27 00:41:19,553	[INFO]	2-3     SUCCESS               5074027.81 (103.43%) [1 edit(s)]  
+2025-01-27 00:41:19,553	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 5), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:19,553	[INFO]	Step: 23
+2025-01-27 00:41:19,553	[INFO]	Stop Steps: 50
+2025-01-27 00:41:20,150	[DEBUG]	EXEC>  SUCCESS 4952065.625
+2025-01-27 00:41:20,151	[INFO]	2-4     SUCCESS               4952065.62 (100.94%) [1 edit(s)]  
+2025-01-27 00:41:20,151	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 6), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n}')"
+2025-01-27 00:41:20,151	[INFO]	Step: 24
+2025-01-27 00:41:20,151	[INFO]	Stop Steps: 50
+2025-01-27 00:41:20,723	[DEBUG]	EXEC>  SUCCESS 4899624.0
+2025-01-27 00:41:20,723	[INFO]	2-5     SUCCESS               4899624.00 (99.87%) [1 edit(s)]  
+2025-01-27 00:41:20,723	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 7), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:20,723	[INFO]	Step: 25
+2025-01-27 00:41:20,723	[INFO]	Stop Steps: 50
+2025-01-27 00:41:21,058	[INFO]	2-6     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 00:41:21,059	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cmath>\n\nbool is_prime[1000001];\n\nvoid sieve_of_eratosthenes(int n) {\n    for (int i = 2; i <= n; ++i)\n        is_prime[i] = true;\n    for (int i = 2; i <= sqrt(n); ++i)\n        if (is_prime[i])\n            for (int j = i * i; j <= n; j += i)\n                is_prime[j] = false;\n}\n\nint count_primes(int n) {\n    int count = 0;\n    for (int i = 2; i <= n; ++i)\n        if (is_prime[i])\n            count++;\n    return count;\n}\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    sieve_of_eratosthenes(n);\n    printf("%d\\n", count_primes(n));\n    return 0;\n}')"
+2025-01-27 00:41:21,059	[INFO]	Step: 26
+2025-01-27 00:41:21,059	[INFO]	Stop Steps: 50
+2025-01-27 00:41:21,260	[INFO]	2-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 00:41:21,260	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 13), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 16), '#include<stdio.h>\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long n,count;\n\n\tn = 1000000;\n\n\tcount = 0;\n\n\tflag[1] = true;\n\n\tfor(long long i = 2; i <= n; i++)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tcount++;\n\n\t\t\tfor(long long j = i + i; j <= n; j = j + i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\t\tif(flag[n] == false)\n\n\t\t\tprintf("prime\\n");\n\n\t\telse\n\n\t\t\tprintf("not prime\\n");\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:21,260	[INFO]	Step: 27
+2025-01-27 00:41:21,260	[INFO]	Stop Steps: 50
+2025-01-27 00:41:21,834	[DEBUG]	EXEC>  SUCCESS 4890045.25
+2025-01-27 00:41:21,834	[INFO]	2-8     SUCCESS               4890045.25 (99.68%) [2 edit(s)]  
+2025-01-27 00:41:21,835	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 14), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 17), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:21,835	[INFO]	Step: 28
+2025-01-27 00:41:21,835	[INFO]	Stop Steps: 50
+2025-01-27 00:41:22,027	[INFO]	2-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 00:41:22,027	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 12), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 18), '#include<stdio.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,n,count;\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:22,027	[INFO]	Step: 29
+2025-01-27 00:41:22,027	[INFO]	Stop Steps: 50
+2025-01-27 00:41:22,225	[INFO]	2-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:41:22,225	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 19), '#include<stdio.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,n,count;\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:41:22,225	[INFO]	Step: 30
+2025-01-27 00:41:22,225	[INFO]	Stop Steps: 50
+2025-01-27 00:41:23,799	[DEBUG]	EXEC>  SUCCESS 4879657.4375
+2025-01-27 00:41:23,800	[INFO]	REF     SUCCESS               4879657.44 (--) [0 edit(s)]  
+2025-01-27 00:41:23,800	[INFO]	Best patch: 10
+2025-01-27 00:41:24,370	[DEBUG]	EXEC>  SUCCESS 4877369.9375
+2025-01-27 00:41:24,371	[INFO]	BEST    SUCCESS              *4877369.94 (99.95%) [0 edit(s)]  
+2025-01-27 00:41:24,371	[INFO]	Best patch step: 19
+2025-01-27 00:42:00,113	[INFO]	Step: 30
+2025-01-27 00:42:00,113	[INFO]	Stop Steps: 50
+2025-01-27 00:42:00,812	[DEBUG]	EXEC>  SUCCESS 4887962.8125
+2025-01-27 00:42:00,813	[INFO]	3-1     SUCCESS              +4887962.81 (100.17%) [1 edit(s)]  
+2025-01-27 00:42:00,813	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:00,813	[INFO]	Step: 31
+2025-01-27 00:42:00,813	[INFO]	Stop Steps: 50
+2025-01-27 00:42:01,391	[DEBUG]	EXEC>  SUCCESS 4918984.3125
+2025-01-27 00:42:01,392	[INFO]	3-2     SUCCESS               4918984.31 (100.81%) [1 edit(s)]  
+2025-01-27 00:42:01,392	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 4), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:01,392	[INFO]	Step: 32
+2025-01-27 00:42:01,392	[INFO]	Stop Steps: 50
+2025-01-27 00:42:01,727	[INFO]	3-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:42:01,727	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tint i,j,n,count;\n\n\tscanf("%d",&n);\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\tcount = 1;\n\n\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t\tcount++;\n\n\t\t}\n\n\t}\n\n\tprintf("%d\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:01,727	[INFO]	Step: 33
+2025-01-27 00:42:01,727	[INFO]	Stop Steps: 50
+2025-01-27 00:42:02,063	[INFO]	3-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 00:42:02,064	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nvoid init()\n\n{\n\n\tlong long i,j,p;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n}\n\nint main(void)\n\n{\n\n\tlong long n;\n\n\tscanf("%lld",&n);\n\n\tinit();\n\n\tif(n == 1 || n == 0)\n\n\t\tprintf("0\\n");\n\n\telse\n\n\t{\n\n\t\tlong long count = 1;\n\n\t\tfor(int i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t\tcount++;\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:02,064	[INFO]	Step: 34
+2025-01-27 00:42:02,064	[INFO]	Stop Steps: 50
+2025-01-27 00:42:02,646	[DEBUG]	EXEC>  SUCCESS 4937240.9375
+2025-01-27 00:42:02,647	[INFO]	3-5     SUCCESS               4937240.94 (101.18%) [1 edit(s)]  
+2025-01-27 00:42:02,647	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:02,647	[INFO]	Step: 35
+2025-01-27 00:42:02,647	[INFO]	Stop Steps: 50
+2025-01-27 00:42:03,231	[DEBUG]	EXEC>  SUCCESS 4955490.0625
+2025-01-27 00:42:03,231	[INFO]	3-6     SUCCESS               4955490.06 (101.55%) [1 edit(s)]  
+2025-01-27 00:42:03,231	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:03,231	[INFO]	Step: 36
+2025-01-27 00:42:03,231	[INFO]	Stop Steps: 50
+2025-01-27 00:42:03,449	[INFO]	3-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 00:42:03,449	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 20), '#include<stdio.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,n,count;\n\n\n\n\tn = 1000000;\n\n\n\n\tif(n == 1 || n == 0)\n\n\t\tcount = 0;\n\n\telse\n\n\t{\n\n\t\tcount = 1;\n\n\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n            flag[i] = false;\n\n        }\n\n\t\tfor(i = 3; i <= 1000; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t{\n\n\t\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t\t{\n\n\t\t\t\t\tflag[j] = true;\n\n\t\t\t\t}\n\n\t\t\t}\n\n\t\t}\n\n\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t{\n\n\t\t\tif(flag[i] == false)\n\n\t\t\t\tcount++;\n\n\t\t}\n\n\t}\n\n\tprintf("%lld\\n",count);\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:03,449	[INFO]	Step: 37
+2025-01-27 00:42:03,449	[INFO]	Stop Steps: 50
+2025-01-27 00:42:03,668	[INFO]	3-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 00:42:03,668	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 4), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 21), '#include<stdio.h>\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long i,j,n,count;\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:03,668	[INFO]	Step: 38
+2025-01-27 00:42:03,669	[INFO]	Stop Steps: 50
+2025-01-27 00:42:03,894	[INFO]	3-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-27 00:42:03,894	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 13), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 22), '#include<cstdio>\n\n#include<cmath>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile(scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:03,894	[INFO]	Step: 39
+2025-01-27 00:42:03,894	[INFO]	Stop Steps: 50
+2025-01-27 00:42:04,083	[INFO]	3-10    TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-27 00:42:04,083	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 14), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 17), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 23), '#include<stdio.h>\n\nbool flag[1000005];\n\nint main(void)\n\n{\n\n\tlong long i,j,n,count;\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:04,083	[INFO]	Step: 40
+2025-01-27 00:42:04,083	[INFO]	Stop Steps: 50
+2025-01-27 00:42:04,655	[DEBUG]	EXEC>  SUCCESS 4883781.5
+2025-01-27 00:42:04,656	[INFO]	3-1     SUCCESS              +4883781.50 (100.08%) [1 edit(s)]  
+2025-01-27 00:42:04,656	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 24), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:42:04,656	[INFO]	Step: 41
+2025-01-27 00:42:04,656	[INFO]	Stop Steps: 50
+2025-01-27 00:42:06,231	[DEBUG]	EXEC>  SUCCESS 4884995.0625
+2025-01-27 00:42:06,231	[INFO]	REF     SUCCESS               4884995.06 (--) [0 edit(s)]  
+2025-01-27 00:42:06,232	[INFO]	Best patch: 10
+2025-01-27 00:42:06,802	[DEBUG]	EXEC>  SUCCESS 4876186.0625
+2025-01-27 00:42:06,802	[INFO]	BEST    SUCCESS              *4876186.06 (99.82%) [0 edit(s)]  
+2025-01-27 00:42:06,802	[INFO]	Best patch step: 19
+2025-01-27 00:46:02,211	[INFO]	Step: 41
+2025-01-27 00:46:02,211	[INFO]	Stop Steps: 50
+2025-01-27 00:46:02,905	[DEBUG]	EXEC>  SUCCESS 4901296.125
+2025-01-27 00:46:02,905	[INFO]	4-2     SUCCESS              +4901296.12 (100.33%) [1 edit(s)]  
+2025-01-27 00:46:02,905	[DEBUG]	patch(4-2)="LineLLMMutation(('source.cpp', 24), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:02,906	[INFO]	Step: 42
+2025-01-27 00:46:02,906	[INFO]	Stop Steps: 50
+2025-01-27 00:46:03,486	[DEBUG]	EXEC>  SUCCESS 4892936.4375
+2025-01-27 00:46:03,486	[INFO]	4-3     SUCCESS              +4892936.44 (100.16%) [1 edit(s)]  
+2025-01-27 00:46:03,487	[DEBUG]	patch(4-3)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:03,487	[INFO]	Step: 43
+2025-01-27 00:46:03,487	[INFO]	Stop Steps: 50
+2025-01-27 00:46:04,192	[DEBUG]	EXEC>  SUCCESS 4917286.3125
+2025-01-27 00:46:04,192	[INFO]	4-4     SUCCESS               4917286.31 (100.66%) [1 edit(s)]  
+2025-01-27 00:46:04,192	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 12), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:04,192	[INFO]	Step: 44
+2025-01-27 00:46:04,193	[INFO]	Stop Steps: 50
+2025-01-27 00:46:04,769	[DEBUG]	EXEC>  SUCCESS 4999641.0625
+2025-01-27 00:46:04,769	[INFO]	4-5     SUCCESS               4999641.06 (102.35%) [1 edit(s)]  
+2025-01-27 00:46:04,769	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 13), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:04,770	[INFO]	Step: 45
+2025-01-27 00:46:04,770	[INFO]	Stop Steps: 50
+2025-01-27 00:46:05,353	[DEBUG]	EXEC>  SUCCESS 4929511.875
+2025-01-27 00:46:05,354	[INFO]	4-6     SUCCESS               4929511.88 (100.91%) [1 edit(s)]  
+2025-01-27 00:46:05,354	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 14), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:05,354	[INFO]	Step: 46
+2025-01-27 00:46:05,354	[INFO]	Stop Steps: 50
+2025-01-27 00:46:05,939	[DEBUG]	EXEC>  SUCCESS 5026918.9375
+2025-01-27 00:46:05,940	[INFO]	4-7     SUCCESS               5026918.94 (102.91%) [1 edit(s)]  
+2025-01-27 00:46:05,940	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 15), '#include<stdio.h>\n\n#include<math.h>\n\nbool isNotPrime[1000000]; // Array to mark non-prime numbers\n\nint main(void)\n\n{\n\n\tlong long i,j,sqrtOfN,n,count; // Declare variables\n\n\tsqrtOfN = (long long)sqrt(1000000.0); // Calculate square root\n\n\tfor(i = 3; i <= sqrtOfN; i = i + 2) // Loop through odd numbers\n\n\t{\n\n\t\tif(isNotPrime[i] == false) // Check if prime\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i) // Mark multiples of i\n\n\t\t\t{\n\n\t\t\t\tisNotPrime[j] = true; // Mark as non-prime\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF) // Input for n\n\n\t{\n\n\t\tif(n == 1 || n == 0) // Edge cases\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2) // Count primes\n\n\t\t\t{\n\n\t\t\t\tif(isNotPrime[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count); // Output count\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:05,940	[INFO]	Step: 47
+2025-01-27 00:46:05,940	[INFO]	Stop Steps: 50
+2025-01-27 00:46:08,421	[INFO]	4-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 00:46:08,421	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 24), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 25), '#include<stdio.h>\n\nbool flag[1000001];\n\nint main(void)\n\n{\n\n\tlong long n,count;\n\n\tn = 1000000;\n\n\tcount = 1;\n\n\tfor (int i = 3; i <= n; i = i + 2)\n\n\t{\n\n\t\tflag[i] = false;\n\n\t}\n\n\tfor (int i = 3; i <= n; i = i + 2)\n\n\t{\n\n\t\tif (flag[i] == false)\n\n\t\t{\n\n\t\t\tfor (int j = i*i; j <= n; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\twhile ((scanf("%lld", &n)) != EOF)\n\n\t{\n\n\t\tif (n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor (int i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif (flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n", count);\n\n\t}\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:08,421	[INFO]	Step: 48
+2025-01-27 00:46:08,421	[INFO]	Stop Steps: 50
+2025-01-27 00:46:09,018	[DEBUG]	EXEC>  SUCCESS 4863836.8125
+2025-01-27 00:46:09,019	[INFO]	4-9     SUCCESS              *4863836.81 (99.57%) [2 edit(s)]  
+2025-01-27 00:46:09,019	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 26), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 00:46:09,019	[INFO]	Step: 49
+2025-01-27 00:46:09,019	[INFO]	Stop Steps: 50
+2025-01-27 00:46:09,602	[DEBUG]	EXEC>  SUCCESS 5007591.375
+2025-01-27 00:46:09,602	[INFO]	4-10    SUCCESS               5007591.38 (102.51%) [2 edit(s)]  
+2025-01-27 00:46:09,603	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 4), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 27), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 00:46:09,603	[INFO]	Step: 50
+2025-01-27 00:46:09,603	[INFO]	Stop Steps: 50
+2025-01-27 00:46:09,603	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-27 00:46:09,603	[INFO]	Step: 50
+2025-01-27 00:46:09,603	[INFO]	Stop Steps: 50
+2025-01-27 00:46:11,452	[INFO]	~~~~ END ~~~~
+2025-01-27 00:46:11,452	[INFO]	Best patch step: 48
+2025-01-27 00:46:11,453	[INFO]	
+2025-01-27 00:46:11,453	[INFO]	==== REPORT ====
+2025-01-27 00:46:11,453	[INFO]	Termination: step budget
+2025-01-27 00:46:11,453	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0003_1737938377.log
+2025-01-27 00:46:11,453	[INFO]	Patch file: _magpie_logs/0003_1737938377.patch
+2025-01-27 00:46:11,453	[INFO]	Diff file: _magpie_logs/0003_1737938377.diff
+2025-01-27 00:46:11,453	[INFO]	Reference fitness: 4884995.06
+2025-01-27 00:46:11,453	[INFO]	Best fitness: 4863836.81
+2025-01-27 00:46:11,453	[INFO]	
+2025-01-27 00:46:11,453	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 10), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = (long long)sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}') + LineLLMMutation(('source.cpp', 26), '#include<stdio.h>\n\n#include<math.h>\n\nbool flag[1000000];\n\nint main(void)\n\n{\n\n\tlong long i,j,p,n,count;\n\n\tp = sqrt(1000000.0);\n\n\tfor(i = 3; i <= p; i = i + 2)\n\n\t{\n\n\t\tif(flag[i] == false)\n\n\t\t{\n\n\t\t\tfor(j = i * i; j <= 1000000; j = j + 2 * i)\n\n\t\t\t{\n\n\t\t\t\tflag[j] = true;\n\n\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\twhile((scanf("%lld",&n)) != EOF)\n\n\t{\n\n\n\n\t\tif(n == 1 || n == 0)\n\n\t\t\tcount = 0;\n\n\t\telse\n\n\t\t{\n\n\t\t\tcount = 1;\n\n\t\t\tfor(i = 3; i <= n; i = i + 2)\n\n\t\t\t{\n\n\t\t\t\tif(flag[i] == false)\n\n\t\t\t\t\tcount++;\n\n\t\t\t}\n\n\t\t}\n\n\t\tprintf("%lld\\n",count);\n\n\t}\n\n\n\n\n\n\n\n\treturn 0;\n\n}')
+2025-01-27 00:46:11,454	[INFO]	
+2025-01-27 00:46:11,454	[INFO]	==== DIFF ====
+

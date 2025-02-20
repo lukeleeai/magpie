@@ -1,0 +1,352 @@
+{
+    "(1)": {
+        "children": [
+            {
+                "fitness": 971223.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = za[i].first; // use reference to avoid copy\n        const int& s = za[i].second; // use reference to avoid copy\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the nested loop that calculates ret1 and ret2, which could be optimized by reducing redundant calculations and improving variable access by using references."
+            },
+            {
+                "fitness": 961171.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nint za[100005][2]; // Changed from pair to a 2D array for cache efficiency\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i][0] = x + y; // Store first part in 0th index\n        za[i][1] = x - y; // Store second part in 1st index\n        lx = min(lx, za[i][0]);\n        rx = max(rx, za[i][0]);\n        ly = min(ly, za[i][1]);\n        ry = max(ry, za[i][1]);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i][0], s = za[i][1]; // Accessing array instead of pair\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the line where the `pair<int, int> P` is defined and used to store coordinate transformations. This can be optimized by changing the data structure to an array for better cache locality and reducing overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            968844.75
+        ]
+    },
+    "(1_15)": {
+        "children": [
+            {
+                "fitness": 984312.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        int f = za[i].first;\n        int s = za[i].second;\n        lx = min(lx, f);\n        rx = max(rx, f);\n        ly = min(ly, s);\n        ry = max(ry, s);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = za[i].first; // use reference to avoid copy\n        const int& s = za[i].second; // use reference to avoid copy\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the loop that calculates the minimum and maximum values of `lx`, `ly`, `rx`, and `ry`, which could be optimized by reducing the number of calls to `min` and `max` functions by using a single loop to determine ranges directly."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1_15"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = za[i].first; // use reference to avoid copy\n        const int& s = za[i].second; // use reference to avoid copy\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            971223.4375
+        ]
+    },
+    "(1_15_24x5x1_22x10)": {
+        "children": [
+            {
+                "fitness": 968891.6875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP points[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int minX = INF, minY = INF, maxX = -INF, maxY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        minX = min(minX, points[i].first);\n        maxX = max(maxX, points[i].first);\n        minY = min(minY, points[i].second);\n        maxY = max(maxY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = points[i].first;\n        const int& s = points[i].second;\n        result1 = max(result1, min(max(f - minX, s - minY), max(maxX - f, maxY - s)));\n        result2 = max(result2, min(max(f - minX, maxY - s), max(maxX - f, s - minY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Combine the variable naming conventions from Parent 1 with the array optimization from Parent 3, maintaining the use of pairs for clarity."
+            },
+            {
+                "fitness": 2033726.6875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\n#define INF 2000000000\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int minX = INF, minY = INF, maxX = -INF, maxY = -INF;\n    pair<int, int> points[100005];\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        minX = min(minX, points[i].first);\n        maxX = max(maxX, points[i].first);\n        minY = min(minY, points[i].second);\n        maxY = max(maxY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        int firstDiffX = points[i].first - minX;\n        int secondDiffY = points[i].second - minY;\n        int firstDiffRX = maxX - points[i].first;\n        int secondDiffRY = maxY - points[i].second;\n\n        result1 = max(result1, min(max(firstDiffX, secondDiffY), max(firstDiffRX, secondDiffRY)));\n        result2 = max(result2, min(max(firstDiffX, secondDiffRY), max(firstDiffRX, secondDiffY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Integrate the use of constants from Parent 4 with the optimized loop structure from Parent 2 for improved readability and efficiency."
+            },
+            {
+                "fitness": 968082.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nint points[100005][2]; // 2D array to store x+y and x-y\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int minX = INF, minY = INF, maxX = -INF, maxY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i][0] = x + y; // Store first part\n        points[i][1] = x - y; // Store second part\n        minX = min(minX, points[i][0]);\n        maxX = max(maxX, points[i][0]);\n        minY = min(minY, points[i][1]);\n        maxY = max(maxY, points[i][1]);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = points[i][0], s = points[i][1];\n        result1 = max(result1, min(max(f - minX, s - minY), max(maxX - f, maxY - s)));\n        result2 = max(result2, min(max(f - minX, maxY - s), max(maxX - f, s - minY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Merge the efficient array usage from Parent 3 with the clean input handling from Parent 4, while replacing pairs with a simpler array structure."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1_15_24",
+            "5",
+            "1_22",
+            "10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        int f = za[i].first;\n        int s = za[i].second;\n        lx = min(lx, f);\n        rx = max(rx, f);\n        ly = min(ly, s);\n        ry = max(ry, s);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = za[i].first; // use reference to avoid copy\n        const int& s = za[i].second; // use reference to avoid copy\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP points[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int firstDiffX = points[i].first - leftX;\n        int secondDiffY = points[i].second - leftY;\n        int firstDiffRX = rightX - points[i].first;\n        int secondDiffRY = rightY - points[i].second;\n        \n        ret1 = max(ret1, min(max(firstDiffX, secondDiffY), max(firstDiffRX, secondDiffRY)));\n        ret2 = max(ret2, min(max(firstDiffX, secondDiffRY), max(firstDiffRX, secondDiffY)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nint za[100005][2]; // Changed from pair to a 2D array for cache efficiency\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i][0] = x + y; // Store first part in 0th index\n        za[i][1] = x - y; // Store second part in 1st index\n        lx = min(lx, za[i][0]);\n        rx = max(rx, za[i][0]);\n        ly = min(ly, za[i][1]);\n        ry = max(ry, za[i][1]);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i][0], s = za[i][1]; // Accessing array instead of pair\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP dataPoints[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int minX = INF, minY = INF, maxX = -INF, maxY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        dataPoints[i] = {x + y, x - y};\n        minX = min(minX, dataPoints[i].first);\n        maxX = max(maxX, dataPoints[i].first);\n        minY = min(minY, dataPoints[i].second);\n        maxY = max(maxY, dataPoints[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = dataPoints[i].first;\n        const int& s = dataPoints[i].second;\n        result1 = max(result1, min(max(f - minX, s - minY), max(maxX - f, maxY - s)));\n        result2 = max(result2, min(max(f - minX, maxY - s), max(maxX - f, s - minY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            952684.75,
+            956319.75,
+            961171.8125,
+            966999.25
+        ]
+    },
+    "(1x2x2x2_10)": {
+        "children": [
+            {
+                "fitness": 986377.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        result1 = max(result1, min(max(points[i].first - leftX, points[i].second - leftY), max(rightX - points[i].first, rightY - points[i].second)));\n        result2 = max(result2, min(max(points[i].first - leftX, rightY - points[i].second), max(rightX - points[i].first, points[i].second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Combine the input handling and variable declarations from Parent 1 (fitness: 955562.6875) with the optimized output and calculation structure from Parent 2 (fitness: 956710.25)."
+            },
+            {
+                "fitness": 965868.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP points[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int firstDiffX = points[i].first - leftX;\n        int secondDiffY = points[i].second - leftY;\n        int firstDiffRX = rightX - points[i].first;\n        int secondDiffRY = rightY - points[i].second;\n        \n        ret1 = max(ret1, min(max(firstDiffX, secondDiffY), max(firstDiffRX, secondDiffRY)));\n        ret2 = max(ret2, min(max(firstDiffX, secondDiffRY), max(firstDiffRX, secondDiffY)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Merge the data structure from Parent 3 (fitness: 969770.875) with the improved calculation logic from Parent 4 (fitness: 971772.5) to enhance performance."
+            },
+            {
+                "fitness": 974895.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        result1 = max(result1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        result2 = max(result2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Combine the input structure from Parent 2 (fitness: 956710.25) with the optimization logic from Parent 1 (fitness: 955562.6875) to create a more efficient calculation routine."
+            },
+            {
+                "fitness": 984074.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        ly = min(ly, za[i].second);\n        rx = max(rx, za[i].first);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Integrate the efficient I/O operations from Parent 1 (fitness: 955562.6875) with the robust handling of pairs from Parent 4 (fitness: 971772.5) to enhance the overall performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "2",
+            "2",
+            "2_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        result1 = max(result1, min(max(points[i].first - leftX, points[i].second - leftY), max(rightX - points[i].first, rightY - points[i].second)));\n        result2 = max(result2, min(max(points[i].first - leftX, rightY - points[i].second), max(rightX - points[i].first, points[i].second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        ly = min(ly, za[i].second);\n        rx = max(rx, za[i].first);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int firstDiffX = za[i].first - lx;\n        int secondDiffY = za[i].second - ly;\n        int firstDiffRX = rx - za[i].first;\n        int secondDiffRY = ry - za[i].second;\n        \n        ret1 = max(ret1, min(max(firstDiffX, secondDiffY), max(firstDiffRX, secondDiffRY)));\n        ret2 = max(ret2, min(max(firstDiffX, secondDiffRY), max(firstDiffRX, secondDiffY)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            955562.6875,
+            956710.25,
+            969770.875,
+            971772.5
+        ]
+    },
+    "(1x5x1_15x6)": {
+        "children": [
+            {
+                "fitness": 984949.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP points[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = points[i].first;\n        const int& s = points[i].second;\n        ret1 = max(ret1, min(max(f - leftX, s - leftY), max(rightX - f, rightY - s)));\n        ret2 = max(ret2, min(max(f - leftX, rightY - s), max(rightX - f, s - leftY)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Combine the input handling of Parent 1 with the optimized variable naming and logic structure of Parent 2 to enhance readability and performance."
+            },
+            {
+                "fitness": 982290.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP coordinates[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        coordinates[i] = {x + y, x - y};\n        leftX = min(leftX, coordinates[i].first);\n        rightX = max(rightX, coordinates[i].first);\n        leftY = min(leftY, coordinates[i].second);\n        rightY = max(rightY, coordinates[i].second);\n    }\n\n    int maxRet1 = 0, maxRet2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = coordinates[i].first;\n        const int& s = coordinates[i].second;\n        maxRet1 = max(maxRet1, min(max(f - leftX, s - leftY), max(rightX - f, rightY - s)));\n        maxRet2 = max(maxRet2, min(max(f - leftX, rightY - s), max(rightX - f, s - leftY)));\n    }\n\n    printf(\"%d\\n\", min(maxRet1, maxRet2));\n}\n",
+                "strategy": "Merge the optimized logic of Parent 3 with improved variable naming from Parent 4, focusing on clarity and performance."
+            },
+            {
+                "fitness": 966999.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP dataPoints[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int minX = INF, minY = INF, maxX = -INF, maxY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        dataPoints[i] = {x + y, x - y};\n        minX = min(minX, dataPoints[i].first);\n        maxX = max(maxX, dataPoints[i].first);\n        minY = min(minY, dataPoints[i].second);\n        maxY = max(maxY, dataPoints[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = dataPoints[i].first;\n        const int& s = dataPoints[i].second;\n        result1 = max(result1, min(max(f - minX, s - minY), max(maxX - f, maxY - s)));\n        result2 = max(result2, min(max(f - minX, maxY - s), max(maxX - f, s - minY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Combine the input structure and logic of Parent 2 with the optimized variable handling from Parent 1 to improve performance without sacrificing clarity."
+            },
+            {
+                "fitness": 973370.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP points[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int minLeftX = INF, minLeftY = INF, maxRightX = -INF, maxRightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        minLeftX = min(minLeftX, points[i].first);\n        maxRightX = max(maxRightX, points[i].first);\n        minLeftY = min(minLeftY, points[i].second);\n        maxRightY = max(maxRightY, points[i].second);\n    }\n\n    int maxResult1 = 0, maxResult2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = points[i].first;\n        const int& s = points[i].second;\n        maxResult1 = max(maxResult1, min(max(f - minLeftX, s - minLeftY), max(maxRightX - f, maxRightY - s)));\n        maxResult2 = max(maxResult2, min(max(f - minLeftX, maxRightY - s), max(maxRightX - f, s - minLeftY)));\n    }\n\n    printf(\"%d\\n\", min(maxResult1, maxResult2));\n}\n",
+                "strategy": "Integrate the best practices of variable management from Parent 3 with the logical flow of Parent 4, ensuring efficiency and readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "5",
+            "1_15",
+            "6"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP points[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int firstDiffX = points[i].first - leftX;\n        int secondDiffY = points[i].second - leftY;\n        int firstDiffRX = rightX - points[i].first;\n        int secondDiffRY = rightY - points[i].second;\n        \n        ret1 = max(ret1, min(max(firstDiffX, secondDiffY), max(firstDiffRX, secondDiffRY)));\n        ret2 = max(ret2, min(max(firstDiffX, secondDiffRY), max(firstDiffRX, secondDiffY)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        const int& f = za[i].first; // use reference to avoid copy\n        const int& s = za[i].second; // use reference to avoid copy\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        result1 = max(result1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        result2 = max(result2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            968844.75,
+            971024.125,
+            971223.4375,
+            974895.3125
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 971772.5,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        ly = min(ly, za[i].second);\n        rx = max(rx, za[i].first);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int firstDiffX = za[i].first - lx;\n        int secondDiffY = za[i].second - ly;\n        int firstDiffRX = rx - za[i].first;\n        int secondDiffRY = ry - za[i].second;\n        \n        ret1 = max(ret1, min(max(firstDiffX, secondDiffY), max(firstDiffRX, secondDiffRY)));\n        ret2 = max(ret2, min(max(firstDiffX, secondDiffRY), max(firstDiffRX, secondDiffY)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the loop that updates `lx`, `ly`, `rx`, and `ry`, which can be optimized by reducing redundant calls to `min` and `max` by calculating values in a single loop iteration."
+            },
+            {
+                "fitness": 996208.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    // Combine min and max calculations into a single loop\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        int diffX = points[i].first - leftX;\n        int diffY = points[i].second - leftY;\n        int revDiffX = rightX - points[i].first;\n        int revDiffY = rightY - points[i].second;\n\n        result1 = max(result1, min(max(diffX, diffY), max(revDiffX, revDiffY)));\n        result2 = max(result2, min(max(diffX, revDiffY), max(revDiffX, diffY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Focus on the for loop that calculates the minimum and maximum values from the input points, which could be optimized by reducing the number of comparisons made within the loop."
+            },
+            {
+                "fitness": 992945.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <tuple>\nusing namespace std;\n\ntypedef long long ll;\n\n#define INF 2000000000\n\ntuple<int, int> za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = make_tuple(x + y, x - y);\n        lx = min(lx, get<0>(za[i]));\n        rx = max(rx, get<0>(za[i]));\n        ly = min(ly, get<1>(za[i]));\n        ry = max(ry, get<1>(za[i]));\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(get<0>(za[i]) - lx, get<1>(za[i]) - ly), max(rx - get<0>(za[i]), ry - get<1>(za[i]))));\n        ret2 = max(ret2, min(max(get<0>(za[i]) - lx, ry - get<1>(za[i])), max(rx - get<0>(za[i]), get<1>(za[i]) - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the line where the pair `za[i]` is being constructed, which can be optimized by directly using a tuple instead of a pair to reduce overhead and improve readability."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            969770.875
+        ]
+    },
+    "(2x6x4x7)": {
+        "children": [
+            {
+                "fitness": 972036.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        result1 = max(result1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        result2 = max(result2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Combine the input handling and variable declarations from Parent 1 with the result calculation logic from Parent 3."
+            },
+            {
+                "fitness": 979941.9375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Merge the efficient input method from Parent 4 with the logic flow from Parent 2 while maintaining variable naming consistency."
+            },
+            {
+                "fitness": 983740.5625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        result1 = max(result1, min(max(points[i].first - leftX, points[i].second - leftY), max(rightX - points[i].first, rightY - points[i].second)));\n        result2 = max(result2, min(max(points[i].first - leftX, rightY - points[i].second), max(rightX - points[i].first, points[i].second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Combine the optimized variable handling from Parent 3 with the streamlined input mechanism from Parent 1 to enhance readability and performance."
+            },
+            {
+                "fitness": 973980.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        leftX = min(leftX, za[i].first);\n        rightX = max(rightX, za[i].first);\n        leftY = min(leftY, za[i].second);\n        rightY = max(rightY, za[i].second);\n    }\n\n    int maxResult1 = 0, maxResult2 = 0;\n    for(int i = 0; i < n; i++) {\n        int first = za[i].first, second = za[i].second; // caching\n        maxResult1 = max(maxResult1, min(max(first - leftX, second - leftY), max(rightX - first, rightY - second)));\n        maxResult2 = max(maxResult2, min(max(first - leftX, rightY - second), max(rightX - first, second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(maxResult1, maxResult2));\n}\n",
+                "strategy": "Fuse the logical structure and caching technique from Parent 4 with the computational integrity of Parent 3, while improving variable names for clarity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "2",
+            "6",
+            "4",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        result1 = max(result1, min(max(points[i].first - leftX, points[i].second - leftY), max(rightX - points[i].first, rightY - points[i].second)));\n        result2 = max(result2, min(max(points[i].first - leftX, rightY - points[i].second), max(rightX - points[i].first, points[i].second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            964341.0625,
+            967464.75,
+            968026.9375,
+            971384.1875
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 978820.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        int pointX = points[i].first;\n        int pointY = points[i].second;\n        result1 = max(result1, min(max(pointX - leftX, pointY - leftY), max(rightX - pointX, rightY - pointY)));\n        result2 = max(result2, min(max(pointX - leftX, rightY - pointY), max(rightX - pointX, pointY - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Focus on the line that calculates the minimum and maximum values for coordinates, which can be optimized by eliminating unnecessary calculations and using a single loop for both transformations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        result1 = max(result1, min(max(points[i].first - leftX, points[i].second - leftY), max(rightX - points[i].first, rightY - points[i].second)));\n        result2 = max(result2, min(max(points[i].first - leftX, rightY - points[i].second), max(rightX - points[i].first, points[i].second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            968026.9375
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 989832.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nint sum[100005];\nint diff[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        sum[i] = x + y;\n        diff[i] = x - y;\n        lx = min(lx, sum[i]);\n        rx = max(rx, sum[i]);\n        ly = min(ly, diff[i]);\n        ry = max(ry, diff[i]);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        result1 = max(result1, min(max(sum[i] - lx, diff[i] - ly), max(rx - sum[i], ry - diff[i])));\n        result2 = max(result2, min(max(sum[i] - lx, ry - diff[i]), max(rx - sum[i], diff[i] - ly)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Focus on the line that constructs the pair `za[i] = {x + y, x - y};`, which could be optimized by directly storing the results in separate arrays to minimize the overhead of pair storage and improve cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int, int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < n; i++) {\n        result1 = max(result1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        result2 = max(result2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            974895.3125
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 972828.5,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        // Combine calculations of x+y and x-y to reduce redundancy\n        int sum = x + y;\n        int diff = x - y;\n        za[i] = {sum, diff};\n        lx = min(lx, sum);\n        rx = max(rx, sum);\n        ly = min(ly, diff);\n        ry = max(ry, diff);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the line where `za[i]` is assigned values, which could be optimized by reducing the number of calculations during the loop."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n"
+        ],
+        "parent_fitnesses": [
+            971384.1875
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 969770.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Optimize the way pairs are initialized and accessed to reduce overhead."
+            },
+            {
+                "fitness": 992435.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Reduce the number of times variables are accessed, especially within loops, to improve performance."
+            },
+            {
+                "fitness": 968026.9375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> PointPair;\ntypedef long long ll;\n\n#define INF 2000000000\n\nPointPair points[100005];\n\nint main() {\n    int numPoints, x, y;  \n    scanf(\"%d\", &numPoints);\n    int leftX = INF, leftY = INF, rightX = -INF, rightY = -INF;\n\n    for(int i = 0; i < numPoints; i++) {\n        scanf(\"%d%d\", &x, &y);\n        points[i] = {x + y, x - y};\n        leftX = min(leftX, points[i].first);\n        rightX = max(rightX, points[i].first);\n        leftY = min(leftY, points[i].second);\n        rightY = max(rightY, points[i].second);\n    }\n\n    int result1 = 0, result2 = 0;\n    for(int i = 0; i < numPoints; i++) {\n        result1 = max(result1, min(max(points[i].first - leftX, points[i].second - leftY), max(rightX - points[i].first, rightY - points[i].second)));\n        result2 = max(result2, min(max(points[i].first - leftX, rightY - points[i].second), max(rightX - points[i].first, points[i].second - leftY)));\n    }\n\n    printf(\"%d\\n\", min(result1, result2));\n}\n",
+                "strategy": "Use more descriptive variable names to enhance readability, which helps in maintenance and potential future optimizations."
+            },
+            {
+                "fitness": 977155.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Replace the `#define` macros with `constexpr` variables for better type safety and debugging."
+            },
+            {
+                "fitness": 971384.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nP za[100005];\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Optimize the loop by reducing redundant calculations."
+            },
+            {
+                "fitness": 2502140.875,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    vector<P> za(n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        ret1 = max(ret1, min(max(za[i].first - lx, za[i].second - ly), max(rx - za[i].first, ry - za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first - lx, ry - za[i].second), max(rx - za[i].first, za[i].second - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Utilize `std::vector` instead of raw arrays for better dynamic sizing and safety."
+            },
+            {
+                "fitness": 2389980.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\nconstexpr int INF = 2000000000;\n\nint main() {\n    int n, x, y;  \n    scanf(\"%d\", &n);\n    vector<P> za(n);\n    int lx = INF, ly = INF, rx = -INF, ry = -INF;\n\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d%d\", &x, &y);\n        za[i] = {x + y, x - y};\n        lx = min(lx, za[i].first);\n        rx = max(rx, za[i].first);\n        ly = min(ly, za[i].second);\n        ry = max(ry, za[i].second);\n    }\n\n    int ret1 = 0, ret2 = 0;\n    for(int i = 0; i < n; i++) {\n        int f = za[i].first, s = za[i].second; // caching\n        ret1 = max(ret1, min(max(f - lx, s - ly), max(rx - f, ry - s)));\n        ret2 = max(ret2, min(max(f - lx, ry - s), max(rx - f, s - ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Move repeated calculations outside the loop for improved efficiency."
+            },
+            {
+                "fitness": 2459000.5625,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <cstdlib>\n#include <cmath>\n#include <ctime>\n#include <cassert>\n#include <string>\n#include <algorithm>\n#include <vector>\n#include <queue>\n#include <stack>\n#include <functional>\n#include <iostream>\n#include <map>\n#include <set>\n\nusing namespace std;\n\ntypedef pair<int,int> P;\ntypedef long long ll;\n\n#define INF 2000000000\n\nP za[100005];\n\nint main() {\n    srand((unsigned int)time(NULL));\n    int n,x,y;  \n    scanf(\"%d\",&n);\n\n    int lx=INF,ly=INF,rx=-INF,ry=-INF;\n\n    for(int i=0;i<n;i++) {\n        scanf(\"%d%d\",&x,&y);\n        za[i] = make_pair(x+y, x-y);\n        lx = min(lx, x+y);\n        rx = max(rx, x+y);\n        ly = min(ly, x-y);\n        ry = max(ry, x-y);\n    }\n\n    int ret1=0,ret2=0;\n\n    for(int i=0;i<n;i++) {\n        ret1 = max(ret1, min(max(za[i].first-lx, za[i].second-ly), max(rx-za[i].first, ry-za[i].second)));\n        ret2 = max(ret2, min(max(za[i].first-lx, ry-za[i].second), max(rx-za[i].first, za[i].second-ly)));\n    }\n\n    printf(\"%d\\n\", min(ret1, ret2));\n}\n",
+                "strategy": "Focus on the inclusion of unnecessary headers, which could be optimized by removing unused libraries."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "//Bokan ga bokka--nn!!\n\n//Daily Lunch Special Tanoshii !!\n\n//\u3053\u308c\u306f\u3001\u982d\u304c\u60aa\u304f\u7af6\u30d7\u30ed\u304c\u4e16\u754c\u3067\u4e00\u756a\u3067\u304d\u306a\u3044HIR180\u304c\n\n//IOI2014\u65e5\u672c\u4ee3\u8868\u306b\u306a\u308b\u307e\u3067\u306eN\u65e5\u9593\u306e\u8a18\u9332\u3067\u3042\u308b\u3002\n\n#include <cstdio>\n\n#include <cstring>\n\n#include <cstdlib>\n\n#include <cmath>\n\n#include <ctime>\n\n#include <cassert>\n\n#include <string>\n\n#include <algorithm>\n\n#include <vector>\n\n#include <queue>\n\n#include <stack>\n\n#include <functional>\n\n#include <iostream>\n\n#include <map>\n\n#include <set>\n\nusing namespace std;\n\ntypedef pair<int,int> P;\n\ntypedef pair<int,P> P1;\n\ntypedef pair<P,P> P2;\n\ntypedef long long ll;\n\n#define pu push\n\n#define pb push_back\n\n#define mp make_pair\n\n#define eps 1e-7\n\n#define INF 2000000000\n\n#define f first\n\n#define s second\n\n#define rep(i,x) for(int i=0;i<x;i++)\n\nP za[100005];\n\nint main()\n\n{\n\n\tsrand((unsigned int)time(NULL));\n\n\tint n,x,y;  scanf(\"%d\",&n);\n\n\tint lx=INF,ly=INF,rx=-INF,ry=-INF;\n\n\tfor(int i=0;i<n;i++)\n\n\t{\n\n\t\tscanf(\"%d%d\",&x,&y);\n\n\t\tza[i]=mp(x+y,x-y);\n\n\t\tlx=min(lx,x+y);\n\n\t\trx=max(rx,x+y);\n\n\t\tly=min(ly,x-y);\n\n\t\try=max(ry,x-y);\n\n\t}\n\n\tint ret1=0,ret2=0;\n\n\tfor(int i=0;i<n;i++)\n\n\t{\n\n\t\t//(lx,ly)(rx,ry)\n\n\t\tret1=max(ret1,min(max(za[i].f-lx,za[i].s-ly),max(rx-za[i].f,ry-za[i].s)));\n\n\t\t//(lx,ry)(rx,ly)\n\n\t\tret2=max(ret2,min(max(za[i].f-lx,ry-za[i].s),max(rx-za[i].f,za[i].s-ly)));\n\n\t}\n\n\tprintf(\"%d\\n\",min(ret1,ret2));\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            2504762.5625
+        ]
+    }
+}

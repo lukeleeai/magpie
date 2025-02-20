@@ -1,0 +1,183 @@
+2025-01-26 23:52:26,855	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8932717213394363
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0246
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 23:52:26,856	[DEBUG]	
+2025-01-26 23:52:26,856	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 23:52:26,856	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 23:52:27,952	[DEBUG]	EXEC>  SUCCESS 3466195.25
+2025-01-26 23:52:27,952	[INFO]	WARM    SUCCESS               3466195.25 (--) [0 edit(s)]  
+2025-01-26 23:52:28,772	[DEBUG]	EXEC>  SUCCESS 3455472.9375
+2025-01-26 23:52:28,772	[INFO]	WARM    SUCCESS               3455472.94 (--) [0 edit(s)]  
+2025-01-26 23:52:29,605	[DEBUG]	EXEC>  SUCCESS 3458421.375
+2025-01-26 23:52:29,606	[INFO]	WARM    SUCCESS               3458421.38 (--) [0 edit(s)]  
+2025-01-26 23:52:30,433	[DEBUG]	EXEC>  SUCCESS 3466726.8125
+2025-01-26 23:52:30,434	[INFO]	WARM    SUCCESS               3466726.81 (--) [0 edit(s)]  
+2025-01-26 23:52:31,252	[DEBUG]	EXEC>  SUCCESS 3427202.875
+2025-01-26 23:52:31,252	[INFO]	WARM    SUCCESS               3427202.88 (--) [0 edit(s)]  
+2025-01-26 23:52:31,253	[INFO]	REF     SUCCESS               3427202.88 (--) [0 edit(s)]  
+2025-01-26 23:52:31,254	[INFO]	
+2025-01-26 23:52:31,254	[INFO]	~~~~ START ~~~~
+2025-01-26 23:55:58,130	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 23:55:58,130	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint dfs(int day, int cost, int place, int two) {\n    if(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost, i, two));\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost + F[place][day], i, two) + E[place][day]);\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n\n            // Optimized the traversal for place-1\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, dfs(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:55:59,637	[DEBUG]	EXEC>  SUCCESS 2011608.125
+2025-01-26 23:55:59,638	[INFO]	0-2     SUCCESS              *2011608.12 (58.70%) [1 edit(s)]  
+2025-01-26 23:55:59,638	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint dfs(int day, int cost, int place, int two) {\n    if(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost, i, two));\n    \n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost + F[place][day], i, two) + E[place][day]);\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, dfs(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+
+2025-01-26 23:56:01,038	[DEBUG]	EXEC>  SUCCESS 1969611.0625
+2025-01-26 23:56:01,039	[INFO]	0-3     SUCCESS              *1969611.06 (57.47%) [1 edit(s)]  
+2025-01-26 23:56:01,039	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint dfs(int day, int cost, int place, int two) {\n    if(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost, i, two));\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost + F[place][day], i, two) + E[place][day]);\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, dfs(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+
+2025-01-26 23:56:02,433	[DEBUG]	EXEC>  SUCCESS 1954842.6875
+2025-01-26 23:56:02,434	[INFO]	0-4     SUCCESS              *1954842.69 (57.04%) [1 edit(s)]  
+2025-01-26 23:56:02,434	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint dfs(int day, int cost, int place, int two) {\n    if(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost, i, two));\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost + F[place][day], i, two) + E[place][day]);\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, dfs(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+
+2025-01-26 23:56:03,919	[DEBUG]	EXEC>  SUCCESS 1981512.4375
+2025-01-26 23:56:03,919	[INFO]	0-5     SUCCESS               1981512.44 (57.82%) [1 edit(s)]  
+2025-01-26 23:56:03,919	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint dfs(int day, int cost, int place, int two) {\n    while(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost, i, two));\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, cost + F[place][day], i, two) + E[place][day]);\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, dfs(day + 1, tcost, i, two + 1) + tE);\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, dfs(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:56:05,315	[DEBUG]	EXEC>  SUCCESS 1955876.125
+2025-01-26 23:56:05,315	[INFO]	0-6     SUCCESS               1955876.12 (57.07%) [1 edit(s)]  
+2025-01-26 23:56:05,316	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint countCities, totalDays, maxWeight, maxTwo;\nint energy[15][30], fuel[15][30];\nint dp[31][51][15][6];\n\nint calculateMaxEnergy(int day, int currentCost, int currentPlace, int usedTwos) {\n    if(dp[day][currentCost][currentPlace][usedTwos] >= 0) return dp[day][currentCost][currentPlace][usedTwos];\n    if(day == totalDays) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < countCities; ++i) ret = max(ret, calculateMaxEnergy(day + 1, currentCost, i, usedTwos));\n\n    if(energy[currentPlace][day] > 0) {\n        if(currentCost + fuel[currentPlace][day] <= maxWeight) {\n            for(int i = 0; i < countCities; ++i) ret = max(ret, calculateMaxEnergy(day + 1, currentCost + fuel[currentPlace][day], i, usedTwos) + energy[currentPlace][day]);\n        }\n        if(usedTwos < maxTwo) {\n            int newCost = currentCost + fuel[currentPlace][day];\n            int newEnergy = energy[currentPlace][day];\n            for(int now = currentPlace - 1; now >= 0; --now) {\n                if(energy[now][day] == 0 || newCost + fuel[now][day] > maxWeight) break;\n                newCost += fuel[now][day];\n                newEnergy += energy[now][day];\n                for(int i = 0; i < countCities; ++i) ret = max(ret, calculateMaxEnergy(day + 1, newCost, i, usedTwos + 1) + newEnergy);\n            }\n            newCost = currentCost + fuel[currentPlace][day];\n            newEnergy = energy[currentPlace][day];\n            for(int now = currentPlace + 1; now < countCities; ++now) {\n                if(energy[now][day] == 0 || newCost + fuel[now][day] > maxWeight) break;\n                newCost += fuel[now][day];\n                newEnergy += energy[now][day];\n                for(int i = 0; i < countCities; ++i) ret = max(ret, calculateMaxEnergy(day + 1, newCost, i, usedTwos + 1) + newEnergy);\n            }\n        }\n    }\n    dp[day][currentCost][currentPlace][usedTwos] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &countCities, &totalDays, &maxWeight, &maxTwo), countCities) {\n        for(int i = 0; i < countCities; ++i)\n            for(int j = 0; j < totalDays; ++j) scanf(" %d", &energy[i][j]);\n        for(int i = 0; i < countCities; ++i)\n            for(int j = 0; j < totalDays; ++j) scanf(" %d", &fuel[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < countCities; ++i) ans = max(ans, calculateMaxEnergy(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:56:08,719	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 23:56:08,719	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint calculateMaxEnergy(int day, int cost, int place, int two) {\n    int ret = 0;\n    int stack[100]; // Use a stack to simulate recursion\n    int stackPointer = 0;\n    stack[stackPointer++] = day;\n    stack[stackPointer++] = cost;\n    stack[stackPointer++] = place;\n    stack[stackPointer++] = two;\n\n    while (stackPointer > 0) {\n        two = stack[--stackPointer];\n        place = stack[--stackPointer];\n        cost = stack[--stackPointer];\n        day = stack[--stackPointer];\n\n        if (dp[day][cost][place][two] >= 0) {\n            ret = max(ret, dp[day][cost][place][two]);\n            continue;\n        }\n        if (day == D) {\n            dp[day][cost][place][two] = ret;\n            continue;\n        }\n\n        for (int i = 0; i < C; ++i) {\n            stack[stackPointer++] = day + 1;\n            stack[stackPointer++] = cost;\n            stack[stackPointer++] = i;\n            stack[stackPointer++] = two;\n        }\n\n        if (E[place][day] > 0) {\n            if (cost + F[place][day] <= W) {\n                for (int i = 0; i < C; ++i) {\n                    stack[stackPointer++] = day + 1;\n                    stack[stackPointer++] = cost + F[place][day];\n                    stack[stackPointer++] = i;\n                    stack[stackPointer++] = two;\n                }\n            }\n            if (two < X) {\n                int tcost = cost + F[place][day];\n                int tE = E[place][day];\n                for (int now = place - 1; now >= 0; --now) {\n                    if (E[now][day] == 0 || tcost + F[now][day] > W) break;\n                    tcost += F[now][day];\n                    tE += E[now][day];\n                    for (int i = 0; i < C; ++i) {\n                        stack[stackPointer++] = day + 1;\n                        stack[stackPointer++] = tcost;\n                        stack[stackPointer++] = i;\n                        stack[stackPointer++] = two + 1;\n                    }\n                }\n                tcost = cost + F[place][day];\n                tE = E[place][day];\n                for (int now = place + 1; now < C; ++now) {\n                    if (E[now][day] == 0 || tcost + F[now][day] > W) break;\n                    tcost += F[now][day];\n                    tE += E[now][day];\n                    for (int i = 0; i < C; ++i) {\n                        stack[stackPointer++] = day + 1;\n                        stack[stackPointer++] = tcost;\n                        stack[stackPointer++] = i;\n                        stack[stackPointer++] = two + 1;\n                    }\n                }\n            }\n        }\n        dp[day][cost][place][two] = ret;\n    }\n    return ret;\n}\n\nint main() {\n    while (scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for (int i = 0; i < C; ++i)\n            for (int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for (int i = 0; i < C; ++i)\n            for (int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for (int i = 0; i < C; ++i) ans = max(ans, calculateMaxEnergy(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:56:10,240	[DEBUG]	EXEC>  SUCCESS 3521929.875
+2025-01-26 23:56:10,240	[INFO]	0-8     SUCCESS               3521929.88 (102.76%) [1 edit(s)]  
+2025-01-26 23:56:10,240	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nvector<vector<int>> E(15, vector<int>(30)), F(15, vector<int>(30));\nint dp[31][51][15][6];\n\nint calculateMaxEnergy(int day, int cost, int place, int two) {\n    if(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) ret = max(ret, calculateMaxEnergy(day + 1, cost, i, two));\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) ret = max(ret, calculateMaxEnergy(day + 1, cost + F[place][day], i, two) + E[place][day]);\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, calculateMaxEnergy(day + 1, tcost, i, two + 1) + tE);\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) ret = max(ret, calculateMaxEnergy(day + 1, tcost, i, two + 1) + tE);\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, calculateMaxEnergy(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:56:11,729	[DEBUG]	EXEC>  SUCCESS 1999384.875
+2025-01-26 23:56:11,730	[INFO]	0-9     SUCCESS               1999384.88 (58.34%) [1 edit(s)]  
+2025-01-26 23:56:11,730	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint calculateMaxEnergy(int day, int cost, int place, int two) {\n    // Check if already computed\n    if(dp[day][cost][place][two] != -1) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    // Reusing the result of previous calculations\n    for(int i = 0; i < C; ++i) {\n        ret = max(ret, calculateMaxEnergy(day + 1, cost, i, two));\n    }\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) {\n                ret = max(ret, calculateMaxEnergy(day + 1, cost + F[place][day], i, two) + E[place][day]);\n            }\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) {\n                    ret = max(ret, calculateMaxEnergy(day + 1, tcost, i, two + 1) + tE);\n                }\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) {\n                    ret = max(ret, calculateMaxEnergy(day + 1, tcost, i, two + 1) + tE);\n                }\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret; // Cache result\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, calculateMaxEnergy(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:56:13,245	[DEBUG]	EXEC>  SUCCESS 2038504.875
+2025-01-26 23:56:13,245	[INFO]	0-10    SUCCESS               2038504.88 (59.48%) [1 edit(s)]  
+2025-01-26 23:56:13,246	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nint C, D, W, X;\nint E[15][30], F[15][30];\nint dp[31][51][15][6];\n\nint calculateMaxEnergy(int day, int cost, int place, int two) {\n    if(dp[day][cost][place][two] >= 0) return dp[day][cost][place][two];\n    if(day == D) return 0;\n\n    int ret = 0;\n    for(int i = 0; i < C; ++i) {\n        ret = max(ret, calculateMaxEnergy(day + 1, cost, i, two));\n    }\n\n    if(E[place][day] > 0) {\n        if(cost + F[place][day] <= W) {\n            for(int i = 0; i < C; ++i) {\n                ret = max(ret, calculateMaxEnergy(day + 1, cost + F[place][day], i, two) + E[place][day]);\n            }\n        }\n        if(two < X) {\n            int tcost = cost + F[place][day];\n            int tE = E[place][day];\n            for(int now = place - 1; now >= 0; --now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) {\n                    ret = max(ret, calculateMaxEnergy(day + 1, tcost, i, two + 1) + tE);\n                }\n            }\n            tcost = cost + F[place][day];\n            tE = E[place][day];\n            for(int now = place + 1; now < C; ++now) {\n                if(E[now][day] == 0 || tcost + F[now][day] > W) break;\n                tcost += F[now][day];\n                tE += E[now][day];\n                for(int i = 0; i < C; ++i) {\n                    ret = max(ret, calculateMaxEnergy(day + 1, tcost, i, two + 1) + tE);\n                }\n            }\n        }\n    }\n    dp[day][cost][place][two] = ret;\n    return ret;\n}\n\nint main() {\n    while(scanf(" %d %d %d %d", &C, &D, &W, &X), C) {\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &E[i][j]);\n        for(int i = 0; i < C; ++i)\n            for(int j = 0; j < D; ++j) scanf(" %d", &F[i][j]);\n\n        memset(dp, -1, sizeof(dp));\n        int ans = 0;\n        for(int i = 0; i < C; ++i) ans = max(ans, calculateMaxEnergy(0, 0, i, 0));\n        printf("%d\\n", ans);\n    }\n    return 0;\n}')"
+2025-01-26 23:56:14,246	[INFO]	Step: 10
+2025-01-26 23:56:14,246	[INFO]	Stop Steps: 50
+2025-01-26 23:56:16,062	[DEBUG]	EXEC>  SUCCESS 3411276.9375
+2025-01-26 23:56:16,062	[INFO]	REF     SUCCESS               3411276.94 (--) [0 edit(s)]  
+2025-01-26 23:56:16,062	[INFO]	Best patch: 3
+2025-01-26 23:56:16,450	[DEBUG]	EXEC>  SUCCESS 1967795.125
+2025-01-26 23:56:16,450	[INFO]	BEST    SUCCESS              *1967795.12 (57.69%) [0 edit(s)]  
+2025-01-26 23:56:16,450	[INFO]	Best patch step: 3
+2025-01-26 23:58:06,666	[INFO]	~~~~ END ~~~~
+2025-01-26 23:58:06,666	[INFO]	Best patch step: 3

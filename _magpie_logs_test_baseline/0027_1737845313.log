@@ -1,0 +1,426 @@
+2025-01-25 22:48:33,221	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5611148347312964
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0027
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-25 22:48:33,222	[DEBUG]	
+2025-01-25 22:48:33,222	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-25 22:48:33,222	[INFO]	~~~~ WARMUP ~~~~
+2025-01-25 22:48:34,092	[DEBUG]	EXEC>  SUCCESS 2471145.625
+2025-01-25 22:48:34,092	[INFO]	WARM    SUCCESS               2471145.62 (--) [0 edit(s)]  
+2025-01-25 22:48:34,656	[DEBUG]	EXEC>  SUCCESS 2443438.75
+2025-01-25 22:48:34,656	[INFO]	WARM    SUCCESS               2443438.75 (--) [0 edit(s)]  
+2025-01-25 22:48:35,232	[DEBUG]	EXEC>  SUCCESS 2455394.0625
+2025-01-25 22:48:35,233	[INFO]	WARM    SUCCESS               2455394.06 (--) [0 edit(s)]  
+2025-01-25 22:48:35,799	[DEBUG]	EXEC>  SUCCESS 2454995.375
+2025-01-25 22:48:35,799	[INFO]	WARM    SUCCESS               2454995.38 (--) [0 edit(s)]  
+2025-01-25 22:48:36,391	[DEBUG]	EXEC>  SUCCESS 2440375.875
+2025-01-25 22:48:36,391	[INFO]	WARM    SUCCESS               2440375.88 (--) [0 edit(s)]  
+2025-01-25 22:48:36,391	[INFO]	REF     SUCCESS               2440375.88 (--) [0 edit(s)]  
+2025-01-25 22:48:36,392	[INFO]	
+2025-01-25 22:48:36,392	[INFO]	~~~~ START ~~~~
+2025-01-25 22:48:59,659	[DEBUG]	EXEC>  SUCCESS 3029025.375
+2025-01-25 22:48:59,659	[INFO]	0-1     SUCCESS              +3029025.38 (124.12%) [1 edit(s)]  
+2025-01-25 22:48:59,659	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    cin >> s;\n\n    char t[100005];\n    int t_size = 0;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t[t_size++] = c;\n        } else if (c == 'B' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = '\\0';\n    cout << t << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:01,007	[DEBUG]	EXEC>  SUCCESS 1217345.5625
+2025-01-25 22:49:01,007	[INFO]	0-2     SUCCESS              *1217345.56 (49.88%) [1 edit(s)]  
+2025-01-25 22:49:01,007	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}')"
+
+2025-01-25 22:49:02,566	[DEBUG]	EXEC>  SUCCESS 2473067.0625
+2025-01-25 22:49:02,566	[INFO]	0-3     SUCCESS               2473067.06 (101.34%) [1 edit(s)]  
+2025-01-25 22:49:02,566	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    t.reserve(s.size()); // Preallocate memory for efficiency\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // More efficient than erase\n        }\n    }\n\n    cout << t << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:04,164	[DEBUG]	EXEC>  SUCCESS 2447332.375
+2025-01-25 22:49:04,164	[INFO]	0-4     SUCCESS               2447332.38 (100.29%) [1 edit(s)]  
+2025-01-25 22:49:04,164	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    vector<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:05,722	[DEBUG]	EXEC>  SUCCESS 2429366.5625
+2025-01-25 22:49:05,722	[INFO]	0-5     SUCCESS               2429366.56 (99.55%) [1 edit(s)]  
+2025-01-25 22:49:05,722	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            s[t_size++] = c; // Place valid characters in the front\n        } else if (c == 'B' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    s.resize(t_size); // Resize the string to keep only valid characters\n    cout << s << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:07,467	[DEBUG]	EXEC>  SUCCESS 2463162.8125
+2025-01-25 22:49:07,467	[INFO]	0-6     SUCCESS               2463162.81 (100.93%) [1 edit(s)]  
+2025-01-25 22:49:07,467	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    vector<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (auto it = t.begin(); it != t.end(); ++it) {\n        cout << *it;\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:09,026	[DEBUG]	EXEC>  SUCCESS 2459024.0
+2025-01-25 22:49:09,027	[INFO]	0-7     SUCCESS               2459024.00 (100.76%) [1 edit(s)]  
+2025-01-25 22:49:09,027	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    for (size_t i = 0; i < s.size(); ++i) {\n        char c = s[i];\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    cout << t << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:10,584	[DEBUG]	EXEC>  SUCCESS 2471261.875
+2025-01-25 22:49:10,585	[INFO]	0-8     SUCCESS               2471261.88 (101.27%) [1 edit(s)]  
+2025-01-25 22:49:10,585	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    cout << t << endl; // Single output operation\n\n    return 0;\n}")"
+2025-01-25 22:49:12,139	[DEBUG]	EXEC>  SUCCESS 2480114.9375
+2025-01-25 22:49:12,140	[INFO]	0-9     SUCCESS               2480114.94 (101.63%) [1 edit(s)]  
+2025-01-25 22:49:12,140	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    t.reserve(s.size()); // Reserve memory\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    cout << t << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:13,751	[DEBUG]	EXEC>  SUCCESS 2443686.5
+2025-01-25 22:49:13,751	[INFO]	0-10    SUCCESS               2443686.50 (100.14%) [1 edit(s)]  
+2025-01-25 22:49:13,752	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:14,752	[INFO]	Step: 10
+2025-01-25 22:49:14,752	[INFO]	Stop Steps: 50
+2025-01-25 22:49:16,450	[DEBUG]	EXEC>  SUCCESS 2453915.8125
+2025-01-25 22:49:16,450	[INFO]	REF     SUCCESS               2453915.81 (--) [0 edit(s)]  
+2025-01-25 22:49:16,450	[INFO]	Best patch: 1
+2025-01-25 22:49:16,787	[DEBUG]	EXEC>  SUCCESS 1199432.9375
+2025-01-25 22:49:16,788	[INFO]	BEST    SUCCESS              *1199432.94 (48.88%) [0 edit(s)]  
+2025-01-25 22:49:16,788	[INFO]	Best patch step: 1
+2025-01-25 22:49:38,482	[INFO]	Step: 10
+2025-01-25 22:49:38,482	[INFO]	Stop Steps: 50
+2025-01-25 22:49:39,040	[DEBUG]	EXEC>  SUCCESS 1200879.75
+2025-01-25 22:49:39,040	[INFO]	1-1     SUCCESS              +1200879.75 (48.94%) [1 edit(s)]  
+2025-01-25 22:49:39,040	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}')"
+2025-01-25 22:49:39,040	[INFO]	Step: 11
+2025-01-25 22:49:39,040	[INFO]	Stop Steps: 50
+2025-01-25 22:49:39,588	[DEBUG]	EXEC>  SUCCESS 2473609.625
+2025-01-25 22:49:39,588	[INFO]	1-2     SUCCESS               2473609.62 (100.80%) [1 edit(s)]  
+2025-01-25 22:49:39,588	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 4), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            s[t_size++] = c; // Place valid characters in the front\n        } else if (c == 'B' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    s.resize(t_size); // Resize the string to keep only valid characters\n    cout << s << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:39,588	[INFO]	Step: 12
+2025-01-25 22:49:39,588	[INFO]	Stop Steps: 50
+2025-01-25 22:49:40,203	[DEBUG]	EXEC>  SUCCESS 2482385.25
+2025-01-25 22:49:40,203	[INFO]	1-3     SUCCESS               2482385.25 (101.16%) [1 edit(s)]  
+2025-01-25 22:49:40,203	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:40,203	[INFO]	Step: 13
+2025-01-25 22:49:40,203	[INFO]	Stop Steps: 50
+2025-01-25 22:49:40,793	[DEBUG]	EXEC>  SUCCESS 2489572.375
+2025-01-25 22:49:40,793	[INFO]	1-4     SUCCESS               2489572.38 (101.45%) [1 edit(s)]  
+2025-01-25 22:49:40,793	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    vector<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:40,793	[INFO]	Step: 14
+2025-01-25 22:49:40,793	[INFO]	Stop Steps: 50
+2025-01-25 22:49:41,290	[DEBUG]	EXEC>  SUCCESS 2724428.75
+2025-01-25 22:49:41,291	[INFO]	1-5     SUCCESS               2724428.75 (111.02%) [1 edit(s)]  
+2025-01-25 22:49:41,291	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    deque<char> t;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t.push_back(c);\n        } else if (c == \'B\' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        printf("%c", c);\n    }\n    printf("\\n");\n\n    return 0;\n}')"
+2025-01-25 22:49:41,291	[INFO]	Step: 15
+2025-01-25 22:49:41,291	[INFO]	Stop Steps: 50
+2025-01-25 22:49:41,893	[DEBUG]	EXEC>  SUCCESS 2505626.8125
+2025-01-25 22:49:41,893	[INFO]	1-6     SUCCESS               2505626.81 (102.11%) [1 edit(s)]  
+2025-01-25 22:49:41,893	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    vector<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    cout << string(t.begin(), t.end()) << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:41,893	[INFO]	Step: 16
+2025-01-25 22:49:41,893	[INFO]	Stop Steps: 50
+2025-01-25 22:49:42,375	[DEBUG]	EXEC>  SUCCESS 2602622.25
+2025-01-25 22:49:42,375	[INFO]	1-7     SUCCESS               2602622.25 (106.06%) [2 edit(s)]  
+2025-01-25 22:49:42,375	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    vector<char> t;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t.push_back(c);\n        } else if (c == \'B\' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    t.push_back(\'\\0\'); // Append null terminator for proper string output\n    printf("%s\\n", t.data());\n\n    return 0;\n}')"
+2025-01-25 22:49:42,375	[INFO]	Step: 17
+2025-01-25 22:49:42,375	[INFO]	Stop Steps: 50
+2025-01-25 22:49:42,925	[DEBUG]	EXEC>  SUCCESS 2481337.25
+2025-01-25 22:49:42,925	[INFO]	1-8     SUCCESS               2481337.25 (101.12%) [2 edit(s)]  
+2025-01-25 22:49:42,925	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 4), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            s[t_size++] = c; // Place valid characters in the front\n        } else if (c == 'B' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    s.resize(t_size); // Resize the string to keep only valid characters\n    cout << s << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 11), "#include <iostream>\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    // Using a single pass to filter valid characters directly into a new string\n    string result;\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            result += c; // Append valid characters\n        } else if (c == 'B' && !result.empty()) {\n            result.pop_back(); // Remove last valid character if there's any\n        }\n    }\n\n    cout << result << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:42,926	[INFO]	Step: 18
+2025-01-25 22:49:42,926	[INFO]	Stop Steps: 50
+2025-01-25 22:49:43,485	[DEBUG]	EXEC>  SUCCESS 2513387.6875
+2025-01-25 22:49:43,486	[INFO]	1-9     SUCCESS               2513387.69 (102.42%) [2 edit(s)]  
+2025-01-25 22:49:43,486	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 9), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 12), "#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    cout << t << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:43,486	[INFO]	Step: 19
+2025-01-25 22:49:43,486	[INFO]	Stop Steps: 50
+2025-01-25 22:49:44,039	[DEBUG]	EXEC>  SUCCESS 2743414.5625
+2025-01-25 22:49:44,039	[INFO]	1-10    SUCCESS               2743414.56 (111.80%) [2 edit(s)]  
+2025-01-25 22:49:44,039	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 3), "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    vector<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 13), "#include <iostream>\n#include <array>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    const int MAX_SIZE = 200000; // max possible size based on input constraints\n    array<char, MAX_SIZE> t; \n    int top = 0; // index to simulate stack behavior\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t[top++] = c; // push operation\n        } else if (c == 'B' && top > 0) {\n            --top; // pop operation\n        }\n    }\n\n    for (int i = 0; i < top; ++i) {\n        cout << t[i]; // output the characters in the stack\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:49:44,039	[INFO]	Step: 20
+2025-01-25 22:49:44,039	[INFO]	Stop Steps: 50
+2025-01-25 22:49:45,620	[DEBUG]	EXEC>  SUCCESS 2488380.0625
+2025-01-25 22:49:45,621	[INFO]	REF     SUCCESS               2488380.06 (--) [0 edit(s)]  
+2025-01-25 22:49:45,621	[INFO]	Best patch: 1
+2025-01-25 22:49:45,957	[DEBUG]	EXEC>  SUCCESS 1184736.8125
+2025-01-25 22:49:45,957	[INFO]	BEST    SUCCESS              *1184736.81 (47.61%) [0 edit(s)]  
+2025-01-25 22:49:45,957	[INFO]	Best patch step: 1
+2025-01-25 22:50:08,709	[INFO]	Step: 20
+2025-01-25 22:50:08,709	[INFO]	Stop Steps: 50
+2025-01-25 22:50:09,171	[DEBUG]	EXEC>  SUCCESS 1196933.9375
+2025-01-25 22:50:09,171	[INFO]	2-1     SUCCESS              +1196933.94 (48.10%) [1 edit(s)]  
+2025-01-25 22:50:09,171	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}')"
+2025-01-25 22:50:09,171	[INFO]	Step: 21
+2025-01-25 22:50:09,171	[INFO]	Stop Steps: 50
+2025-01-25 22:50:09,725	[DEBUG]	EXEC>  SUCCESS 2471540.1875
+2025-01-25 22:50:09,725	[INFO]	2-2     SUCCESS               2471540.19 (99.32%) [1 edit(s)]  
+2025-01-25 22:50:09,725	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 4), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            s[t_size++] = c; // Place valid characters in the front\n        } else if (c == 'B' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    s.resize(t_size); // Resize the string to keep only valid characters\n    cout << s << endl;\n\n    return 0;\n}")"
+2025-01-25 22:50:09,725	[INFO]	Step: 22
+2025-01-25 22:50:09,725	[INFO]	Stop Steps: 50
+2025-01-25 22:50:10,350	[DEBUG]	EXEC>  SUCCESS 2465454.875
+2025-01-25 22:50:10,351	[INFO]	2-3     SUCCESS               2465454.88 (99.08%) [1 edit(s)]  
+2025-01-25 22:50:10,351	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c); // Use deque to maintain order and allow efficient removals\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove last valid character if 'B' is encountered\n        }\n    }\n\n    for (char c : t) {\n        cout << c; // Output the filtered result\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:50:10,351	[INFO]	Step: 23
+2025-01-25 22:50:10,351	[INFO]	Stop Steps: 50
+2025-01-25 22:50:10,904	[DEBUG]	EXEC>  SUCCESS 2495137.0625
+2025-01-25 22:50:10,904	[INFO]	2-4     SUCCESS               2495137.06 (100.27%) [1 edit(s)]  
+2025-01-25 22:50:10,904	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Track current size of valid characters\n    string result;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            result += c; // Append valid characters\n        } else if (c == 'B' && !result.empty()) {\n            result.pop_back(); // Remove last valid character\n        }\n    }\n\n    cout << result << endl; // Output the result\n    return 0;\n}")"
+2025-01-25 22:50:10,904	[INFO]	Step: 24
+2025-01-25 22:50:10,904	[INFO]	Stop Steps: 50
+2025-01-25 22:50:11,531	[DEBUG]	EXEC>  SUCCESS 2497350.5
+2025-01-25 22:50:11,531	[INFO]	2-5     SUCCESS               2497350.50 (100.36%) [1 edit(s)]  
+2025-01-25 22:50:11,531	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c); // Efficiently add valid characters\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove last valid character\n        }\n    }\n\n    for (char c : t) {\n        cout << c; // Output the filtered characters\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:50:11,531	[INFO]	Step: 25
+2025-01-25 22:50:11,531	[INFO]	Stop Steps: 50
+2025-01-25 22:50:12,077	[DEBUG]	EXEC>  SUCCESS 2717219.25
+2025-01-25 22:50:12,077	[INFO]	2-6     SUCCESS               2717219.25 (109.20%) [1 edit(s)]  
+2025-01-25 22:50:12,077	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s); // Using scanf for faster input\n\n    char result[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            result[t_size++] = c; // Store valid characters\n        } else if (c == \'B\' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    result[t_size] = \'\\0\'; // Null terminate the result\n    printf("%s\\n", result); // Output the result\n    return 0;\n}')"
+2025-01-25 22:50:12,077	[INFO]	Step: 26
+2025-01-25 22:50:12,077	[INFO]	Stop Steps: 50
+2025-01-25 22:50:12,433	[DEBUG]	EXEC>  SUCCESS 1092674.625
+2025-01-25 22:50:12,434	[INFO]	2-7     SUCCESS              *1092674.62 (43.91%) [2 edit(s)]  
+2025-01-25 22:50:12,434	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+
+2025-01-25 22:50:12,434	[INFO]	Step: 27
+2025-01-25 22:50:12,434	[INFO]	Stop Steps: 50
+2025-01-25 22:50:12,993	[DEBUG]	EXEC>  SUCCESS 2484325.0
+2025-01-25 22:50:12,994	[INFO]	2-8     SUCCESS               2484325.00 (99.84%) [2 edit(s)]  
+2025-01-25 22:50:12,994	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 4), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            s[t_size++] = c; // Place valid characters in the front\n        } else if (c == 'B' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    s.resize(t_size); // Resize the string to keep only valid characters\n    cout << s << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 15), "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string result; // Use a separate string to build the result\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            result += c; // Append valid characters directly\n        } else if (c == 'B' && !result.empty()) {\n            result.pop_back(); // Remove last valid character\n        }\n    }\n\n    cout << result << endl; // Output the result directly\n    return 0;\n}")"
+2025-01-25 22:50:12,994	[INFO]	Step: 28
+2025-01-25 22:50:12,994	[INFO]	Stop Steps: 50
+2025-01-25 22:50:13,613	[DEBUG]	EXEC>  SUCCESS 2471622.1875
+2025-01-25 22:50:13,614	[INFO]	2-9     SUCCESS               2471622.19 (99.33%) [3 edit(s)]  
+2025-01-25 22:50:13,614	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 4), "#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            s[t_size++] = c; // Place valid characters in the front\n        } else if (c == 'B' && t_size) {\n            t_size--; // Remove last valid character\n        }\n    }\n\n    s.resize(t_size); // Resize the string to keep only valid characters\n    cout << s << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 11), "#include <iostream>\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    int t_size = 0; // Keep track of the current size of valid characters\n\n    // Using a single pass to filter valid characters directly into a new string\n    string result;\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            result += c; // Append valid characters\n        } else if (c == 'B' && !result.empty()) {\n            result.pop_back(); // Remove last valid character if there's any\n        }\n    }\n\n    cout << result << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 16), "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    // Using a vector to manage valid characters for better performance\n    vector<char> result;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            result.push_back(c); // Append valid characters\n        } else if (c == 'B' && !result.empty()) {\n            result.pop_back(); // Remove last valid character if there's any\n        }\n    }\n\n    // Convert vector back to string for output\n    cout << string(result.begin(), result.end()) << endl;\n\n    return 0;\n}")"
+2025-01-25 22:50:13,614	[INFO]	Step: 29
+2025-01-25 22:50:13,614	[INFO]	Stop Steps: 50
+2025-01-25 22:50:14,171	[DEBUG]	EXEC>  SUCCESS 2466215.5625
+2025-01-25 22:50:14,172	[INFO]	2-10    SUCCESS               2466215.56 (99.11%) [2 edit(s)]  
+2025-01-25 22:50:14,172	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 0), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 17), "#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t += c; // Append to string instead of using deque\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove the last character\n        }\n    }\n\n    cout << t << endl; // Output the result directly\n\n    return 0;\n}")"
+2025-01-25 22:50:14,172	[INFO]	Step: 30
+2025-01-25 22:50:14,172	[INFO]	Stop Steps: 50
+2025-01-25 22:50:15,764	[DEBUG]	EXEC>  SUCCESS 2494649.0
+2025-01-25 22:50:15,765	[INFO]	REF     SUCCESS               2494649.00 (--) [0 edit(s)]  
+2025-01-25 22:50:15,765	[INFO]	Best patch: 1_14
+2025-01-25 22:50:16,106	[DEBUG]	EXEC>  SUCCESS 1070765.5625
+2025-01-25 22:50:16,107	[INFO]	BEST    SUCCESS              *1070765.56 (42.92%) [0 edit(s)]  
+2025-01-25 22:50:16,107	[INFO]	Best patch step: 26
+2025-01-25 22:50:40,042	[INFO]	Step: 30
+2025-01-25 22:50:40,042	[INFO]	Stop Steps: 50
+2025-01-25 22:50:40,516	[DEBUG]	EXEC>  SUCCESS 1062772.9375
+2025-01-25 22:50:40,517	[INFO]	3-1     SUCCESS              *1062772.94 (42.60%) [2 edit(s)]  
+2025-01-25 22:50:40,517	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+
+2025-01-25 22:50:40,517	[INFO]	Step: 31
+2025-01-25 22:50:40,517	[INFO]	Stop Steps: 50
+2025-01-25 22:50:40,854	[DEBUG]	EXEC>  SUCCESS 1205213.0
+2025-01-25 22:50:40,855	[INFO]	3-2     SUCCESS               1205213.00 (48.31%) [1 edit(s)]  
+2025-01-25 22:50:40,855	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}')"
+2025-01-25 22:50:40,855	[INFO]	Step: 32
+2025-01-25 22:50:40,855	[INFO]	Stop Steps: 50
+2025-01-25 22:50:41,193	[DEBUG]	EXEC>  SUCCESS 1201968.9375
+2025-01-25 22:50:41,193	[INFO]	3-3     SUCCESS               1201968.94 (48.18%) [1 edit(s)]  
+2025-01-25 22:50:41,193	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t[t_size++] = s[i];\n        } else if (s[i] == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}')"
+2025-01-25 22:50:41,193	[INFO]	Step: 33
+2025-01-25 22:50:41,193	[INFO]	Stop Steps: 50
+2025-01-25 22:50:41,824	[DEBUG]	EXEC>  SUCCESS 2482631.1875
+2025-01-25 22:50:41,824	[INFO]	3-4     SUCCESS               2482631.19 (99.52%) [1 edit(s)]  
+2025-01-25 22:50:41,824	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), "#include <iostream>\n#include <deque>\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Efficient removal while preserving order\n        }\n    }\n\n    for (char c : t) {\n        cout << c; // Output the filtered result from deque\n    }\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:50:41,825	[INFO]	Step: 34
+2025-01-25 22:50:41,825	[INFO]	Stop Steps: 50
+2025-01-25 22:50:42,166	[DEBUG]	EXEC>  SUCCESS 1056273.6875
+2025-01-25 22:50:42,166	[INFO]	3-5     SUCCESS              *1056273.69 (42.34%) [1 edit(s)]  
+2025-01-25 22:50:42,166	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Construct the output string directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n\n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+
+2025-01-25 22:50:42,166	[INFO]	Step: 35
+2025-01-25 22:50:42,166	[INFO]	Stop Steps: 50
+2025-01-25 22:50:42,723	[DEBUG]	EXEC>  SUCCESS 2495640.4375
+2025-01-25 22:50:42,724	[INFO]	3-6     SUCCESS               2495640.44 (100.04%) [1 edit(s)]  
+2025-01-25 22:50:42,724	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t += c; // Append to string for simplicity\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Efficiently remove the last character\n        }\n    }\n\n    cout << t << endl; // Output the result directly\n\n    return 0;\n}")"
+2025-01-25 22:50:42,724	[INFO]	Step: 36
+2025-01-25 22:50:42,724	[INFO]	Stop Steps: 50
+2025-01-25 22:50:43,059	[DEBUG]	EXEC>  SUCCESS 1192148.25
+2025-01-25 22:50:43,060	[INFO]	3-7     SUCCESS               1192148.25 (47.79%) [3 edit(s)]  
+2025-01-25 22:50:43,060	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char result[100005]; // Allocate enough space for the result\n    int index = 0;\n    \n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[index] = \'\\0\'; // Null-terminate the result\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+2025-01-25 22:50:43,060	[INFO]	Step: 37
+2025-01-25 22:50:43,060	[INFO]	Stop Steps: 50
+2025-01-25 22:50:43,609	[DEBUG]	EXEC>  SUCCESS 2473591.3125
+2025-01-25 22:50:43,609	[INFO]	3-8     SUCCESS               2473591.31 (99.16%) [2 edit(s)]  
+2025-01-25 22:50:43,609	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), "#include <cstdio>\n#include <string>\n#include <iostream>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    \n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t += c; // Automatically manages memory\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Removes the last character\n        }\n    }\n\n    cout << t << endl; // Use cout for better I/O performance in C++\n    \n    return 0;\n}")"
+2025-01-25 22:50:43,609	[INFO]	Step: 38
+2025-01-25 22:50:43,609	[INFO]	Stop Steps: 50
+2025-01-25 22:50:44,176	[DEBUG]	EXEC>  SUCCESS 2460923.125
+2025-01-25 22:50:44,177	[INFO]	3-9     SUCCESS               2460923.12 (98.65%) [2 edit(s)]  
+2025-01-25 22:50:44,177	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 4), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c); // Use deque to maintain order and allow efficient removals\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove last valid character if 'B' is encountered\n        }\n    }\n\n    for (char c : t) {\n        cout << c; // Output the filtered result\n    }\n    cout << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 20), "#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t; // Using string instead of deque\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t += c; // Append valid characters directly to the string\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove last valid character if 'B' is encountered\n        }\n    }\n\n    cout << t; // Output the filtered result directly\n    cout << endl;\n\n    return 0;\n}")"
+2025-01-25 22:50:44,177	[INFO]	Step: 39
+2025-01-25 22:50:44,177	[INFO]	Stop Steps: 50
+2025-01-25 22:50:44,731	[DEBUG]	EXEC>  SUCCESS 2467599.125
+2025-01-25 22:50:44,731	[INFO]	3-10    SUCCESS               2467599.12 (98.92%) [3 edit(s)]  
+2025-01-25 22:50:44,731	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 0), "#include <iostream>\n#include <deque>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    deque<char> t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t.push_back(c);\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    for (char c : t) {\n        cout << c;\n    }\n    cout << endl;\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 17), "#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t += c; // Append to string instead of using deque\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove the last character\n        }\n    }\n\n    cout << t << endl; // Output the result directly\n\n    return 0;\n}") | LineLLMMutation(('source.cpp', 21), "#include <iostream>\n#include <string>\n\nusing namespace std;\n\nint main(void) {\n    string s;\n    cin >> s;\n\n    string t;\n    t.reserve(s.size()); // Reserve space in advance to avoid multiple allocations\n\n    for (char c : s) {\n        if (c == '0' || c == '1') {\n            t += c; // Append to string\n        } else if (c == 'B' && !t.empty()) {\n            t.pop_back(); // Remove the last character\n        }\n    }\n\n    cout << t << endl; // Output the result directly\n\n    return 0;\n}")"
+2025-01-25 22:50:44,731	[INFO]	Step: 40
+2025-01-25 22:50:44,731	[INFO]	Stop Steps: 50
+2025-01-25 22:50:46,310	[DEBUG]	EXEC>  SUCCESS 2484976.0
+2025-01-25 22:50:46,310	[INFO]	REF     SUCCESS               2484976.00 (--) [0 edit(s)]  
+2025-01-25 22:50:46,310	[INFO]	Best patch: 10
+2025-01-25 22:50:46,648	[DEBUG]	EXEC>  SUCCESS 1055601.1875
+2025-01-25 22:50:46,648	[INFO]	BEST    SUCCESS              *1055601.19 (42.48%) [0 edit(s)]  
+2025-01-25 22:50:46,648	[INFO]	Best patch step: 34
+2025-01-25 22:51:15,703	[INFO]	Step: 40
+2025-01-25 22:51:15,704	[INFO]	Stop Steps: 50
+2025-01-25 22:51:16,168	[DEBUG]	EXEC>  SUCCESS 1057669.1875
+2025-01-25 22:51:16,168	[INFO]	4-1     SUCCESS              +1057669.19 (42.56%) [1 edit(s)]  
+2025-01-25 22:51:16,168	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Construct the output string directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n\n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+2025-01-25 22:51:16,168	[INFO]	Step: 41
+2025-01-25 22:51:16,168	[INFO]	Stop Steps: 50
+2025-01-25 22:51:16,506	[DEBUG]	EXEC>  SUCCESS 1047898.8125
+2025-01-25 22:51:16,506	[INFO]	4-2     SUCCESS              *1047898.81 (42.17%) [2 edit(s)]  
+2025-01-25 22:51:16,506	[DEBUG]	patch(4-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+
+2025-01-25 22:51:16,506	[INFO]	Step: 42
+2025-01-25 22:51:16,506	[INFO]	Stop Steps: 50
+2025-01-25 22:51:16,845	[DEBUG]	EXEC>  SUCCESS 1224976.3125
+2025-01-25 22:51:16,846	[INFO]	4-3     SUCCESS               1224976.31 (49.30%) [1 edit(s)]  
+2025-01-25 22:51:16,846	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t[t_size++] = s[i];\n        } else if (s[i] == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}')"
+2025-01-25 22:51:16,846	[INFO]	Step: 43
+2025-01-25 22:51:16,846	[INFO]	Stop Steps: 50
+2025-01-25 22:51:17,194	[DEBUG]	EXEC>  SUCCESS 1083445.1875
+2025-01-25 22:51:17,194	[INFO]	4-4     SUCCESS               1083445.19 (43.60%) [1 edit(s)]  
+2025-01-25 22:51:17,195	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    char result[t_size + 1]; // +1 for null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[index] = \'\\0\'; // Ensure null-termination\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+2025-01-25 22:51:17,195	[INFO]	Step: 44
+2025-01-25 22:51:17,195	[INFO]	Stop Steps: 50
+2025-01-25 22:51:17,533	[DEBUG]	EXEC>  SUCCESS 1059168.25
+2025-01-25 22:51:17,533	[INFO]	4-5     SUCCESS               1059168.25 (42.62%) [1 edit(s)]  
+2025-01-25 22:51:17,533	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    char result[t_size + 1]; // +1 for null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[index] = \'\\0\'; // Null-terminate the output\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+2025-01-25 22:51:17,533	[INFO]	Step: 45
+2025-01-25 22:51:17,533	[INFO]	Stop Steps: 50
+2025-01-25 22:51:17,867	[DEBUG]	EXEC>  SUCCESS 1189439.0625
+2025-01-25 22:51:17,868	[INFO]	4-6     SUCCESS               1189439.06 (47.87%) [1 edit(s)]  
+2025-01-25 22:51:17,868	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char result[100005]; // Allocate enough space for the result\n    int index = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[index] = \'\\0\'; // Ensure the result is null-terminated\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+2025-01-25 22:51:17,868	[INFO]	Step: 46
+2025-01-25 22:51:17,868	[INFO]	Stop Steps: 50
+2025-01-25 22:51:18,211	[DEBUG]	EXEC>  SUCCESS 1087674.1875
+2025-01-25 22:51:18,212	[INFO]	4-7     SUCCESS               1087674.19 (43.77%) [2 edit(s)]  
+2025-01-25 22:51:18,212	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Construct the output string directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n\n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    // Use a single pass to calculate the effective size and modify the string in place\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            s[t_size++] = s[i]; // Store valid characters in the same array\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--; // Decrease size on \'B\'\n        }\n    }\n\n    s[t_size] = \'\\0\'; // Null-terminate the modified string\n    printf("%s\\n", s);\n\n    return 0;\n}')"
+2025-01-25 22:51:18,212	[INFO]	Step: 47
+2025-01-25 22:51:18,212	[INFO]	Stop Steps: 50
+2025-01-25 22:51:18,555	[DEBUG]	EXEC>  SUCCESS 1198571.9375
+2025-01-25 22:51:18,555	[INFO]	4-8     SUCCESS               1198571.94 (48.23%) [3 edit(s)]  
+2025-01-25 22:51:18,555	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char result[100005]; // Allocate enough space for the result\n    int index = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--; // Remove the last added \'0\' or \'1\'\n        }\n    }\n    \n    result[index] = \'\\0\'; // Null-terminate the result\n    printf("%s\\n", result);\n\n    return 0;\n}')"
+2025-01-25 22:51:18,555	[INFO]	Step: 48
+2025-01-25 22:51:18,555	[INFO]	Stop Steps: 50
+2025-01-25 22:51:18,732	[INFO]	4-9     TEST_CODE_ERROR       None (--) [4 edit(s)]  
+2025-01-25 22:51:18,732	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char result[100005]; // Allocate enough space for the result\n    int index = 0;\n    \n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[index] = \'\\0\'; // Null-terminate the result\n    printf("%s\\n", result);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int index = 0; \n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            // Directly print the character instead of storing it\n            putchar(s[i]);\n            index++;\n        } else if (s[i] == \'B\' && index > 0) {\n            // Move back one character in the output\n            // We can achieve this by using a simple print buffer\n            // This can be optimized further if required\n            putchar(\'\\b\'); // This is an approximation; we can use a more sophisticated approach if needed\n        }\n    }\n\n    putchar(\'\\n\'); // Ensure to print a newline at the end\n    return 0;\n}')"
+2025-01-25 22:51:18,732	[INFO]	Step: 49
+2025-01-25 22:51:18,732	[INFO]	Stop Steps: 50
+2025-01-25 22:51:19,213	[DEBUG]	EXEC>  SUCCESS 2683649.375
+2025-01-25 22:51:19,213	[INFO]	4-10    SUCCESS               2683649.38 (107.99%) [2 edit(s)]  
+2025-01-25 22:51:19,214	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t[t_size++] = s[i];\n        } else if (s[i] == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    vector<char> t;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t.push_back(s[i]);\n        } else if (s[i] == \'B\' && !t.empty()) {\n            t.pop_back();\n        }\n    }\n\n    t.push_back(\'\\0\'); // Add null terminator for output\n    printf("%s\\n", t.data());\n\n    return 0;\n}')"
+2025-01-25 22:51:19,214	[INFO]	Step: 50
+2025-01-25 22:51:19,214	[INFO]	Stop Steps: 50
+2025-01-25 22:51:19,214	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-25 22:51:19,675	[INFO]	~~~~ END ~~~~
+2025-01-25 22:51:19,675	[INFO]	Best patch step: 41
+2025-01-25 22:51:19,675	[INFO]	
+2025-01-25 22:51:19,676	[INFO]	==== REPORT ====
+2025-01-25 22:51:19,676	[INFO]	Termination: step budget
+2025-01-25 22:51:19,676	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0027_1737845313.log
+2025-01-25 22:51:19,676	[INFO]	Patch file: _magpie_logs/0027_1737845313.patch
+2025-01-25 22:51:19,676	[INFO]	Diff file: _magpie_logs/0027_1737845313.diff
+2025-01-25 22:51:19,676	[INFO]	Reference fitness: 2484976.00
+2025-01-25 22:51:19,676	[INFO]	Best fitness: 1047898.81
+2025-01-25 22:51:19,676	[INFO]	
+2025-01-25 22:51:19,676	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    char t[100005];\n    int t_size = 0;\n\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        char c = s[i];\n        if (c == \'0\' || c == \'1\') {\n            t[t_size++] = c;\n        } else if (c == \'B\' && t_size) {\n            t_size--;\n        }\n    }\n\n    t[t_size] = \'\\0\';\n    printf("%s\\n", t);\n\n    return 0;\n}') + LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main(void) {\n    char s[100005];\n    scanf("%s", s);\n\n    int t_size = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            t_size++;\n        } else if (s[i] == \'B\' && t_size > 0) {\n            t_size--;\n        }\n    }\n\n    // Use the t_size to construct the output directly\n    char result[t_size + 1]; // +1 for the null terminator\n    int index = 0;\n    for (int i = 0; s[i] != \'\\0\'; ++i) {\n        if (s[i] == \'0\' || s[i] == \'1\') {\n            result[index++] = s[i];\n        } else if (s[i] == \'B\' && index > 0) {\n            index--;\n        }\n    }\n    \n    result[t_size] = \'\\0\';\n    printf("%s\\n", result);\n\n    return 0;\n}')
+2025-01-25 22:51:19,677	[INFO]	
+2025-01-25 22:51:19,677	[INFO]	==== DIFF ====
+

@@ -1,0 +1,376 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 2400466.0625,
+                "new_code": "#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> freq;\n        int key, max_count = 0;\n        \n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &key);\n            freq[key]++;\n            if (freq[key] > max_count) {\n                max_count = freq[key];\n                ans = key;\n            }\n        }\n\n        if (max_count > n / 2) printf(\"%d\\n\", ans);\n        else printf(\"NO COLOR\\n\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting operation, which can be optimized by using a more efficient counting approach to determine the majority element rather than sorting the entire array."
+            },
+            {
+                "fitness": 7715442.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        int t[1000001];\n        unordered_map<int, int> countMap;\n\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n            countMap[t[i]]++; // Count occurrences using hash map\n        }\n\n        ans = -1;\n        for (const auto& pair : countMap) {\n            if (pair.second > n / 2) {\n                ans = pair.first; // Find the majority element\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the counting of occurrences in the array by using a hash map instead of repeatedly counting elements, which can significantly improve the performance on larger datasets."
+            },
+            {
+                "fitness": 2395243.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> countMap;\n        int maxCount = 0;\n        ans = -1;\n\n        for (int i = 0; i < n; i++) {\n            int color;\n            scanf(\"%d\", &color);\n            countMap[color]++;\n            if (countMap[color] > maxCount) {\n                maxCount = countMap[color];\n                ans = color;\n            }\n        }\n\n        if (maxCount > n / 2) {\n            printf(\"%d\\n\", ans);\n        } else {\n            printf(\"NO COLOR\\n\");\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting and counting mechanism within the `main` function. Instead of sorting the entire array and then counting occurrences for each element, we can use a hashmap (unordered_map) to count the occurrences in a single pass. This will reduce the time complexity significantly, especially for larger inputs."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            974757.375
+        ]
+    },
+    "(0x19x4x7)": {
+        "children": [
+            {
+                "fitness": 995703.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input reading and sorting logic from Parent 1 with the early exit mechanism from Parent 3 to improve runtime efficiency."
+            },
+            {
+                "fitness": 983265.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                if (i < n) {\n                    key = t[i];\n                }\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the counting logic from Parent 2 with the sorting and input handling from Parent 4 to create a more efficient version that includes a check for the last counted key."
+            },
+            {
+                "fitness": 992543.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the input reading from Parent 1 with the optimized sorting and counting logic from Parent 4, ensuring that the program maintains efficiency while being clear and concise."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0",
+            "19",
+            "4",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            974757.375,
+            983088.0625,
+            986181.25,
+            986330.4375
+        ]
+    },
+    "(1)": {
+        "children": [
+            {
+                "fitness": 2418044.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\nint n;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        \n        unordered_map<int, int> frequency;\n        int max_count = 0;\n        int ans = -1;\n\n        for (int i = 0; i < n; i++) {\n            frequency[t[i]]++;\n            if (frequency[t[i]] > max_count) {\n                max_count = frequency[t[i]];\n                ans = t[i];\n            }\n        }\n\n        if (max_count <= n / 2) {\n            printf(\"NO COLOR\\n\");\n        } else {\n            printf(\"%d\\n\", ans);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on reducing the number of comparisons and the number of elements processed by leveraging the properties of sorting and using a more efficient counting method."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        int cnt = 1;\n        int key = t[0];\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break;\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            991355.0625
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 2442217.125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\n\nusing namespace std;\n\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> countMap;\n        int maxCount = 0;\n\n        for (int i = 0; i < n; i++) {\n            int color;\n            scanf(\"%d\", &color);\n            countMap[color]++;\n            maxCount = max(maxCount, countMap[color]);\n        }\n\n        ans = -1;\n        for (const auto& pair : countMap) {\n            if (pair.second > n / 2) {\n                ans = pair.first;\n                break;\n            }\n        }\n\n        if (ans == -1) \n            printf(\"NO COLOR\\n\");\n        else \n            printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the input/output operations and the sorting process, which can be improved by reducing the number of comparisons and using a more efficient way to count occurrences."
+            },
+            {
+                "fitness": 2398785.875,
+                "new_code": "#include <cstdio>\n#include <unordered_map>\n\nusing namespace std;\n\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> frequency;\n        int max_count = 0;\n\n        for (int i = 0; i < n; i++) {\n            int color;\n            scanf(\"%d\", &color);\n            frequency[color]++;\n            if (frequency[color] > max_count) {\n                max_count = frequency[color];\n                ans = color;\n            }\n        }\n\n        if (max_count > n / 2) \n            printf(\"%d\\n\", ans);\n        else \n            printf(\"NO COLOR\\n\");\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting and counting logic, which could be optimized by avoiding unnecessary sorting and using a hashmap to count occurrences instead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            972489.125
+        ]
+    },
+    "(19x8x9x10)": {
+        "children": [
+            {
+                "fitness": 985480.3125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the array size handling from Parent 4 with the improved output structure from Parent 1, enhancing clarity and performance."
+            },
+            {
+                "fitness": 989106.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i <= n; i++) {\n            if (i < n && key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                if (i < n) {\n                    key = t[i];\n                }\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the improved handling of input size and array bounds from Parent 3 with the clear variable initialization from Parent 4, optimizing the overall logic flow."
+            },
+            {
+                "fitness": 984761.625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        t[n] = -1; // Adding a sentinel value for safety\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key; \n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the optimized input/output methods from Parent 1 with the structural checks from Parent 2, ensuring performance is prioritized while maintaining code clarity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19",
+            "8",
+            "9",
+            "10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                if (i < n) {\n                    key = t[i];\n                }\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            972489.125,
+            975385.5625,
+            983265.1875,
+            986911.1875
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 987729.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        // Using a better input method with a single read operation\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        // Sort using std::unique to remove duplicates and calculate the mode\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading and sorting process, which can be optimized by using a more efficient input method and reducing the number of comparisons in the sorting phase."
+            },
+            {
+                "fitness": 2417267.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> freq_map;\n        int max_count = 0;\n        int candidate = -1;\n\n        for (int i = 0; i < n; i++) {\n            int value;\n            scanf(\"%d\", &value);\n            freq_map[value]++;\n            if (freq_map[value] > max_count) {\n                max_count = freq_map[value];\n                candidate = value;\n            }\n        }\n\n        if (max_count > n / 2) \n            printf(\"%d\\n\", candidate);\n        else \n            printf(\"NO COLOR\\n\");\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the loops and the sorting logic, which could be optimized by reducing the number of comparisons and eliminating unnecessary sorting operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            969919.75
+        ]
+    },
+    "(2_10)": {
+        "children": [
+            {
+                "fitness": 991830.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        // Using a better input method with a single read operation\n        // Changed from multiple scanf calls to a single bulk read using getchar\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        // Sort using std::unique to remove duplicates and calculate the mode\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the input method to improve performance by using a single read operation and reducing the number of calls to `scanf`, which can be costly in a loop."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        // Using a better input method with a single read operation\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        // Sort using std::unique to remove duplicates and calculate the mode\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            987729.75
+        ]
+    },
+    "(2x0x2_10x4)": {
+        "children": [
+            {
+                "fitness": 986181.25,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the input handling from Parent 3 (fitness: 987729.75) with the sorting and detection logic from Parent 1 (fitness: 969919.75)."
+            },
+            {
+                "fitness": 1015518.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break; // Early exit if majority found\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient counting method from Parent 2 (fitness: 978342.4375) with the array size definition from Parent 4 (fitness: 988533.5) to reduce redundancy in counting."
+            },
+            {
+                "fitness": 991060.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break; // Early exit if majority found\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the early exit optimization from Parent 3 (fitness: 987729.75) with the counting strategy from Parent 4 (fitness: 988533.5) to improve performance while maintaining clarity."
+            },
+            {
+                "fitness": 986330.4375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the concise input reading from Parent 1 (fitness: 969919.75) with the refined output logic from Parent 4 (fitness: 988533.5) to enhance readability and maintainability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "2",
+            "0",
+            "2_10",
+            "4"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        // Using a better input method with a single read operation\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        // Sort using std::unique to remove duplicates and calculate the mode\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            969919.75,
+            978342.4375,
+            987729.75,
+            988533.5
+        ]
+    },
+    "(2x4x0x1)": {
+        "children": [
+            {
+                "fitness": 1007803.75,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and sorting logic from Parent 1 (fitness: 974345.9375) with the counting logic from Parent 2 (fitness: 978853.8125). This crossover optimizes the counting of occurrences while maintaining the efficient sorting approach."
+            },
+            {
+                "fitness": 996526.875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        sort(t, t + n);\n        ans = -1; \n\n        for (int i = 0; i < n; i++) {\n            int cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the initialization and output strategy from Parent 1 (fitness: 974345.9375) with an improved counting method from Parent 2 (fitness: 978853.8125), reducing unnecessary operations."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "2",
+            "4",
+            "0",
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        int cnt = 1;\n        int key = t[0];\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break;\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            974345.9375,
+            978853.8125,
+            980642.8125,
+            991355.0625
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 2422960.5,
+                "new_code": "#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> freq;\n        ans = -1;\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n            freq[t[i]]++;\n            if (freq[t[i]] > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line where the sorting operation occurs, which could be optimized by using a more efficient counting method (like a hashmap) to avoid the overhead of sorting when determining the majority element."
+            },
+            {
+                "fitness": 8327809.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\nint freq[1000001]; // Frequency array\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        fill(freq, freq + 1000001, 0); // Initialize frequency array\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n            freq[t[i]]++; // Count occurrences\n        }\n\n        ans = -1; \n        for (int i = 0; i < 1000001; i++) {\n            if (freq[i] > n / 2) { // Check if count exceeds half\n                ans = i;\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the counting of occurrences in the array. The current implementation uses `count` which has a time complexity of O(n) for each element, leading to a total complexity of O(n^2). Instead, we can use a frequency array to count occurrences in a single pass, which will reduce the overall complexity to O(n)."
+            },
+            {
+                "fitness": 2389868.9375,
+                "new_code": "#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> colorCount;\n        int majorityThreshold = n / 2;\n        ans = -1;\n\n        for (int i = 0; i < n; i++) {\n            int color;\n            scanf(\"%d\", &color);\n            colorCount[color]++;\n            if (colorCount[color] > majorityThreshold) {\n                ans = color;\n                break; // Exit early if majority found\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting process and the way we handle the majority color detection. The algorithm can be optimized by using a hash map to count occurrences, which can reduce the time complexity from O(n log n) to O(n)."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            986181.25
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 2390009.8125,
+                "new_code": "#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, ans;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> frequency;\n        int majorityCount = n / 2;\n\n        for (int i = 0; i < n; i++) {\n            int color;\n            scanf(\"%d\", &color);\n            frequency[color]++;\n            // Check if the current color has reached majority\n            if (frequency[color] > majorityCount) {\n                ans = color;\n                break; // Exit early if majority found\n            }\n        }\n\n        // If no majority found, set ans to -1\n        if (frequency[ans] <= majorityCount) ans = -1;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting operation and the counting logic, which can be optimized by using a hash map to count occurrences instead of sorting the array, reducing the time complexity from O(n log n) to O(n)."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n        }\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n        ans = -1;\n\n        for (int i = 1; i < n; i++) {\n            if (key == t[i]) {\n                cnt++;\n            } else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break; // Exit early if majority found\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        // Final check for last counted key\n        if (cnt > n / 2) ans = key;\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            986330.4375
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 980642.8125,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Replace `cin` and `cout` with `scanf` and `printf` for faster input/output."
+            },
+            {
+                "fitness": 991355.0625,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        int cnt = 1;\n        int key = t[0];\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) {\n                    ans = key;\n                    break;\n                }\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Use a single loop to count occurrences and determine the answer, reducing the complexity of the second loop."
+            },
+            {
+                "fitness": 1011132.1875,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_SIZE = 1000001;\nint n, key, cnt, ans;\nint t[MAX_SIZE];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Change the array size to a constant for better readability and maintainability."
+            },
+            {
+                "fitness": 988533.5,
+                "new_code": "#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint n, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1; \n        sort(t, t + n);\n        \n        for (int i = 0; i < n; i++) {\n            cnt = count(t, t + n, t[i]);\n            if (cnt > n / 2) {\n                ans = t[i];\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Use a binary search to find the majority element instead of sorting the entire array."
+            },
+            {
+                "fitness": 2428202.125,
+                "new_code": "#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint n, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        unordered_map<int, int> count_map;\n        for (int i = 0; i < n; i++) {\n            scanf(\"%d\", &t[i]);\n            count_map[t[i]]++;\n        }\n        ans = -1;\n\n        for (auto& entry : count_map) {\n            if (entry.second > n / 2) {\n                ans = entry.first;\n                break;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize an unordered collection to count occurrences in a single pass, improving efficiency."
+            },
+            {
+                "fitness": 2395238.9375,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint n, ans;\nvector<int> t;\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        t.resize(n);\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n        ans = -1;\n\n        for (auto &val : t) {\n            int cnt = count_if(t.begin(), t.end(), [&](int x) { return x == val; });\n            if (cnt > n / 2) {\n                ans = val;\n                break;\n            }\n        }\n\n        printf(ans == -1 ? \"NO COLOR\\n\" : \"%d\\n\", ans);\n    }\n    return 0;\n}\n",
+                "strategy": "Use `std::count_if` for readability while counting occurrences."
+            },
+            {
+                "fitness": 2393198.0625,
+                "new_code": "#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (cin >> n && n) {\n        for (int i = 0; i < n; i++) cin >> t[i];\n        t[n] = ans = -1;\n        sort(t, t + n);\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) cout << \"NO COLOR\" << endl;\n        else cout << ans << endl;\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the import statements to reduce compilation time and dependency on unnecessary libraries."
+            },
+            {
+                "fitness": 988644.375,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint n, key, cnt, ans;\nint t[1000001];\n\nint main() {\n    while (scanf(\"%d\", &n), n) {\n        for (int i = 0; i < n; i++) scanf(\"%d\", &t[i]);\n\n        t[n] = ans = -1;\n        sort(t, t + n);\n\n        key = t[0];\n        cnt = 1;\n\n        for (int i = 1; i <= n; i++) {\n            if (key == t[i]) cnt++;\n            else {\n                if (cnt > n / 2) ans = key;\n                key = t[i];\n                cnt = 1;\n            }\n        }\n\n        if (ans == -1) printf(\"NO COLOR\\n\");\n        else printf(\"%d\\n\", ans);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the input/output operations, which could be optimized by using faster I/O methods."
+            },
+            {
+                "fitness": 2379549.1875,
+                "new_code": "#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    int n;\n    while (cin >> n && n) {\n        unordered_map<int, int> frequency;\n        int color, maxCount = 0, ans = -1;\n\n        for (int i = 0; i < n; i++) {\n            cin >> color;\n            frequency[color]++;\n            if (frequency[color] > maxCount) {\n                maxCount = frequency[color];\n                ans = color;\n            }\n        }\n\n        if (maxCount > n / 2) {\n            cout << ans << endl;\n        } else {\n            cout << \"NO COLOR\" << endl;\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the sorting operation and the way input is handled, which could be optimized by using a more efficient input method and avoiding unnecessary sorting for unique elements."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include<iostream>\n\n#include<algorithm>\n\nusing namespace std;\n\nint n,key,cnt,ans;\n\nint t[1000001];\n\nint main(){\n\n  while(cin>>n&&n){\n\n    for(int i=0;i<n;i++)cin>>t[i];\n\n    t[n]=ans=-1;\n\n    sort(t,t+n);\n\n    key=t[0];\n\n    cnt=1;\n\n    for(int i=1;i<=n;i++){\n\n      if(key==t[i])cnt++;\n\n      else{\n\n\tif(cnt>n/2)ans=key;\n\n\tkey=t[i];\n\n\tcnt=1;\n\n      }\n\n    }\n\n    if(ans==-1)cout<<\"NO COLOR\"<<endl;\n\n    else cout<<ans<<endl;\n\n  }\n\n  return 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            2391605.5
+        ]
+    }
+}

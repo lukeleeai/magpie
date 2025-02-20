@@ -1,0 +1,421 @@
+2025-01-26 02:19:56,736	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8095479260476052
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0035
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 02:19:56,736	[DEBUG]	
+2025-01-26 02:19:56,736	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 02:19:56,736	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 02:19:57,462	[DEBUG]	EXEC>  SUCCESS 2393314.125
+2025-01-26 02:19:57,462	[INFO]	WARM    SUCCESS               2393314.12 (--) [0 edit(s)]  
+2025-01-26 02:19:57,939	[DEBUG]	EXEC>  SUCCESS 2416594.0625
+2025-01-26 02:19:57,939	[INFO]	WARM    SUCCESS               2416594.06 (--) [0 edit(s)]  
+2025-01-26 02:19:58,418	[DEBUG]	EXEC>  SUCCESS 2408543.3125
+2025-01-26 02:19:58,419	[INFO]	WARM    SUCCESS               2408543.31 (--) [0 edit(s)]  
+2025-01-26 02:19:58,894	[DEBUG]	EXEC>  SUCCESS 2346767.375
+2025-01-26 02:19:58,894	[INFO]	WARM    SUCCESS               2346767.38 (--) [0 edit(s)]  
+2025-01-26 02:19:59,377	[DEBUG]	EXEC>  SUCCESS 2339249.6875
+2025-01-26 02:19:59,377	[INFO]	WARM    SUCCESS               2339249.69 (--) [0 edit(s)]  
+2025-01-26 02:19:59,377	[INFO]	REF     SUCCESS               2339249.69 (--) [0 edit(s)]  
+2025-01-26 02:19:59,377	[INFO]	
+2025-01-26 02:19:59,377	[INFO]	~~~~ START ~~~~
+2025-01-26 02:21:41,436	[DEBUG]	EXEC>  SUCCESS 2347635.0625
+2025-01-26 02:21:41,437	[INFO]	0-1     SUCCESS              +2347635.06 (100.36%) [1 edit(s)]  
+2025-01-26 02:21:41,437	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z=0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char *str = new char[n + 1];\n    scanf("%s", str);\n    s = str;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    delete[] str;\n    return 0;\n}')"
+2025-01-26 02:21:42,718	[DEBUG]	EXEC>  SUCCESS 1151302.5
+2025-01-26 02:21:42,718	[INFO]	0-2     SUCCESS              *1151302.50 (49.22%) [1 edit(s)]  
+2025-01-26 02:21:42,718	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:21:43,993	[DEBUG]	EXEC>  SUCCESS 1135627.25
+2025-01-26 02:21:43,993	[INFO]	0-3     SUCCESS              *1135627.25 (48.55%) [1 edit(s)]  
+2025-01-26 02:21:43,993	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:21:45,276	[DEBUG]	EXEC>  SUCCESS 1163508.6875
+2025-01-26 02:21:45,276	[INFO]	0-4     SUCCESS               1163508.69 (49.74%) [1 edit(s)]  
+2025-01-26 02:21:45,276	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, r = 0, g = 0, b = 0;\n    long long z = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:46,405	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 02:21:46,405	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        long long limit = n - o + 1; // Pre-calculate limit\n        for (long long i = o - 1; i < limit; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:47,822	[DEBUG]	EXEC>  SUCCESS 1178857.1875
+2025-01-26 02:21:47,823	[INFO]	0-6     SUCCESS               1178857.19 (50.39%) [1 edit(s)]  
+2025-01-26 02:21:47,823	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <array>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    array<char, 200005> s;\n    scanf("%s", s.data());\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:49,101	[DEBUG]	EXEC>  SUCCESS 1156228.8125
+2025-01-26 02:21:49,101	[INFO]	0-7     SUCCESS               1156228.81 (49.43%) [1 edit(s)]  
+2025-01-26 02:21:49,101	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:50,381	[DEBUG]	EXEC>  SUCCESS 1142420.9375
+2025-01-26 02:21:50,381	[INFO]	0-8     SUCCESS               1142420.94 (48.84%) [1 edit(s)]  
+2025-01-26 02:21:50,381	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:51,841	[DEBUG]	EXEC>  SUCCESS 2565950.0625
+2025-01-26 02:21:51,841	[INFO]	0-9     SUCCESS               2565950.06 (109.69%) [1 edit(s)]  
+2025-01-26 02:21:51,841	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long n, z = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n    unordered_map<char, long long> colorCount;\n\n    for (long long i = 0; i < n; i++) {\n        z += colorCount[\'G\'] * colorCount[\'B\'] * (s[i] == \'R\') +\n             colorCount[\'R\'] * colorCount[\'B\'] * (s[i] == \'G\') +\n             colorCount[\'R\'] * colorCount[\'G\'] * (s[i] == \'B\');\n        colorCount[s[i]]++;\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:53,122	[DEBUG]	EXEC>  SUCCESS 1150643.375
+2025-01-26 02:21:53,122	[INFO]	0-10    SUCCESS               1150643.38 (49.19%) [1 edit(s)]  
+2025-01-26 02:21:53,122	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:21:54,123	[INFO]	Step: 10
+2025-01-26 02:21:54,123	[INFO]	Stop Steps: 50
+2025-01-26 02:21:55,713	[DEBUG]	EXEC>  SUCCESS 2330234.5625
+2025-01-26 02:21:55,713	[INFO]	REF     SUCCESS               2330234.56 (--) [0 edit(s)]  
+2025-01-26 02:21:55,713	[INFO]	Best patch: 2
+2025-01-26 02:21:55,980	[DEBUG]	EXEC>  SUCCESS 1148433.5625
+2025-01-26 02:21:55,980	[INFO]	BEST    SUCCESS              *1148433.56 (49.28%) [0 edit(s)]  
+2025-01-26 02:21:55,980	[INFO]	Best patch step: 2
+2025-01-26 02:22:56,616	[INFO]	Step: 10
+2025-01-26 02:22:56,616	[INFO]	Stop Steps: 50
+2025-01-26 02:22:57,009	[DEBUG]	EXEC>  SUCCESS 1155817.3125
+2025-01-26 02:22:57,010	[INFO]	1-1     SUCCESS              +1155817.31 (49.60%) [1 edit(s)]  
+2025-01-26 02:22:57,010	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:57,010	[INFO]	Step: 11
+2025-01-26 02:22:57,010	[INFO]	Stop Steps: 50
+2025-01-26 02:22:57,275	[DEBUG]	EXEC>  SUCCESS 1126203.6875
+2025-01-26 02:22:57,275	[INFO]	1-2     SUCCESS              *1126203.69 (48.33%) [1 edit(s)]  
+2025-01-26 02:22:57,275	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:22:57,275	[INFO]	Step: 12
+2025-01-26 02:22:57,275	[INFO]	Stop Steps: 50
+2025-01-26 02:22:57,539	[DEBUG]	EXEC>  SUCCESS 1149260.75
+2025-01-26 02:22:57,539	[INFO]	1-3     SUCCESS               1149260.75 (49.32%) [1 edit(s)]  
+2025-01-26 02:22:57,539	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:57,540	[INFO]	Step: 13
+2025-01-26 02:22:57,540	[INFO]	Stop Steps: 50
+2025-01-26 02:22:57,818	[DEBUG]	EXEC>  SUCCESS 1147014.75
+2025-01-26 02:22:57,818	[INFO]	1-4     SUCCESS               1147014.75 (49.22%) [1 edit(s)]  
+2025-01-26 02:22:57,818	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:57,818	[INFO]	Step: 14
+2025-01-26 02:22:57,818	[INFO]	Stop Steps: 50
+2025-01-26 02:22:58,098	[DEBUG]	EXEC>  SUCCESS 1125923.125
+2025-01-26 02:22:58,098	[INFO]	1-5     SUCCESS              *1125923.12 (48.32%) [1 edit(s)]  
+2025-01-26 02:22:58,099	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:22:58,099	[INFO]	Step: 15
+2025-01-26 02:22:58,099	[INFO]	Stop Steps: 50
+2025-01-26 02:22:58,366	[DEBUG]	EXEC>  SUCCESS 1163137.0
+2025-01-26 02:22:58,366	[INFO]	1-6     SUCCESS               1163137.00 (49.92%) [1 edit(s)]  
+2025-01-26 02:22:58,366	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:58,366	[INFO]	Step: 16
+2025-01-26 02:22:58,366	[INFO]	Stop Steps: 50
+2025-01-26 02:22:58,490	[INFO]	1-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:22:58,490	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    // Optimized the nested loop by using a single pass through the string\n    // to count invalid patterns instead of checking pairs multiple times\n    for (long long i = 0; i < n; i++) {\n        if (i >= 3) {\n            if (s[i] != s[i - 1] && s[i] != s[i - 2] && s[i - 1] != s[i - 2]) {\n                z--;\n            }\n        }\n    }\n    \n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:58,490	[INFO]	Step: 17
+2025-01-26 02:22:58,490	[INFO]	Stop Steps: 50
+2025-01-26 02:22:58,614	[INFO]	1-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:22:58,614	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    // Optimize the nested loop\n    for (long long i = 0; i < n; i++) {\n        if (i >= 3) {\n            if (s[i] != s[i - 1] && s[i - 1] != s[i - 2] && s[i - 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:58,614	[INFO]	Step: 18
+2025-01-26 02:22:58,614	[INFO]	Stop Steps: 50
+2025-01-26 02:22:58,748	[INFO]	1-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:22:58,748	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    // Optimized section: Single pass to reduce unnecessary checks\n    long long count[3] = {0}; // count[0] for R, count[1] for G, count[2] for B\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') count[0]++;\n        else if (s[i] == \'G\') count[1]++;\n        else if (s[i] == \'B\') count[2]++;\n    }\n    \n    z -= (count[0] * count[1] + count[1] * count[2] + count[2] * count[0]); // Adjust z based on counts\n\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:58,748	[INFO]	Step: 19
+2025-01-26 02:22:58,748	[INFO]	Stop Steps: 50
+2025-01-26 02:22:59,023	[DEBUG]	EXEC>  SUCCESS 1169837.625
+2025-01-26 02:22:59,024	[INFO]	1-10    SUCCESS               1169837.62 (50.20%) [2 edit(s)]  
+2025-01-26 02:22:59,024	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    // Optimize the nested loop by reducing the number of checks\n    for (long long o = 3; o <= n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2]) {\n                if (s[i - o / 2] != s[i]) {\n                    z--;\n                }\n            }\n        }\n    }\n    \n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:22:59,024	[INFO]	Step: 20
+2025-01-26 02:22:59,024	[INFO]	Stop Steps: 50
+2025-01-26 02:22:59,493	[DEBUG]	EXEC>  SUCCESS 2337362.4375
+2025-01-26 02:22:59,493	[INFO]	1-1     SUCCESS               2337362.44 (100.31%) [1 edit(s)]  
+2025-01-26 02:22:59,493	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z = 0, r = 0, g = 0, b = 0;\n\n    cin >> n;\n    cin >> s;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n\n    cout << z << endl;\n    return 0;\n}")"
+2025-01-26 02:22:59,493	[INFO]	Step: 21
+2025-01-26 02:22:59,493	[INFO]	Stop Steps: 50
+2025-01-26 02:22:59,961	[DEBUG]	EXEC>  SUCCESS 2337073.875
+2025-01-26 02:22:59,961	[INFO]	1-2     SUCCESS               2337073.88 (100.29%) [1 edit(s)]  
+2025-01-26 02:22:59,961	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 15), "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z = 0, r = 0, g = 0, b = 0;\n\n    cin >> n;\n    cin >> s;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n\n    cout << z << endl;\n    return 0;\n}")"
+2025-01-26 02:22:59,961	[INFO]	Step: 22
+2025-01-26 02:22:59,961	[INFO]	Stop Steps: 50
+2025-01-26 02:23:00,439	[DEBUG]	EXEC>  SUCCESS 2343857.3125
+2025-01-26 02:23:00,439	[INFO]	1-3     SUCCESS               2343857.31 (100.58%) [1 edit(s)]  
+2025-01-26 02:23:00,439	[DEBUG]	patch(1-3)="LineLLMMutation(('source.cpp', 16), "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z = 0, r = 0, g = 0, b = 0;\n\n    cin >> n;\n    cin >> s;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n\n    cout << z << endl;\n    return 0;\n}")"
+2025-01-26 02:23:00,439	[INFO]	Step: 23
+2025-01-26 02:23:00,439	[INFO]	Stop Steps: 50
+2025-01-26 02:23:01,924	[DEBUG]	EXEC>  SUCCESS 2361732.6875
+2025-01-26 02:23:01,924	[INFO]	REF     SUCCESS               2361732.69 (--) [0 edit(s)]  
+2025-01-26 02:23:01,924	[INFO]	Best patch: 2
+2025-01-26 02:23:02,199	[DEBUG]	EXEC>  SUCCESS 1158958.625
+2025-01-26 02:23:02,199	[INFO]	BEST    SUCCESS              *1158958.62 (49.07%) [0 edit(s)]  
+2025-01-26 02:23:02,199	[INFO]	Best patch step: 14
+2025-01-26 02:23:59,875	[INFO]	Step: 23
+2025-01-26 02:23:59,875	[INFO]	Stop Steps: 50
+2025-01-26 02:24:00,271	[DEBUG]	EXEC>  SUCCESS 1133013.125
+2025-01-26 02:24:00,271	[INFO]	2-4     SUCCESS              *1133013.12 (47.97%) [1 edit(s)]  
+2025-01-26 02:24:00,271	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:24:00,271	[INFO]	Step: 24
+2025-01-26 02:24:00,271	[INFO]	Stop Steps: 50
+2025-01-26 02:24:00,539	[DEBUG]	EXEC>  SUCCESS 1142825.125
+2025-01-26 02:24:00,539	[INFO]	2-5     SUCCESS               1142825.12 (48.39%) [1 edit(s)]  
+2025-01-26 02:24:00,539	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:00,539	[INFO]	Step: 25
+2025-01-26 02:24:00,539	[INFO]	Stop Steps: 50
+2025-01-26 02:24:00,802	[DEBUG]	EXEC>  SUCCESS 1132326.75
+2025-01-26 02:24:00,802	[INFO]	2-6     SUCCESS              *1132326.75 (47.94%) [1 edit(s)]  
+2025-01-26 02:24:00,802	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:24:00,802	[INFO]	Step: 26
+2025-01-26 02:24:00,802	[INFO]	Stop Steps: 50
+2025-01-26 02:24:01,075	[DEBUG]	EXEC>  SUCCESS 1128030.9375
+2025-01-26 02:24:01,075	[INFO]	2-7     SUCCESS              *1128030.94 (47.76%) [1 edit(s)]  
+2025-01-26 02:24:01,076	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:24:01,076	[INFO]	Step: 27
+2025-01-26 02:24:01,076	[INFO]	Stop Steps: 50
+2025-01-26 02:24:01,345	[DEBUG]	EXEC>  SUCCESS 1139489.125
+2025-01-26 02:24:01,345	[INFO]	2-8     SUCCESS               1139489.12 (48.25%) [1 edit(s)]  
+2025-01-26 02:24:01,345	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:01,345	[INFO]	Step: 28
+2025-01-26 02:24:01,345	[INFO]	Stop Steps: 50
+2025-01-26 02:24:01,607	[DEBUG]	EXEC>  SUCCESS 1137127.6875
+2025-01-26 02:24:01,608	[INFO]	2-9     SUCCESS               1137127.69 (48.15%) [1 edit(s)]  
+2025-01-26 02:24:01,608	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s); \n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:01,608	[INFO]	Step: 29
+2025-01-26 02:24:01,608	[INFO]	Stop Steps: 50
+2025-01-26 02:24:01,731	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:24:01,731	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long i = 0; i < n; i++) {\n        if (i >= 3) { // Start checking from the 4th character\n            if (s[i] != s[i - 1] && s[i - 1] != s[i - 2] && s[i - 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:01,731	[INFO]	Step: 30
+2025-01-26 02:24:01,731	[INFO]	Stop Steps: 50
+2025-01-26 02:24:01,850	[INFO]	2-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:24:01,850	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b; r++;\n        } else if (s[i] == \'G\') {\n            z += r * b; g++;\n        } else if (s[i] == \'B\') {\n            z += r * g; b++;\n        }\n    }\n\n    // Optimized to a single pass calculation instead of a nested loop\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z -= (g * b);\n        } else if (s[i] == \'G\') {\n            z -= (r * b);\n        } else if (s[i] == \'B\') {\n            z -= (r * g);\n        }\n    }\n    \n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:01,850	[INFO]	Step: 31
+2025-01-26 02:24:01,850	[INFO]	Stop Steps: 50
+2025-01-26 02:24:01,980	[INFO]	2-2     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:24:01,980	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005]; // assuming n <= 200000\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    // Optimize the nested loop by reducing unnecessary checks\n    long long count[3] = {0}; // count for R, G, B\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') count[0]++;\n        else if (s[i] == \'G\') count[1]++;\n        else if (s[i] == \'B\') count[2]++;\n    }\n\n    // Calculate invalid combinations based on counts\n    z -= (count[0] * count[1] * count[2]); // total combinations minus valid ones\n\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:01,980	[INFO]	Step: 32
+2025-01-26 02:24:01,980	[INFO]	Stop Steps: 50
+2025-01-26 02:24:02,099	[INFO]	2-3     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:24:02,099	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    // Optimize the checking for conditions by using a single loop\n    for (long long i = 0; i < n; i++) {\n        if (i >= 3) {\n            if (s[i] != s[i - 1] && s[i - 1] != s[i - 2] && s[i - 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:24:02,099	[INFO]	Step: 33
+2025-01-26 02:24:02,099	[INFO]	Stop Steps: 50
+2025-01-26 02:24:02,567	[DEBUG]	EXEC>  SUCCESS 2323437.75
+2025-01-26 02:24:02,567	[INFO]	2-4     SUCCESS               2323437.75 (98.38%) [1 edit(s)]  
+2025-01-26 02:24:02,567	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 21), "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z = 0, r = 0, g = 0, b = 0;\n\n    cin >> n;\n    cin >> s;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n\n    cout << z << endl;\n    return 0;\n}")"
+2025-01-26 02:24:02,567	[INFO]	Step: 34
+2025-01-26 02:24:02,567	[INFO]	Stop Steps: 50
+2025-01-26 02:24:03,027	[DEBUG]	EXEC>  SUCCESS 2326150.1875
+2025-01-26 02:24:03,028	[INFO]	2-5     SUCCESS               2326150.19 (98.49%) [1 edit(s)]  
+2025-01-26 02:24:03,028	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 22), "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z = 0, r = 0, g = 0, b = 0;\n\n    cin >> n;\n    cin >> s;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n\n    cout << z << endl;\n    return 0;\n}")"
+2025-01-26 02:24:03,028	[INFO]	Step: 35
+2025-01-26 02:24:03,028	[INFO]	Stop Steps: 50
+2025-01-26 02:24:03,493	[DEBUG]	EXEC>  SUCCESS 2329931.9375
+2025-01-26 02:24:03,493	[INFO]	2-6     SUCCESS               2329931.94 (98.65%) [1 edit(s)]  
+2025-01-26 02:24:03,493	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 23), "#include <iostream>\n#include <string>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z = 0, r = 0, g = 0, b = 0;\n\n    cin >> n;\n    cin >> s;\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z += g * b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z += r * b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n\n    cout << z << endl;\n    return 0;\n}")"
+2025-01-26 02:24:03,493	[INFO]	Step: 36
+2025-01-26 02:24:03,493	[INFO]	Stop Steps: 50
+2025-01-26 02:24:04,968	[DEBUG]	EXEC>  SUCCESS 2329814.0
+2025-01-26 02:24:04,968	[INFO]	REF     SUCCESS               2329814.00 (--) [0 edit(s)]  
+2025-01-26 02:24:04,968	[INFO]	Best patch: 5
+2025-01-26 02:24:05,230	[DEBUG]	EXEC>  SUCCESS 1136332.375
+2025-01-26 02:24:05,230	[INFO]	BEST    SUCCESS              *1136332.38 (48.77%) [0 edit(s)]  
+2025-01-26 02:24:05,230	[INFO]	Best patch step: 26
+2025-01-26 02:25:09,741	[INFO]	Step: 36
+2025-01-26 02:25:09,742	[INFO]	Stop Steps: 50
+2025-01-26 02:25:10,134	[DEBUG]	EXEC>  SUCCESS 1145532.75
+2025-01-26 02:25:10,134	[INFO]	3-7     SUCCESS              +1145532.75 (49.17%) [1 edit(s)]  
+2025-01-26 02:25:10,134	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:10,134	[INFO]	Step: 37
+2025-01-26 02:25:10,134	[INFO]	Stop Steps: 50
+2025-01-26 02:25:10,402	[DEBUG]	EXEC>  SUCCESS 1153486.25
+2025-01-26 02:25:10,402	[INFO]	3-8     SUCCESS               1153486.25 (49.51%) [1 edit(s)]  
+2025-01-26 02:25:10,402	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:10,402	[INFO]	Step: 38
+2025-01-26 02:25:10,402	[INFO]	Stop Steps: 50
+2025-01-26 02:25:10,668	[DEBUG]	EXEC>  SUCCESS 1150678.5
+2025-01-26 02:25:10,668	[INFO]	3-9     SUCCESS               1150678.50 (49.39%) [1 edit(s)]  
+2025-01-26 02:25:10,668	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:10,668	[INFO]	Step: 39
+2025-01-26 02:25:10,668	[INFO]	Stop Steps: 50
+2025-01-26 02:25:10,933	[DEBUG]	EXEC>  SUCCESS 1125912.6875
+2025-01-26 02:25:10,933	[INFO]	3-10    SUCCESS              *1125912.69 (48.33%) [1 edit(s)]  
+2025-01-26 02:25:10,933	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:25:10,933	[INFO]	Step: 40
+2025-01-26 02:25:10,933	[INFO]	Stop Steps: 50
+2025-01-26 02:25:11,210	[DEBUG]	EXEC>  SUCCESS 1156920.5625
+2025-01-26 02:25:11,210	[INFO]	3-1     SUCCESS               1156920.56 (49.66%) [1 edit(s)]  
+2025-01-26 02:25:11,210	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s); \n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:11,210	[INFO]	Step: 41
+2025-01-26 02:25:11,210	[INFO]	Stop Steps: 50
+2025-01-26 02:25:11,474	[DEBUG]	EXEC>  SUCCESS 1130487.125
+2025-01-26 02:25:11,474	[INFO]	3-2     SUCCESS               1130487.12 (48.52%) [1 edit(s)]  
+2025-01-26 02:25:11,475	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:11,475	[INFO]	Step: 42
+2025-01-26 02:25:11,475	[INFO]	Stop Steps: 50
+2025-01-26 02:25:11,595	[INFO]	3-3     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:25:11,595	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    // Reduce the nested loops by maintaining a count of different colors.\n    long long colorCount[3] = {0};  // R, G, B counts\n\n    for (long long i = 0; i < n; i++) {\n        colorCount[s[i] == \'R\' ? 0 : (s[i] == \'G\' ? 1 : 2)]++;\n    }\n\n    z -= colorCount[0] * colorCount[1] * colorCount[2]; // Adjust z based on the counts of R, G, B\n\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:11,595	[INFO]	Step: 43
+2025-01-26 02:25:11,596	[INFO]	Stop Steps: 50
+2025-01-26 02:25:11,865	[INFO]	3-4     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:25:11,865	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    unordered_map<char, long long> count;\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            count[s[i]]++;\n            if (count.size() == 3) {\n                z--;\n            }\n        }\n        count.clear(); // Clear the map for the next iteration\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:11,865	[INFO]	Step: 44
+2025-01-26 02:25:11,866	[INFO]	Stop Steps: 50
+2025-01-26 02:25:11,987	[INFO]	3-5     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:25:11,987	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 26), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    // Optimize the pattern checking by using a single loop with a sliding window approach\n    for (long long i = 0; i < n; i++) {\n        if (i >= 3) {\n            if (s[i] != s[i - 1] && s[i - 1] != s[i - 2] && s[i - 2] != s[i]) {\n                z--;\n            }\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:11,987	[INFO]	Step: 45
+2025-01-26 02:25:11,987	[INFO]	Stop Steps: 50
+2025-01-26 02:25:12,117	[INFO]	3-6     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 02:25:12,117	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s); \n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 27), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s); \n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    // Optimize the counting of triplets\n    for (long long i = 0; i < n - 2; i++) {\n        if (s[i] != s[i + 1] && s[i] != s[i + 2] && s[i + 1] != s[i + 2]) {\n            z--;\n        }\n    }\n\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:25:12,117	[INFO]	Step: 46
+2025-01-26 02:25:12,117	[INFO]	Stop Steps: 50
+2025-01-26 02:25:12,592	[DEBUG]	EXEC>  SUCCESS 2338565.8125
+2025-01-26 02:25:12,592	[INFO]	3-7     SUCCESS               2338565.81 (100.38%) [1 edit(s)]  
+2025-01-26 02:25:12,592	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 28), "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n    string s;\n    long long n, z=0, r = 0, g = 0, b = 0;\n    cin >> n;\n    cin >> s;\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == 'R') {\n            z+=g*b;\n            r++;\n        }\n        if (s[i] == 'G') {\n            z+=r*b;\n            g++;\n        }\n        if (s[i] == 'B') {\n            z+=r*g;\n            b++;\n        }\n    }\n    for (long long o = 3; o-1 < n; o += 2) {\n        for (long long i = o-1; i < n; i++) {\n            if (s[i] != s[i-o+1] && s[i-o+1] != s[i-o/2] && s[i-o/2] !=s[i])\n                z--;\n        }\n    }\n    cout<<z<<endl;\n    return 0;\n}")"
+2025-01-26 02:25:12,592	[INFO]	Step: 47
+2025-01-26 02:25:12,592	[INFO]	Stop Steps: 50
+2025-01-26 02:25:14,071	[DEBUG]	EXEC>  SUCCESS 2371274.1875
+2025-01-26 02:25:14,071	[INFO]	REF     SUCCESS               2371274.19 (--) [0 edit(s)]  
+2025-01-26 02:25:14,071	[INFO]	Best patch: 9
+2025-01-26 02:25:14,337	[DEBUG]	EXEC>  SUCCESS 1147181.4375
+2025-01-26 02:25:14,337	[INFO]	BEST    SUCCESS              *1147181.44 (48.38%) [0 edit(s)]  
+2025-01-26 02:25:14,337	[INFO]	Best patch step: 39
+2025-01-26 02:26:32,566	[INFO]	Step: 47
+2025-01-26 02:26:32,566	[INFO]	Stop Steps: 50
+2025-01-26 02:26:32,961	[DEBUG]	EXEC>  SUCCESS 1132112.9375
+2025-01-26 02:26:32,961	[INFO]	4-8     SUCCESS              *1132112.94 (47.74%) [1 edit(s)]  
+2025-01-26 02:26:32,961	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+
+2025-01-26 02:26:32,961	[INFO]	Step: 48
+2025-01-26 02:26:32,961	[INFO]	Stop Steps: 50
+2025-01-26 02:26:33,223	[DEBUG]	EXEC>  SUCCESS 1139521.625
+2025-01-26 02:26:33,224	[INFO]	4-9     SUCCESS               1139521.62 (48.06%) [1 edit(s)]  
+2025-01-26 02:26:33,224	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:26:33,224	[INFO]	Step: 49
+2025-01-26 02:26:33,224	[INFO]	Stop Steps: 50
+2025-01-26 02:26:33,487	[DEBUG]	EXEC>  SUCCESS 1151791.0
+2025-01-26 02:26:33,488	[INFO]	4-10    SUCCESS               1151791.00 (48.57%) [1 edit(s)]  
+2025-01-26 02:26:33,488	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        if (s[i] == \'R\') {\n            z += g * b;\n            r++;\n        } else if (s[i] == \'G\') {\n            z += r * b;\n            g++;\n        } else if (s[i] == \'B\') {\n            z += r * g;\n            b++;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')"
+2025-01-26 02:26:33,488	[INFO]	Step: 50
+2025-01-26 02:26:33,488	[INFO]	Stop Steps: 50
+2025-01-26 02:26:33,488	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 02:26:33,488	[INFO]	Step: 50
+2025-01-26 02:26:33,488	[INFO]	Stop Steps: 50
+2025-01-26 02:26:33,847	[INFO]	~~~~ END ~~~~
+2025-01-26 02:26:33,847	[INFO]	Best patch step: 47
+2025-01-26 02:26:33,847	[INFO]	
+2025-01-26 02:26:33,847	[INFO]	==== REPORT ====
+2025-01-26 02:26:33,847	[INFO]	Termination: step budget
+2025-01-26 02:26:33,847	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0035_1737857996.log
+2025-01-26 02:26:33,847	[INFO]	Patch file: _magpie_logs/0035_1737857996.patch
+2025-01-26 02:26:33,847	[INFO]	Diff file: _magpie_logs/0035_1737857996.diff
+2025-01-26 02:26:33,847	[INFO]	Reference fitness: 2371274.19
+2025-01-26 02:26:33,847	[INFO]	Best fitness: 1132112.94
+2025-01-26 02:26:33,847	[INFO]	
+2025-01-26 02:26:33,848	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long n, z = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    char s[200005];\n    scanf("%s", s);\n\n    for (long long i = 0; i < n; i++) {\n        switch (s[i]) {\n            case \'R\':\n                z += g * b;\n                r++;\n                break;\n            case \'G\':\n                z += r * b;\n                g++;\n                break;\n            case \'B\':\n                z += r * g;\n                b++;\n                break;\n        }\n    }\n\n    for (long long o = 3; o - 1 < n; o += 2) {\n        for (long long i = o - 1; i < n; i++) {\n            if (s[i] != s[i - o + 1] && s[i - o + 1] != s[i - o / 2] && s[i - o / 2] != s[i])\n                z--;\n        }\n    }\n    printf("%lld\\n", z);\n    return 0;\n}')
+2025-01-26 02:26:33,848	[INFO]	
+2025-01-26 02:26:33,848	[INFO]	==== DIFF ====
+

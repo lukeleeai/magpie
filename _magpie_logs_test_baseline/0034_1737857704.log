@@ -1,0 +1,432 @@
+2025-01-26 02:15:04,273	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6814738589928375
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0034
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 02:15:04,273	[DEBUG]	
+2025-01-26 02:15:04,273	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 02:15:04,273	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 02:15:05,276	[DEBUG]	EXEC>  SUCCESS 3357572.875
+2025-01-26 02:15:05,277	[INFO]	WARM    SUCCESS               3357572.88 (--) [0 edit(s)]  
+2025-01-26 02:15:06,025	[DEBUG]	EXEC>  SUCCESS 3359053.625
+2025-01-26 02:15:06,025	[INFO]	WARM    SUCCESS               3359053.62 (--) [0 edit(s)]  
+2025-01-26 02:15:06,782	[DEBUG]	EXEC>  SUCCESS 3330608.3125
+2025-01-26 02:15:06,782	[INFO]	WARM    SUCCESS               3330608.31 (--) [0 edit(s)]  
+2025-01-26 02:15:07,528	[DEBUG]	EXEC>  SUCCESS 3380786.9375
+2025-01-26 02:15:07,528	[INFO]	WARM    SUCCESS               3380786.94 (--) [0 edit(s)]  
+2025-01-26 02:15:08,291	[DEBUG]	EXEC>  SUCCESS 3367326.3125
+2025-01-26 02:15:08,291	[INFO]	WARM    SUCCESS               3367326.31 (--) [0 edit(s)]  
+2025-01-26 02:15:08,292	[INFO]	REF     SUCCESS               3367326.31 (--) [0 edit(s)]  
+2025-01-26 02:15:08,292	[INFO]	
+2025-01-26 02:15:08,292	[INFO]	~~~~ START ~~~~
+2025-01-26 02:16:11,705	[DEBUG]	EXEC>  SUCCESS 1943596.75
+2025-01-26 02:16:11,705	[INFO]	0-1     SUCCESS              *1943596.75 (57.72%) [1 edit(s)]  
+2025-01-26 02:16:11,705	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n    scanf("%lld", &n);\n    long long int a[n + 10];\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]); // Changed from cin to scanf\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c); // Changed from cin to scanf\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s); // Changed from cout to printf\n    }\n}')"
+
+2025-01-26 02:16:12,995	[DEBUG]	EXEC>  SUCCESS 1922341.5625
+2025-01-26 02:16:12,996	[INFO]	0-2     SUCCESS              *1922341.56 (57.09%) [1 edit(s)]  
+2025-01-26 02:16:12,996	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nconst int MAX_SIZE = 100010; // Set a fixed size\nlong long int a[MAX_SIZE];\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n    scanf("%lld", &n);\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+
+2025-01-26 02:16:14,404	[DEBUG]	EXEC>  SUCCESS 3437939.25
+2025-01-26 02:16:14,404	[INFO]	0-3     SUCCESS               3437939.25 (102.10%) [1 edit(s)]  
+2025-01-26 02:16:14,404	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n    scanf("%lld", &n);\n    long long int a[n + 10];\n    long long int ar[100001] = {0};\n    vector<long long int> results; // Buffer for results\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        results.push_back(s); // Store result\n    }\n\n    for (long long int res : results) {\n        printf("%lld\\n", res); // Print all results at once\n    }\n}')"
+2025-01-26 02:16:15,806	[DEBUG]	EXEC>  SUCCESS 3425361.3125
+2025-01-26 02:16:15,806	[INFO]	0-4     SUCCESS               3425361.31 (101.72%) [1 edit(s)]  
+2025-01-26 02:16:15,806	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n    scanf("%lld", &n);\n    vector<long long int> a(n);\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:16:17,095	[DEBUG]	EXEC>  SUCCESS 1936124.75
+2025-01-26 02:16:17,095	[INFO]	0-5     SUCCESS               1936124.75 (57.50%) [1 edit(s)]  
+2025-01-26 02:16:17,095	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n    scanf("%lld", &n);\n    long long int a[n + 10];\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:16:18,542	[DEBUG]	EXEC>  SUCCESS 2340711.4375
+2025-01-26 02:16:18,542	[INFO]	0-6     SUCCESS               2340711.44 (69.51%) [1 edit(s)]  
+2025-01-26 02:16:18,542	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n    scanf("%lld", &n);\n    long long int a[n + 10];\n    unordered_map<long long int, long long int> ar;\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:16:19,946	[DEBUG]	EXEC>  SUCCESS 3332970.125
+2025-01-26 02:16:19,946	[INFO]	0-7     SUCCESS               3332970.12 (98.98%) [1 edit(s)]  
+2025-01-26 02:16:19,946	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <numeric>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n    scanf("%lld", &n);\n    vector<long long int> a(n);\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n    }\n\n    s = accumulate(a.begin(), a.end(), 0LL); // Sum using accumulate\n\n    long long int ar[100001] = {0};\n    for (auto val : a) {\n        ar[val]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:16:21,240	[DEBUG]	EXEC>  SUCCESS 1972350.375
+2025-01-26 02:16:21,240	[INFO]	0-8     SUCCESS               1972350.38 (58.57%) [1 edit(s)]  
+2025-01-26 02:16:21,240	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n    scanf("%lld", &n);\n    long long int a[n + 10], ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    while (m--) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:16:22,540	[DEBUG]	EXEC>  SUCCESS 1906109.375
+2025-01-26 02:16:22,540	[INFO]	0-9     SUCCESS              *1906109.38 (56.61%) [1 edit(s)]  
+2025-01-26 02:16:22,540	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, i, totalSum = 0, from, to;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[100001] = {0};\n\n    for (i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}')"
+
+2025-01-26 02:16:23,826	[DEBUG]	EXEC>  SUCCESS 1447636.8125
+2025-01-26 02:16:23,826	[INFO]	0-10    SUCCESS              *1447636.81 (42.99%) [1 edit(s)]  
+2025-01-26 02:16:23,826	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}')"
+
+2025-01-26 02:16:24,827	[INFO]	Step: 10
+2025-01-26 02:16:24,827	[INFO]	Stop Steps: 50
+2025-01-26 02:16:26,585	[DEBUG]	EXEC>  SUCCESS 3351702.5625
+2025-01-26 02:16:26,585	[INFO]	REF     SUCCESS               3351702.56 (--) [0 edit(s)]  
+2025-01-26 02:16:26,585	[INFO]	Best patch: 9
+2025-01-26 02:16:26,858	[DEBUG]	EXEC>  SUCCESS 1416472.375
+2025-01-26 02:16:26,859	[INFO]	BEST    SUCCESS              *1416472.38 (42.26%) [0 edit(s)]  
+2025-01-26 02:16:26,859	[INFO]	Best patch step: 9
+2025-01-26 02:17:38,574	[INFO]	Step: 10
+2025-01-26 02:17:38,574	[INFO]	Stop Steps: 50
+2025-01-26 02:17:38,974	[DEBUG]	EXEC>  SUCCESS 1410187.9375
+2025-01-26 02:17:38,974	[INFO]	1-1     SUCCESS              *1410187.94 (42.07%) [1 edit(s)]  
+2025-01-26 02:17:38,974	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}')"
+
+2025-01-26 02:17:38,974	[INFO]	Step: 11
+2025-01-26 02:17:38,974	[INFO]	Stop Steps: 50
+2025-01-26 02:17:39,252	[DEBUG]	EXEC>  SUCCESS 1916840.0
+2025-01-26 02:17:39,252	[INFO]	1-2     SUCCESS               1916840.00 (57.19%) [1 edit(s)]  
+2025-01-26 02:17:39,252	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, i, totalSum = 0, from, to;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[100001] = {0};\n\n    for (i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:17:39,253	[INFO]	Step: 12
+2025-01-26 02:17:39,253	[INFO]	Stop Steps: 50
+2025-01-26 02:17:39,526	[DEBUG]	EXEC>  SUCCESS 1889129.8125
+2025-01-26 02:17:39,526	[INFO]	1-3     SUCCESS               1889129.81 (56.36%) [1 edit(s)]  
+2025-01-26 02:17:39,526	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:17:39,526	[INFO]	Step: 13
+2025-01-26 02:17:39,526	[INFO]	Stop Steps: 50
+2025-01-26 02:17:39,808	[DEBUG]	EXEC>  SUCCESS 1957376.1875
+2025-01-26 02:17:39,808	[INFO]	1-4     SUCCESS               1957376.19 (58.40%) [1 edit(s)]  
+2025-01-26 02:17:39,808	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nconst int MAX_SIZE = 100010; // Set a fixed size for the array\nlong long int a[MAX_SIZE];\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to;\n    scanf("%lld", &n);\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        totalSum += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * ar[from];\n        ar[to] += ar[from];\n        ar[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:17:39,808	[INFO]	Step: 14
+2025-01-26 02:17:39,808	[INFO]	Stop Steps: 50
+2025-01-26 02:17:40,092	[DEBUG]	EXEC>  SUCCESS 1932511.5
+2025-01-26 02:17:40,092	[INFO]	1-5     SUCCESS               1932511.50 (57.66%) [1 edit(s)]  
+2025-01-26 02:17:40,092	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to;\n    scanf("%lld", &n); // Use long long for size\n    long long int elements[n + 10]; // Dynamic array for elements\n    long long int elementCount[100001] = {0}; // Keep counts\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:17:40,092	[INFO]	Step: 15
+2025-01-26 02:17:40,092	[INFO]	Stop Steps: 50
+2025-01-26 02:17:40,365	[DEBUG]	EXEC>  SUCCESS 1911480.0625
+2025-01-26 02:17:40,365	[INFO]	1-6     SUCCESS               1911480.06 (57.03%) [1 edit(s)]  
+2025-01-26 02:17:40,365	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to;\n    scanf("%lld", &n); // Use long long for input\n    long long int a[n + 10];\n    long long int ar[100001] = {0}; // Count occurrences\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        totalSum += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * ar[from];\n        ar[to] += ar[from];\n        ar[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:17:40,365	[INFO]	Step: 16
+2025-01-26 02:17:40,365	[INFO]	Stop Steps: 50
+2025-01-26 02:17:40,744	[DEBUG]	EXEC>  SUCCESS 2840997.1875
+2025-01-26 02:17:40,745	[INFO]	1-7     SUCCESS               2840997.19 (84.76%) [2 edit(s)]  
+2025-01-26 02:17:40,745	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, totalSum = 0, from, to;\n    scanf("%d", &n);\n    vector<int> elements(n);\n    vector<int> elementCount(100001, 0);\n\n    for (int i = 0; i < n; i++) {\n        scanf("%d", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m);\n    for (int i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum);\n    }\n}')"
+2025-01-26 02:17:40,745	[INFO]	Step: 17
+2025-01-26 02:17:40,745	[INFO]	Stop Steps: 50
+2025-01-26 02:17:41,183	[DEBUG]	EXEC>  SUCCESS 2347831.5
+2025-01-26 02:17:41,184	[INFO]	1-8     SUCCESS               2347831.50 (70.05%) [2 edit(s)]  
+2025-01-26 02:17:41,184	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, i, totalSum = 0, from, to;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[100001] = {0};\n\n    for (i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0, from, to;\n    scanf("%lld", &numElements);\n    unordered_map<long long int, long long int> elementCount;\n    long long int elements[numElements];\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        if (elementCount[from] > 0) {\n            totalSum += (to - from) * elementCount[from];\n            elementCount[to] += elementCount[from];\n            elementCount[from] = 0;\n        }\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:17:41,184	[INFO]	Step: 18
+2025-01-26 02:17:41,184	[INFO]	Stop Steps: 50
+2025-01-26 02:17:41,560	[DEBUG]	EXEC>  SUCCESS 3291534.5
+2025-01-26 02:17:41,560	[INFO]	1-9     SUCCESS               3291534.50 (98.20%) [2 edit(s)]  
+2025-01-26 02:17:41,560	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nconst int MAX_SIZE = 100010; // Set a fixed size\nlong long int a[MAX_SIZE];\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n    scanf("%lld", &n);\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_SIZE = 100010; // Set a fixed size\nlong long int a[MAX_SIZE];\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n    scanf("%lld", &n);\n    vector<long long int> ar(MAX_SIZE, 0); // Using vector for dynamic allocation\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:17:41,560	[INFO]	Step: 19
+2025-01-26 02:17:41,560	[INFO]	Stop Steps: 50
+2025-01-26 02:17:41,989	[DEBUG]	EXEC>  SUCCESS 2372852.0
+2025-01-26 02:17:41,989	[INFO]	1-10    SUCCESS               2372852.00 (70.80%) [2 edit(s)]  
+2025-01-26 02:17:41,989	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n    scanf("%lld", &n);\n    long long int a[n + 10];\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n    scanf("%lld", &n);\n    long long int a[n];\n    unordered_map<long long int, long long int> ar;\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:17:41,989	[INFO]	Step: 20
+2025-01-26 02:17:41,989	[INFO]	Stop Steps: 50
+2025-01-26 02:17:42,542	[DEBUG]	EXEC>  SUCCESS 2397421.1875
+2025-01-26 02:17:42,542	[INFO]	1-1     SUCCESS               2397421.19 (71.53%) [1 edit(s)]  
+2025-01-26 02:17:42,542	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n\n    scanf("%lld", &n);\n\n    long long int a[n + 10];\n    unordered_map<long long int, long long int> ar;\n\n    for (i = 0; i < n; i++) {\n        cin >> a[i];\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    cin >> m;\n\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        cin >> b >> c;\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        cout << s << endl;\n    }\n}')"
+2025-01-26 02:17:42,542	[INFO]	Step: 21
+2025-01-26 02:17:42,542	[INFO]	Stop Steps: 50
+2025-01-26 02:17:43,087	[DEBUG]	EXEC>  SUCCESS 3313115.5
+2025-01-26 02:17:43,088	[INFO]	1-2     SUCCESS               3313115.50 (98.85%) [1 edit(s)]  
+2025-01-26 02:17:43,088	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nconst int maxn = 100010; // Fixed size array\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n\n    scanf("%lld", &n);\n\n    long long int a[maxn];\n    unordered_map<long long int, long long int> ar;\n\n    for (i = 0; i < n; i++) {\n        cin >> a[i];\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n\n    for (i = 0; i < m; i++) {\n        cin >> b >> c;\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        cout << s << endl;\n    }\n}')"
+2025-01-26 02:17:43,088	[INFO]	Step: 22
+2025-01-26 02:17:43,088	[INFO]	Stop Steps: 50
+2025-01-26 02:17:43,517	[DEBUG]	EXEC>  SUCCESS 2345303.1875
+2025-01-26 02:17:43,518	[INFO]	1-3     SUCCESS               2345303.19 (69.97%) [1 edit(s)]  
+2025-01-26 02:17:43,518	[DEBUG]	patch(1-3)="LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, s = 0, b, c;\n\n    scanf("%lld", &n);\n\n    long long int a[n + 10];\n    unordered_map<long long int, long long int> ar;\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &b, &c);\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        printf("%lld\\n", s);\n    }\n}')"
+2025-01-26 02:17:43,518	[INFO]	Step: 23
+2025-01-26 02:17:43,518	[INFO]	Stop Steps: 50
+2025-01-26 02:17:45,289	[DEBUG]	EXEC>  SUCCESS 3414927.375
+2025-01-26 02:17:45,290	[INFO]	REF     SUCCESS               3414927.38 (--) [0 edit(s)]  
+2025-01-26 02:17:45,290	[INFO]	Best patch: 9
+2025-01-26 02:17:45,561	[DEBUG]	EXEC>  SUCCESS 1429536.3125
+2025-01-26 02:17:45,562	[INFO]	BEST    SUCCESS              *1429536.31 (41.86%) [0 edit(s)]  
+2025-01-26 02:17:45,562	[INFO]	Best patch step: 10
+2025-01-26 02:18:25,647	[INFO]	Step: 23
+2025-01-26 02:18:25,648	[INFO]	Stop Steps: 50
+2025-01-26 02:18:26,042	[DEBUG]	EXEC>  SUCCESS 1393078.4375
+2025-01-26 02:18:26,043	[INFO]	2-4     SUCCESS              *1393078.44 (40.79%) [1 edit(s)]  
+2025-01-26 02:18:26,043	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}')"
+
+2025-01-26 02:18:26,043	[INFO]	Step: 24
+2025-01-26 02:18:26,043	[INFO]	Stop Steps: 50
+2025-01-26 02:18:26,315	[DEBUG]	EXEC>  SUCCESS 1915164.0
+2025-01-26 02:18:26,315	[INFO]	2-5     SUCCESS               1915164.00 (56.08%) [1 edit(s)]  
+2025-01-26 02:18:26,315	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:18:26,315	[INFO]	Step: 25
+2025-01-26 02:18:26,315	[INFO]	Stop Steps: 50
+2025-01-26 02:18:26,585	[DEBUG]	EXEC>  SUCCESS 1977330.6875
+2025-01-26 02:18:26,585	[INFO]	2-6     SUCCESS               1977330.69 (57.90%) [1 edit(s)]  
+2025-01-26 02:18:26,585	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10]; // Keep dynamic allocation for elements\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:18:26,585	[INFO]	Step: 26
+2025-01-26 02:18:26,585	[INFO]	Stop Steps: 50
+2025-01-26 02:18:26,854	[DEBUG]	EXEC>  SUCCESS 1882310.4375
+2025-01-26 02:18:26,854	[INFO]	2-7     SUCCESS               1882310.44 (55.12%) [1 edit(s)]  
+2025-01-26 02:18:26,854	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0, from, to;\n    scanf("%lld", &numElements); // Use long long for input\n    long long int elements[numElements + 10], elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:18:26,854	[INFO]	Step: 27
+2025-01-26 02:18:26,854	[INFO]	Stop Steps: 50
+2025-01-26 02:18:27,128	[DEBUG]	EXEC>  SUCCESS 1890298.0625
+2025-01-26 02:18:27,129	[INFO]	2-8     SUCCESS               1890298.06 (55.35%) [1 edit(s)]  
+2025-01-26 02:18:27,129	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10]; // Dynamic allocation for elements\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:18:27,129	[INFO]	Step: 28
+2025-01-26 02:18:27,129	[INFO]	Stop Steps: 50
+2025-01-26 02:18:27,397	[DEBUG]	EXEC>  SUCCESS 1945236.3125
+2025-01-26 02:18:27,398	[INFO]	2-9     SUCCESS               1945236.31 (56.96%) [1 edit(s)]  
+2025-01-26 02:18:27,398	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0, from, to;\n    scanf("%lld", &numElements); // Use long long for input\n    long long int elements[numElements + 10], elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:18:27,398	[INFO]	Step: 29
+2025-01-26 02:18:27,398	[INFO]	Stop Steps: 50
+2025-01-26 02:18:27,775	[DEBUG]	EXEC>  SUCCESS 2860735.625
+2025-01-26 02:18:27,775	[INFO]	2-10    SUCCESS               2860735.62 (83.77%) [2 edit(s)]  
+2025-01-26 02:18:27,775	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, from, to;\n    scanf("%d", &n);\n    \n    vector<int> elements(n); // Use vector instead of raw array\n    vector<int> elementCount(100001, 0); // Use vector with initializer\n    \n    int totalSum = 0;\n    \n    for (int i = 0; i < n; i++) {\n        scanf("%d", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m);\n    for (int i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum);\n    }\n}')"
+2025-01-26 02:18:27,775	[INFO]	Step: 30
+2025-01-26 02:18:27,775	[INFO]	Stop Steps: 50
+2025-01-26 02:18:28,052	[DEBUG]	EXEC>  SUCCESS 1944272.6875
+2025-01-26 02:18:28,052	[INFO]	2-1     SUCCESS               1944272.69 (56.93%) [2 edit(s)]  
+2025-01-26 02:18:28,052	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[100001] = {0}; // Use fixed size array for element counts\n\n    for (long long int i = 0; i < n; i++) {\n        long long int elem;\n        scanf("%lld", &elem); // Read each element\n        totalSum += elem;\n        elements[elem]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (long long int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elements[from];\n        elements[to] += elements[from];\n        elements[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:18:28,052	[INFO]	Step: 31
+2025-01-26 02:18:28,052	[INFO]	Stop Steps: 50
+2025-01-26 02:18:28,468	[DEBUG]	EXEC>  SUCCESS 2357706.5625
+2025-01-26 02:18:28,469	[INFO]	2-2     SUCCESS               2357706.56 (69.04%) [2 edit(s)]  
+2025-01-26 02:18:28,469	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to;\n    scanf("%lld", &n); // Use long long for input\n    long long int a[n + 10];\n    long long int ar[100001] = {0}; // Count occurrences\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        totalSum += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * ar[from];\n        ar[to] += ar[from];\n        ar[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <map>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to;\n    scanf("%lld", &n); // Use long long for input\n    long long int a[n + 10];\n    map<long long int, long long int> ar; // Use a map to count occurrences\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &a[i]);\n        totalSum += a[i];\n        ar[a[i]]++;\n    }\n\n    scanf("%lld", &m);\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * ar[from];\n        ar[to] += ar[from];\n        ar[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:18:28,469	[INFO]	Step: 32
+2025-01-26 02:18:28,469	[INFO]	Stop Steps: 50
+2025-01-26 02:18:28,740	[DEBUG]	EXEC>  SUCCESS 1933361.875
+2025-01-26 02:18:28,740	[INFO]	2-3     SUCCESS               1933361.88 (56.62%) [2 edit(s)]  
+2025-01-26 02:18:28,740	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, i, totalSum = 0, from, to;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[100001] = {0};\n\n    for (i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum);\n    }\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, i, totalSum = 0, from, to;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[100001] = {0};\n\n    for (i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        long long int count = elementCount[from];\n        if (count > 0) {\n            totalSum += (to - from) * count; // Update totalSum based on count\n            elementCount[to] += count; // Move the counts\n            elementCount[from] = 0; // Reset the count for \'from\'\n        }\n        printf("%lld\\n", totalSum); // Print the current total sum\n    }\n}')"
+2025-01-26 02:18:28,740	[INFO]	Step: 33
+2025-01-26 02:18:28,740	[INFO]	Stop Steps: 50
+2025-01-26 02:18:29,480	[DEBUG]	EXEC>  SUCCESS 3359217.125
+2025-01-26 02:18:29,480	[INFO]	2-4     SUCCESS               3359217.12 (98.37%) [1 edit(s)]  
+2025-01-26 02:18:29,480	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 21), '#include"stdc++.h"\n\nusing namespace std;\n\nint main()\n\n{\n\n    long long int n,m,i,r,s=0,b,c,j;\n\n    scanf("%lld",&n);\n\n    long long int a[n+10];\n\n    long long int ar[100001]={0};\n\n    for(i=0;i<n;i++){\n\n        cin>>a[i];\n\n        s+=a[i];\n\n        ar[a[i]]++;\n\n    }\n\n    cin>>m;\n\n    long long int f[m+10];\n\n    for(i=0;i<m;i++){\n\n        cin>>b>>c;\n\n        s+=(c-b)*ar[b];\n\n        ar[c]+=ar[b];\n\n        ar[b]=0;\n\n        cout<<s<<endl;\n\n    }\n\n\n\n}')"
+2025-01-26 02:18:29,481	[INFO]	Step: 34
+2025-01-26 02:18:29,481	[INFO]	Stop Steps: 50
+2025-01-26 02:18:31,228	[DEBUG]	EXEC>  SUCCESS 3385439.4375
+2025-01-26 02:18:31,228	[INFO]	REF     SUCCESS               3385439.44 (--) [0 edit(s)]  
+2025-01-26 02:18:31,228	[INFO]	Best patch: 9
+2025-01-26 02:18:31,498	[DEBUG]	EXEC>  SUCCESS 1429425.875
+2025-01-26 02:18:31,498	[INFO]	BEST    SUCCESS              *1429425.88 (42.22%) [0 edit(s)]  
+2025-01-26 02:18:31,498	[INFO]	Best patch step: 23
+2025-01-26 02:19:07,428	[INFO]	Step: 34
+2025-01-26 02:19:07,428	[INFO]	Stop Steps: 50
+2025-01-26 02:19:07,821	[DEBUG]	EXEC>  SUCCESS 1396899.5
+2025-01-26 02:19:07,821	[INFO]	3-5     SUCCESS              *1396899.50 (41.26%) [1 edit(s)]  
+2025-01-26 02:19:07,821	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}')"
+
+2025-01-26 02:19:07,821	[INFO]	Step: 35
+2025-01-26 02:19:07,821	[INFO]	Stop Steps: 50
+2025-01-26 02:19:08,103	[DEBUG]	EXEC>  SUCCESS 1928673.0
+2025-01-26 02:19:08,103	[INFO]	3-6     SUCCESS               1928673.00 (56.97%) [1 edit(s)]  
+2025-01-26 02:19:08,103	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0, from, to;\n    scanf("%lld", &numElements); // Use long long for input\n    long long int elements[numElements + 10], elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:08,103	[INFO]	Step: 36
+2025-01-26 02:19:08,103	[INFO]	Stop Steps: 50
+2025-01-26 02:19:08,408	[DEBUG]	EXEC>  SUCCESS 3343665.8125
+2025-01-26 02:19:08,408	[INFO]	3-7     SUCCESS               3343665.81 (98.77%) [1 edit(s)]  
+2025-01-26 02:19:08,408	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int* elements = new long long int[n + 10]; // Dynamic allocation for elements\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n    delete[] elements; // Clean up dynamic memory\n}')"
+2025-01-26 02:19:08,408	[INFO]	Step: 37
+2025-01-26 02:19:08,409	[INFO]	Stop Steps: 50
+2025-01-26 02:19:08,680	[DEBUG]	EXEC>  SUCCESS 1906293.75
+2025-01-26 02:19:08,681	[INFO]	3-8     SUCCESS               1906293.75 (56.31%) [1 edit(s)]  
+2025-01-26 02:19:08,681	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:08,681	[INFO]	Step: 38
+2025-01-26 02:19:08,681	[INFO]	Stop Steps: 50
+2025-01-26 02:19:08,959	[DEBUG]	EXEC>  SUCCESS 1973001.75
+2025-01-26 02:19:08,959	[INFO]	3-9     SUCCESS               1973001.75 (58.28%) [1 edit(s)]  
+2025-01-26 02:19:08,959	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:08,959	[INFO]	Step: 39
+2025-01-26 02:19:08,959	[INFO]	Stop Steps: 50
+2025-01-26 02:19:09,266	[DEBUG]	EXEC>  SUCCESS 3387311.625
+2025-01-26 02:19:09,266	[INFO]	3-10    SUCCESS               3387311.62 (100.06%) [1 edit(s)]  
+2025-01-26 02:19:09,266	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int* elements = new long long int[n + 10]; // Dynamic allocation for elements\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n    delete[] elements; // Clean up dynamic memory\n}')"
+2025-01-26 02:19:09,266	[INFO]	Step: 40
+2025-01-26 02:19:09,266	[INFO]	Stop Steps: 50
+2025-01-26 02:19:09,639	[DEBUG]	EXEC>  SUCCESS 2872652.875
+2025-01-26 02:19:09,639	[INFO]	3-1     SUCCESS               2872652.88 (84.85%) [2 edit(s)]  
+2025-01-26 02:19:09,639	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, from, to; \n    scanf("%d", &n); \n    vector<int> elements(n);\n    vector<int> elementCount(100001, 0);\n    int totalSum = 0;\n\n    for (int i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); \n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); \n    for (int i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); \n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); \n    }\n}')"
+2025-01-26 02:19:09,639	[INFO]	Step: 41
+2025-01-26 02:19:09,639	[INFO]	Stop Steps: 50
+2025-01-26 02:19:09,918	[DEBUG]	EXEC>  SUCCESS 1919737.1875
+2025-01-26 02:19:09,919	[INFO]	3-2     SUCCESS               1919737.19 (56.71%) [2 edit(s)]  
+2025-01-26 02:19:09,919	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0, from, to;\n    scanf("%lld", &numElements); // Use long long for input\n    long long int elements[numElements + 10], elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_ELEMENTS = 100001;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[MAX_ELEMENTS] = {0};\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    long long int from, to;\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        if (from < MAX_ELEMENTS) {\n            totalSum += (to - from) * elementCount[from];\n            elementCount[to] += elementCount[from];\n            elementCount[from] = 0;\n        }\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:19:09,919	[INFO]	Step: 42
+2025-01-26 02:19:09,919	[INFO]	Stop Steps: 50
+2025-01-26 02:19:10,293	[DEBUG]	EXEC>  SUCCESS 3347287.125
+2025-01-26 02:19:10,294	[INFO]	3-3     SUCCESS               3347287.12 (98.87%) [2 edit(s)]  
+2025-01-26 02:19:10,294	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10]; // Dynamic allocation for elements\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    vector<long long int> elements(n); // Use vector for dynamic allocation\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        if (elementCount[from] > 0) { // Check if there are elements to move\n            totalSum += (to - from) * elementCount[from];\n            elementCount[to] += elementCount[from];\n            elementCount[from] = 0;\n        }\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:10,294	[INFO]	Step: 43
+2025-01-26 02:19:10,294	[INFO]	Stop Steps: 50
+2025-01-26 02:19:10,712	[DEBUG]	EXEC>  SUCCESS 2353676.9375
+2025-01-26 02:19:10,712	[INFO]	3-4     SUCCESS               2353676.94 (69.52%) [2 edit(s)]  
+2025-01-26 02:19:10,712	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    long long int n, m, i, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    unordered_map<long long int, long long int> elementCount; // Use unordered_map for dynamic size and efficiency\n\n    for (i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:10,712	[INFO]	Step: 44
+2025-01-26 02:19:10,712	[INFO]	Stop Steps: 50
+2025-01-26 02:19:11,454	[DEBUG]	EXEC>  SUCCESS 3424630.3125
+2025-01-26 02:19:11,454	[INFO]	3-5     SUCCESS               3424630.31 (101.16%) [1 edit(s)]  
+2025-01-26 02:19:11,454	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), '#include "stdc++.h"\n\nusing namespace std;\n\nint main() {\n    long long int n, m, i, r, s = 0, b, c, j;\n\n    scanf("%lld", &n);\n\n    long long int a[n + 10];\n    long long int ar[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        cin >> a[i];\n        s += a[i];\n        ar[a[i]]++;\n    }\n\n    cin >> m;\n\n    long long int f[m + 10];\n\n    for (i = 0; i < m; i++) {\n        cin >> b >> c;\n        s += (c - b) * ar[b];\n        ar[c] += ar[b];\n        ar[b] = 0;\n        cout << s << endl;\n    }\n}')"
+2025-01-26 02:19:11,454	[INFO]	Step: 45
+2025-01-26 02:19:11,454	[INFO]	Stop Steps: 50
+2025-01-26 02:19:13,207	[DEBUG]	EXEC>  SUCCESS 3326117.5
+2025-01-26 02:19:13,207	[INFO]	REF     SUCCESS               3326117.50 (--) [0 edit(s)]  
+2025-01-26 02:19:13,207	[INFO]	Best patch: 9
+2025-01-26 02:19:13,474	[DEBUG]	EXEC>  SUCCESS 1403710.6875
+2025-01-26 02:19:13,474	[INFO]	BEST    SUCCESS              *1403710.69 (42.20%) [0 edit(s)]  
+2025-01-26 02:19:13,474	[INFO]	Best patch step: 34
+2025-01-26 02:19:53,389	[INFO]	Step: 45
+2025-01-26 02:19:53,389	[INFO]	Stop Steps: 50
+2025-01-26 02:19:53,788	[DEBUG]	EXEC>  SUCCESS 1402490.8125
+2025-01-26 02:19:53,788	[INFO]	4-6     SUCCESS              *1402490.81 (42.17%) [1 edit(s)]  
+2025-01-26 02:19:53,788	[DEBUG]	patch(4-6)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}')"
+
+2025-01-26 02:19:53,788	[INFO]	Step: 46
+2025-01-26 02:19:53,788	[INFO]	Stop Steps: 50
+2025-01-26 02:19:54,067	[DEBUG]	EXEC>  SUCCESS 2023167.375
+2025-01-26 02:19:54,067	[INFO]	4-7     SUCCESS               2023167.38 (60.83%) [1 edit(s)]  
+2025-01-26 02:19:54,067	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:54,067	[INFO]	Step: 47
+2025-01-26 02:19:54,067	[INFO]	Stop Steps: 50
+2025-01-26 02:19:54,346	[DEBUG]	EXEC>  SUCCESS 1950417.9375
+2025-01-26 02:19:54,346	[INFO]	4-8     SUCCESS               1950417.94 (58.64%) [1 edit(s)]  
+2025-01-26 02:19:54,346	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:54,346	[INFO]	Step: 48
+2025-01-26 02:19:54,346	[INFO]	Stop Steps: 50
+2025-01-26 02:19:54,630	[DEBUG]	EXEC>  SUCCESS 1994930.0
+2025-01-26 02:19:54,630	[INFO]	4-9     SUCCESS               1994930.00 (59.98%) [1 edit(s)]  
+2025-01-26 02:19:54,630	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst int MAX_ELEMENTS = 100001;\n\nint main() {\n    long long int numElements, numQueries, totalSum = 0;\n    scanf("%lld", &numElements);\n    long long int elements[numElements + 10], elementCount[MAX_ELEMENTS] = {0};\n\n    for (int i = 0; i < numElements; i++) {\n        scanf("%lld", &elements[i]);\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &numQueries);\n    long long int from, to;\n    for (int i = 0; i < numQueries; i++) {\n        scanf("%lld%lld", &from, &to);\n        if (from < MAX_ELEMENTS) {\n            totalSum += (to - from) * elementCount[from];\n            elementCount[to] += elementCount[from];\n            elementCount[from] = 0;\n        }\n        printf("%lld\\n", totalSum);\n    }\n}')"
+2025-01-26 02:19:54,631	[INFO]	Step: 49
+2025-01-26 02:19:54,631	[INFO]	Stop Steps: 50
+2025-01-26 02:19:54,917	[DEBUG]	EXEC>  SUCCESS 2052529.6875
+2025-01-26 02:19:54,917	[INFO]	4-10    SUCCESS               2052529.69 (61.71%) [1 edit(s)]  
+2025-01-26 02:19:54,917	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    long long int n, m, totalSum = 0, from, to; // Use long long for larger inputs\n    scanf("%lld", &n); // Change to long long\n    long long int elements[n + 10];\n    long long int elementCount[100001] = {0}; // Use long long for element counts\n\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &elements[i]); // Change to long long\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%lld", &m); // Change to long long\n    for (int i = 0; i < m; i++) {\n        scanf("%lld%lld", &from, &to); // Change to long long\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%lld\\n", totalSum); // Change to long long\n    }\n}')"
+2025-01-26 02:19:54,917	[INFO]	Step: 50
+2025-01-26 02:19:54,917	[INFO]	Stop Steps: 50
+2025-01-26 02:19:54,917	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 02:19:54,917	[INFO]	Step: 50
+2025-01-26 02:19:54,917	[INFO]	Stop Steps: 50
+2025-01-26 02:19:55,661	[INFO]	~~~~ END ~~~~
+2025-01-26 02:19:55,661	[INFO]	Best patch step: 45
+2025-01-26 02:19:55,662	[INFO]	
+2025-01-26 02:19:55,662	[INFO]	==== REPORT ====
+2025-01-26 02:19:55,662	[INFO]	Termination: step budget
+2025-01-26 02:19:55,662	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0034_1737857704.log
+2025-01-26 02:19:55,662	[INFO]	Patch file: _magpie_logs/0034_1737857704.patch
+2025-01-26 02:19:55,662	[INFO]	Diff file: _magpie_logs/0034_1737857704.diff
+2025-01-26 02:19:55,662	[INFO]	Reference fitness: 3326117.50
+2025-01-26 02:19:55,662	[INFO]	Best fitness: 1402490.81
+2025-01-26 02:19:55,662	[INFO]	
+2025-01-26 02:19:55,662	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint main() {\n    int n, m, i, totalSum = 0, from, to; // Change long long to int\n    scanf("%d", &n); // Change to int\n    int elements[n + 10];\n    int elementCount[100001] = {0};\n\n    for (i = 0; i < n; i++) {\n        scanf("%d", &elements[i]); // Change to int\n        totalSum += elements[i];\n        elementCount[elements[i]]++;\n    }\n\n    scanf("%d", &m); // Change to int\n    for (i = 0; i < m; i++) {\n        scanf("%d%d", &from, &to); // Change to int\n        totalSum += (to - from) * elementCount[from];\n        elementCount[to] += elementCount[from];\n        elementCount[from] = 0;\n        printf("%d\\n", totalSum); // Change to int\n    }\n}')
+2025-01-26 02:19:55,663	[INFO]	
+2025-01-26 02:19:55,663	[INFO]	==== DIFF ====
+

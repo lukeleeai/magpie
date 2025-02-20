@@ -1,0 +1,169 @@
+2025-01-26 22:18:58,159	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8973109411674740
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0227
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 22:18:58,160	[DEBUG]	
+2025-01-26 22:18:58,160	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 22:18:58,160	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 22:18:59,392	[DEBUG]	EXEC>  SUCCESS 2464278.125
+2025-01-26 22:18:59,392	[INFO]	WARM    SUCCESS               2464278.12 (--) [0 edit(s)]  
+2025-01-26 22:19:00,029	[DEBUG]	EXEC>  SUCCESS 2455837.75
+2025-01-26 22:19:00,029	[INFO]	WARM    SUCCESS               2455837.75 (--) [0 edit(s)]  
+2025-01-26 22:19:00,674	[DEBUG]	EXEC>  SUCCESS 2470922.75
+2025-01-26 22:19:00,674	[INFO]	WARM    SUCCESS               2470922.75 (--) [0 edit(s)]  
+2025-01-26 22:19:01,312	[DEBUG]	EXEC>  SUCCESS 2450125.5
+2025-01-26 22:19:01,313	[INFO]	WARM    SUCCESS               2450125.50 (--) [0 edit(s)]  
+2025-01-26 22:19:01,966	[DEBUG]	EXEC>  SUCCESS 2483342.25
+2025-01-26 22:19:01,966	[INFO]	WARM    SUCCESS               2483342.25 (--) [0 edit(s)]  
+2025-01-26 22:19:01,966	[INFO]	REF     SUCCESS               2483342.25 (--) [0 edit(s)]  
+2025-01-26 22:19:01,967	[INFO]	
+2025-01-26 22:19:01,967	[INFO]	~~~~ START ~~~~
+2025-01-26 22:20:41,737	[INFO]	0-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 22:20:41,737	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <queue>\n#include <limits>\n\nusing namespace std;\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vvi dist(n, vi(n, INFTY));\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x;\n                cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j][i * w + j] = 0;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j][ii * w + jj] = 1;\n                }\n            }\n        }\n\n        for (int k : hearts) {\n            for (int i = 0; i < n; i++) {\n                for (int j = 0; j < n; j++)\n                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);\n            }\n        }\n\n        int hsize = hearts.size();\n        vvi dp(1 << hsize, vi(n, INFTY));\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]][j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = i; j; j = (j - 1) & i)\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            for (int j = 0; j < n; j++)\n                for (int k = 0; k < n; k++)\n                    dp[i][j] = min(dp[i][j], dp[i][k] + dist[k][j]);\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:43,121	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 22:20:43,121	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <limits>\n#include <queue>\n\nusing namespace std;\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; scanf("%d %d", &h, &w), h | w;) {\n        int n = h * w;\n        vvi dist(n, vi(n, INFTY));\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; scanf("%d", &x);\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j][i * w + j] = 0;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j][ii * w + jj] = 1;\n                }\n            }\n        }\n\n        for (int k : hearts) {\n            for (int i = 0; i < n; i++) {\n                for (int j = 0; j < n; j++)\n                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);\n            }\n        }\n\n        int hsize = hearts.size();\n        vvi dp(1 << hsize, vi(n, INFTY));\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]][j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = i; j; j = (j - 1) & i)\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            for (int j = 0; j < n; j++)\n                for (int k = 0; k < n; k++)\n                    dp[i][j] = min(dp[i][j], dp[i][k] + dist[k][j]);\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        printf("%d\\n", n - (res + 1));\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:46,761	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 22:20:46,762	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vi dist(n * n, INFTY);\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j] = i * w + j;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j] = 1;\n                }\n            }\n        }\n\n        for (int k : hearts) {\n            for (int i = 0; i < n; i++) {\n                for (int j = 0; j < n; j++)\n                    dist[i * n + j] = min(dist[i * n + j], dist[i * n + k] + dist[k * n + j]);\n            }\n        }\n\n        int hsize = hearts.size();\n        vi dp(1 << hsize, INFTY);\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i] = dist[hearts[i] * n + j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = i; j; j = (j - 1) & i)\n                for (int k = 0; k < n; k++)\n                    dp[i * n + k] = min(dp[i * n + k], dp[j * n + k] + dp[(i ^ j) * n + k]);\n            for (int j = 0; j < n; j++)\n                for (int k = 0; k < n; k++)\n                    dp[i * n + j] = min(dp[i * n + j], dp[i * n + k] + dist[k * n + j]);\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1 * n + i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:48,243	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 22:20:48,244	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vvi dist(n, vi(n, INFTY));\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j][i * w + j] = 0;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j][ii * w + jj] = 1;\n                }\n            }\n        }\n\n        for (int k : hearts) {\n            for (int i = 0; i < n; i++)\n                for (int j = 0; j < n; j++)\n                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);\n        }\n\n        int hsize = hearts.size();\n        vvi dp(1 << hsize, vi(n, INFTY));\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]][j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = 0; j < (1 << hsize); j++) {\n                if (i & j) continue; // Avoid redundant calculations\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:49,488	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 22:20:49,488	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vi dist(n * n, INFTY);\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j] = i * w + j;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j] = 1;\n                }\n            }\n        }\n\n        int hsize = hearts.size();\n        vi dp(1 << hsize, INFTY);\n        for (int i = 0; i < hsize; i++)\n            dp[1 << i] = dist[hearts[i]];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = 0; j < (1 << hsize); j++) {\n                if (i & j) continue; // Avoid redundant calculations\n                for (int k = 0; k < n; k++)\n                    dp[i] = min(dp[i], dp[j] + dist[(i ^ j)][k]);\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:50,752	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 22:20:50,752	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <limits>\n#include <queue>\n\nusing namespace std;\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vvi dist(n, vi(n, INFTY));\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j][i * w + j] = 0;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j][ii * w + jj] = 1;\n                }\n            }\n        }\n\n        for (int heart : hearts) {\n            queue<int> q;\n            q.push(heart);\n            dist[heart][heart] = 0;\n\n            while (!q.empty()) {\n                int u = q.front(); q.pop();\n                int x = u / w, y = u % w;\n\n                for (int k = 0; k < 4; k++) {\n                    int ii = x + di[k], jj = y + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w) {\n                        int v = ii * w + jj;\n                        if (dist[heart][v] > dist[heart][u] + 1) {\n                            dist[heart][v] = dist[heart][u] + 1;\n                            q.push(v);\n                        }\n                    }\n                }\n            }\n        }\n\n        int hsize = hearts.size();\n        vvi dp(1 << hsize, vi(n, INFTY));\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]][j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = 0; j < (1 << hsize); j++) {\n                if (i & j) continue;\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:52,069	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 22:20:52,070	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <limits>\n#include <unordered_map>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        unordered_map<int, unordered_map<int, int>> dist;\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j][i * w + j] = 0;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j][ii * w + jj] = 1;\n                }\n            }\n        }\n\n        for (int heart : hearts) {\n            for (int i = 0; i < n; i++)\n                for (int j = 0; j < n; j++)\n                    dist[i][j] = min(dist[i][j], dist[i][heart] + dist[heart][j]);\n        }\n\n        int hsize = hearts.size();\n        vvi dp(1 << hsize, vi(n, INFTY));\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]][j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = 0; j < (1 << hsize); j++) {\n                if (i & j) continue; // Avoid redundant calculations\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:53,294	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 22:20:53,294	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <array>\n#include <limits>\n\nusing namespace std;\n\nconst int MAXN = 10000;\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        array<array<int, MAXN>, MAXN> dist;\n        array<int, MAXN * MAXN> hearts;\n\n        for (int i = 0; i < MAXN; i++) {\n            fill(dist[i].begin(), dist[i].end(), INFTY);\n        }\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1)\n                    hearts.push_back(i * w + j);\n\n                dist[i * w + j][i * w + j] = 0;\n\n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                for (int k = 0; k < 4; k++) {\n                    int ii = i + di[k], jj = j + dj[k];\n                    if (0 <= ii && ii < h && 0 <= jj && jj < w)\n                        dist[i * w + j][ii * w + jj] = 1;\n                }\n            }\n        }\n\n        for (int heart : hearts) {\n            for (int i = 0; i < n; i++) {\n                for (int j = 0; j < n; j++)\n                    dist[i][j] = min(dist[i][j], dist[i][heart] + dist[heart][j]);\n            }\n        }\n\n        int hsize = hearts.size();\n        array<array<int, MAXN>, MAXN> dp;\n        for (int i = 0; i < (1 << hsize); i++) {\n            fill(dp[i].begin(), dp[i].end(), INFTY);\n        }\n        \n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]][j];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = 0; j < (1 << hsize); j++) {\n                if (i & j) continue; // Avoid redundant calculations\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:54,559	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 22:20:54,559	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <limits>\n#include <queue>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vi dist(n, INFTY);\n        vi hearts;\n        queue<int> q;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1) {\n                    hearts.push_back(i * w + j);\n                    q.push(i * w + j);\n                    dist[i * w + j] = 0;\n                }\n                \n                int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n                while (!q.empty()) {\n                    int u = q.front(); q.pop();\n                    int x = u / w, y = u % w;\n                    for (int k = 0; k < 4; k++) {\n                        int ii = x + di[k], jj = y + dj[k];\n                        if (0 <= ii && ii < h && 0 <= jj && jj < w) {\n                            int v = ii * w + jj;\n                            if (dist[v] > dist[u] + 1) {\n                                dist[v] = dist[u] + 1;\n                                q.push(v);\n                            }\n                        }\n                    }\n                }\n            }\n        }\n\n        int hsize = hearts.size();\n        vvi dp(1 << hsize, vi(n, INFTY));\n        for (int i = 0; i < hsize; i++)\n            for (int j = 0; j < n; j++)\n                dp[1 << i][j] = dist[hearts[i]];\n\n        for (int i = 0; i < (1 << hsize); i++) {\n            for (int j = 0; j < (1 << hsize); j++) {\n                if (i & j) continue; // Avoid redundant calculations\n                for (int k = 0; k < n; k++)\n                    dp[i][k] = min(dp[i][k], dp[j][k] + dp[i ^ j][k]);\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dp[(1 << hsize) - 1][i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:56,016	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 22:20:56,017	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#include <limits>\n#include <queue>\n\nusing namespace std;\n\ntypedef vector<int> vi;\n\nconst int INFTY = numeric_limits<int>::max();\n\nint main() {\n    for (int h, w; cin >> h >> w, h | w;) {\n        int n = h * w;\n        vi dist(n, INFTY);\n        vi hearts;\n\n        for (int i = 0; i < h; i++) {\n            for (int j = 0; j < w; j++) {\n                int x; cin >> x;\n                if (x == 1) {\n                    hearts.push_back(i * w + j);\n                    dist[i * w + j] = 0;\n                }\n            }\n        }\n\n        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;\n        for (int heart : hearts) {\n            pq.push({0, heart});\n        }\n\n        while (!pq.empty()) {\n            auto [d, u] = pq.top(); pq.pop();\n            if (d > dist[u]) continue;\n\n            int x = u / w, y = u % w;\n            int di[] = {-1, 1, 0, 0}, dj[] = {0, 0, -1, 1};\n\n            for (int k = 0; k < 4; k++) {\n                int ii = x + di[k], jj = y + dj[k];\n                if (0 <= ii && ii < h && 0 <= jj && jj < w) {\n                    int v = ii * w + jj;\n                    if (dist[v] > dist[u] + 1) {\n                        dist[v] = dist[u] + 1;\n                        pq.push({dist[v], v});\n                    }\n                }\n            }\n        }\n\n        int res = INFTY;\n        for (int i = 0; i < n; i++)\n            res = min(res, dist[i]);\n\n        cout << n - (res + 1) << endl;\n    }\n\n    return 0;\n}')"
+2025-01-26 22:20:57,017	[INFO]	Step: 10
+2025-01-26 22:20:57,017	[INFO]	Stop Steps: 50
+2025-01-26 22:20:58,795	[DEBUG]	EXEC>  SUCCESS 2467679.6875
+2025-01-26 22:20:58,795	[INFO]	REF     SUCCESS               2467679.69 (--) [0 edit(s)]  
+2025-01-26 22:20:58,795	[INFO]	Best patch step: None
+2025-01-26 22:21:35,255	[INFO]	~~~~ END ~~~~
+2025-01-26 22:21:35,255	[INFO]	Best patch step: None

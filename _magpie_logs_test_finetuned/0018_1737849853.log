@@ -1,0 +1,413 @@
+2025-01-26 00:04:13,056	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8718602542049509
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0018
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 00:04:13,056	[DEBUG]	
+2025-01-26 00:04:13,056	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 00:04:13,057	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 00:04:14,109	[DEBUG]	EXEC>  SUCCESS 11724688.375
+2025-01-26 00:04:14,110	[INFO]	WARM    SUCCESS               11724688.38 (--) [0 edit(s)]  
+2025-01-26 00:04:14,910	[DEBUG]	EXEC>  SUCCESS 12267645.5625
+2025-01-26 00:04:14,910	[INFO]	WARM    SUCCESS               12267645.56 (--) [0 edit(s)]  
+2025-01-26 00:04:15,725	[DEBUG]	EXEC>  SUCCESS 11755842.4375
+2025-01-26 00:04:15,725	[INFO]	WARM    SUCCESS               11755842.44 (--) [0 edit(s)]  
+2025-01-26 00:04:16,525	[DEBUG]	EXEC>  SUCCESS 12251678.8125
+2025-01-26 00:04:16,525	[INFO]	WARM    SUCCESS               12251678.81 (--) [0 edit(s)]  
+2025-01-26 00:04:17,323	[DEBUG]	EXEC>  SUCCESS 12354108.9375
+2025-01-26 00:04:17,323	[INFO]	WARM    SUCCESS               12354108.94 (--) [0 edit(s)]  
+2025-01-26 00:04:17,323	[INFO]	REF     SUCCESS               12354108.94 (--) [0 edit(s)]  
+2025-01-26 00:04:17,324	[INFO]	
+2025-01-26 00:04:17,324	[INFO]	~~~~ START ~~~~
+2025-01-26 00:04:48,035	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:48,035	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    memset(arr2, -1, sizeof(arr2));\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:49,173	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:49,173	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);  // More efficient than memset\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:50,767	[DEBUG]	EXEC>  SUCCESS 11824627.625
+2025-01-26 00:04:50,767	[INFO]	0-3     SUCCESS              *11824627.62 (95.71%) [1 edit(s)]  
+2025-01-26 00:04:50,767	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:04:52,332	[DEBUG]	EXEC>  SUCCESS 13734814.75
+2025-01-26 00:04:52,332	[INFO]	0-4     SUCCESS               13734814.75 (111.18%) [1 edit(s)]  
+2025-01-26 00:04:52,333	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);  // Store difference\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:53,472	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:53,472	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst long long inf = 1000000000000000001;\nll k2, arr[1000000], arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:54,611	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:54,611	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nll k2, arr[1000000], arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:55,749	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:55,750	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nll k2, arr[1000000], arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = arr[cur] - arr[cur + i];  // Direct subtraction\n        sum = min(sum, func(n, cur + i) + (diff < 0 ? -diff : diff));  // Use conditional to avoid abs\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:56,893	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:56,893	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst long long inf = 1e18;  // Using a clearer constant expression\nll k2, arr[1000000], arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:04:58,037	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:58,037	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nll k2, arr[1000000], arr2[1000000];\n\nll func(ll n) {\n    arr2[0] = 0;  // Base case\n    for (ll cur = 1; cur <= n; ++cur) {\n        arr2[cur] = inf;  // Initialize\n        for (ll i = 1; i <= k2 && cur - i >= 0; ++i) {\n            arr2[cur] = min(arr2[cur], arr2[cur - i] + abs(arr[cur] - arr[cur - i]));\n        }\n    }\n    return arr2[n];\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1));\n    return 0;\n}')"
+2025-01-26 00:04:59,181	[INFO]	0-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:04:59,181	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nll k2;\nvector<ll> arr, arr2;\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    arr.resize(n);\n    arr2.resize(n, -1);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:05:00,182	[INFO]	Step: 10
+2025-01-26 00:05:00,182	[INFO]	Stop Steps: 50
+2025-01-26 00:05:02,110	[DEBUG]	EXEC>  SUCCESS 12035940.3125
+2025-01-26 00:05:02,111	[INFO]	REF     SUCCESS               12035940.31 (--) [0 edit(s)]  
+2025-01-26 00:05:02,111	[INFO]	Best patch: 2
+2025-01-26 00:05:02,532	[DEBUG]	EXEC>  SUCCESS 10546676.5
+2025-01-26 00:05:02,532	[INFO]	BEST    SUCCESS              *10546676.50 (87.63%) [0 edit(s)]  
+2025-01-26 00:05:02,532	[INFO]	Best patch step: 2
+2025-01-26 00:05:21,158	[INFO]	Step: 10
+2025-01-26 00:05:21,158	[INFO]	Stop Steps: 50
+2025-01-26 00:05:21,802	[DEBUG]	EXEC>  SUCCESS 10688411.75
+2025-01-26 00:05:21,802	[INFO]	1-1     SUCCESS              +10688411.75 (88.80%) [1 edit(s)]  
+2025-01-26 00:05:21,802	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:05:21,803	[INFO]	Step: 11
+2025-01-26 00:05:21,803	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,302	[DEBUG]	EXEC>  SUCCESS 10598938.75
+2025-01-26 00:05:22,302	[INFO]	1-2     SUCCESS              +10598938.75 (88.06%) [1 edit(s)]  
+2025-01-26 00:05:22,302	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);  // Store difference\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:05:22,302	[INFO]	Step: 12
+2025-01-26 00:05:22,302	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,390	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:05:22,390	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>')"
+2025-01-26 00:05:22,390	[INFO]	Step: 13
+2025-01-26 00:05:22,391	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,474	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:05:22,474	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>')"
+2025-01-26 00:05:22,475	[INFO]	Step: 14
+2025-01-26 00:05:22,475	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,557	[INFO]	1-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:05:22,557	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>')"
+2025-01-26 00:05:22,557	[INFO]	Step: 15
+2025-01-26 00:05:22,557	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,707	[INFO]	1-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:05:22,707	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>')"
+2025-01-26 00:05:22,707	[INFO]	Step: 16
+2025-01-26 00:05:22,707	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,857	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:05:22,857	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nvector<ll> arr2(1000000, -1); // Use a vector to manage size more efficiently\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        if (cur + i <= n) { // Check boundary to avoid out of range\n sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n        }\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 10444596.6875')"
+2025-01-26 00:05:22,857	[INFO]	Step: 17
+2025-01-26 00:05:22,857	[INFO]	Stop Steps: 50
+2025-01-26 00:05:22,984	[INFO]	1-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:05:22,984	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);  // Store difference\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll n;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    ll currentValue = arr[cur];\n    for (ll i = 1; i <= k2 && cur + i < n; ++i) {\n        ll diff = abs(currentValue - arr[cur + i]);  // Store difference using current value\n        sum = min(sum, func(cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(0));\n    return 0;\n}\n\nFitness score: 10431053.625')"
+2025-01-26 00:05:22,984	[INFO]	Step: 18
+2025-01-26 00:05:22,984	[INFO]	Stop Steps: 50
+2025-01-26 00:05:24,843	[DEBUG]	EXEC>  SUCCESS 12426220.3125
+2025-01-26 00:05:24,843	[INFO]	REF     SUCCESS               12426220.31 (--) [0 edit(s)]  
+2025-01-26 00:05:24,843	[INFO]	Best patch: 2
+2025-01-26 00:05:25,279	[DEBUG]	EXEC>  SUCCESS 10708575.375
+2025-01-26 00:05:25,280	[INFO]	BEST    SUCCESS              *10708575.38 (86.18%) [0 edit(s)]  
+2025-01-26 00:05:25,280	[INFO]	Best patch step: 2
+2025-01-26 00:06:01,113	[INFO]	Step: 18
+2025-01-26 00:06:01,113	[INFO]	Stop Steps: 50
+2025-01-26 00:06:01,662	[DEBUG]	EXEC>  SUCCESS 11397890.0
+2025-01-26 00:06:01,662	[INFO]	2-9     SUCCESS              +11397890.00 (91.72%) [1 edit(s)]  
+2025-01-26 00:06:01,662	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);  // Store difference\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:06:01,662	[INFO]	Step: 19
+2025-01-26 00:06:01,662	[INFO]	Stop Steps: 50
+2025-01-26 00:06:02,085	[DEBUG]	EXEC>  SUCCESS 10591509.875
+2025-01-26 00:06:02,085	[INFO]	2-10    SUCCESS              *10591509.88 (85.24%) [1 edit(s)]  
+2025-01-26 00:06:02,085	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:02,085	[INFO]	Step: 20
+2025-01-26 00:06:02,085	[INFO]	Stop Steps: 50
+2025-01-26 00:06:02,516	[DEBUG]	EXEC>  SUCCESS 11041114.875
+2025-01-26 00:06:02,516	[INFO]	2-1     SUCCESS               11041114.88 (88.85%) [1 edit(s)]  
+2025-01-26 00:06:02,516	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);  // Store difference\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:06:02,516	[INFO]	Step: 21
+2025-01-26 00:06:02,516	[INFO]	Stop Steps: 50
+2025-01-26 00:06:02,938	[DEBUG]	EXEC>  SUCCESS 10573664.9375
+2025-01-26 00:06:02,939	[INFO]	2-2     SUCCESS              *10573664.94 (85.09%) [1 edit(s)]  
+2025-01-26 00:06:02,939	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:02,939	[INFO]	Step: 22
+2025-01-26 00:06:02,939	[INFO]	Stop Steps: 50
+2025-01-26 00:06:03,361	[DEBUG]	EXEC>  SUCCESS 10502032.75
+2025-01-26 00:06:03,362	[INFO]	2-3     SUCCESS              *10502032.75 (84.52%) [1 edit(s)]  
+2025-01-26 00:06:03,362	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:03,362	[INFO]	Step: 23
+2025-01-26 00:06:03,362	[INFO]	Stop Steps: 50
+2025-01-26 00:06:03,792	[DEBUG]	EXEC>  SUCCESS 10625998.6875
+2025-01-26 00:06:03,792	[INFO]	2-4     SUCCESS               10625998.69 (85.51%) [1 edit(s)]  
+2025-01-26 00:06:03,792	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:06:03,792	[INFO]	Step: 24
+2025-01-26 00:06:03,792	[INFO]	Stop Steps: 50
+2025-01-26 00:06:03,921	[INFO]	2-5     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:06:03,921	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);  // Store difference\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    ll currentValue = arr[cur];  // Store the current value\n    for (ll i = 1; i <= k2; ++i) {\n        ll nextValue = arr[cur + i];  // Store the next value\n        ll diff = abs(currentValue - nextValue);  // Use stored values\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 10481163.875')"
+2025-01-26 00:06:03,921	[INFO]	Step: 25
+2025-01-26 00:06:03,921	[INFO]	Stop Steps: 50
+2025-01-26 00:06:04,063	[INFO]	2-6     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:06:04,063	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nvector<ll> arr2(1000000, -1);  // Use a vector for dynamic sizing and initialization\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        if (cur + i <= n)  // Check to prevent out of bounds\n sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 9994416.5625')"
+2025-01-26 00:06:04,063	[INFO]	Step: 26
+2025-01-26 00:06:04,063	[INFO]	Stop Steps: 50
+2025-01-26 00:06:06,210	[DEBUG]	EXEC>  SUCCESS 14921447.5
+2025-01-26 00:06:06,210	[INFO]	REF     SUCCESS               14921447.50 (--) [0 edit(s)]  
+2025-01-26 00:06:06,210	[INFO]	Best patch: 6
+2025-01-26 00:06:06,638	[DEBUG]	EXEC>  SUCCESS 10446417.75
+2025-01-26 00:06:06,638	[INFO]	BEST    SUCCESS              *10446417.75 (70.01%) [0 edit(s)]  
+2025-01-26 00:06:06,638	[INFO]	Best patch step: 22
+2025-01-26 00:06:32,687	[INFO]	Step: 26
+2025-01-26 00:06:32,687	[INFO]	Stop Steps: 50
+2025-01-26 00:06:33,228	[DEBUG]	EXEC>  SUCCESS 10422431.3125
+2025-01-26 00:06:33,229	[INFO]	3-7     SUCCESS              *10422431.31 (69.85%) [1 edit(s)]  
+2025-01-26 00:06:33,229	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:33,229	[INFO]	Step: 27
+2025-01-26 00:06:33,229	[INFO]	Stop Steps: 50
+2025-01-26 00:06:33,646	[DEBUG]	EXEC>  SUCCESS 10157073.0
+2025-01-26 00:06:33,646	[INFO]	3-8     SUCCESS              *10157073.00 (68.07%) [1 edit(s)]  
+2025-01-26 00:06:33,646	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:33,646	[INFO]	Step: 28
+2025-01-26 00:06:33,646	[INFO]	Stop Steps: 50
+2025-01-26 00:06:33,731	[INFO]	3-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:06:33,731	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>')"
+2025-01-26 00:06:33,731	[INFO]	Step: 29
+2025-01-26 00:06:33,731	[INFO]	Stop Steps: 50
+2025-01-26 00:06:33,813	[INFO]	3-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:06:33,813	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>')"
+2025-01-26 00:06:33,813	[INFO]	Step: 30
+2025-01-26 00:06:33,813	[INFO]	Stop Steps: 50
+2025-01-26 00:06:33,903	[INFO]	3-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:06:33,903	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>')"
+2025-01-26 00:06:33,903	[INFO]	Step: 31
+2025-01-26 00:06:33,903	[INFO]	Stop Steps: 50
+2025-01-26 00:06:33,985	[INFO]	3-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:06:33,985	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>')"
+2025-01-26 00:06:33,985	[INFO]	Step: 32
+2025-01-26 00:06:33,985	[INFO]	Stop Steps: 50
+2025-01-26 00:06:34,115	[INFO]	3-3     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:06:34,115	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nvector<ll> arr2(1000000, -1); // Use a vector for dynamic sizing and initialization\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 9297720.75')"
+2025-01-26 00:06:34,115	[INFO]	Step: 33
+2025-01-26 00:06:34,116	[INFO]	Stop Steps: 50
+2025-01-26 00:06:34,241	[INFO]	3-4     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:06:34,241	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n) {\n    arr2[0] = 0; // Base case\n    for (ll cur = 1; cur <= n; ++cur) {\n        arr2[cur] = inf; // Initialize to infinity\n        for (ll i = 1; i <= k2 && cur - i >= 0; ++i) {\n            arr2[cur] = min(arr2[cur], arr2[cur - i] + abs(arr[cur] - arr[cur - i]));\n        }\n    }\n    return arr2[n];\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, inf);\n    printf("%lld\\n", func(n - 1));\n    return 0;\n}\n\nFitness score: 10046384.9375')"
+2025-01-26 00:06:34,241	[INFO]	Step: 34
+2025-01-26 00:06:34,241	[INFO]	Stop Steps: 50
+2025-01-26 00:06:34,373	[INFO]	3-5     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:06:34,373	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nvector<ll> arr2(1000000, -1);  // Use a vector for dynamic sizing and initialization\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);  // Using scanf for faster input\n    }\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 9829475.5')"
+2025-01-26 00:06:34,373	[INFO]	Step: 35
+2025-01-26 00:06:34,373	[INFO]	Stop Steps: 50
+2025-01-26 00:06:34,503	[INFO]	3-6     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:06:34,503	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nvector<ll> arr2(1000000, -1); // Use vector for automatic size management\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 10309772.3125')"
+2025-01-26 00:06:34,503	[INFO]	Step: 36
+2025-01-26 00:06:34,503	[INFO]	Stop Steps: 50
+2025-01-26 00:06:36,432	[DEBUG]	EXEC>  SUCCESS 12064697.4375
+2025-01-26 00:06:36,432	[INFO]	REF     SUCCESS               12064697.44 (--) [0 edit(s)]  
+2025-01-26 00:06:36,432	[INFO]	Best patch: 5
+2025-01-26 00:06:36,850	[DEBUG]	EXEC>  SUCCESS 10977224.125
+2025-01-26 00:06:36,850	[INFO]	BEST    SUCCESS              *10977224.12 (90.99%) [0 edit(s)]  
+2025-01-26 00:06:36,850	[INFO]	Best patch step: 27
+2025-01-26 00:06:57,725	[INFO]	Step: 36
+2025-01-26 00:06:57,725	[INFO]	Stop Steps: 50
+2025-01-26 00:06:58,231	[DEBUG]	EXEC>  SUCCESS 10358126.375
+2025-01-26 00:06:58,231	[INFO]	4-7     SUCCESS              *10358126.38 (85.85%) [1 edit(s)]  
+2025-01-26 00:06:58,231	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:58,231	[INFO]	Step: 37
+2025-01-26 00:06:58,231	[INFO]	Stop Steps: 50
+2025-01-26 00:06:58,649	[DEBUG]	EXEC>  SUCCESS 10823949.125
+2025-01-26 00:06:58,649	[INFO]	4-8     SUCCESS               10823949.12 (89.72%) [1 edit(s)]  
+2025-01-26 00:06:58,649	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:06:58,649	[INFO]	Step: 38
+2025-01-26 00:06:58,649	[INFO]	Stop Steps: 50
+2025-01-26 00:06:59,066	[DEBUG]	EXEC>  SUCCESS 10589049.3125
+2025-01-26 00:06:59,067	[INFO]	4-9     SUCCESS               10589049.31 (87.77%) [1 edit(s)]  
+2025-01-26 00:06:59,067	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:06:59,067	[INFO]	Step: 39
+2025-01-26 00:06:59,067	[INFO]	Stop Steps: 50
+2025-01-26 00:06:59,452	[DEBUG]	EXEC>  SUCCESS 11283011.875
+2025-01-26 00:06:59,453	[INFO]	4-10    SUCCESS               11283011.88 (93.52%) [1 edit(s)]  
+2025-01-26 00:06:59,453	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:06:59,453	[INFO]	Step: 40
+2025-01-26 00:06:59,453	[INFO]	Stop Steps: 50
+2025-01-26 00:06:59,835	[DEBUG]	EXEC>  SUCCESS 9998670.875
+2025-01-26 00:06:59,836	[INFO]	4-1     SUCCESS              *9998670.88 (82.88%) [1 edit(s)]  
+2025-01-26 00:06:59,836	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+
+2025-01-26 00:06:59,836	[INFO]	Step: 41
+2025-01-26 00:06:59,836	[INFO]	Stop Steps: 50
+2025-01-26 00:07:00,254	[DEBUG]	EXEC>  SUCCESS 10868395.9375
+2025-01-26 00:07:00,254	[INFO]	4-2     SUCCESS               10868395.94 (90.08%) [1 edit(s)]  
+2025-01-26 00:07:00,254	[DEBUG]	patch(4-2)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:07:00,254	[INFO]	Step: 42
+2025-01-26 00:07:00,254	[INFO]	Stop Steps: 50
+2025-01-26 00:07:00,663	[DEBUG]	EXEC>  SUCCESS 8798765.0
+2025-01-26 00:07:00,663	[INFO]	4-3     SUCCESS              *8798765.00 (72.93%) [2 edit(s)]  
+2025-01-26 00:07:00,663	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll iterative_func(ll n) {\n    fill(arr2, arr2 + 1000000, inf);\n    arr2[0] = 0;\n\n    for (ll cur = 0; cur < n; ++cur) {\n        for (ll i = 1; i <= k2 && cur + i <= n; ++i) {\n            arr2[cur + i] = min(arr2[cur + i], arr2[cur] + abs(arr[cur] - arr[cur + i]));\n        }\n    }\n    return arr2[n];\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", iterative_func(n - 1));\n    return 0;\n}')"
+
+2025-01-26 00:07:00,663	[INFO]	Step: 43
+2025-01-26 00:07:00,663	[INFO]	Stop Steps: 50
+2025-01-26 00:07:00,790	[INFO]	4-4     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 00:07:00,790	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    if (scanf("%lld%lld", &n, &k2) != 2) return 1; // Error handling\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]); // Using scanf for faster input\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}\n\nFitness score: 10297102.9375')"
+2025-01-26 00:07:00,790	[INFO]	Step: 44
+2025-01-26 00:07:00,790	[INFO]	Stop Steps: 50
+2025-01-26 00:07:02,597	[DEBUG]	EXEC>  SUCCESS 11992506.8125
+2025-01-26 00:07:02,597	[INFO]	REF     SUCCESS               11992506.81 (--) [0 edit(s)]  
+2025-01-26 00:07:02,597	[INFO]	Best patch: 5_18
+2025-01-26 00:07:03,006	[DEBUG]	EXEC>  SUCCESS 9179270.6875
+2025-01-26 00:07:03,006	[INFO]	BEST    SUCCESS              *9179270.69 (76.54%) [0 edit(s)]  
+2025-01-26 00:07:03,006	[INFO]	Best patch step: 42
+2025-01-26 00:07:32,231	[INFO]	Step: 44
+2025-01-26 00:07:32,231	[INFO]	Stop Steps: 50
+2025-01-26 00:07:32,762	[DEBUG]	EXEC>  SUCCESS 9123542.1875
+2025-01-26 00:07:32,763	[INFO]	5-5     SUCCESS              *9123542.19 (76.08%) [2 edit(s)]  
+2025-01-26 00:07:32,763	[DEBUG]	patch(5-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll iterative_func(ll n) {\n    fill(arr2, arr2 + 1000000, inf);\n    arr2[0] = 0;\n\n    for (ll cur = 0; cur < n; ++cur) {\n        for (ll i = 1; i <= k2 && cur + i <= n; ++i) {\n            arr2[cur + i] = min(arr2[cur + i], arr2[cur] + abs(arr[cur] - arr[cur + i]));\n        }\n    }\n    return arr2[n];\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", iterative_func(n - 1));\n    return 0;\n}')"
+
+2025-01-26 00:07:32,763	[INFO]	Step: 45
+2025-01-26 00:07:32,763	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,143	[DEBUG]	EXEC>  SUCCESS 10603479.125
+2025-01-26 00:07:33,144	[INFO]	5-6     SUCCESS               10603479.12 (88.42%) [1 edit(s)]  
+2025-01-26 00:07:33,144	[DEBUG]	patch(5-6)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        ll diff = abs(arr[cur] - arr[cur + i]);\n        sum = min(sum, func(n, cur + i) + diff);\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}')"
+2025-01-26 00:07:33,144	[INFO]	Step: 46
+2025-01-26 00:07:33,144	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,229	[INFO]	5-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:07:33,229	[DEBUG]	patch(5-7)="LineLLMCrossover(('source.cpp', 16), '#include <cstdio>')"
+2025-01-26 00:07:33,229	[INFO]	Step: 47
+2025-01-26 00:07:33,229	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,317	[INFO]	5-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:07:33,317	[DEBUG]	patch(5-8)="LineLLMCrossover(('source.cpp', 17), '#include <cstdio>')"
+2025-01-26 00:07:33,317	[INFO]	Step: 48
+2025-01-26 00:07:33,317	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,402	[INFO]	5-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:07:33,402	[DEBUG]	patch(5-9)="LineLLMCrossover(('source.cpp', 18), '#include <cstdio>')"
+2025-01-26 00:07:33,402	[INFO]	Step: 49
+2025-01-26 00:07:33,402	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,486	[INFO]	5-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 00:07:33,486	[DEBUG]	patch(5-10)="LineLLMCrossover(('source.cpp', 19), '#include <cstdio>')"
+2025-01-26 00:07:33,486	[INFO]	Step: 50
+2025-01-26 00:07:33,486	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,486	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 00:07:33,486	[INFO]	Step: 50
+2025-01-26 00:07:33,486	[INFO]	Stop Steps: 50
+2025-01-26 00:07:33,648	[INFO]	~~~~ END ~~~~
+2025-01-26 00:07:33,649	[INFO]	Best patch step: 44
+2025-01-26 00:07:33,649	[INFO]	
+2025-01-26 00:07:33,649	[INFO]	==== REPORT ====
+2025-01-26 00:07:33,649	[INFO]	Termination: step budget
+2025-01-26 00:07:33,649	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0018_1737849853.log
+2025-01-26 00:07:33,649	[INFO]	Patch file: _magpie_logs/0018_1737849853.patch
+2025-01-26 00:07:33,649	[INFO]	Diff file: _magpie_logs/0018_1737849853.diff
+2025-01-26 00:07:33,649	[INFO]	Reference fitness: 11992506.81
+2025-01-26 00:07:33,649	[INFO]	Best fitness: 9123542.19
+2025-01-26 00:07:33,649	[INFO]	
+2025-01-26 00:07:33,649	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll func(ll n, ll cur) {\n    if (cur == n) return 0;\n    if (cur > n) return inf;\n    if (arr2[cur] != -1) return arr2[cur];\n\n    ll sum = inf;\n    for (ll i = 1; i <= k2; ++i) {\n        sum = min(sum, func(n, cur + i) + abs(arr[cur] - arr[cur + i]));\n    }\n    return arr2[cur] = sum;\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    fill(arr2, arr2 + 1000000, -1);\n    printf("%lld\\n", func(n - 1, 0));\n    return 0;\n}') + LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\n#define ll long long int\n#define inf 1000000000000000001\n\nll k2;\nll arr[1000000];\nll arr2[1000000];\n\nll iterative_func(ll n) {\n    fill(arr2, arr2 + 1000000, inf);\n    arr2[0] = 0;\n\n    for (ll cur = 0; cur < n; ++cur) {\n        for (ll i = 1; i <= k2 && cur + i <= n; ++i) {\n            arr2[cur + i] = min(arr2[cur + i], arr2[cur] + abs(arr[cur] - arr[cur + i]));\n        }\n    }\n    return arr2[n];\n}\n\nint main() {\n    ll n;\n    scanf("%lld%lld", &n, &k2);\n    for (ll i = 0; i < n; ++i) {\n        scanf("%lld", &arr[i]);\n    }\n    printf("%lld\\n", iterative_func(n - 1));\n    return 0;\n}')
+2025-01-26 00:07:33,650	[INFO]	
+2025-01-26 00:07:33,650	[INFO]	==== DIFF ====
+

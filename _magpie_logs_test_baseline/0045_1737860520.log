@@ -1,0 +1,422 @@
+2025-01-26 03:02:00,704	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 3753641190786863
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0045
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 03:02:00,705	[DEBUG]	
+2025-01-26 03:02:00,705	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 03:02:00,705	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 03:02:01,805	[DEBUG]	EXEC>  SUCCESS 2359495.5625
+2025-01-26 03:02:01,807	[INFO]	WARM    SUCCESS               2359495.56 (--) [0 edit(s)]  
+2025-01-26 03:02:02,542	[DEBUG]	EXEC>  SUCCESS 2354517.625
+2025-01-26 03:02:02,542	[INFO]	WARM    SUCCESS               2354517.62 (--) [0 edit(s)]  
+2025-01-26 03:02:03,280	[DEBUG]	EXEC>  SUCCESS 2349438.625
+2025-01-26 03:02:03,280	[INFO]	WARM    SUCCESS               2349438.62 (--) [0 edit(s)]  
+2025-01-26 03:02:04,003	[DEBUG]	EXEC>  SUCCESS 2341154.625
+2025-01-26 03:02:04,003	[INFO]	WARM    SUCCESS               2341154.62 (--) [0 edit(s)]  
+2025-01-26 03:02:04,743	[DEBUG]	EXEC>  SUCCESS 2353336.1875
+2025-01-26 03:02:04,744	[INFO]	WARM    SUCCESS               2353336.19 (--) [0 edit(s)]  
+2025-01-26 03:02:04,744	[INFO]	REF     SUCCESS               2353336.19 (--) [0 edit(s)]  
+2025-01-26 03:02:04,744	[INFO]	
+2025-01-26 03:02:04,744	[INFO]	~~~~ START ~~~~
+2025-01-26 03:02:48,925	[DEBUG]	EXEC>  SUCCESS 2339403.0
+2025-01-26 03:02:48,925	[INFO]	0-1     SUCCESS              *2339403.00 (99.41%) [1 edit(s)]  
+2025-01-26 03:02:48,925	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    cin >> n;\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:02:50,387	[DEBUG]	EXEC>  SUCCESS 2379096.875
+2025-01-26 03:02:50,387	[INFO]	0-2     SUCCESS               2379096.88 (101.09%) [1 edit(s)]  
+2025-01-26 03:02:50,387	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:02:51,858	[DEBUG]	EXEC>  SUCCESS 2384148.9375
+2025-01-26 03:02:51,858	[INFO]	0-3     SUCCESS               2384148.94 (101.31%) [1 edit(s)]  
+2025-01-26 03:02:51,858	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:02:53,320	[DEBUG]	EXEC>  SUCCESS 2387954.25
+2025-01-26 03:02:53,320	[INFO]	0-4     SUCCESS               2387954.25 (101.47%) [1 edit(s)]  
+2025-01-26 03:02:53,320	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:02:54,802	[DEBUG]	EXEC>  SUCCESS 2342716.5
+2025-01-26 03:02:54,803	[INFO]	0-5     SUCCESS               2342716.50 (99.55%) [1 edit(s)]  
+2025-01-26 03:02:54,803	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:02:56,277	[DEBUG]	EXEC>  SUCCESS 2340038.0
+2025-01-26 03:02:56,277	[INFO]	0-6     SUCCESS               2340038.00 (99.43%) [1 edit(s)]  
+2025-01-26 03:02:56,277	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        bool valid = true;\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (valid && (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:02:57,749	[DEBUG]	EXEC>  SUCCESS 2390874.125
+2025-01-26 03:02:57,749	[INFO]	0-7     SUCCESS               2390874.12 (101.60%) [1 edit(s)]  
+2025-01-26 03:02:57,749	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:02:59,217	[DEBUG]	EXEC>  SUCCESS 2391020.125
+2025-01-26 03:02:59,217	[INFO]	0-8     SUCCESS               2391020.12 (101.60%) [1 edit(s)]  
+2025-01-26 03:02:59,217	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:03:00,686	[DEBUG]	EXEC>  SUCCESS 2386741.5
+2025-01-26 03:03:00,686	[INFO]	0-9     SUCCESS               2386741.50 (101.42%) [1 edit(s)]  
+2025-01-26 03:03:00,687	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:03:02,150	[DEBUG]	EXEC>  SUCCESS 2356977.5
+2025-01-26 03:03:02,150	[INFO]	0-10    SUCCESS               2356977.50 (100.15%) [1 edit(s)]  
+2025-01-26 03:03:02,150	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:03:03,151	[INFO]	Step: 10
+2025-01-26 03:03:03,151	[INFO]	Stop Steps: 50
+2025-01-26 03:03:04,893	[DEBUG]	EXEC>  SUCCESS 2346480.125
+2025-01-26 03:03:04,893	[INFO]	REF     SUCCESS               2346480.12 (--) [0 edit(s)]  
+2025-01-26 03:03:04,893	[INFO]	Best patch: 0
+2025-01-26 03:03:05,340	[DEBUG]	EXEC>  SUCCESS 2413552.4375
+2025-01-26 03:03:05,340	[INFO]	BEST    SUCCESS               2413552.44 (102.86%) [0 edit(s)]  
+2025-01-26 03:03:05,340	[INFO]	Best patch step: 0
+2025-01-26 03:04:06,973	[INFO]	Step: 10
+2025-01-26 03:04:06,973	[INFO]	Stop Steps: 50
+2025-01-26 03:04:07,542	[DEBUG]	EXEC>  SUCCESS 2339358.25
+2025-01-26 03:04:07,542	[INFO]	1-1     SUCCESS              *2339358.25 (99.70%) [1 edit(s)]  
+2025-01-26 03:04:07,542	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    cin >> n;\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:04:07,542	[INFO]	Step: 11
+2025-01-26 03:04:07,542	[INFO]	Stop Steps: 50
+2025-01-26 03:04:07,998	[DEBUG]	EXEC>  SUCCESS 2357848.0625
+2025-01-26 03:04:07,999	[INFO]	1-2     SUCCESS               2357848.06 (100.48%) [1 edit(s)]  
+2025-01-26 03:04:07,999	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        bool valid = true;\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (valid && (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:07,999	[INFO]	Step: 12
+2025-01-26 03:04:07,999	[INFO]	Stop Steps: 50
+2025-01-26 03:04:08,443	[DEBUG]	EXEC>  SUCCESS 2330571.1875
+2025-01-26 03:04:08,443	[INFO]	1-3     SUCCESS              *2330571.19 (99.32%) [1 edit(s)]  
+2025-01-26 03:04:08,443	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:04:08,443	[INFO]	Step: 13
+2025-01-26 03:04:08,443	[INFO]	Stop Steps: 50
+2025-01-26 03:04:08,906	[DEBUG]	EXEC>  SUCCESS 2342685.9375
+2025-01-26 03:04:08,906	[INFO]	1-4     SUCCESS               2342685.94 (99.84%) [1 edit(s)]  
+2025-01-26 03:04:08,907	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, r = 0, g = 0, b = 0, ans = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:08,907	[INFO]	Step: 14
+2025-01-26 03:04:08,907	[INFO]	Stop Steps: 50
+2025-01-26 03:04:09,358	[DEBUG]	EXEC>  SUCCESS 2328346.9375
+2025-01-26 03:04:09,359	[INFO]	1-5     SUCCESS              *2328346.94 (99.23%) [1 edit(s)]  
+2025-01-26 03:04:09,359	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:04:09,359	[INFO]	Step: 15
+2025-01-26 03:04:09,359	[INFO]	Stop Steps: 50
+2025-01-26 03:04:09,821	[DEBUG]	EXEC>  SUCCESS 2332624.875
+2025-01-26 03:04:09,821	[INFO]	1-6     SUCCESS               2332624.88 (99.41%) [1 edit(s)]  
+2025-01-26 03:04:09,821	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:09,821	[INFO]	Step: 16
+2025-01-26 03:04:09,821	[INFO]	Stop Steps: 50
+2025-01-26 03:04:10,119	[INFO]	1-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:04:10,119	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    cin >> n;\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    cin >> n;\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n / 3) { // Limit length to n/3 for distinct triples\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:10,119	[INFO]	Step: 17
+2025-01-26 03:04:10,119	[INFO]	Stop Steps: 50
+2025-01-26 03:04:10,429	[INFO]	1-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:04:10,429	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        bool valid = true;\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (valid && (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        int count = 0;\n        for (int j = 1; j <= n - 2 * len; j++) {\n            // Use a boolean array to track colors in the current segment\n            bool color[3] = {false, false, false}; // R, G, B\n            color[s[j] == \'R\'] = true;\n            color[s[j] == \'G\'] = true;\n            color[s[j] == \'B\'] = true;\n            color[s[j + len] == \'R\'] = true;\n            color[s[j + len] == \'G\'] = true;\n            color[s[j + len] == \'B\'] = true;\n            color[s[j + 2 * len] == \'R\'] = true;\n            color[s[j + 2 * len] == \'G\'] = true;\n            color[s[j + 2 * len] == \'B\'] = true;\n\n            // If all colors are present, do not decrement ans\n            if (color[0] && color[1] && color[2]) {\n                count++;\n            }\n        }\n        ans -= (n - 2 * len + 1 - count);\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:10,429	[INFO]	Step: 18
+2025-01-26 03:04:10,429	[INFO]	Stop Steps: 50
+2025-01-26 03:04:10,735	[INFO]	1-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:04:10,735	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n / 3; len++) { // Limit length to n / 3\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:10,735	[INFO]	Step: 19
+2025-01-26 03:04:10,735	[INFO]	Stop Steps: 50
+2025-01-26 03:04:11,035	[INFO]	1-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:04:11,035	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    // Optimize the nested loops by using a single pass with a sliding window approach\n    for (int len = 1; len <= n / 3; len++) { // Reduce the upper limit for len\n        for (int j = 1; j <= n - 2 * len; j++) {\n            // Directly compare using a single condition\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:11,035	[INFO]	Step: 20
+2025-01-26 03:04:11,035	[INFO]	Stop Steps: 50
+2025-01-26 03:04:11,880	[DEBUG]	EXEC>  SUCCESS 2335064.75
+2025-01-26 03:04:11,880	[INFO]	1-1     SUCCESS               2335064.75 (99.51%) [1 edit(s)]  
+2025-01-26 03:04:11,880	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include"stdc++.h"\n\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n\n#define per(i,a,n) for(int i=n;i>=a;i--)\n\n#define pb push_back\n\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\ntypedef pair<int,int> pii;\n\ntypedef double db;\n\nll n,ans,r,g,b;\n\nchar s[4010];\n\nint main(){\n\n    cin>>n;\n\n    scanf("%s",s+1);\n\n    rep(i,1,n){\n\n        if(s[i]==\'R\')\tr++;\n\n        if(s[i]==\'G\')\tg++;\n\n        if(s[i]==\'B\')\tb++;\n\n    }\n\n    ans=r*g*b;\n\n    rep(len,1,n){\n\n        rep(j,1,n-2*len){\n\n            if(s[j]!=s[j+len]&&s[j]!=s[j+2*len]&&s[j+len]!=s[j+2*len])\n\n                ans--;\n\n        }\n\n    }\n\n    printf("%lld\\n",ans);\n\n    return 0;\n\n}')"
+2025-01-26 03:04:11,880	[INFO]	Step: 21
+2025-01-26 03:04:11,880	[INFO]	Stop Steps: 50
+2025-01-26 03:04:13,610	[DEBUG]	EXEC>  SUCCESS 2337385.5
+2025-01-26 03:04:13,610	[INFO]	REF     SUCCESS               2337385.50 (--) [0 edit(s)]  
+2025-01-26 03:04:13,610	[INFO]	Best patch: 2
+2025-01-26 03:04:14,061	[DEBUG]	EXEC>  SUCCESS 2332803.5625
+2025-01-26 03:04:14,061	[INFO]	BEST    SUCCESS              *2332803.56 (99.80%) [0 edit(s)]  
+2025-01-26 03:04:14,061	[INFO]	Best patch step: 14
+2025-01-26 03:04:57,079	[INFO]	Step: 21
+2025-01-26 03:04:57,079	[INFO]	Stop Steps: 50
+2025-01-26 03:04:57,676	[DEBUG]	EXEC>  SUCCESS 2344218.25
+2025-01-26 03:04:57,676	[INFO]	2-2     SUCCESS              +2344218.25 (100.29%) [1 edit(s)]  
+2025-01-26 03:04:57,676	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:57,676	[INFO]	Step: 22
+2025-01-26 03:04:57,676	[INFO]	Stop Steps: 50
+2025-01-26 03:04:58,150	[DEBUG]	EXEC>  SUCCESS 2353091.4375
+2025-01-26 03:04:58,150	[INFO]	2-3     SUCCESS               2353091.44 (100.67%) [1 edit(s)]  
+2025-01-26 03:04:58,150	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:58,150	[INFO]	Step: 23
+2025-01-26 03:04:58,150	[INFO]	Stop Steps: 50
+2025-01-26 03:04:58,617	[DEBUG]	EXEC>  SUCCESS 2343538.5625
+2025-01-26 03:04:58,617	[INFO]	2-4     SUCCESS              +2343538.56 (100.26%) [1 edit(s)]  
+2025-01-26 03:04:58,618	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:58,618	[INFO]	Step: 24
+2025-01-26 03:04:58,618	[INFO]	Stop Steps: 50
+2025-01-26 03:04:59,086	[DEBUG]	EXEC>  SUCCESS 2339634.375
+2025-01-26 03:04:59,087	[INFO]	2-5     SUCCESS              +2339634.38 (100.10%) [1 edit(s)]  
+2025-01-26 03:04:59,087	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:59,087	[INFO]	Step: 25
+2025-01-26 03:04:59,087	[INFO]	Stop Steps: 50
+2025-01-26 03:04:59,552	[DEBUG]	EXEC>  SUCCESS 2363403.6875
+2025-01-26 03:04:59,552	[INFO]	2-6     SUCCESS               2363403.69 (101.11%) [1 edit(s)]  
+2025-01-26 03:04:59,553	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:04:59,553	[INFO]	Step: 26
+2025-01-26 03:04:59,553	[INFO]	Stop Steps: 50
+2025-01-26 03:05:00,026	[DEBUG]	EXEC>  SUCCESS 2380475.8125
+2025-01-26 03:05:00,026	[INFO]	2-7     SUCCESS               2380475.81 (101.84%) [1 edit(s)]  
+2025-01-26 03:05:00,027	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    rep(i, 1, n) {\n        if(s[i] == \'R\') r++;\n        else if(s[i] == \'G\') g++;\n        else if(s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:05:00,027	[INFO]	Step: 27
+2025-01-26 03:05:00,027	[INFO]	Stop Steps: 50
+2025-01-26 03:05:00,493	[DEBUG]	EXEC>  SUCCESS 2320178.5
+2025-01-26 03:05:00,493	[INFO]	2-8     SUCCESS              *2320178.50 (99.26%) [2 edit(s)]  
+2025-01-26 03:05:00,493	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimize the inner loop by using a single pass to count valid triplets\n    for (int len = 1; len <= n; len++) {\n        int count = 0; // Count valid triplet starts\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                count++;\n            }\n        }\n        ans -= count; // Reduce the total based on counted valid triplets\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:05:00,493	[INFO]	Step: 28
+2025-01-26 03:05:00,493	[INFO]	Stop Steps: 50
+2025-01-26 03:05:00,801	[INFO]	2-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:05:00,801	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    // Optimize the nested loop by using a single loop and a count array\n    int count[3] = {0}; // count[0] for R, count[1] for G, count[2] for B\n    for (int j = 1; j <= n; ++j) {\n        int color = (s[j] == \'R\') ? 0 : (s[j] == \'G\') ? 1 : 2; // Assign colors to integer values\n        count[color]++;\n        // Adjust ans directly instead of checking all combinations\n        ans -= count[0] * count[1] * count[2] - (color == 0 ? count[1] * count[2] : (color == 1 ? count[0] * count[2] : count[0] * count[1]));\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:05:00,801	[INFO]	Step: 29
+2025-01-26 03:05:00,802	[INFO]	Stop Steps: 50
+2025-01-26 03:05:01,117	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:05:01,117	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimize the loop by reducing the number of checks\n    for (int len = 1; len <= n / 3; len++) { // Adjusted to n/3 to prevent overflow\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:05:01,117	[INFO]	Step: 30
+2025-01-26 03:05:01,117	[INFO]	Stop Steps: 50
+2025-01-26 03:05:01,287	[INFO]	2-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:05:01,287	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 14), '#include"stdc++.h"\n\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n\n#define per(i,a,n) for(int i=n;i>=a;i--)\n\n#define pb push_back\n\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\ntypedef pair<int,int> pii;\n\ntypedef double db;\n\nll n,ans,r,g,b;\n\nchar s[4010];\n\nint main(){\n\n    cin>>n;\n\n    scanf("%s",s+1);\n\n    rep(i,1,n){\n\n        if(s[i]==\'R\')\tr++;\n\n        if(s[i]==\'G\')\tg++;\n\n        if(s[i]==\'B\')\tb++;\n\n    }\n\n    ans=r*g*b;\n\n    rep(len,1,n){\n\n        rep(j,1,n-2*len){\n\n            if(s[j]!=s[j+len]&&s[j]!=s[j+2*len]&&s[j+len]!=s[j+2*len])\n\n                ans--;\n\n        }\n\n    }\n\n    printf("%lld\\n",ans);\n\n    return 0;\n\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n); // Using scanf for faster input\n    scanf("%s", s + 1);\n\n    // Using a single loop to count colors\n    for (int i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b;\n\n    // Optimize the loop to check for triplets\n    for (int len = 1; len <= n / 3; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                ans--;\n            }\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:05:01,287	[INFO]	Step: 31
+2025-01-26 03:05:01,287	[INFO]	Stop Steps: 50
+2025-01-26 03:05:02,022	[DEBUG]	EXEC>  SUCCESS 2378310.125
+2025-01-26 03:05:02,022	[INFO]	2-2     SUCCESS               2378310.12 (101.75%) [1 edit(s)]  
+2025-01-26 03:05:02,022	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include"stdc++.h"\n\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n\n#define per(i,a,n) for(int i=n;i>=a;i--)\n\n#define pb push_back\n\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\ntypedef pair<int,int> pii;\n\ntypedef double db;\n\nll n,ans,r,g,b;\n\nchar s[4010];\n\nint main(){\n\n\tcin>>n;\n\n\tscanf("%s",s+1);\n\n\trep(i,1,n){\n\n\t\tif(s[i]==\'R\')\tr++;\n\n\t\tif(s[i]==\'G\')\tg++;\n\n\t\tif(s[i]==\'B\')\tb++;\n\n\t}\n\n\tans=r*g*b;\n\n\trep(len,1,n){\n\n\t\trep(j,1,n-2*len){\n\n\t\t\tif(s[j]!=s[j+len]&&s[j]!=s[j+2*len]&&s[j+len]!=s[j+2*len])\n\n\t\t\t\tans--;\n\n\t\t}\n\n\t}\n\n\tprintf("%lld\\n",ans);\n\n\treturn 0;\n\n}')"
+2025-01-26 03:05:02,022	[INFO]	Step: 32
+2025-01-26 03:05:02,022	[INFO]	Stop Steps: 50
+2025-01-26 03:05:03,765	[DEBUG]	EXEC>  SUCCESS 2411487.75
+2025-01-26 03:05:03,765	[INFO]	REF     SUCCESS               2411487.75 (--) [0 edit(s)]  
+2025-01-26 03:05:03,765	[INFO]	Best patch: 2_15
+2025-01-26 03:05:04,223	[DEBUG]	EXEC>  SUCCESS 2339511.1875
+2025-01-26 03:05:04,223	[INFO]	BEST    SUCCESS              *2339511.19 (97.02%) [0 edit(s)]  
+2025-01-26 03:05:04,223	[INFO]	Best patch step: 27
+2025-01-26 03:06:06,769	[INFO]	Step: 32
+2025-01-26 03:06:06,770	[INFO]	Stop Steps: 50
+2025-01-26 03:06:07,362	[DEBUG]	EXEC>  SUCCESS 2374690.0625
+2025-01-26 03:06:07,363	[INFO]	3-3     SUCCESS              +2374690.06 (98.47%) [2 edit(s)]  
+2025-01-26 03:06:07,363	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimize the inner loop by using a single pass to count valid triplets\n    for (int len = 1; len <= n; len++) {\n        int count = 0; // Count valid triplet starts\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                count++;\n            }\n        }\n        ans -= count; // Reduce the total based on counted valid triplets\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:07,363	[INFO]	Step: 33
+2025-01-26 03:06:07,363	[INFO]	Stop Steps: 50
+2025-01-26 03:06:07,841	[DEBUG]	EXEC>  SUCCESS 2453041.625
+2025-01-26 03:06:07,841	[INFO]	3-4     SUCCESS               2453041.62 (101.72%) [1 edit(s)]  
+2025-01-26 03:06:07,842	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:07,842	[INFO]	Step: 34
+2025-01-26 03:06:07,842	[INFO]	Stop Steps: 50
+2025-01-26 03:06:08,315	[DEBUG]	EXEC>  SUCCESS 2348630.5625
+2025-01-26 03:06:08,315	[INFO]	3-5     SUCCESS              +2348630.56 (97.39%) [1 edit(s)]  
+2025-01-26 03:06:08,315	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:08,315	[INFO]	Step: 35
+2025-01-26 03:06:08,316	[INFO]	Stop Steps: 50
+2025-01-26 03:06:08,780	[DEBUG]	EXEC>  SUCCESS 2390423.5625
+2025-01-26 03:06:08,781	[INFO]	3-6     SUCCESS               2390423.56 (99.13%) [1 edit(s)]  
+2025-01-26 03:06:08,781	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:08,781	[INFO]	Step: 36
+2025-01-26 03:06:08,781	[INFO]	Stop Steps: 50
+2025-01-26 03:06:09,246	[DEBUG]	EXEC>  SUCCESS 2339073.1875
+2025-01-26 03:06:09,246	[INFO]	3-7     SUCCESS              *2339073.19 (97.00%) [1 edit(s)]  
+2025-01-26 03:06:09,246	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:06:09,246	[INFO]	Step: 37
+2025-01-26 03:06:09,246	[INFO]	Stop Steps: 50
+2025-01-26 03:06:09,719	[DEBUG]	EXEC>  SUCCESS 2384561.8125
+2025-01-26 03:06:09,719	[INFO]	3-8     SUCCESS               2384561.81 (98.88%) [1 edit(s)]  
+2025-01-26 03:06:09,719	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:09,719	[INFO]	Step: 38
+2025-01-26 03:06:09,719	[INFO]	Stop Steps: 50
+2025-01-26 03:06:10,187	[DEBUG]	EXEC>  SUCCESS 2374648.8125
+2025-01-26 03:06:10,187	[INFO]	3-9     SUCCESS               2374648.81 (98.47%) [3 edit(s)]  
+2025-01-26 03:06:10,187	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimize the inner loop by using a single pass to count valid triplets\n    for (int len = 1; len <= n; len++) {\n        int count = 0; // Count valid triplet starts\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                count++;\n            }\n        }\n        ans -= count; // Reduce the total based on counted valid triplets\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimize the counting of valid triplets with a single pass\n    int count = 0;\n    for (int j = 1; j <= n; j++) {\n        for (int len = 1; len <= (n - j) / 2; len++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                count++;\n            }\n        }\n    }\n    ans -= count; // Reduce the total based on counted valid triplets\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:10,187	[INFO]	Step: 39
+2025-01-26 03:06:10,187	[INFO]	Stop Steps: 50
+2025-01-26 03:06:10,503	[INFO]	3-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:06:10,503	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        bool foundDifferent = false; // Early exit flag\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) {\n                ans--;\n                foundDifferent = true; // Set the flag if a different combination is found\n            }\n        }\n        if (foundDifferent) break; // Exit the loop early if any different combination was found\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:10,503	[INFO]	Step: 40
+2025-01-26 03:06:10,503	[INFO]	Stop Steps: 50
+2025-01-26 03:06:10,819	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:06:10,819	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimize the nested loop by changing the inner loop\'s range\n    for (int len = 1; len <= n / 3; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:10,819	[INFO]	Step: 41
+2025-01-26 03:06:10,819	[INFO]	Stop Steps: 50
+2025-01-26 03:06:11,146	[INFO]	3-2     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 03:06:11,146	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    char s[4010];\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    // Optimized counting of invalid triplets in a single pass\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') {\n            for (int j = i + 1; j <= n; j++) {\n                if (s[j] == \'G\') {\n                    for (int k = j + 1; k <= n; k++) {\n                        if (s[k] == \'B\') {\n                            ans--;\n                        }\n                    }\n                }\n            }\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:11,146	[INFO]	Step: 42
+2025-01-26 03:06:11,146	[INFO]	Stop Steps: 50
+2025-01-26 03:06:11,608	[DEBUG]	EXEC>  SUCCESS 2400224.25
+2025-01-26 03:06:11,608	[INFO]	3-3     SUCCESS               2400224.25 (99.53%) [1 edit(s)]  
+2025-01-26 03:06:11,608	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <iostream>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    cin >> n;\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:11,608	[INFO]	Step: 43
+2025-01-26 03:06:11,609	[INFO]	Stop Steps: 50
+2025-01-26 03:06:12,058	[DEBUG]	EXEC>  SUCCESS 2326685.0625
+2025-01-26 03:06:12,058	[INFO]	3-4     SUCCESS              *2326685.06 (96.48%) [1 edit(s)]  
+2025-01-26 03:06:12,058	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 25), '#include <iostream>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:06:12,058	[INFO]	Step: 44
+2025-01-26 03:06:12,058	[INFO]	Stop Steps: 50
+2025-01-26 03:06:12,360	[INFO]	3-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 03:06:12,360	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), '#include <iostream>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n    rep(len, 1, n) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (s[j] != s[j + len] && s[j + len] != s[j + 2 * len]) {\n                ans--;\n            }\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:06:12,360	[INFO]	Step: 45
+2025-01-26 03:06:12,360	[INFO]	Stop Steps: 50
+2025-01-26 03:06:14,106	[DEBUG]	EXEC>  SUCCESS 2347251.9375
+2025-01-26 03:06:14,107	[INFO]	REF     SUCCESS               2347251.94 (--) [0 edit(s)]  
+2025-01-26 03:06:14,107	[INFO]	Best patch: 25
+2025-01-26 03:06:14,564	[DEBUG]	EXEC>  SUCCESS 2410129.875
+2025-01-26 03:06:14,564	[INFO]	BEST    SUCCESS               2410129.88 (102.68%) [0 edit(s)]  
+2025-01-26 03:06:14,564	[INFO]	Best patch step: 43
+2025-01-26 03:07:05,621	[INFO]	Step: 45
+2025-01-26 03:07:05,621	[INFO]	Stop Steps: 50
+2025-01-26 03:07:06,192	[DEBUG]	EXEC>  SUCCESS 2340387.4375
+2025-01-26 03:07:06,192	[INFO]	4-6     SUCCESS              *2340387.44 (99.71%) [1 edit(s)]  
+2025-01-26 03:07:06,192	[DEBUG]	patch(4-6)="LineLLMMutation(('source.cpp', 25), '#include <iostream>\n#include <cstring>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define per(i,a,n) for(int i=n;i>=a;i--)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\ntypedef pair<int,int> pii;\ntypedef double db;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n    rep(len, 1, n) {\n        rep(j, 1, n - 2 * len) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n                ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:07:06,192	[INFO]	Step: 46
+2025-01-26 03:07:06,192	[INFO]	Stop Steps: 50
+2025-01-26 03:07:06,656	[DEBUG]	EXEC>  SUCCESS 2319204.5
+2025-01-26 03:07:06,656	[INFO]	4-7     SUCCESS              *2319204.50 (98.81%) [1 edit(s)]  
+2025-01-26 03:07:06,656	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 10), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 03:07:06,656	[INFO]	Step: 47
+2025-01-26 03:07:06,656	[INFO]	Stop Steps: 50
+2025-01-26 03:07:07,143	[DEBUG]	EXEC>  SUCCESS 2339870.5
+2025-01-26 03:07:07,143	[INFO]	4-8     SUCCESS               2339870.50 (99.69%) [1 edit(s)]  
+2025-01-26 03:07:07,143	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 12), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    rep(i, 1, n) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    \n    ans = r * g * b;\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:07:07,143	[INFO]	Step: 48
+2025-01-26 03:07:07,143	[INFO]	Stop Steps: 50
+2025-01-26 03:07:07,608	[DEBUG]	EXEC>  SUCCESS 2343537.625
+2025-01-26 03:07:07,608	[INFO]	4-9     SUCCESS               2343537.62 (99.84%) [1 edit(s)]  
+2025-01-26 03:07:07,608	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 13), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    \n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    \n    ans = r * g * b;\n    int count = 0;\n    for (int j = 1; j <= n; j++) {\n        for (int len = 1; len <= (n - j) / 2; len++) {\n            if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n                count++;\n            }\n        }\n    }\n    ans -= count;\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:07:07,608	[INFO]	Step: 49
+2025-01-26 03:07:07,608	[INFO]	Stop Steps: 50
+2025-01-26 03:07:08,076	[DEBUG]	EXEC>  SUCCESS 2345802.9375
+2025-01-26 03:07:08,076	[INFO]	4-10    SUCCESS               2345802.94 (99.94%) [1 edit(s)]  
+2025-01-26 03:07:08,076	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 14), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n    \n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    rep(i, 1, n) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    \n    ans = r * g * b;\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 03:07:08,076	[INFO]	Step: 50
+2025-01-26 03:07:08,076	[INFO]	Stop Steps: 50
+2025-01-26 03:07:08,076	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 03:07:08,076	[INFO]	Step: 50
+2025-01-26 03:07:08,076	[INFO]	Stop Steps: 50
+2025-01-26 03:07:08,541	[INFO]	~~~~ END ~~~~
+2025-01-26 03:07:08,541	[INFO]	Best patch step: 46
+2025-01-26 03:07:08,541	[INFO]	
+2025-01-26 03:07:08,541	[INFO]	==== REPORT ====
+2025-01-26 03:07:08,541	[INFO]	Termination: step budget
+2025-01-26 03:07:08,541	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0045_1737860520.log
+2025-01-26 03:07:08,541	[INFO]	Patch file: _magpie_logs/0045_1737860520.patch
+2025-01-26 03:07:08,541	[INFO]	Diff file: _magpie_logs/0045_1737860520.diff
+2025-01-26 03:07:08,541	[INFO]	Reference fitness: 2347251.94
+2025-01-26 03:07:08,541	[INFO]	Best fitness: 2319204.50
+2025-01-26 03:07:08,541	[INFO]	
+2025-01-26 03:07:08,542	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 10), '#include <iostream>\n#include <cstdio>\nusing namespace std;\n\n#define rep(i,a,n) for(int i=a;i<=n;i++)\n#define pb push_back\n#define SZ(x) ((int)(x).size())\n\ntypedef long long ll;\nchar s[4010];\n\ninline bool different(int j, int len) {\n    return s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len];\n}\n\nint main() {\n    ll n, ans = 0, r = 0, g = 0, b = 0;\n\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    for (int i = 1; i <= n; i++) {\n        r += (s[i] == \'R\');\n        g += (s[i] == \'G\');\n        b += (s[i] == \'B\');\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n            if (different(j, len)) ans--;\n        }\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')
+2025-01-26 03:07:08,542	[INFO]	
+2025-01-26 03:07:08,542	[INFO]	==== DIFF ====
+

@@ -1,0 +1,420 @@
+2025-01-25 23:38:15,490	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6955317177808015
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0010
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-25 23:38:15,490	[DEBUG]	
+2025-01-25 23:38:15,490	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-25 23:38:15,490	[INFO]	~~~~ WARMUP ~~~~
+2025-01-25 23:38:16,306	[DEBUG]	EXEC>  SUCCESS 2335677.875
+2025-01-25 23:38:16,306	[INFO]	WARM    SUCCESS               2335677.88 (--) [0 edit(s)]  
+2025-01-25 23:38:16,871	[DEBUG]	EXEC>  SUCCESS 2342845.0
+2025-01-25 23:38:16,871	[INFO]	WARM    SUCCESS               2342845.00 (--) [0 edit(s)]  
+2025-01-25 23:38:17,442	[DEBUG]	EXEC>  SUCCESS 2369149.875
+2025-01-25 23:38:17,443	[INFO]	WARM    SUCCESS               2369149.88 (--) [0 edit(s)]  
+2025-01-25 23:38:18,008	[DEBUG]	EXEC>  SUCCESS 2346217.1875
+2025-01-25 23:38:18,008	[INFO]	WARM    SUCCESS               2346217.19 (--) [0 edit(s)]  
+2025-01-25 23:38:18,573	[DEBUG]	EXEC>  SUCCESS 2355052.0
+2025-01-25 23:38:18,573	[INFO]	WARM    SUCCESS               2355052.00 (--) [0 edit(s)]  
+2025-01-25 23:38:18,573	[INFO]	REF     SUCCESS               2355052.00 (--) [0 edit(s)]  
+2025-01-25 23:38:18,574	[INFO]	
+2025-01-25 23:38:18,574	[INFO]	~~~~ START ~~~~
+2025-01-25 23:38:42,543	[DEBUG]	EXEC>  SUCCESS 949986.875
+2025-01-25 23:38:42,543	[INFO]	0-1     SUCCESS              *949986.88 (40.34%) [1 edit(s)]  
+2025-01-25 23:38:42,543	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:38:43,824	[DEBUG]	EXEC>  SUCCESS 948582.875
+2025-01-25 23:38:43,824	[INFO]	0-2     SUCCESS              *948582.88 (40.28%) [1 edit(s)]  
+2025-01-25 23:38:43,825	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:39:14,963	[INFO]	0-3     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:39:14,964	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (a[i] > maxn) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:39:36,591	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-25 23:39:36,591	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%d", &a[i]);\n    }\n    int ans = 0;\n    while (true) {\n        int maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%d\\n", ans);\n}')"
+2025-01-25 23:40:07,768	[INFO]	0-5     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:40:07,768	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <array>\nusing namespace std;\n\nconst int N = 10000;\narray<long long, N> a;\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:40:38,920	[INFO]	0-6     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:40:38,921	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:41:10,074	[INFO]	0-7     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:41:10,074	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (a[i] > maxn) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        long long increment = maxn / n;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : increment;\n        }\n        ans += increment;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:41:41,225	[INFO]	0-8     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:41:41,225	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int maxIndex = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     maxIndex = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == maxIndex) ? maxn % n : maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:42:12,376	[INFO]	0-9     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:42:12,376	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nconst int MAX_SIZE = 10000;\nlong long a[MAX_SIZE];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:42:43,527	[INFO]	0-10    TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-01-25 23:42:43,527	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        long long increment = maxn / n;\n        for (int i = 1; i <= n; i++) {\n a[i] += (i == id) ? maxn % n : increment;\n        }\n        ans += increment;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:42:44,527	[INFO]	Step: 10
+2025-01-25 23:42:44,527	[INFO]	Stop Steps: 50
+2025-01-25 23:42:46,224	[DEBUG]	EXEC>  SUCCESS 2330740.9375
+2025-01-25 23:42:46,224	[INFO]	REF     SUCCESS               2330740.94 (--) [0 edit(s)]  
+2025-01-25 23:42:46,224	[INFO]	Best patch: 1
+2025-01-25 23:42:46,497	[DEBUG]	EXEC>  SUCCESS 965646.9375
+2025-01-25 23:42:46,497	[INFO]	BEST    SUCCESS              *965646.94 (41.43%) [0 edit(s)]  
+2025-01-25 23:42:46,497	[INFO]	Best patch step: 1
+2025-01-25 23:43:05,227	[INFO]	Step: 10
+2025-01-25 23:43:05,227	[INFO]	Stop Steps: 50
+2025-01-25 23:43:05,632	[DEBUG]	EXEC>  SUCCESS 959463.375
+2025-01-25 23:43:05,632	[INFO]	1-1     SUCCESS              *959463.38 (41.17%) [1 edit(s)]  
+2025-01-25 23:43:05,632	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:43:05,632	[INFO]	Step: 11
+2025-01-25 23:43:05,632	[INFO]	Stop Steps: 50
+2025-01-25 23:43:05,906	[DEBUG]	EXEC>  SUCCESS 949050.875
+2025-01-25 23:43:05,906	[INFO]	1-2     SUCCESS              *949050.88 (40.72%) [1 edit(s)]  
+2025-01-25 23:43:05,906	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:43:05,906	[INFO]	Step: 12
+2025-01-25 23:43:05,906	[INFO]	Stop Steps: 50
+2025-01-25 23:43:06,176	[DEBUG]	EXEC>  SUCCESS 949528.25
+2025-01-25 23:43:06,176	[INFO]	1-3     SUCCESS               949528.25 (40.74%) [1 edit(s)]  
+2025-01-25 23:43:06,176	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:06,176	[INFO]	Step: 13
+2025-01-25 23:43:06,176	[INFO]	Stop Steps: 50
+2025-01-25 23:43:06,449	[DEBUG]	EXEC>  SUCCESS 961322.25
+2025-01-25 23:43:06,449	[INFO]	1-4     SUCCESS               961322.25 (41.25%) [1 edit(s)]  
+2025-01-25 23:43:06,449	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:06,449	[INFO]	Step: 14
+2025-01-25 23:43:06,449	[INFO]	Stop Steps: 50
+2025-01-25 23:43:06,727	[DEBUG]	EXEC>  SUCCESS 954154.8125
+2025-01-25 23:43:06,728	[INFO]	1-5     SUCCESS               954154.81 (40.94%) [1 edit(s)]  
+2025-01-25 23:43:06,728	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:06,728	[INFO]	Step: 15
+2025-01-25 23:43:06,728	[INFO]	Stop Steps: 50
+2025-01-25 23:43:06,998	[DEBUG]	EXEC>  SUCCESS 964885.8125
+2025-01-25 23:43:06,998	[INFO]	1-6     SUCCESS               964885.81 (41.40%) [1 edit(s)]  
+2025-01-25 23:43:06,998	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:06,998	[INFO]	Step: 16
+2025-01-25 23:43:06,998	[INFO]	Stop Steps: 50
+2025-01-25 23:43:07,051	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:43:07,051	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 0; i < n; i++) {\n        scanf("%lld", &a[i]); // Changed index to start from 0\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[0];\n        int id = 0;\n        for (int i = 1; i < n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n break;\n        }\n        for (int i = 0; i < n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 920578.5625')"
+2025-01-25 23:43:07,051	[INFO]	Step: 17
+2025-01-25 23:43:07,051	[INFO]	Stop Steps: 50
+2025-01-25 23:43:07,102	[INFO]	1-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:43:07,103	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        long long div = maxn / n; // Precompute division\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += div; // Use precomputed value\n }\n        }\n        ans += div; // Use precomputed value\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 849140.0')"
+2025-01-25 23:43:07,103	[INFO]	Step: 18
+2025-01-25 23:43:07,103	[INFO]	Stop Steps: 50
+2025-01-25 23:43:08,689	[DEBUG]	EXEC>  SUCCESS 2360812.6875
+2025-01-25 23:43:08,690	[INFO]	REF     SUCCESS               2360812.69 (--) [0 edit(s)]  
+2025-01-25 23:43:08,690	[INFO]	Best patch: 0
+2025-01-25 23:43:08,960	[DEBUG]	EXEC>  SUCCESS 952045.8125
+2025-01-25 23:43:08,960	[INFO]	BEST    SUCCESS              *952045.81 (40.33%) [0 edit(s)]  
+2025-01-25 23:43:08,960	[INFO]	Best patch step: 11
+2025-01-25 23:43:55,030	[INFO]	Step: 18
+2025-01-25 23:43:55,030	[INFO]	Stop Steps: 50
+2025-01-25 23:43:55,428	[DEBUG]	EXEC>  SUCCESS 962261.3125
+2025-01-25 23:43:55,428	[INFO]	2-9     SUCCESS              +962261.31 (40.76%) [1 edit(s)]  
+2025-01-25 23:43:55,428	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:55,428	[INFO]	Step: 19
+2025-01-25 23:43:55,428	[INFO]	Stop Steps: 50
+2025-01-25 23:43:55,700	[DEBUG]	EXEC>  SUCCESS 953400.8125
+2025-01-25 23:43:55,700	[INFO]	2-10    SUCCESS              +953400.81 (40.38%) [1 edit(s)]  
+2025-01-25 23:43:55,700	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:55,700	[INFO]	Step: 20
+2025-01-25 23:43:55,700	[INFO]	Stop Steps: 50
+2025-01-25 23:43:55,972	[DEBUG]	EXEC>  SUCCESS 957588.3125
+2025-01-25 23:43:55,972	[INFO]	2-1     SUCCESS               957588.31 (40.56%) [1 edit(s)]  
+2025-01-25 23:43:55,972	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:55,972	[INFO]	Step: 21
+2025-01-25 23:43:55,972	[INFO]	Stop Steps: 50
+2025-01-25 23:43:56,243	[DEBUG]	EXEC>  SUCCESS 961838.3125
+2025-01-25 23:43:56,243	[INFO]	2-2     SUCCESS               961838.31 (40.74%) [1 edit(s)]  
+2025-01-25 23:43:56,243	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:56,243	[INFO]	Step: 22
+2025-01-25 23:43:56,243	[INFO]	Stop Steps: 50
+2025-01-25 23:43:56,520	[DEBUG]	EXEC>  SUCCESS 962867.0
+2025-01-25 23:43:56,520	[INFO]	2-3     SUCCESS               962867.00 (40.79%) [1 edit(s)]  
+2025-01-25 23:43:56,520	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:56,520	[INFO]	Step: 23
+2025-01-25 23:43:56,521	[INFO]	Stop Steps: 50
+2025-01-25 23:43:56,790	[DEBUG]	EXEC>  SUCCESS 949964.25
+2025-01-25 23:43:56,790	[INFO]	2-4     SUCCESS              *949964.25 (40.24%) [1 edit(s)]  
+2025-01-25 23:43:56,790	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:43:56,790	[INFO]	Step: 24
+2025-01-25 23:43:56,790	[INFO]	Stop Steps: 50
+2025-01-25 23:43:56,845	[INFO]	2-5     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:43:56,845	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        // Use a single pass to find the maximum and its index\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n\n        // Update the array in a single loop\n        long long maxDivN = maxn / n;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxDivN;\n }\n        }\n        ans += maxDivN;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 824237.0625')"
+2025-01-25 23:43:56,845	[INFO]	Step: 25
+2025-01-25 23:43:56,845	[INFO]	Stop Steps: 50
+2025-01-25 23:43:56,897	[INFO]	2-6     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:43:56,897	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 949528.25')"
+2025-01-25 23:43:56,897	[INFO]	Step: 26
+2025-01-25 23:43:56,897	[INFO]	Stop Steps: 50
+2025-01-25 23:43:56,950	[INFO]	2-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:43:56,950	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    scanf("%lld", &a[1]); // Read the first element separately for simplicity\n    for (int i = 2; i <= n; i++) {\n        scanf("%lld", &a[i]); // Continue reading the rest\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 924230.875')"
+2025-01-25 23:43:56,951	[INFO]	Step: 27
+2025-01-25 23:43:56,951	[INFO]	Stop Steps: 50
+2025-01-25 23:43:57,229	[DEBUG]	EXEC>  SUCCESS 959575.375
+2025-01-25 23:43:57,229	[INFO]	2-8     SUCCESS               959575.38 (40.65%) [2 edit(s)]  
+2025-01-25 23:43:57,230	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:43:57,230	[INFO]	Step: 28
+2025-01-25 23:43:57,230	[INFO]	Stop Steps: 50
+2025-01-25 23:43:58,816	[DEBUG]	EXEC>  SUCCESS 2367279.0625
+2025-01-25 23:43:58,816	[INFO]	REF     SUCCESS               2367279.06 (--) [0 edit(s)]  
+2025-01-25 23:43:58,816	[INFO]	Best patch: 7
+2025-01-25 23:43:59,092	[DEBUG]	EXEC>  SUCCESS 951872.5625
+2025-01-25 23:43:59,092	[INFO]	BEST    SUCCESS              *951872.56 (40.21%) [0 edit(s)]  
+2025-01-25 23:43:59,092	[INFO]	Best patch step: 23
+2025-01-25 23:44:48,288	[INFO]	Step: 28
+2025-01-25 23:44:48,288	[INFO]	Stop Steps: 50
+2025-01-25 23:44:48,697	[DEBUG]	EXEC>  SUCCESS 966638.5625
+2025-01-25 23:44:48,697	[INFO]	3-9     SUCCESS              +966638.56 (40.83%) [1 edit(s)]  
+2025-01-25 23:44:48,697	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:48,697	[INFO]	Step: 29
+2025-01-25 23:44:48,697	[INFO]	Stop Steps: 50
+2025-01-25 23:44:48,980	[DEBUG]	EXEC>  SUCCESS 954317.4375
+2025-01-25 23:44:48,980	[INFO]	3-10    SUCCESS              +954317.44 (40.31%) [1 edit(s)]  
+2025-01-25 23:44:48,980	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:48,980	[INFO]	Step: 30
+2025-01-25 23:44:48,980	[INFO]	Stop Steps: 50
+2025-01-25 23:44:49,262	[DEBUG]	EXEC>  SUCCESS 953002.875
+2025-01-25 23:44:49,263	[INFO]	3-1     SUCCESS              +953002.88 (40.26%) [1 edit(s)]  
+2025-01-25 23:44:49,263	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:49,263	[INFO]	Step: 31
+2025-01-25 23:44:49,263	[INFO]	Stop Steps: 50
+2025-01-25 23:44:49,547	[DEBUG]	EXEC>  SUCCESS 972901.8125
+2025-01-25 23:44:49,548	[INFO]	3-2     SUCCESS               972901.81 (41.10%) [1 edit(s)]  
+2025-01-25 23:44:49,548	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:49,548	[INFO]	Step: 32
+2025-01-25 23:44:49,548	[INFO]	Stop Steps: 50
+2025-01-25 23:44:49,846	[DEBUG]	EXEC>  SUCCESS 969405.5625
+2025-01-25 23:44:49,847	[INFO]	3-3     SUCCESS               969405.56 (40.95%) [1 edit(s)]  
+2025-01-25 23:44:49,847	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:49,847	[INFO]	Step: 33
+2025-01-25 23:44:49,847	[INFO]	Stop Steps: 50
+2025-01-25 23:44:50,130	[DEBUG]	EXEC>  SUCCESS 960419.4375
+2025-01-25 23:44:50,130	[INFO]	3-4     SUCCESS               960419.44 (40.57%) [1 edit(s)]  
+2025-01-25 23:44:50,131	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:50,131	[INFO]	Step: 34
+2025-01-25 23:44:50,131	[INFO]	Stop Steps: 50
+2025-01-25 23:44:50,298	[INFO]	3-5     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:44:50,298	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>')"
+2025-01-25 23:44:50,299	[INFO]	Step: 35
+2025-01-25 23:44:50,299	[INFO]	Stop Steps: 50
+2025-01-25 23:44:50,381	[INFO]	3-6     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:44:50,382	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        // Use a single pass to find the maximum value and its index\n        for (int i = 2; i <= n; i++) {\n if (a[i] > maxn) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        // Update the array in a single pass\n        long long factor = maxn / n;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += factor;\n }\n        }\n        ans += factor;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 761464.6875')"
+2025-01-25 23:44:50,382	[INFO]	Step: 36
+2025-01-25 23:44:50,382	[INFO]	Stop Steps: 50
+2025-01-25 23:44:50,668	[DEBUG]	EXEC>  SUCCESS 1018878.0
+2025-01-25 23:44:50,669	[INFO]	3-7     SUCCESS               1018878.00 (43.04%) [2 edit(s)]  
+2025-01-25 23:44:50,669	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break; // Exit condition\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:44:50,669	[INFO]	Step: 37
+2025-01-25 23:44:50,669	[INFO]	Stop Steps: 50
+2025-01-25 23:44:50,729	[INFO]	3-8     COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-01-25 23:44:50,729	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool running = true;\n    while (running) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) {\n running = false;\n break;\n        }\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    bool updated;\n\n    do {\n        long long maxn = a[1];\n        int id = 1;\n        updated = false;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n        updated = true;\n    } while (updated);\n    \n    printf("%lld\\n", ans);\n}\n\nFitness score: 911991.8125')"
+2025-01-25 23:44:50,729	[INFO]	Step: 38
+2025-01-25 23:44:50,729	[INFO]	Stop Steps: 50
+2025-01-25 23:44:52,337	[DEBUG]	EXEC>  SUCCESS 2360093.0
+2025-01-25 23:44:52,337	[INFO]	REF     SUCCESS               2360093.00 (--) [0 edit(s)]  
+2025-01-25 23:44:52,337	[INFO]	Best patch: 7
+2025-01-25 23:44:52,624	[DEBUG]	EXEC>  SUCCESS 984877.9375
+2025-01-25 23:44:52,624	[INFO]	BEST    SUCCESS              *984877.94 (41.73%) [0 edit(s)]  
+2025-01-25 23:44:52,624	[INFO]	Best patch step: 23
+2025-01-25 23:45:20,591	[INFO]	Step: 38
+2025-01-25 23:45:20,591	[INFO]	Stop Steps: 50
+2025-01-25 23:45:21,000	[DEBUG]	EXEC>  SUCCESS 962995.0
+2025-01-25 23:45:21,000	[INFO]	4-9     SUCCESS              *962995.00 (40.80%) [1 edit(s)]  
+2025-01-25 23:45:21,000	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:45:21,000	[INFO]	Step: 39
+2025-01-25 23:45:21,000	[INFO]	Stop Steps: 50
+2025-01-25 23:45:21,283	[DEBUG]	EXEC>  SUCCESS 970165.0
+2025-01-25 23:45:21,283	[INFO]	4-10    SUCCESS               970165.00 (41.11%) [1 edit(s)]  
+2025-01-25 23:45:21,283	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:45:21,283	[INFO]	Step: 40
+2025-01-25 23:45:21,283	[INFO]	Stop Steps: 50
+2025-01-25 23:45:21,560	[DEBUG]	EXEC>  SUCCESS 957341.1875
+2025-01-25 23:45:21,560	[INFO]	4-1     SUCCESS              *957341.19 (40.56%) [1 edit(s)]  
+2025-01-25 23:45:21,560	[DEBUG]	patch(4-1)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:45:21,560	[INFO]	Step: 41
+2025-01-25 23:45:21,560	[INFO]	Stop Steps: 50
+2025-01-25 23:45:21,839	[DEBUG]	EXEC>  SUCCESS 960907.3125
+2025-01-25 23:45:21,839	[INFO]	4-2     SUCCESS               960907.31 (40.71%) [1 edit(s)]  
+2025-01-25 23:45:21,839	[DEBUG]	patch(4-2)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:45:21,839	[INFO]	Step: 42
+2025-01-25 23:45:21,839	[INFO]	Stop Steps: 50
+2025-01-25 23:45:22,134	[DEBUG]	EXEC>  SUCCESS 1006439.375
+2025-01-25 23:45:22,134	[INFO]	4-3     SUCCESS               1006439.38 (42.64%) [1 edit(s)]  
+2025-01-25 23:45:22,134	[DEBUG]	patch(4-3)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:45:22,134	[INFO]	Step: 43
+2025-01-25 23:45:22,134	[INFO]	Stop Steps: 50
+2025-01-25 23:45:22,417	[DEBUG]	EXEC>  SUCCESS 961187.875
+2025-01-25 23:45:22,417	[INFO]	4-4     SUCCESS               961187.88 (40.73%) [1 edit(s)]  
+2025-01-25 23:45:22,417	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:45:22,417	[INFO]	Step: 44
+2025-01-25 23:45:22,418	[INFO]	Stop Steps: 50
+2025-01-25 23:45:22,477	[INFO]	4-5     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:45:22,478	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\nusing namespace std;\n\nlong long a[10001]; // Increased size to accommodate 1-based indexing\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        long long increment = maxn / n; // Calculate once\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + increment; // Use pre-calculated increment\n        }\n        ans += increment; // Add the increment directly\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 923631.375')"
+2025-01-25 23:45:22,478	[INFO]	Step: 45
+2025-01-25 23:45:22,478	[INFO]	Stop Steps: 50
+2025-01-25 23:45:22,533	[INFO]	4-6     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:45:22,534	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\nusing namespace std;\n\nlong long a[10001]; // Increased size to avoid out-of-bounds access\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]); // This line can be optimized\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 906512.3125')"
+2025-01-25 23:45:22,534	[INFO]	Step: 46
+2025-01-25 23:45:22,534	[INFO]	Stop Steps: 50
+2025-01-25 23:45:22,591	[INFO]	4-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:45:22,591	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n        if (a[i] > maxn) {\n            maxn = a[i];\n            id = i;\n        }\n        }\n        if (maxn <= n - 1) break;\n        long long div = maxn / n;\n        for (int i = 1; i <= n; i++) {\n        a[i] = (i == id) ? maxn % n : a[i] + div;\n        }\n        ans += div;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 910482.75')"
+2025-01-25 23:45:22,591	[INFO]	Step: 47
+2025-01-25 23:45:22,591	[INFO]	Stop Steps: 50
+2025-01-25 23:45:22,645	[INFO]	4-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-25 23:45:22,645	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    // Using a single scanf to read all values at once for better performance\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1)\n break;\n        for (int i = 1; i <= n; i++) {\n if (i == id) {\n     a[i] = maxn % n;\n } else {\n     a[i] += maxn / n;\n }\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}\n\nFitness score: 966638.5625')"
+2025-01-25 23:45:22,645	[INFO]	Step: 48
+2025-01-25 23:45:22,645	[INFO]	Stop Steps: 50
+2025-01-25 23:45:24,260	[DEBUG]	EXEC>  SUCCESS 2518553.75
+2025-01-25 23:45:24,261	[INFO]	REF     SUCCESS               2518553.75 (--) [0 edit(s)]  
+2025-01-25 23:45:24,261	[INFO]	Best patch: 12
+2025-01-25 23:45:24,541	[DEBUG]	EXEC>  SUCCESS 963324.875
+2025-01-25 23:45:24,541	[INFO]	BEST    SUCCESS              *963324.88 (38.25%) [0 edit(s)]  
+2025-01-25 23:45:24,541	[INFO]	Best patch step: 40
+2025-01-25 23:45:47,189	[INFO]	Step: 48
+2025-01-25 23:45:47,189	[INFO]	Stop Steps: 50
+2025-01-25 23:45:47,591	[DEBUG]	EXEC>  SUCCESS 974207.625
+2025-01-25 23:45:47,591	[INFO]	5-9     SUCCESS              +974207.62 (38.68%) [1 edit(s)]  
+2025-01-25 23:45:47,591	[DEBUG]	patch(5-9)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+2025-01-25 23:45:47,591	[INFO]	Step: 49
+2025-01-25 23:45:47,591	[INFO]	Stop Steps: 50
+2025-01-25 23:45:47,866	[DEBUG]	EXEC>  SUCCESS 963028.3125
+2025-01-25 23:45:47,867	[INFO]	5-10    SUCCESS              *963028.31 (38.24%) [1 edit(s)]  
+2025-01-25 23:45:47,867	[DEBUG]	patch(5-10)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')"
+
+2025-01-25 23:45:47,867	[INFO]	Step: 50
+2025-01-25 23:45:47,867	[INFO]	Stop Steps: 50
+2025-01-25 23:45:47,867	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-25 23:45:47,867	[INFO]	Step: 50
+2025-01-25 23:45:47,867	[INFO]	Stop Steps: 50
+2025-01-25 23:45:48,117	[INFO]	~~~~ END ~~~~
+2025-01-25 23:45:48,117	[INFO]	Best patch step: 49
+2025-01-25 23:45:48,117	[INFO]	
+2025-01-25 23:45:48,117	[INFO]	==== REPORT ====
+2025-01-25 23:45:48,117	[INFO]	Termination: step budget
+2025-01-25 23:45:48,117	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0010_1737848295.log
+2025-01-25 23:45:48,117	[INFO]	Patch file: _magpie_logs/0010_1737848295.patch
+2025-01-25 23:45:48,117	[INFO]	Diff file: _magpie_logs/0010_1737848295.diff
+2025-01-25 23:45:48,117	[INFO]	Reference fitness: 2518553.75
+2025-01-25 23:45:48,118	[INFO]	Best fitness: 963028.31
+2025-01-25 23:45:48,118	[INFO]	
+2025-01-25 23:45:48,118	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\nusing namespace std;\n\nlong long a[10000];\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    for (int i = 1; i <= n; i++) {\n        scanf("%lld", &a[i]);\n    }\n    long long ans = 0;\n    while (true) {\n        long long maxn = a[1];\n        int id = 1;\n        for (int i = 2; i <= n; i++) {\n if (maxn < a[i]) {\n     maxn = a[i];\n     id = i;\n }\n        }\n        if (maxn <= n - 1) break;\n        for (int i = 1; i <= n; i++) {\n a[i] = (i == id) ? maxn % n : a[i] + maxn / n;\n        }\n        ans += maxn / n;\n    }\n    printf("%lld\\n", ans);\n}')
+2025-01-25 23:45:48,118	[INFO]	
+2025-01-25 23:45:48,118	[INFO]	==== DIFF ====
+

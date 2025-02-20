@@ -114,6 +114,7 @@ number: literal_number""",
         "offspring_mutation": 0.4,
         "uniform_rate": 0.5,  # GeneticProgrammingUniformConcat and GeneticProgrammingUniformInter only
         "batch_reset": True,
+        "llm_type": "baseline",
     },
     # [search.minify] section
     "search.minify": {

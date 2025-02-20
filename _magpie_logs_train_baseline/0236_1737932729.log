@@ -1,0 +1,308 @@
+2025-01-26 23:05:29,446	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5291447552578320
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0236
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 23:05:29,446	[DEBUG]	
+2025-01-26 23:05:29,446	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 23:05:29,446	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 23:05:30,463	[DEBUG]	EXEC>  SUCCESS 2444954.75
+2025-01-26 23:05:30,463	[INFO]	WARM    SUCCESS               2444954.75 (--) [0 edit(s)]  
+2025-01-26 23:05:31,098	[DEBUG]	EXEC>  SUCCESS 2468732.3125
+2025-01-26 23:05:31,098	[INFO]	WARM    SUCCESS               2468732.31 (--) [0 edit(s)]  
+2025-01-26 23:05:31,743	[DEBUG]	EXEC>  SUCCESS 2449498.875
+2025-01-26 23:05:31,744	[INFO]	WARM    SUCCESS               2449498.88 (--) [0 edit(s)]  
+2025-01-26 23:05:32,381	[DEBUG]	EXEC>  SUCCESS 2471835.0625
+2025-01-26 23:05:32,381	[INFO]	WARM    SUCCESS               2471835.06 (--) [0 edit(s)]  
+2025-01-26 23:05:33,025	[DEBUG]	EXEC>  SUCCESS 2445030.25
+2025-01-26 23:05:33,025	[INFO]	WARM    SUCCESS               2445030.25 (--) [0 edit(s)]  
+2025-01-26 23:05:33,026	[INFO]	REF     SUCCESS               2445030.25 (--) [0 edit(s)]  
+2025-01-26 23:05:33,026	[INFO]	
+2025-01-26 23:05:33,026	[INFO]	~~~~ START ~~~~
+2025-01-26 23:07:08,762	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-26 23:07:08,762	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z + 0.0);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:10,322	[DEBUG]	EXEC>  SUCCESS 1117443.0
+2025-01-26 23:07:10,322	[INFO]	0-2     SUCCESS              *1117443.00 (45.70%) [1 edit(s)]  
+2025-01-26 23:07:10,322	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        long double min_val = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else min_val = min(min_val, (long double)z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+
+2025-01-26 23:07:11,760	[DEBUG]	EXEC>  SUCCESS 1119134.625
+2025-01-26 23:07:11,760	[INFO]	0-3     SUCCESS               1119134.62 (45.77%) [1 edit(s)]  
+2025-01-26 23:07:11,760	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:13,202	[DEBUG]	EXEC>  SUCCESS 1132265.8125
+2025-01-26 23:07:13,202	[INFO]	0-4     SUCCESS               1132265.81 (46.31%) [1 edit(s)]  
+2025-01-26 23:07:13,202	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <cstdlib>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE); // Exit on invalid input\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE); // Exit on invalid size\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:14,648	[DEBUG]	EXEC>  SUCCESS 1163240.3125
+2025-01-26 23:07:14,648	[INFO]	0-5     SUCCESS               1163240.31 (47.58%) [1 edit(s)]  
+2025-01-26 23:07:14,649	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn, z;\n    long long s[1266], ind;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:16,093	[DEBUG]	EXEC>  SUCCESS 1134446.8125
+2025-01-26 23:07:16,093	[INFO]	0-6     SUCCESS               1134446.81 (46.40%) [1 edit(s)]  
+2025-01-26 23:07:16,093	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        long long input[m];\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &input[i]);\n            if (input[i] > (1LL << 62)) exit(EXIT_FAILURE);\n            if (input[i] % 2 == 0)\n                s[ind++] = input[i];\n            else mn = min(mn, input[i]);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:17,649	[DEBUG]	EXEC>  SUCCESS 1127079.0
+2025-01-26 23:07:17,650	[INFO]	0-7     SUCCESS               1127079.00 (46.10%) [1 edit(s)]  
+2025-01-26 23:07:17,650	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind); // Consider using optimized sort for small data sizes\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:19,024	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 23:07:19,024	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn, z;\n    vector<long long> s;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s.push_back(z);\n            else mn = min(mn, z);\n        }\n        sort(s.begin(), s.end());\n        if (s.size() != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (size_t i = 0; i < s.size(); i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:20,400	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 23:07:20,400	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn, z;\n    vector<long long> s;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s.push_back(z);\n            else mn = min(mn, z);\n        }\n        sort(s.begin(), s.end());\n        if (s.size() != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (size_t i = 0; i < s.size(); i++)\n            printf("%s%lld", (i ? " " : ""), s[i] / da);\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:21,774	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 23:07:21,774	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\ninline long long gcd(long long a, long long b) {\n    return (a == 0) ? b : gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn, z;\n    vector<long long> s;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s.push_back(z);\n            else mn = min(mn, z);\n        }\n        sort(s.begin(), s.end());\n        if (s.size() != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (size_t i = 0; i < s.size(); i++)\n            printf("%s%lld", (i ? " " : ""), s[i] / da);\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:07:22,775	[INFO]	Step: 10
+2025-01-26 23:07:22,775	[INFO]	Stop Steps: 50
+2025-01-26 23:07:24,430	[DEBUG]	EXEC>  SUCCESS 2480332.625
+2025-01-26 23:07:24,431	[INFO]	REF     SUCCESS               2480332.62 (--) [0 edit(s)]  
+2025-01-26 23:07:24,431	[INFO]	Best patch: 1
+2025-01-26 23:07:24,878	[DEBUG]	EXEC>  SUCCESS 1132228.625
+2025-01-26 23:07:24,878	[INFO]	BEST    SUCCESS              *1132228.62 (45.65%) [0 edit(s)]  
+2025-01-26 23:07:24,878	[INFO]	Best patch step: 1
+2025-01-26 23:08:32,963	[INFO]	Step: 10
+2025-01-26 23:08:32,963	[INFO]	Stop Steps: 50
+2025-01-26 23:08:33,529	[DEBUG]	EXEC>  SUCCESS 1122825.875
+2025-01-26 23:08:33,530	[INFO]	1-1     SUCCESS              *1122825.88 (45.27%) [1 edit(s)]  
+2025-01-26 23:08:33,530	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        long double min_val = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else min_val = min(min_val, (long double)z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+
+2025-01-26 23:08:33,530	[INFO]	Step: 11
+2025-01-26 23:08:33,530	[INFO]	Stop Steps: 50
+2025-01-26 23:08:33,960	[DEBUG]	EXEC>  SUCCESS 1109759.4375
+2025-01-26 23:08:33,961	[INFO]	1-2     SUCCESS              *1109759.44 (44.74%) [1 edit(s)]  
+2025-01-26 23:08:33,961	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+
+2025-01-26 23:08:33,961	[INFO]	Step: 12
+2025-01-26 23:08:33,961	[INFO]	Stop Steps: 50
+2025-01-26 23:08:34,400	[DEBUG]	EXEC>  SUCCESS 1127369.625
+2025-01-26 23:08:34,401	[INFO]	1-3     SUCCESS               1127369.62 (45.45%) [1 edit(s)]  
+2025-01-26 23:08:34,401	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <cstdlib>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:34,401	[INFO]	Step: 13
+2025-01-26 23:08:34,401	[INFO]	Stop Steps: 50
+2025-01-26 23:08:34,835	[DEBUG]	EXEC>  SUCCESS 1122373.9375
+2025-01-26 23:08:34,835	[INFO]	1-4     SUCCESS               1122373.94 (45.25%) [1 edit(s)]  
+2025-01-26 23:08:34,836	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:34,836	[INFO]	Step: 14
+2025-01-26 23:08:34,836	[INFO]	Stop Steps: 50
+2025-01-26 23:08:35,266	[DEBUG]	EXEC>  SUCCESS 1137142.3125
+2025-01-26 23:08:35,266	[INFO]	1-5     SUCCESS               1137142.31 (45.85%) [1 edit(s)]  
+2025-01-26 23:08:35,266	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <cstdlib>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * 1.0 * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:35,267	[INFO]	Step: 15
+2025-01-26 23:08:35,267	[INFO]	Stop Steps: 50
+2025-01-26 23:08:35,712	[DEBUG]	EXEC>  SUCCESS 1129599.0
+2025-01-26 23:08:35,712	[INFO]	1-6     SUCCESS               1129599.00 (45.54%) [1 edit(s)]  
+2025-01-26 23:08:35,712	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * 1.0 * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:35,712	[INFO]	Step: 16
+2025-01-26 23:08:35,713	[INFO]	Stop Steps: 50
+2025-01-26 23:08:36,141	[DEBUG]	EXEC>  SUCCESS 1113236.75
+2025-01-26 23:08:36,142	[INFO]	1-7     SUCCESS               1113236.75 (44.88%) [2 edit(s)]  
+2025-01-26 23:08:36,142	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        long double min_val = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else min_val = min(min_val, (long double)z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long s[1266];\n        long long ind = 0, z;\n        long double min_val = 1e100;\n\n        for (long long i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit instead of infinite loop\n            if (z % 2 == 0) {\n                s[ind++] = z;\n            } else {\n                min_val = min(min_val, (long double)z);\n            }\n        }\n\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit instead of infinite loop\n\n        long long da = sqrt(s[0] * s[1] / min_val + 0.5);\n        printf("%lld\\n", da);\n        \n        for (long long i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:36,142	[INFO]	Step: 17
+2025-01-26 23:08:36,142	[INFO]	Stop Steps: 50
+2025-01-26 23:08:36,675	[DEBUG]	EXEC>  SUCCESS 2388018.75
+2025-01-26 23:08:36,675	[INFO]	1-8     SUCCESS               2388018.75 (96.28%) [2 edit(s)]  
+2025-01-26 23:08:36,675	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n;\n    while (scanf("%lld", &n) && n) {\n        long long m = (n + 1) * n / 2;\n        vector<long long> s;\n        long long mn = 1e100, z;\n        \n        s.reserve(m); // Reserve space for efficiency\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s.push_back(z);\n            else \n                mn = min(mn, z);\n        }\n        \n        sort(s.begin(), s.end());\n        if (s.size() != n) while (1); // Check if the size is correct\n        \n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (size_t i = 0; i < s.size(); i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:36,675	[INFO]	Step: 18
+2025-01-26 23:08:36,676	[INFO]	Stop Steps: 50
+2025-01-26 23:08:37,109	[DEBUG]	EXEC>  SUCCESS 1141924.375
+2025-01-26 23:08:37,109	[INFO]	1-9     SUCCESS               1141924.38 (46.04%) [2 edit(s)]  
+2025-01-26 23:08:37,109	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind); // Consider using optimized sort for small data sizes\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long s[1266], ind = 0, mn = 1e100, z;\n\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else \n                mn = min(mn, z);\n        }\n\n        if (ind != n) exit(EXIT_FAILURE);\n        sort(s, s + ind); // Sorting only the valid even numbers\n\n        // Calculate \'da\' using the formula directly without sqrt for improved performance.\n        long long da = static_cast<long long>(sqrt(s[0] * s[1] / mn) + 0.5);\n        \n        printf("%lld\\n", da);\n        for (int i = 0; i < ind; i++) { // Loop through only valid indices\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:37,109	[INFO]	Step: 19
+2025-01-26 23:08:37,109	[INFO]	Stop Steps: 50
+2025-01-26 23:08:37,270	[INFO]	1-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 23:08:37,270	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <cstdlib>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE); // Exit on invalid input\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE); // Exit on invalid size\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <cstdlib>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    return (a == 0) ? b : gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n > 0) {\n        m = (n + 1) * n / 2;\n        long long s[1266], ind = 0, z, mn = LLONG_MAX; // Use LLONG_MAX for better readability\n\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE); // Exit on invalid input\n            if (z % 2 == 0) {\n                s[ind++] = z;\n            } else {\n                mn = min(mn, z);\n            }\n        }\n        \n        if (ind != n) exit(EXIT_FAILURE); // Exit on invalid size\n\n        sort(s, s + ind);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        \n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:08:37,270	[INFO]	Step: 20
+2025-01-26 23:08:37,270	[INFO]	Stop Steps: 50
+2025-01-26 23:08:37,915	[DEBUG]	EXEC>  SUCCESS 2448252.3125
+2025-01-26 23:08:37,916	[INFO]	1-1     SUCCESS               2448252.31 (98.71%) [1 edit(s)]  
+2025-01-26 23:08:37,916	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n#include <stdio.h>\n#include <string.h>\n#include <string>\n#include <list>\n#include <map>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long gcd(long long a,long long b)\n{\n    if(a==0) return b;\n    return gcd(b%a,a);\n}\n\nlong long m,n, mn;\nlong long s[1266],ind,gd;\n\nint main()\n{\n    while(cin>>n && n)\n    {\n        m = (n + 1) * n / 2;\n        double mn;\n        ind = 0;\n        mn = 1e100;\n\n        for(int i = 0; i < m; i++)\n        {\n            long long z;\n            scanf("%lld", &z);\n            if(z > (1LL << 62)) while(1);\n            if(z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z + 0.0);\n        }\n\n        sort(s, s + ind);\n\n        if(ind != n) while(1);\n\n        long long da = sqrt(s[0] * 1.0 * s[1] / mn) + 0.5;\n\n        cout << da << endl;\n\n        for(int i = 0; i < n; i++)\n        {\n            if(i) cout << \' \';\n            cout << s[i] / da;\n        }\n        cout << endl;\n    }\n}')"
+2025-01-26 23:08:37,916	[INFO]	Step: 21
+2025-01-26 23:08:37,916	[INFO]	Stop Steps: 50
+2025-01-26 23:08:39,564	[DEBUG]	EXEC>  SUCCESS 2448585.8125
+2025-01-26 23:08:39,565	[INFO]	REF     SUCCESS               2448585.81 (--) [0 edit(s)]  
+2025-01-26 23:08:39,565	[INFO]	Best patch: 2
+2025-01-26 23:08:39,994	[DEBUG]	EXEC>  SUCCESS 1135378.75
+2025-01-26 23:08:39,994	[INFO]	BEST    SUCCESS              *1135378.75 (46.37%) [0 edit(s)]  
+2025-01-26 23:08:39,994	[INFO]	Best patch step: 11
+2025-01-26 23:09:43,206	[INFO]	Step: 21
+2025-01-26 23:09:43,206	[INFO]	Stop Steps: 50
+2025-01-26 23:09:43,764	[DEBUG]	EXEC>  SUCCESS 1132205.5625
+2025-01-26 23:09:43,764	[INFO]	2-2     SUCCESS              *1132205.56 (46.24%) [1 edit(s)]  
+2025-01-26 23:09:43,765	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+
+2025-01-26 23:09:43,765	[INFO]	Step: 22
+2025-01-26 23:09:43,765	[INFO]	Stop Steps: 50
+2025-01-26 23:09:44,197	[DEBUG]	EXEC>  SUCCESS 1141878.75
+2025-01-26 23:09:44,197	[INFO]	2-3     SUCCESS               1141878.75 (46.63%) [2 edit(s)]  
+2025-01-26 23:09:44,197	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        long double min_val = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else min_val = min(min_val, (long double)z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long s[1266];\n        long long ind = 0, z;\n        long double min_val = 1e100;\n\n        for (long long i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit instead of infinite loop\n            if (z % 2 == 0) {\n                s[ind++] = z;\n            } else {\n                min_val = min(min_val, (long double)z);\n            }\n        }\n\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit instead of infinite loop\n\n        long long da = sqrt(s[0] * s[1] / min_val + 0.5);\n        printf("%lld\\n", da);\n        \n        for (long long i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:44,197	[INFO]	Step: 23
+2025-01-26 23:09:44,197	[INFO]	Stop Steps: 50
+2025-01-26 23:09:44,639	[DEBUG]	EXEC>  SUCCESS 1125333.8125
+2025-01-26 23:09:44,639	[INFO]	2-4     SUCCESS              *1125333.81 (45.96%) [1 edit(s)]  
+2025-01-26 23:09:44,639	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit condition\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else \n                mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit condition\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+
+2025-01-26 23:09:44,639	[INFO]	Step: 24
+2025-01-26 23:09:44,639	[INFO]	Stop Steps: 50
+2025-01-26 23:09:45,077	[DEBUG]	EXEC>  SUCCESS 1128997.5
+2025-01-26 23:09:45,077	[INFO]	2-5     SUCCESS               1128997.50 (46.11%) [1 edit(s)]  
+2025-01-26 23:09:45,077	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long s[1266];\n        long long ind = 0, z;\n        long double min_val = 1e100;\n\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit condition\n            if (z % 2 == 0) {\n                s[ind++] = z;\n            } else {\n                min_val = min(min_val, (long double)z);\n            }\n        }\n\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit condition\n\n        long long da = sqrt(s[0] * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        \n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:45,077	[INFO]	Step: 25
+2025-01-26 23:09:45,077	[INFO]	Stop Steps: 50
+2025-01-26 23:09:45,510	[DEBUG]	EXEC>  SUCCESS 1130957.6875
+2025-01-26 23:09:45,510	[INFO]	2-6     SUCCESS               1130957.69 (46.19%) [1 edit(s)]  
+2025-01-26 23:09:45,510	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit instead of infinite loop\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else \n                mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit instead of infinite loop\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:45,510	[INFO]	Step: 26
+2025-01-26 23:09:45,511	[INFO]	Stop Steps: 50
+2025-01-26 23:09:45,952	[DEBUG]	EXEC>  SUCCESS 1127863.625
+2025-01-26 23:09:45,952	[INFO]	2-7     SUCCESS               1127863.62 (46.06%) [1 edit(s)]  
+2025-01-26 23:09:45,953	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long s[1266];\n        long long ind = 0, z;\n        long double min_val = 1e100;\n\n        for (long long i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit instead of infinite loop\n            if (z % 2 == 0) {\n                s[ind++] = z;\n            } else {\n                min_val = min(min_val, (long double)z);\n            }\n        }\n\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit instead of infinite loop\n\n        long long da = sqrt(s[0] * s[1] / min_val + 0.5);\n        printf("%lld\\n", da);\n        \n        for (long long i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:45,953	[INFO]	Step: 27
+2025-01-26 23:09:45,953	[INFO]	Stop Steps: 50
+2025-01-26 23:09:46,383	[DEBUG]	EXEC>  SUCCESS 1119011.0625
+2025-01-26 23:09:46,384	[INFO]	2-8     SUCCESS              *1119011.06 (45.70%) [2 edit(s)]  
+2025-01-26 23:09:46,384	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    while (b) {\n        long long temp = b;\n        b = a % b;\n        a = temp;\n    }\n    return a;\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+
+2025-01-26 23:09:46,384	[INFO]	Step: 28
+2025-01-26 23:09:46,384	[INFO]	Stop Steps: 50
+2025-01-26 23:09:46,863	[DEBUG]	EXEC>  SUCCESS 2426645.0625
+2025-01-26 23:09:46,863	[INFO]	2-9     SUCCESS               2426645.06 (99.10%) [3 edit(s)]  
+2025-01-26 23:09:46,863	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        long double min_val = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else min_val = min(min_val, (long double)z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long s[1266];\n        long long ind = 0, z;\n        long double min_val = 1e100;\n\n        for (long long i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit instead of infinite loop\n            if (z % 2 == 0) {\n                s[ind++] = z;\n            } else {\n                min_val = min(min_val, (long double)z);\n            }\n        }\n\n        sort(s, s + ind);\n        if (ind != n) return 0; // Exit instead of infinite loop\n\n        long long da = sqrt(s[0] * s[1] / min_val + 0.5);\n        printf("%lld\\n", da);\n        \n        for (long long i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        vector<long long> s; // Using vector for dynamic size management\n        long long z;\n        long double min_val = 1e100;\n\n        for (long long i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) return 0; // Exit instead of infinite loop\n            if (z % 2 == 0) {\n                s.push_back(z); // Efficiently adding to the vector\n            } else {\n                min_val = min(min_val, (long double)z);\n            }\n        }\n\n        if (s.size() != n) return 0; // Exit instead of infinite loop\n\n        long long da = sqrt(s[0] * s[1] / min_val + 0.5);\n        printf("%lld\\n", da);\n        \n        for (size_t i = 0; i < s.size(); i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:46,863	[INFO]	Step: 29
+2025-01-26 23:09:46,863	[INFO]	Stop Steps: 50
+2025-01-26 23:09:47,405	[DEBUG]	EXEC>  SUCCESS 2413476.5625
+2025-01-26 23:09:47,405	[INFO]	2-10    SUCCESS               2413476.56 (98.57%) [2 edit(s)]  
+2025-01-26 23:09:47,405	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z);\n        }\n        sort(s, s + ind);\n        if (ind != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\n#include <vector>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        vector<long long> s;  // Use vector for dynamic size\n        long long z;\n        mn = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) exit(EXIT_FAILURE);\n            if (z % 2 == 0)\n                s.push_back(z);  // Dynamically add even numbers\n            else \n                mn = min(mn, z);\n        }\n        sort(s.begin(), s.end());  // Sort using vector methods\n        if (s.size() != n) exit(EXIT_FAILURE);\n        long long da = sqrt(s[0] * s[1] / mn) + 0.5;\n        printf("%lld\\n", da);\n        for (size_t i = 0; i < s.size(); i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:47,405	[INFO]	Step: 30
+2025-01-26 23:09:47,405	[INFO]	Stop Steps: 50
+2025-01-26 23:09:47,565	[INFO]	2-1     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 23:09:47,565	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nlong long gcd(long long a, long long b) {\n    if (a == 0) return b;\n    return gcd(b % a, a);\n}\n\nint main() {\n    long long n, m, mn;\n    long long s[1266], ind, z;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        ind = 0;\n        long double min_val = 1e100;\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1);\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else min_val = min(min_val, (long double)z);\n        }\n        sort(s, s + ind);\n        if (ind != n) while (1);\n        long long da = sqrt(s[0] * 1.0 * s[1] / min_val) + 0.5;\n        printf("%lld\\n", da);\n        for (int i = 0; i < n; i++) {\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <cmath>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    long long n, m;\n    while (scanf("%lld", &n) && n) {\n        m = (n + 1) * n / 2;\n        long long z, min_val = LLONG_MAX; // Using LLONG_MAX for better clarity\n        long long s[1266], ind = 0;\n\n        for (int i = 0; i < m; i++) {\n            scanf("%lld", &z);\n            if (z > (1LL << 62)) while (1); // Possible infinite loop if input is invalid\n            if (z % 2 == 0)\n                s[ind++] = z;\n            else \n                min_val = min(min_val, z); // No need for long double here\n        }\n        \n        sort(s, s + ind);\n        if (ind != n) while (1); // Check if the input is valid\n\n        long long da = sqrt(s[0] * s[1] / min_val + 0.5); // Adjusted rounding\n        printf("%lld\\n", da);\n\n        for (int i = 0; i < ind; i++) { // Changed from n to ind for correct output\n            if (i) printf(" ");\n            printf("%lld", s[i] / da);\n        }\n        printf("\\n");\n    }\n}')"
+2025-01-26 23:09:47,565	[INFO]	Step: 31
+2025-01-26 23:09:47,565	[INFO]	Stop Steps: 50
+2025-01-26 23:09:48,201	[DEBUG]	EXEC>  SUCCESS 2444886.1875
+2025-01-26 23:09:48,201	[INFO]	2-2     SUCCESS               2444886.19 (99.85%) [1 edit(s)]  
+2025-01-26 23:09:48,201	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n#include <stdio.h>\n#include <string.h>\n#include <string>\n#include <list>\n#include <map>\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nusing namespace std;\n\nlong long gcd(long long a,long long b) {\n    if(a==0) return b;\n    return gcd(b%a,a);\n}\n\nlong long m,n, mn;\nlong long s[1266],ind,gd;\n\nint main() {\n    while(cin >> n && n) {\n        m = (n + 1) * n / 2;\n        double mn;\n        ind = 0;\n        mn = 1e100;\n\n        for(int i = 0; i < m; i++) {\n            long long z;\n            scanf("%lld", &z);\n            if(z > (1LL << 62)) while(1);\n            if(z % 2 == 0)\n                s[ind++] = z;\n            else mn = min(mn, z + 0.0);\n        }\n\n        sort(s, s + ind);\n        if(ind != n) while(1);\n\n        long long da = sqrt(s[0] * 1.0 * s[1] / mn) + 0.5;\n\n        cout << da << endl;\n\n        for(int i = 0; i < n; i++) {\n            if(i) cout << \' \';\n            cout << s[i] / da;\n        }\n        cout << endl;\n    }\n}')"
+2025-01-26 23:09:48,201	[INFO]	Step: 32
+2025-01-26 23:09:48,201	[INFO]	Stop Steps: 50
+2025-01-26 23:09:49,971	[DEBUG]	EXEC>  SUCCESS 2459207.3125
+2025-01-26 23:09:49,971	[INFO]	REF     SUCCESS               2459207.31 (--) [0 edit(s)]  
+2025-01-26 23:09:49,971	[INFO]	Best patch: 2_15
+2025-01-26 23:09:50,407	[DEBUG]	EXEC>  SUCCESS 1134789.125
+2025-01-26 23:09:50,407	[INFO]	BEST    SUCCESS              *1134789.12 (46.14%) [0 edit(s)]  
+2025-01-26 23:09:50,407	[INFO]	Best patch step: 27
+2025-01-26 23:10:57,156	[INFO]	~~~~ END ~~~~
+2025-01-26 23:10:57,156	[INFO]	Best patch step: 27

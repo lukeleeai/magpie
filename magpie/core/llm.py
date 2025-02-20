@@ -15,7 +15,9 @@ class LLMBase:
         # Lazy load the LLM to avoid deepcopy/pickle errors with thread locks
         if self._llm is None:
             self._llm = ChatOpenAI(
-                model="gpt-4o-mini",
+                # model="gpt-4o-mini",
+                model="gpt-4o",
+                # model="ft:gpt-4o-mini-2024-07-18:prompt-infection::Au7BGrZS",  # PIE-finetuned
                 temperature=0.7,
                 openai_api_key=os.getenv("OPENAI_API_KEY"),
                 openai_organization=os.getenv("OPENAI_ORG"),
@@ -32,6 +34,11 @@ class LLMBase:
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
 
+    def extract_test_input(self, text: str) -> str:
+        pattern = r"```\n(.*?)\n```"  # extract the text between ``` and ```
+        matches = re.findall(pattern, text, re.DOTALL)
+        return matches[0].strip() if matches else ""
+
 
 class LLMCrossover(LLMBase):
     prompt = ChatPromptTemplate.from_template(
@@ -40,7 +47,6 @@ class LLMCrossover(LLMBase):
             We are implementing a genetic algorithm to optimize code by performing crossover operations, aiming to improve its fitness score (runtime).
             As an expert C++ developer, your task is to generate {num_offsprings} crossover codes from given parent codes.
             A lower fitness score means better performance.
-
 
             Here are some examples of successful code optimizations:
 
@@ -124,6 +130,7 @@ class LLMCrossover(LLMBase):
                 printf("%lld\n", ans);
             }}
             ```
+            The above are only examples.
 
             Each crossover operation should involve selecting parent codes, combining them strategically to produce optimized offspring.
             The strategy should clearly describe how the parent codes are combined to form the crossover.
@@ -131,7 +138,7 @@ class LLMCrossover(LLMBase):
 
             Your goal is to return the best {num_offsprings} crossover codes.
             Your code should be a valid C++ code that can be compiled and run.
-            Here's an example an an output format. The third mutation, the example output is:
+            Here's an example an an output format. For the third crossover, the example output is:
 
             <Crossover 3>
             strategy: Combine function A from Parent 1 (fitness: X) with function B from Parent 2 (fitness: Y).
@@ -140,7 +147,7 @@ class LLMCrossover(LLMBase):
             // your crossover code
             ```
 
-            Here are the parent codes with their fitness scores:
+            Now, here are the parent codes with their fitness scores:
             {codes_and_fitnesses}
 
             Return the best {num_offsprings} crossovers.
@@ -171,7 +178,9 @@ class LLMCrossover(LLMBase):
                 for strategy, code in zip(strategies, codes):
                     print("Strategy: ", strategy)
                     print("Code: ", code)
-                    crossovers.append({"strategy": strategy, "crossover_code": code})
+                    crossovers.append(
+                        {"strategy": strategy, "crossover_code": code}
+                    )
                 return crossovers
 
             print("Mismatch or empty strategies/codes, retrying...")
@@ -276,9 +285,11 @@ class LLMMutation(LLMBase):
             The above are only examples.
             Each mutation operation should involve selecting specific parts of the code, such as import packages, lines, or blocks, and applying diverse strategies to optimize them.
             The strategy should clearly describe the focus area and the intended optimization.
-
+            Balancing exploration and exploitation is key to success.
+            Your code should be a valid C++ code that can be compiled and run.
             Your goal is to return the best {num_offsprings} optimization mutations.
-            When printing the third mutation, the example output format is:
+
+            Here's an example an an output format. For the third mutation, the example output is:
             
             <Mutation 3>
             strategy: Focus on the line X that does Y, which could be optimized by Z.
@@ -287,7 +298,7 @@ class LLMMutation(LLMBase):
             // your mutated code
             ```
 
-            Here's the code to mutate:
+            Now, here's the code to mutate:
             {code}
             Fitness score: {fitness}
 
@@ -366,6 +377,52 @@ class LLMOneShotOptimization(LLMMutation):
             """
         )
     )
+
+
+class LLMTestAugmentation(LLMBase):
+    prompt = ChatPromptTemplate.from_template(
+        textwrap.dedent(
+            """
+            You are an expert C++ performance engineer. Your task is to analyze the given source code and modify its test input to create a more demanding performance test case. 
+
+            Key requirements:
+            - Analyze the computational complexity of the source code
+            - Modify the numeric values or strings in the test input to increase execution time
+            - Keep the same number of input lines and maintain input format validity
+            - Target ~10x longer execution time through algorithmic complexity, not repetition
+            - Ensure the modified input remains valid for the source code
+
+            Example: If the code has O(N²) complexity and processes numbers, increasing the magnitude of those numbers (where appropriate) will increase execution time more effectively than duplicating test cases.
+
+            Context:
+            The test will be run using:
+            `perf stat -e cycles,task-clock ./build/src_code < test_input.txt 2>&1`
+
+            Source code:
+            {source_code}
+
+            Current test input (test_input.txt):
+            {test_input}
+
+            Generate 10 lines of test input.
+            Please provide the modified test input wrapped in triple backticks (```).
+            """
+        )
+    )
+
+    def augment_test(self, source_code: str, test_input: str) -> str:
+        for _ in range(3):
+            messages = self.prompt.format_messages(
+                source_code=source_code,
+                test_input=test_input,
+            )
+            response = self.llm.invoke(messages)
+
+            augmented_test_input = self.extract_test_input(response.content)
+            if augmented_test_input:
+                return augmented_test_input
+
+        raise ValueError("Failed to augment the test input after 3 attempts.")
 
 
 # Usage example:

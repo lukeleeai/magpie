@@ -1,0 +1,395 @@
+2025-01-27 01:09:53,662	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 4907222149835129
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0046
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-27 01:09:53,662	[DEBUG]	
+2025-01-27 01:09:53,662	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-27 01:09:53,662	[INFO]	~~~~ WARMUP ~~~~
+2025-01-27 01:09:55,462	[DEBUG]	EXEC>  SUCCESS 35675007.0625
+2025-01-27 01:09:55,462	[INFO]	WARM    SUCCESS               35675007.06 (--) [0 edit(s)]  
+2025-01-27 01:09:56,901	[DEBUG]	EXEC>  SUCCESS 35652261.375
+2025-01-27 01:09:56,902	[INFO]	WARM    SUCCESS               35652261.38 (--) [0 edit(s)]  
+2025-01-27 01:09:58,322	[DEBUG]	EXEC>  SUCCESS 35763911.75
+2025-01-27 01:09:58,322	[INFO]	WARM    SUCCESS               35763911.75 (--) [0 edit(s)]  
+2025-01-27 01:09:59,788	[DEBUG]	EXEC>  SUCCESS 35707700.375
+2025-01-27 01:09:59,788	[INFO]	WARM    SUCCESS               35707700.38 (--) [0 edit(s)]  
+2025-01-27 01:10:01,352	[DEBUG]	EXEC>  SUCCESS 35738541.625
+2025-01-27 01:10:01,352	[INFO]	WARM    SUCCESS               35738541.62 (--) [0 edit(s)]  
+2025-01-27 01:10:01,352	[INFO]	REF     SUCCESS               35738541.62 (--) [0 edit(s)]  
+2025-01-27 01:10:01,354	[INFO]	
+2025-01-27 01:10:01,354	[INFO]	~~~~ START ~~~~
+2025-01-27 01:10:14,223	[INFO]	0-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:14,224	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\nusing namespace std;\n\nint n;\n\nint main()\n\n{\n\n\tcin >> n;\n\n\tcout << n / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:15,405	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:15,406	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include<vector>\n\nusing namespace std;\n\n\n\nvector<int> memo;\n\n\n\nint solve( int n )\n\n{\n\n\tif ( n < 0 )\n\n\t{\n\n\t\treturn 0;\n\n\t}\n\n\n\n\tif ( memo[n] != -1 )\n\n\t{\n\n\t\treturn memo[n];\n\n\t}\n\n\n\n\treturn solve( n - 1 ) + solve( n - 2 ) + solve( n - 3 );\n\n}\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tmemo.resize( n + 1 );\n\n\t\tfill( ALL( memo ), -1 );\n\n\n\n\t\tcout << solve( n ) / 3650 + 1 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:16,593	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:16,593	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include<vector>\n\nusing namespace std;\n\n\n\nvector<int> memo(200, -1);\n\n\n\nint solve( int n )\n\n{\n\n\tif ( n < 0 )\n\n\t{\n\n\t\treturn 0;\n\n\t}\n\n\n\n\tif ( memo[n] != -1 )\n\n\t{\n\n\t\treturn memo[n];\n\n\t}\n\n\n\n\treturn solve( n - 1 ) + solve( n - 2 ) + solve( n - 3 );\n\n}\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tcout << solve( n ) / 3650 + 1 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:17,777	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:17,777	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include<vector>\n\nusing namespace std;\n\n\n\nvector<int> memo(200, -1);\n\n\n\nint solve( int n )\n\n{\n\n\tif ( n < 0 )\n\n\t{\n\n\t\treturn 0;\n\n\t}\n\n\n\n\tif ( memo[n] != -1 )\n\n\t{\n\n\t\treturn memo[n];\n\n\t}\n\n\n\n\treturn solve( n - 1 ) + solve( n - 2 ) + solve( n - 3 );\n\n}\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tcout << (solve( n ) + 3649) / 3650 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:18,960	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:18,960	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include<vector>\n\nusing namespace std;\n\n\n\nvector<int> memo(200, -1);\n\n\n\nint solve( int n )\n\n{\n\n\tif ( n < 0 )\n\n\t{\n\n\t\treturn 0;\n\n\t}\n\n\n\n\tif ( memo[n] != -1 )\n\n\t{\n\n\t\treturn memo[n];\n\n\t}\n\n\n\n\treturn solve( n - 1 ) + solve( n - 2 ) + solve( n - 3 );\n\n}\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tcout << (solve( n ) + 3649) / 3650 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:20,408	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:20,408	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n\nusing namespace std;\n\nint n;\n\nint main()\n\n{\n\n\tcin >> n;\n\n\tcout << n / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:21,848	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:21,848	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n\nusing namespace std;\n\nint n;\n\nint main()\n\n{\n\n\tcin >> n;\n\n\tcout << n / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:23,279	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:23,279	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n\nusing namespace std;\n\nint n;\n\nint main()\n\n{\n\n\tcin >> n;\n\n\tcout << n / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:24,720	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:24,720	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n\nusing namespace std;\n\nint n;\n\nint main()\n\n{\n\n\tcin >> n;\n\n\tcout << n / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:26,171	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:26,171	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n\nusing namespace std;\n\nint n;\n\nint main()\n\n{\n\n\tcin >> n;\n\n\tcout << n / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:27,172	[INFO]	Step: 10
+2025-01-27 01:10:27,172	[INFO]	Stop Steps: 50
+2025-01-27 01:10:29,624	[DEBUG]	EXEC>  SUCCESS 35794201.4375
+2025-01-27 01:10:29,624	[INFO]	REF     SUCCESS               35794201.44 (--) [0 edit(s)]  
+2025-01-27 01:10:29,625	[INFO]	Best patch step: None
+2025-01-27 01:10:43,384	[INFO]	Step: 10
+2025-01-27 01:10:43,384	[INFO]	Stop Steps: 50
+2025-01-27 01:10:43,545	[INFO]	1-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:43,546	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 0), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\nchar str[200005];\nint main(){\n    scanf("%s",str);\n    int ans = 0;\n    int a=-1;\n    for(int i=0;str[i];i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans,i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:10:43,546	[INFO]	Step: 11
+2025-01-27 01:10:43,546	[INFO]	Stop Steps: 50
+2025-01-27 01:10:43,711	[INFO]	1-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:43,711	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 1), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\nchar str[200005];\nint main(){\n    int n;\n\tscanf("%d",&n);\n    scanf("%s",str);\n    int ans = 0;\n    int a=-1;\n    for(int i=0;str[i];i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans,i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:10:43,711	[INFO]	Step: 12
+2025-01-27 01:10:43,711	[INFO]	Stop Steps: 50
+2025-01-27 01:10:43,875	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:43,876	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e5;\nint n, a[maxn], b[maxn];\nint main(void) {\n    int n;\n\tscanf("%d",&n);\n    int ans = 0;\n\tscanf("%d",&a[i]);\n\tfor (int i = 0; i < n; ++i) {\n\t\tscanf("%d%d", a + i, b + i);\n\t}\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:10:43,876	[INFO]	Step: 13
+2025-01-27 01:10:43,876	[INFO]	Stop Steps: 50
+2025-01-27 01:10:44,040	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:10:44,040	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 3), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\nchar str[200005];\nint main(){\n    int n;\n\tscanf("%d",&n);\n    scanf("%s",str);\n    int ans = 0;\n    int a=-1;\n    for(int i=0;str[i];i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans,i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:10:44,040	[INFO]	Step: 14
+2025-01-27 01:10:44,040	[INFO]	Stop Steps: 50
+2025-01-27 01:10:44,481	[INFO]	1-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:44,482	[DEBUG]	patch(1-5)="LineLLMMutation(('source.cpp', 10), '#include <iostream>\n\nusing namespace std;\n\nint main()\n\n{\n\n\tint n;\n\n\tcin >> n;\n\n\n\n\tif ( n == 0 )\n\n\t{\n\n\t\treturn 0;\n\n\t}\n\n\n\n\tint ans = 1;\n\n\n\n\twhile ( n > 0 )\n\n\t{\n\n\t\tans += ( n % 3 == 0 );\n\n\t\tn /= 3;\n\n\t}\n\n\n\n\tcout << ans << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:44,482	[INFO]	Step: 15
+2025-01-27 01:10:44,482	[INFO]	Stop Steps: 50
+2025-01-27 01:10:44,957	[INFO]	1-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:44,957	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 11), '#include <iostream>\n\nusing namespace std;\n\nint main()\n\n{\n\n\tint n, a = 0, b = 1;\n\n\tcin >> n;\n\n\n\n\tfor ( int i = 0; i < n; ++i )\n\n\t{\n\n\t\tswap( a, b );\n\n\t\tb += a % 1000000007;\n\n\t}\n\n\n\n\tcout << b / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:44,957	[INFO]	Step: 16
+2025-01-27 01:10:44,957	[INFO]	Stop Steps: 50
+2025-01-27 01:10:45,156	[INFO]	1-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:45,156	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n\nint n, a[100005];\n\nint main()\n\n{\n\n\tscanf( "%d", &n );\n\n\tfor ( int i = 0; i < n; ++i )\n\n\t{\n\n\t\tscanf( "%d", a + i );\n\n\t}\n\n\n\n\tlong long ans = 0;\n\n\tfor ( int i = n - 1; i >= 0; --i )\n\n\t{\n\n\t\tlong long cur = a[i] + ans;\n\n\t\tlong long tar = ( cur + 999999999 ) / 1000000000 * 1000000000;\n\n\t\tans += tar - cur;\n\n\t}\n\n\n\n\tprintf( "%lld\\n", ans );\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:45,157	[INFO]	Step: 17
+2025-01-27 01:10:45,157	[INFO]	Stop Steps: 50
+2025-01-27 01:10:45,345	[INFO]	1-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:45,345	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n\nint n;\n\nint main()\n\n{\n\n\tscanf( "%d", &n );\n\n\tprintf( "%d\\n", n / 3 + 1 );\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:45,345	[INFO]	Step: 18
+2025-01-27 01:10:45,346	[INFO]	Stop Steps: 50
+2025-01-27 01:10:45,823	[INFO]	1-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:45,823	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n\nusing namespace std;\n\n\n\n// Function to calculate the nth Fibonacci number\n\nint fibo( int n )\n\n{\n\n\tif ( n <= 1 )\n\n\t{\n\n\t\treturn 1;\n\n\t}\n\n\n\n\treturn fibo( n - 1 ) + fibo( n - 2 );\n\n}\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\tcin >> n;\n\n\n\n\tcout << fibo( n ) / 3650 + 1 << endl;\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:45,823	[INFO]	Step: 19
+2025-01-27 01:10:45,823	[INFO]	Stop Steps: 50
+2025-01-27 01:10:46,008	[INFO]	1-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:10:46,008	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n\nint n;\n\nint main()\n\n{\n\n\tscanf( "%d", &n );\n\n\tprintf( "%d\\n", n / 3 + 1 );\n\n\treturn 0;\n\n}')"
+2025-01-27 01:10:46,008	[INFO]	Step: 20
+2025-01-27 01:10:46,008	[INFO]	Stop Steps: 50
+2025-01-27 01:10:48,460	[DEBUG]	EXEC>  SUCCESS 35802707.125
+2025-01-27 01:10:48,461	[INFO]	REF     SUCCESS               35802707.12 (--) [0 edit(s)]  
+2025-01-27 01:10:48,461	[INFO]	Best patch step: None
+2025-01-27 01:11:10,588	[INFO]	Step: 20
+2025-01-27 01:11:10,588	[INFO]	Stop Steps: 50
+2025-01-27 01:11:10,743	[INFO]	2-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:11:10,743	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\nchar str[200005];\nint main(){\n    scanf("%s",str);\n    int ans = 0;\n    int a=-1;\n    for(int i=0;str[i];i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans,i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:11:10,743	[INFO]	Step: 21
+2025-01-27 01:11:10,743	[INFO]	Stop Steps: 50
+2025-01-27 01:11:10,901	[INFO]	2-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:11:10,901	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\ntypedef long long li;\nconst int maxn = 1e5;\nint n, a[maxn], b[maxn];\nint main(void) {\n    scanf("%d", &n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d%d", a + i, b + i);\n    }\n    li ans = 0;\n    for (int i = n - 1; i >= 0; --i) {\n        li cur = a[i] + ans;\n        li tar = (cur + b[i] - 1) / b[i] * b[i];\n        ans += tar - cur;\n    }\n    printf("%lld\n", ans);\n}')"
+2025-01-27 01:11:10,901	[INFO]	Step: 22
+2025-01-27 01:11:10,901	[INFO]	Stop Steps: 50
+2025-01-27 01:11:11,061	[INFO]	2-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:11:11,061	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\nchar str[200005];\nlong long a[100000], b[100000];\nint main(){\n    scanf("%s",str);\n    int ans = 0;\n    int n=-1;\n    for(int i=0;str[i];i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans,i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:11:11,061	[INFO]	Step: 23
+2025-01-27 01:11:11,061	[INFO]	Stop Steps: 50
+2025-01-27 01:11:11,221	[INFO]	2-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:11:11,222	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\nchar str[200005];\nint n, a[100000], b[100000];\nint main(){\n    scanf("%s",str);\n    int ans = 0;\n    int n=-1;\n    for(int i=0;str[i];i++){\n        if(str[i]==\'Z\'){\n            if(a!=-1)\n                ans = max(ans,i-a);\n        }else if(str[i]==\'A\' && a==-1)\n            a = i;\n    }\n    printf("%d\n",ans+1);\n    return 0;\n}')"
+2025-01-27 01:11:11,222	[INFO]	Step: 24
+2025-01-27 01:11:11,222	[INFO]	Stop Steps: 50
+2025-01-27 01:11:12,391	[DEBUG]	EXEC>  SUCCESS 34500628.1875
+2025-01-27 01:11:12,391	[INFO]	2-5     SUCCESS              *34500628.19 (96.36%) [1 edit(s)]  
+2025-01-27 01:11:12,391	[DEBUG]	patch(2-5)="LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tcout << solve( solve, n ) / 3650 + 1 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:12,392	[INFO]	Step: 25
+2025-01-27 01:11:12,392	[INFO]	Stop Steps: 50
+2025-01-27 01:11:13,421	[DEBUG]	EXEC>  SUCCESS 34521924.5625
+2025-01-27 01:11:13,422	[INFO]	2-6     SUCCESS               34521924.56 (96.42%) [1 edit(s)]  
+2025-01-27 01:11:13,422	[DEBUG]	patch(2-6)="LineLLMMutation(('source.cpp', 17), '#include <iostream>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tcout << solve( solve, n ) / 3650 + 1 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:11:13,422	[INFO]	Step: 26
+2025-01-27 01:11:13,422	[INFO]	Stop Steps: 50
+2025-01-27 01:11:14,295	[DEBUG]	EXEC>  SUCCESS 34003664.0
+2025-01-27 01:11:14,295	[INFO]	2-7     SUCCESS              *34003664.00 (94.98%) [1 edit(s)]  
+2025-01-27 01:11:14,296	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:14,296	[INFO]	Step: 27
+2025-01-27 01:11:14,296	[INFO]	Stop Steps: 50
+2025-01-27 01:11:15,156	[DEBUG]	EXEC>  SUCCESS 33949177.875
+2025-01-27 01:11:15,156	[INFO]	2-8     SUCCESS              *33949177.88 (94.82%) [1 edit(s)]  
+2025-01-27 01:11:15,156	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:15,156	[INFO]	Step: 28
+2025-01-27 01:11:15,156	[INFO]	Stop Steps: 50
+2025-01-27 01:11:16,021	[DEBUG]	EXEC>  SUCCESS 33978953.0625
+2025-01-27 01:11:16,021	[INFO]	2-9     SUCCESS               33978953.06 (94.91%) [1 edit(s)]  
+2025-01-27 01:11:16,022	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:11:16,022	[INFO]	Step: 29
+2025-01-27 01:11:16,022	[INFO]	Stop Steps: 50
+2025-01-27 01:11:16,349	[INFO]	2-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:11:16,349	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:11:16,349	[INFO]	Step: 30
+2025-01-27 01:11:16,350	[INFO]	Stop Steps: 50
+2025-01-27 01:11:18,788	[DEBUG]	EXEC>  SUCCESS 35698830.6875
+2025-01-27 01:11:18,789	[INFO]	REF     SUCCESS               35698830.69 (--) [0 edit(s)]  
+2025-01-27 01:11:18,789	[INFO]	Best patch: 19
+2025-01-27 01:11:19,654	[DEBUG]	EXEC>  SUCCESS 33959680.5625
+2025-01-27 01:11:19,655	[INFO]	BEST    SUCCESS              *33959680.56 (95.13%) [0 edit(s)]  
+2025-01-27 01:11:19,655	[INFO]	Best patch step: 27
+2025-01-27 01:11:53,989	[INFO]	Step: 30
+2025-01-27 01:11:53,989	[INFO]	Stop Steps: 50
+2025-01-27 01:11:54,969	[DEBUG]	EXEC>  SUCCESS 33963161.375
+2025-01-27 01:11:54,969	[INFO]	3-1     SUCCESS              +33963161.38 (95.14%) [1 edit(s)]  
+2025-01-27 01:11:54,969	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:11:54,969	[INFO]	Step: 31
+2025-01-27 01:11:54,970	[INFO]	Stop Steps: 50
+2025-01-27 01:11:55,841	[DEBUG]	EXEC>  SUCCESS 33947872.25
+2025-01-27 01:11:55,842	[INFO]	3-2     SUCCESS              *33947872.25 (95.10%) [1 edit(s)]  
+2025-01-27 01:11:55,842	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:55,842	[INFO]	Step: 32
+2025-01-27 01:11:55,842	[INFO]	Stop Steps: 50
+2025-01-27 01:11:56,707	[DEBUG]	EXEC>  SUCCESS 33938537.25
+2025-01-27 01:11:56,708	[INFO]	3-3     SUCCESS              *33938537.25 (95.07%) [1 edit(s)]  
+2025-01-27 01:11:56,708	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:56,708	[INFO]	Step: 33
+2025-01-27 01:11:56,708	[INFO]	Stop Steps: 50
+2025-01-27 01:11:57,573	[DEBUG]	EXEC>  SUCCESS 34021000.75
+2025-01-27 01:11:57,573	[INFO]	3-4     SUCCESS               34021000.75 (95.30%) [1 edit(s)]  
+2025-01-27 01:11:57,573	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:11:57,573	[INFO]	Step: 34
+2025-01-27 01:11:57,573	[INFO]	Stop Steps: 50
+2025-01-27 01:11:58,452	[DEBUG]	EXEC>  SUCCESS 33906415.3125
+2025-01-27 01:11:58,452	[INFO]	3-5     SUCCESS              *33906415.31 (94.98%) [1 edit(s)]  
+2025-01-27 01:11:58,453	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:58,453	[INFO]	Step: 35
+2025-01-27 01:11:58,453	[INFO]	Stop Steps: 50
+2025-01-27 01:11:59,480	[DEBUG]	EXEC>  SUCCESS 34629108.625
+2025-01-27 01:11:59,481	[INFO]	3-6     SUCCESS               34629108.62 (97.00%) [1 edit(s)]  
+2025-01-27 01:11:59,481	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include <iostream>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tcout << solve( solve, n ) / 3650 + 1 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:11:59,481	[INFO]	Step: 36
+2025-01-27 01:11:59,481	[INFO]	Stop Steps: 50
+2025-01-27 01:11:59,976	[DEBUG]	EXEC>  SUCCESS 1208397.0625
+2025-01-27 01:11:59,976	[INFO]	3-7     SUCCESS              *1208397.06 (3.38%) [2 edit(s)]  
+2025-01-27 01:11:59,977	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\n\n\twhile ( true )\n\n\t{\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\t\t\n\n\t\tint a = 0, b = 0, c = 1;\n\n\n\n\t\tfor ( int i = 1; i <= n; ++i )\n\n\t\t{\n\n\t\t\tint t = a + b + c;\n\n\t\t\ta = b;\n\n\t\t\tb = c;\n\n\t\t\tc = t;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", c / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:11:59,977	[INFO]	Step: 37
+2025-01-27 01:11:59,977	[INFO]	Stop Steps: 50
+2025-01-27 01:12:00,560	[DEBUG]	EXEC>  SUCCESS 3162164.5
+2025-01-27 01:12:00,561	[INFO]	3-8     SUCCESS               3162164.50 (8.86%) [2 edit(s)]  
+2025-01-27 01:12:00,561	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> dp( n + 1, 0 );\n\n\t\tdp[0] = 1;\n\n\n\n\t\tfor ( int i = 1; i <= n; ++i )\n\n\t\t{\n\n\t\t\tfor ( int j = 1; j <= 3; ++j )\n\n\t\t\t{\n\n\t\t\t\tif ( i - j >= 0 )\n\n\t\t\t\t{\n\n\t\t\t\t\tdp[i] += dp[i - j];\n\n\t\t\t\t}\n\n\t\t\t}\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", dp[n] / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:00,561	[INFO]	Step: 38
+2025-01-27 01:12:00,561	[INFO]	Stop Steps: 50
+2025-01-27 01:12:01,060	[DEBUG]	EXEC>  SUCCESS 1217484.25
+2025-01-27 01:12:01,060	[INFO]	3-9     SUCCESS               1217484.25 (3.41%) [2 edit(s)]  
+2025-01-27 01:12:01,060	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tint a = 1, b = 0, c = 0;\n\n\n\n\t\tfor ( int i = 1; i <= n; i++ )\n\n\t\t{\n\n\t\t\tint tmp = a + b + c;\n\n\n\n\t\t\tc = b;\n\n\t\t\tb = a;\n\n\t\t\ta = tmp;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", a / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:01,060	[INFO]	Step: 39
+2025-01-27 01:12:01,060	[INFO]	Stop Steps: 50
+2025-01-27 01:12:01,523	[INFO]	3-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-27 01:12:01,523	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tcin >> n;\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tcout << solve( solve, n ) / 3650 + 1 << endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 25), '#include <iostream>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\tcin >> n;\n\n\n\n\twhile ( n != 0 )\n\n\t{\n\n\t\tint three_back = 1, two_back = 1, one_back = 2, current;\n\n\t\tif ( n == 1 )\n\n\t\t{\n\n\t\t\tcout << 1 << endl;\n\n\t\t}\n\n\t\telse if ( n == 2 )\n\n\t\t{\n\n\t\t\tcout << 1 << endl;\n\n\t\t}\n\n\t\telse if ( n == 3 )\n\n\t\t{\n\n\t\t\tcout << 2 << endl;\n\n\t\t}\n\n\t\telse\n\n\t\t{\n\n\t\t\tfor ( int i = 4; i <= n; i++ )\n\n\t\t\t{\n\n\t\t\t\tcurrent = three_back + two_back + one_back;\n\n\t\t\t\tthree_back = two_back;\n\n\t\t\t\ttwo_back = one_back;\n\n\t\t\t\tone_back = current;\n\n\t\t\t}\n\n\n\n\t\t\tcout << current << endl;\n\n\t\t}\n\n\n\n\t\tcin >> n;\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:01,523	[INFO]	Step: 40
+2025-01-27 01:12:01,523	[INFO]	Stop Steps: 50
+2025-01-27 01:12:01,681	[INFO]	3-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-27 01:12:01,681	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 26), '#include<cstdio>\n#include<algorithm>\nusing namespace std;\nint main(){\n\tint n,ans=1;\n\tscanf("%d",&n);\n\twhile(n--)\n\t\tans+=solve(n)/3650;\n\tprintf("%d\n",ans);\n\treturn 0;\n}')"
+2025-01-27 01:12:01,681	[INFO]	Step: 41
+2025-01-27 01:12:01,681	[INFO]	Stop Steps: 50
+2025-01-27 01:12:04,124	[DEBUG]	EXEC>  SUCCESS 35693007.0
+2025-01-27 01:12:04,124	[INFO]	REF     SUCCESS               35693007.00 (--) [0 edit(s)]  
+2025-01-27 01:12:04,125	[INFO]	Best patch: 19_22
+2025-01-27 01:12:04,639	[DEBUG]	EXEC>  SUCCESS 1215595.375
+2025-01-27 01:12:04,639	[INFO]	BEST    SUCCESS              *1215595.38 (3.41%) [0 edit(s)]  
+2025-01-27 01:12:04,640	[INFO]	Best patch step: 36
+2025-01-27 01:12:22,336	[INFO]	Step: 41
+2025-01-27 01:12:22,336	[INFO]	Stop Steps: 50
+2025-01-27 01:12:23,012	[DEBUG]	EXEC>  SUCCESS 1247022.125
+2025-01-27 01:12:23,013	[INFO]	4-2     SUCCESS              +1247022.12 (3.49%) [2 edit(s)]  
+2025-01-27 01:12:23,013	[DEBUG]	patch(4-2)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\n\n\twhile ( true )\n\n\t{\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\t\t\n\n\t\tint a = 0, b = 0, c = 1;\n\n\n\n\t\tfor ( int i = 1; i <= n; ++i )\n\n\t\t{\n\n\t\t\tint t = a + b + c;\n\n\t\t\ta = b;\n\n\t\t\tb = c;\n\n\t\t\tc = t;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", c / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:23,013	[INFO]	Step: 42
+2025-01-27 01:12:23,013	[INFO]	Stop Steps: 50
+2025-01-27 01:12:23,509	[DEBUG]	EXEC>  SUCCESS 1212552.1875
+2025-01-27 01:12:23,509	[INFO]	4-3     SUCCESS              *1212552.19 (3.40%) [2 edit(s)]  
+2025-01-27 01:12:23,509	[DEBUG]	patch(4-3)="LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tint a = 1, b = 0, c = 0;\n\n\n\n\t\tfor ( int i = 1; i <= n; i++ )\n\n\t\t{\n\n\t\t\tint tmp = a + b + c;\n\n\n\n\t\t\tc = b;\n\n\t\t\tb = a;\n\n\t\t\ta = tmp;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", a / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+
+2025-01-27 01:12:23,509	[INFO]	Step: 43
+2025-01-27 01:12:23,509	[INFO]	Stop Steps: 50
+2025-01-27 01:12:24,017	[DEBUG]	EXEC>  SUCCESS 1224221.8125
+2025-01-27 01:12:24,017	[INFO]	4-4     SUCCESS               1224221.81 (3.43%) [1 edit(s)]  
+2025-01-27 01:12:24,018	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\n\n\twhile ( true )\n\n\t{\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tint a = 1, b = 0, c = 0;\n\n\n\n\t\tfor ( int i = 1; i <= n; i++ )\n\n\t\t{\n\n\t\t\tint tmp = a + b + c;\n\n\n\n\t\t\tc = b;\n\n\t\t\tb = a;\n\n\t\t\ta = tmp;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", a / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:24,018	[INFO]	Step: 44
+2025-01-27 01:12:24,018	[INFO]	Stop Steps: 50
+2025-01-27 01:12:24,479	[INFO]	4-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:12:24,480	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\tscanf( "%d", &n );\n\n\n\n\tvector<int> memo( n + 1, -1 );\n\n\n\n\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\treturn 1;\n\n\t\t}\n\n\t\telse if ( n < 0 )\n\n\t\t{\n\n\t\t\treturn 0;\n\n\t\t}\n\n\n\n\t\tif ( memo[n] != -1 )\n\n\t\t{\n\n\t\t\treturn memo[n];\n\n\t\t}\n\n\n\n\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t};\n\n\n\n\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:24,480	[INFO]	Step: 45
+2025-01-27 01:12:24,480	[INFO]	Stop Steps: 50
+2025-01-27 01:12:24,761	[INFO]	4-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-27 01:12:24,761	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n, dp[100000];\n\n\tscanf( "%d", &n );\n\n\tdp[0] = 1;\n\n\n\n\tfor ( int i = 1; i <= n; ++i )\n\n\t{\n\n\t\tfor ( int j = 1; j <= 3; ++j )\n\n\t\t{\n\n\t\t\tif ( i - j >= 0 )\n\n\t\t\t{\n\n\t\t\t\tdp[i] += dp[i - j];\n\n\t\t\t}\n\n\t\t}\n\n\t}\n\n\n\n\tprintf( "%d\\n", dp[n] / 3650 + 1 );\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:24,761	[INFO]	Step: 46
+2025-01-27 01:12:24,761	[INFO]	Stop Steps: 50
+2025-01-27 01:12:25,642	[DEBUG]	EXEC>  SUCCESS 34002709.0
+2025-01-27 01:12:25,643	[INFO]	4-7     SUCCESS               34002709.00 (95.26%) [1 edit(s)]  
+2025-01-27 01:12:25,643	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto fib = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", fib( fib, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:25,643	[INFO]	Step: 47
+2025-01-27 01:12:25,643	[INFO]	Stop Steps: 50
+2025-01-27 01:12:25,835	[INFO]	4-8     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-27 01:12:25,835	[DEBUG]	patch(4-8)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\n\n\twhile ( true )\n\n\t{\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\t\t\n\n\t\tint a = 0, b = 0, c = 1;\n\n\n\n\t\tfor ( int i = 1; i <= n; ++i )\n\n\t\t{\n\n\t\t\tint t = a + b + c;\n\n\t\t\ta = b;\n\n\t\t\tb = c;\n\n\t\t\tc = t;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", c / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 27), '#include <cstdio>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\n\n\twhile ( true )\n\n\t{\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\t\t\n\n\t\tint a = 0, b = 0, c = 1;\n\n\n\n\t\tif ( n == 1 || n == 2 )\n\n\t\t{\n\n\t\t\tprintf( "1\\n" );\n\n\t\t\tcontinue;\n\n\t\t}\n\n\n\n\t\tfor ( int i = 3; i <= n; ++i )\n\n\t\t{\n\n\t\t\tint t = a + b + c;\n\n\t\t\ta = b;\n\n\t\t\tb = c;\n\n\t\t\tc = t;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", c / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:25,835	[INFO]	Step: 48
+2025-01-27 01:12:25,835	[INFO]	Stop Steps: 50
+2025-01-27 01:12:26,017	[INFO]	4-9     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-27 01:12:26,018	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tint a = 1, b = 0, c = 0;\n\n\n\n\t\tfor ( int i = 1; i <= n; i++ )\n\n\t\t{\n\n\t\t\tint tmp = a + b + c;\n\n\n\n\t\t\tc = b;\n\n\t\t\tb = a;\n\n\t\t\ta = tmp;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", a / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 28), '#include<cstdio>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\tint n,a,b,c;\n\n\twhile(scanf("%d",&n),n!=0){\n\n\t\ta=1;b=0;c=0;\n\n\t\tfor(int i=1;i<=n;i++)a+=b+c,b=a-c,c=b;\n\n\t\tprintf("%d\\n",a/3650+1);\n\n\t}\n\n\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:26,018	[INFO]	Step: 49
+2025-01-27 01:12:26,018	[INFO]	Stop Steps: 50
+2025-01-27 01:12:26,206	[INFO]	4-10    TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-01-27 01:12:26,207	[DEBUG]	patch(4-10)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> dp( n + 1, 0 );\n\n\t\tdp[0] = 1;\n\n\n\n\t\tfor ( int i = 1; i <= n; ++i )\n\n\t\t{\n\n\t\t\tfor ( int j = 1; j <= 3; ++j )\n\n\t\t\t{\n\n\t\t\t\tif ( i - j >= 0 )\n\n\t\t\t\t{\n\n\t\t\t\t\tdp[i] += dp[i - j];\n\n\t\t\t\t}\n\n\t\t\t}\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", dp[n] / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') | LineLLMMutation(('source.cpp', 29), '#include<cstdio>\n\nint main()\n\n{\n\n\tint n;\n\n\twhile(~scanf("%d", &n) && n) printf("%d\\n", n > 3 ? n - 2 : n);\n\n\treturn 0;\n\n}')"
+2025-01-27 01:12:26,207	[INFO]	Step: 50
+2025-01-27 01:12:26,207	[INFO]	Stop Steps: 50
+2025-01-27 01:12:26,207	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-27 01:12:26,207	[INFO]	Step: 50
+2025-01-27 01:12:26,207	[INFO]	Stop Steps: 50
+2025-01-27 01:12:27,792	[INFO]	~~~~ END ~~~~
+2025-01-27 01:12:27,792	[INFO]	Best patch step: 42
+2025-01-27 01:12:27,793	[INFO]	
+2025-01-27 01:12:27,793	[INFO]	==== REPORT ====
+2025-01-27 01:12:27,793	[INFO]	Termination: step budget
+2025-01-27 01:12:27,793	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0046_1737940193.log
+2025-01-27 01:12:27,793	[INFO]	Patch file: _magpie_logs/0046_1737940193.patch
+2025-01-27 01:12:27,793	[INFO]	Diff file: _magpie_logs/0046_1737940193.diff
+2025-01-27 01:12:27,793	[INFO]	Reference fitness: 35693007.00
+2025-01-27 01:12:27,793	[INFO]	Best fitness: 1212552.19
+2025-01-27 01:12:27,793	[INFO]	
+2025-01-27 01:12:27,794	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tvector<int> memo( n + 1, -1 );\n\n\n\n\t\tauto solve = [&]( auto&& self, int n ) -> int {\n\n\t\t\tif ( n == 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 1;\n\n\t\t\t}\n\n\t\t\telse if ( n < 0 )\n\n\t\t\t{\n\n\t\t\t\treturn 0;\n\n\t\t\t}\n\n\n\n\t\t\tif ( memo[n] != -1 )\n\n\t\t\t{\n\n\t\t\t\treturn memo[n];\n\n\t\t\t}\n\n\n\n\t\t\treturn self( self, n - 1 ) + self( self, n - 2 ) + self( self, n - 3 );\n\n\t\t};\n\n\n\n\t\tprintf( "%d\\n", solve( solve, n ) / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}') + LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\n#include <vector>\n\nusing namespace std;\n\n\n\nint main()\n\n{\n\n\twhile ( true )\n\n\t{\n\n\t\tint n;\n\n\t\tscanf( "%d", &n );\n\n\n\n\t\tif ( n == 0 )\n\n\t\t{\n\n\t\t\tbreak;\n\n\t\t}\n\n\n\n\t\tint a = 1, b = 0, c = 0;\n\n\n\n\t\tfor ( int i = 1; i <= n; i++ )\n\n\t\t{\n\n\t\t\tint tmp = a + b + c;\n\n\n\n\t\t\tc = b;\n\n\t\t\tb = a;\n\n\t\t\ta = tmp;\n\n\t\t}\n\n\n\n\t\tprintf( "%d\\n", a / 3650 + 1 );\n\n\t}\n\n\n\n\treturn 0;\n\n}')
+2025-01-27 01:12:27,795	[INFO]	
+2025-01-27 01:12:27,795	[INFO]	==== DIFF ====
+

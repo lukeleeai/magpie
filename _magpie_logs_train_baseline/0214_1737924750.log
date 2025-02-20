@@ -1,0 +1,423 @@
+2025-01-26 20:52:30,773	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 3180549067072410
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0214
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 20:52:30,774	[DEBUG]	
+2025-01-26 20:52:30,774	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 20:52:30,774	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 20:52:31,603	[DEBUG]	EXEC>  SUCCESS 3320748.125
+2025-01-26 20:52:31,603	[INFO]	WARM    SUCCESS               3320748.12 (--) [0 edit(s)]  
+2025-01-26 20:52:32,151	[DEBUG]	EXEC>  SUCCESS 3234488.3125
+2025-01-26 20:52:32,152	[INFO]	WARM    SUCCESS               3234488.31 (--) [0 edit(s)]  
+2025-01-26 20:52:32,724	[DEBUG]	EXEC>  SUCCESS 3235070.1875
+2025-01-26 20:52:32,724	[INFO]	WARM    SUCCESS               3235070.19 (--) [0 edit(s)]  
+2025-01-26 20:52:33,286	[DEBUG]	EXEC>  SUCCESS 3250430.125
+2025-01-26 20:52:33,286	[INFO]	WARM    SUCCESS               3250430.12 (--) [0 edit(s)]  
+2025-01-26 20:52:33,842	[DEBUG]	EXEC>  SUCCESS 3225763.5
+2025-01-26 20:52:33,842	[INFO]	WARM    SUCCESS               3225763.50 (--) [0 edit(s)]  
+2025-01-26 20:52:33,843	[INFO]	REF     SUCCESS               3225763.50 (--) [0 edit(s)]  
+2025-01-26 20:52:33,843	[INFO]	
+2025-01-26 20:52:33,843	[INFO]	~~~~ START ~~~~
+2025-01-26 20:54:02,231	[DEBUG]	EXEC>  SUCCESS 1955976.5
+2025-01-26 20:54:02,231	[INFO]	0-1     SUCCESS              *1955976.50 (60.64%) [1 edit(s)]  
+2025-01-26 20:54:02,231	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 4; i <= 10000; ++i) {\n        for (int j = 2; j <= sqrt((double)i); ++j) {\n            if (i % j == 0) {\n                b1.reset(i);\n                break;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i])\n                ++P;\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:54:03,705	[DEBUG]	EXEC>  SUCCESS 1029882.1875
+2025-01-26 20:54:03,705	[INFO]	0-2     SUCCESS              *1029882.19 (31.93%) [1 edit(s)]  
+2025-01-26 20:54:03,705	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i <= 10000; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i])\n                ++P;\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:54:05,291	[DEBUG]	EXEC>  SUCCESS 1007507.375
+2025-01-26 20:54:05,291	[INFO]	0-3     SUCCESS              *1007507.38 (31.23%) [1 edit(s)]  
+2025-01-26 20:54:05,291	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:54:06,760	[DEBUG]	EXEC>  SUCCESS 994613.4375
+2025-01-26 20:54:06,760	[INFO]	0-4     SUCCESS              *994613.44 (30.83%) [1 edit(s)]  
+2025-01-26 20:54:06,760	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N;\n        static int P;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:54:08,233	[DEBUG]	EXEC>  SUCCESS 1026549.0
+2025-01-26 20:54:08,233	[INFO]	0-5     SUCCESS               1026549.00 (31.82%) [1 edit(s)]  
+2025-01-26 20:54:08,233	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N, P;\n    do {\n        P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    } while (true);\n    return 0;\n}')"
+2025-01-26 20:54:09,615	[DEBUG]	EXEC>  SUCCESS 1006472.1875
+2025-01-26 20:54:09,615	[INFO]	0-6     SUCCESS               1006472.19 (31.20%) [1 edit(s)]  
+2025-01-26 20:54:09,615	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:54:10,924	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 20:54:10,924	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        int P = 0;\n        for (int i = 1; i <= N / 2; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:54:12,395	[DEBUG]	EXEC>  SUCCESS 2480121.875
+2025-01-26 20:54:12,395	[INFO]	0-8     SUCCESS               2480121.88 (76.88%) [1 edit(s)]  
+2025-01-26 20:54:12,395	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cmath>\n#include <cstdio>\n#include <vector>\n\n#define MAX 10001\n\nusing namespace std;\n\nvector<bool> is_prime(MAX, true);\n\nvoid ComputePrimes() {\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:54:13,865	[DEBUG]	EXEC>  SUCCESS 1019611.25
+2025-01-26 20:54:13,866	[INFO]	0-9     SUCCESS               1019611.25 (31.61%) [1 edit(s)]  
+2025-01-26 20:54:13,866	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N, P;\n    while (scanf("%d", &N) != EOF) {\n        P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:54:15,329	[DEBUG]	EXEC>  SUCCESS 1009624.0
+2025-01-26 20:54:15,330	[INFO]	0-10    SUCCESS               1009624.00 (31.30%) [1 edit(s)]  
+2025-01-26 20:54:15,330	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i]) {\n                ++P;\n            }\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:54:16,330	[INFO]	Step: 10
+2025-01-26 20:54:16,330	[INFO]	Stop Steps: 50
+2025-01-26 20:54:17,896	[DEBUG]	EXEC>  SUCCESS 3240528.3125
+2025-01-26 20:54:17,896	[INFO]	REF     SUCCESS               3240528.31 (--) [0 edit(s)]  
+2025-01-26 20:54:17,896	[INFO]	Best patch: 3
+2025-01-26 20:54:18,354	[DEBUG]	EXEC>  SUCCESS 1012066.875
+2025-01-26 20:54:18,354	[INFO]	BEST    SUCCESS              *1012066.88 (31.23%) [0 edit(s)]  
+2025-01-26 20:54:18,354	[INFO]	Best patch step: 3
+2025-01-26 20:55:12,882	[INFO]	Step: 10
+2025-01-26 20:55:12,882	[INFO]	Stop Steps: 50
+2025-01-26 20:55:13,470	[DEBUG]	EXEC>  SUCCESS 1009046.3125
+2025-01-26 20:55:13,470	[INFO]	1-1     SUCCESS              *1009046.31 (31.14%) [1 edit(s)]  
+2025-01-26 20:55:13,470	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N;\n        static int P;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:55:13,470	[INFO]	Step: 11
+2025-01-26 20:55:13,470	[INFO]	Stop Steps: 50
+2025-01-26 20:55:13,843	[DEBUG]	EXEC>  SUCCESS 1008136.875
+2025-01-26 20:55:13,843	[INFO]	1-2     SUCCESS              *1008136.88 (31.11%) [1 edit(s)]  
+2025-01-26 20:55:13,843	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:55:13,843	[INFO]	Step: 12
+2025-01-26 20:55:13,843	[INFO]	Stop Steps: 50
+2025-01-26 20:55:14,303	[DEBUG]	EXEC>  SUCCESS 1020337.9375
+2025-01-26 20:55:14,303	[INFO]	1-3     SUCCESS               1020337.94 (31.49%) [1 edit(s)]  
+2025-01-26 20:55:14,303	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:55:14,303	[INFO]	Step: 13
+2025-01-26 20:55:14,303	[INFO]	Stop Steps: 50
+2025-01-26 20:55:14,772	[DEBUG]	EXEC>  SUCCESS 1044138.8125
+2025-01-26 20:55:14,772	[INFO]	1-4     SUCCESS               1044138.81 (32.22%) [1 edit(s)]  
+2025-01-26 20:55:14,772	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i]) {\n                ++P;\n            }\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:55:14,772	[INFO]	Step: 14
+2025-01-26 20:55:14,772	[INFO]	Stop Steps: 50
+2025-01-26 20:55:15,232	[DEBUG]	EXEC>  SUCCESS 1010296.5
+2025-01-26 20:55:15,232	[INFO]	1-5     SUCCESS               1010296.50 (31.18%) [1 edit(s)]  
+2025-01-26 20:55:15,232	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += b1[N - i + 1] && b1[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}')"
+2025-01-26 20:55:15,232	[INFO]	Step: 15
+2025-01-26 20:55:15,232	[INFO]	Stop Steps: 50
+2025-01-26 20:55:15,603	[DEBUG]	EXEC>  SUCCESS 1004179.625
+2025-01-26 20:55:15,603	[INFO]	1-6     SUCCESS              *1004179.62 (30.99%) [1 edit(s)]  
+2025-01-26 20:55:15,603	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += is_prime[N - i + 1] && is_prime[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}')"
+
+2025-01-26 20:55:15,603	[INFO]	Step: 16
+2025-01-26 20:55:15,603	[INFO]	Stop Steps: 50
+2025-01-26 20:55:15,913	[INFO]	1-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:55:15,913	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N;\n        static int P;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N;\n        static int P;\n        if (scanf("%d", &N) == EOF)\n            break;\n        P = 0;\n        for (int i = 1; i <= N / 2; ++i) { // Optimize loop to only go up to N/2\n            P += b1[N - i + 1] && b1[i];\n        }\n        P *= 2; // Multiply by 2 as we count pairs (i, N-i)\n        if (N % 2 == 0 && b1[N / 2]) // Adjust for the middle case if N is even\n            P++;\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:55:15,913	[INFO]	Step: 17
+2025-01-26 20:55:15,913	[INFO]	Stop Steps: 50
+2025-01-26 20:55:16,138	[INFO]	1-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:55:16,138	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) != 1 || feof(stdin)) break;\n        \n        // Optimized counting of prime pairs\n        for (int i = 1; i <= N / 2; ++i) {\n            if (is_prime[i] && is_prime[N - i]) {\n                P++;\n            }\n        }\n        // If N is prime itself, add one to the count\n        if (N % 2 == 0 && is_prime[N / 2]) {\n            P++;\n        }\n        \n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:55:16,139	[INFO]	Step: 18
+2025-01-26 20:55:16,139	[INFO]	Stop Steps: 50
+2025-01-26 20:55:16,677	[DEBUG]	EXEC>  SUCCESS 2492959.6875
+2025-01-26 20:55:16,677	[INFO]	1-9     SUCCESS               2492959.69 (76.93%) [2 edit(s)]  
+2025-01-26 20:55:16,677	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 2), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n#include <vector>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    vector<int> inputs;\n    \n    // Read all inputs at once\n    while (scanf("%d", &N) != EOF) {\n        inputs.push_back(N);\n    }\n    \n    for (const int& input : inputs) {\n        int P = 0;\n        for (int i = 1; i <= input; ++i) {\n            P += b1[input - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:55:16,677	[INFO]	Step: 19
+2025-01-26 20:55:16,677	[INFO]	Stop Steps: 50
+2025-01-26 20:55:16,986	[INFO]	1-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:55:16,986	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 9), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i]) {\n                ++P;\n            }\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        // Optimize by iterating only until sqrt(N)\n        for (int i = 1; i * i <= N; ++i) {\n            if (b1[N - i] && b1[i]) {\n                ++P; // Count pairs (i, N-i)\n            }\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:55:16,986	[INFO]	Step: 20
+2025-01-26 20:55:16,986	[INFO]	Stop Steps: 50
+2025-01-26 20:55:17,546	[DEBUG]	EXEC>  SUCCESS 2538951.3125
+2025-01-26 20:55:17,546	[INFO]	1-1     SUCCESS               2538951.31 (78.35%) [1 edit(s)]  
+2025-01-26 20:55:17,546	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), "#include <cmath>\n#include <iostream>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes(){\n    b1.set();\n    b1.reset(1);\n    for(int i = 2; i * i <= 10000; ++i){\n        if(b1[i]) {\n            for(int j = i * i; j <= 10000; j += i){\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n\n    while (true) {\n        int N, P = 0;\n\n        cin >> N;\n\n        if (cin.eof())\n            break;\n\n        for(int i = 1; i <= N; ++i){\n            if(b1[N - i + 1] && b1[i])\n                ++P;\n        }\n\n        cout << P << '\\n';\n    }\n    return 0;\n}")"
+2025-01-26 20:55:17,546	[INFO]	Step: 21
+2025-01-26 20:55:17,546	[INFO]	Stop Steps: 50
+2025-01-26 20:55:19,104	[DEBUG]	EXEC>  SUCCESS 3253444.9375
+2025-01-26 20:55:19,104	[INFO]	REF     SUCCESS               3253444.94 (--) [0 edit(s)]  
+2025-01-26 20:55:19,104	[INFO]	Best patch: 3
+2025-01-26 20:55:19,475	[DEBUG]	EXEC>  SUCCESS 1007151.1875
+2025-01-26 20:55:19,476	[INFO]	BEST    SUCCESS              *1007151.19 (30.96%) [0 edit(s)]  
+2025-01-26 20:55:19,476	[INFO]	Best patch step: 15
+2025-01-26 20:56:17,657	[INFO]	Step: 21
+2025-01-26 20:56:17,657	[INFO]	Stop Steps: 50
+2025-01-26 20:56:18,149	[DEBUG]	EXEC>  SUCCESS 1009420.25
+2025-01-26 20:56:18,149	[INFO]	2-2     SUCCESS              +1009420.25 (31.03%) [1 edit(s)]  
+2025-01-26 20:56:18,150	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += is_prime[N - i + 1] && is_prime[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}')"
+2025-01-26 20:56:18,150	[INFO]	Step: 22
+2025-01-26 20:56:18,150	[INFO]	Stop Steps: 50
+2025-01-26 20:56:18,524	[DEBUG]	EXEC>  SUCCESS 1006446.9375
+2025-01-26 20:56:18,524	[INFO]	2-3     SUCCESS              *1006446.94 (30.93%) [1 edit(s)]  
+2025-01-26 20:56:18,524	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+
+2025-01-26 20:56:18,524	[INFO]	Step: 23
+2025-01-26 20:56:18,525	[INFO]	Stop Steps: 50
+2025-01-26 20:56:18,985	[DEBUG]	EXEC>  SUCCESS 1038109.5
+2025-01-26 20:56:18,986	[INFO]	2-4     SUCCESS               1038109.50 (31.91%) [1 edit(s)]  
+2025-01-26 20:56:18,986	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:18,986	[INFO]	Step: 24
+2025-01-26 20:56:18,986	[INFO]	Stop Steps: 50
+2025-01-26 20:56:19,454	[DEBUG]	EXEC>  SUCCESS 1008594.375
+2025-01-26 20:56:19,455	[INFO]	2-5     SUCCESS               1008594.38 (31.00%) [1 edit(s)]  
+2025-01-26 20:56:19,455	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:19,455	[INFO]	Step: 25
+2025-01-26 20:56:19,455	[INFO]	Stop Steps: 50
+2025-01-26 20:56:19,920	[DEBUG]	EXEC>  SUCCESS 1020629.25
+2025-01-26 20:56:19,920	[INFO]	2-6     SUCCESS               1020629.25 (31.37%) [1 edit(s)]  
+2025-01-26 20:56:19,920	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:19,920	[INFO]	Step: 26
+2025-01-26 20:56:19,920	[INFO]	Stop Steps: 50
+2025-01-26 20:56:20,381	[DEBUG]	EXEC>  SUCCESS 1037760.6875
+2025-01-26 20:56:20,382	[INFO]	2-7     SUCCESS               1037760.69 (31.90%) [1 edit(s)]  
+2025-01-26 20:56:20,382	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += b1[N - i + 1] && b1[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}')"
+2025-01-26 20:56:20,382	[INFO]	Step: 27
+2025-01-26 20:56:20,382	[INFO]	Stop Steps: 50
+2025-01-26 20:56:20,646	[INFO]	2-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:56:20,646	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += is_prime[N - i + 1] && is_prime[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cmath>\n#include <cstdio>\n#include <array>\n#include <vector>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint countPrimePairs(int N) {\n    int count = 0;\n    for (int i = 1; i <= N / 2; ++i) { // Only need to check up to N/2 for pairs\n        if (is_prime[i] && is_prime[N - i]) {\n            count++;\n        }\n    }\n    return count;\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = countPrimePairs(N); // Use the optimized counting function\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:20,646	[INFO]	Step: 28
+2025-01-26 20:56:20,646	[INFO]	Stop Steps: 50
+2025-01-26 20:56:20,866	[INFO]	2-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:56:20,866	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        // Instead of iterating from 1 to N, we can directly calculate pairs\n        for (int i = 2; i <= N / 2; ++i) {\n            if (is_prime[i] && is_prime[N - i]) {\n                P++;\n            }\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:20,866	[INFO]	Step: 29
+2025-01-26 20:56:20,866	[INFO]	Stop Steps: 50
+2025-01-26 20:56:21,181	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:56:21,181	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N;\n        static int P;\n        scanf("%d", &N);\n        if (feof(stdin))\n            break;\n        P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) == 1) {\n        int P = 0;\n        for (int i = 1; i <= N / 2; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:21,181	[INFO]	Step: 30
+2025-01-26 20:56:21,182	[INFO]	Stop Steps: 50
+2025-01-26 20:56:21,588	[DEBUG]	EXEC>  SUCCESS 2500481.125
+2025-01-26 20:56:21,588	[INFO]	2-1     SUCCESS               2500481.12 (76.86%) [2 edit(s)]  
+2025-01-26 20:56:21,588	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 2), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += b1[N - i + 1] && b1[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <vector>\n\n#define MAX 10001\n\nusing namespace std;\n\nvector<bool> isPrime(MAX, true);\n\nvoid ComputePrimes() {\n    isPrime[0] = isPrime[1] = false; // 0 and 1 are not prime numbers\n    for (int i = 2; i * i < MAX; ++i) {\n        if (isPrime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                isPrime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += isPrime[N - i + 1] && isPrime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:56:21,588	[INFO]	Step: 31
+2025-01-26 20:56:21,588	[INFO]	Stop Steps: 50
+2025-01-26 20:56:22,143	[DEBUG]	EXEC>  SUCCESS 3311343.1875
+2025-01-26 20:56:22,144	[INFO]	2-2     SUCCESS               3311343.19 (101.78%) [1 edit(s)]  
+2025-01-26 20:56:22,144	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), "#include<cmath>\n\n#include<iostream>\n\n#include<bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes(){\n    b1.set();\n    b1.reset(1);\n    for(int i = 4; i <= 10000; ++i){\n        for(int j = 2; j <= sqrt((double)i); ++j){\n            if( i % j == 0 ){\n                b1.reset( i );\n                break;\n            }\n        }\n    }\n}\n\nint main()\n{\n    ComputePrimes();\n    while( true )\n    {\n        int N, P = 0;\n        cin >> N;\n        if( cin.eof() )\n            break;\n        for(int i = 1; i <= N; ++i){\n            if( b1[N - i + 1] == true && b1[ i ] == true )\n                ++P;\n        }\n        cout << P << '\\n';\n    }\n    return 0;\n}")"
+2025-01-26 20:56:22,144	[INFO]	Step: 32
+2025-01-26 20:56:22,144	[INFO]	Stop Steps: 50
+2025-01-26 20:56:23,708	[DEBUG]	EXEC>  SUCCESS 3297034.8125
+2025-01-26 20:56:23,708	[INFO]	REF     SUCCESS               3297034.81 (--) [0 edit(s)]  
+2025-01-26 20:56:23,709	[INFO]	Best patch: 5
+2025-01-26 20:56:24,082	[DEBUG]	EXEC>  SUCCESS 1002486.75
+2025-01-26 20:56:24,082	[INFO]	BEST    SUCCESS              *1002486.75 (30.41%) [0 edit(s)]  
+2025-01-26 20:56:24,082	[INFO]	Best patch step: 22
+2025-01-26 20:57:21,286	[INFO]	Step: 32
+2025-01-26 20:57:21,286	[INFO]	Stop Steps: 50
+2025-01-26 20:57:21,786	[DEBUG]	EXEC>  SUCCESS 1020575.8125
+2025-01-26 20:57:21,786	[INFO]	3-3     SUCCESS              +1020575.81 (30.95%) [1 edit(s)]  
+2025-01-26 20:57:21,786	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:21,786	[INFO]	Step: 33
+2025-01-26 20:57:21,786	[INFO]	Stop Steps: 50
+2025-01-26 20:57:22,245	[DEBUG]	EXEC>  SUCCESS 1009778.8125
+2025-01-26 20:57:22,245	[INFO]	3-4     SUCCESS              +1009778.81 (30.63%) [1 edit(s)]  
+2025-01-26 20:57:22,245	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:22,245	[INFO]	Step: 34
+2025-01-26 20:57:22,245	[INFO]	Stop Steps: 50
+2025-01-26 20:57:22,716	[DEBUG]	EXEC>  SUCCESS 1006606.9375
+2025-01-26 20:57:22,716	[INFO]	3-5     SUCCESS              +1006606.94 (30.53%) [1 edit(s)]  
+2025-01-26 20:57:22,716	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:22,717	[INFO]	Step: 35
+2025-01-26 20:57:22,717	[INFO]	Stop Steps: 50
+2025-01-26 20:57:23,171	[DEBUG]	EXEC>  SUCCESS 1006745.875
+2025-01-26 20:57:23,171	[INFO]	3-6     SUCCESS               1006745.88 (30.53%) [1 edit(s)]  
+2025-01-26 20:57:23,171	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:23,171	[INFO]	Step: 36
+2025-01-26 20:57:23,171	[INFO]	Stop Steps: 50
+2025-01-26 20:57:23,541	[DEBUG]	EXEC>  SUCCESS 1009691.4375
+2025-01-26 20:57:23,541	[INFO]	3-7     SUCCESS               1009691.44 (30.62%) [1 edit(s)]  
+2025-01-26 20:57:23,542	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:23,542	[INFO]	Step: 37
+2025-01-26 20:57:23,542	[INFO]	Stop Steps: 50
+2025-01-26 20:57:24,002	[DEBUG]	EXEC>  SUCCESS 1002488.25
+2025-01-26 20:57:24,002	[INFO]	3-8     SUCCESS              +1002488.25 (30.41%) [1 edit(s)]  
+2025-01-26 20:57:24,002	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:24,002	[INFO]	Step: 38
+2025-01-26 20:57:24,002	[INFO]	Stop Steps: 50
+2025-01-26 20:57:24,224	[INFO]	3-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:57:24,225	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n\n        // Optimize the counting of prime pairs\n        for (int i = 1; i <= N / 2; ++i) {\n            P += is_prime[i] && is_prime[N - i];\n        }\n        if (N % 2 == 0 && is_prime[N / 2]) {\n            P++; // Count (N/2, N/2) if N is even\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:24,225	[INFO]	Step: 39
+2025-01-26 20:57:24,225	[INFO]	Stop Steps: 50
+2025-01-26 20:57:24,565	[DEBUG]	EXEC>  SUCCESS 1007997.25
+2025-01-26 20:57:24,566	[INFO]	3-10    SUCCESS               1007997.25 (30.57%) [2 edit(s)]  
+2025-01-26 20:57:24,566	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += b1[N - i + 1] && b1[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <vector>\n\n#define MAX 10001\n\nusing namespace std;\n\nbool is_prime[MAX];\n\nvoid ComputePrimes() {\n    fill(is_prime, is_prime + MAX, true);\n    is_prime[0] = is_prime[1] = false; // 0 and 1 are not prime numbers\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:24,566	[INFO]	Step: 40
+2025-01-26 20:57:24,566	[INFO]	Stop Steps: 50
+2025-01-26 20:57:24,789	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:57:24,789	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 3), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (true) {\n        if (scanf("%d", &N) != EOF) {\n            int P = 0;\n            for (int i = 1; i <= N; ++i) {\n                P += is_prime[N - i + 1] && is_prime[i];\n            }\n            printf("%d\\n", P);\n        } else {\n            break;\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        // Optimized loop: Only check up to N/2\n        for (int i = 1; i <= N / 2; ++i) {\n            if (is_prime[N - i + 1] && is_prime[i]) {\n                P += 1; // Count the pair\n            }\n        }\n        // Account for the middle number if N is odd\n        if (N % 2 == 0 && is_prime[N / 2]) {\n            P += 1;\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:24,789	[INFO]	Step: 41
+2025-01-26 20:57:24,789	[INFO]	Stop Steps: 50
+2025-01-26 20:57:25,095	[INFO]	3-2     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 20:57:25,095	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 6), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N / 2; ++i) { // Optimize by only checking up to N/2\n            if (is_prime[N - i] && is_prime[i]) {\n                P++;\n            }\n        }\n        if (N % 2 == 0 && is_prime[N / 2]) P++; // Special case for even N\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:25,095	[INFO]	Step: 42
+2025-01-26 20:57:25,095	[INFO]	Stop Steps: 50
+2025-01-26 20:57:25,640	[DEBUG]	EXEC>  SUCCESS 2405954.9375
+2025-01-26 20:57:25,641	[INFO]	3-3     SUCCESS               2405954.94 (72.97%) [1 edit(s)]  
+2025-01-26 20:57:25,641	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), "#include <cmath>\n#include <iostream>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(0);\n    b1.reset(1);\n\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n\n    while (true) {\n        int N, P = 0;\n\n        cin >> N;\n\n        if (cin.eof())\n            break;\n\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i])\n                ++P;\n        }\n\n        cout << P << '\\n';\n    }\n    return 0;\n}")"
+2025-01-26 20:57:25,641	[INFO]	Step: 43
+2025-01-26 20:57:25,641	[INFO]	Stop Steps: 50
+2025-01-26 20:57:26,176	[DEBUG]	EXEC>  SUCCESS 2446201.8125
+2025-01-26 20:57:26,177	[INFO]	3-4     SUCCESS               2446201.81 (74.19%) [1 edit(s)]  
+2025-01-26 20:57:26,177	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 25), '#include <cmath>\n#include <iostream>\n#include <bitset>\n#include <cstdio>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(0);\n    b1.reset(1);\n\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    \n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i])\n                ++P;\n        }\n\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:57:26,177	[INFO]	Step: 44
+2025-01-26 20:57:26,177	[INFO]	Stop Steps: 50
+2025-01-26 20:57:26,728	[DEBUG]	EXEC>  SUCCESS 2406045.875
+2025-01-26 20:57:26,728	[INFO]	3-5     SUCCESS               2406045.88 (72.98%) [1 edit(s)]  
+2025-01-26 20:57:26,728	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), "#include <cmath>\n#include <iostream>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> b1;\n\nvoid ComputePrimes() {\n    b1.set();\n    b1.reset(0);\n    b1.reset(1);\n\n    for (int i = 2; i * i < MAX; ++i) {\n        if (b1[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                b1.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n\n    int N;\n    while (cin >> N) {\n        int P = 0;\n\n        for (int i = 1; i <= N; ++i) {\n            if (b1[N - i + 1] && b1[i])\n                ++P;\n        }\n\n        cout << P << '\\n';\n    }\n    return 0;\n}")"
+2025-01-26 20:57:26,728	[INFO]	Step: 45
+2025-01-26 20:57:26,728	[INFO]	Stop Steps: 50
+2025-01-26 20:57:28,290	[DEBUG]	EXEC>  SUCCESS 3279828.875
+2025-01-26 20:57:28,290	[INFO]	REF     SUCCESS               3279828.88 (--) [0 edit(s)]  
+2025-01-26 20:57:28,290	[INFO]	Best patch: 5
+2025-01-26 20:57:28,661	[DEBUG]	EXEC>  SUCCESS 996169.1875
+2025-01-26 20:57:28,661	[INFO]	BEST    SUCCESS              *996169.19 (30.37%) [0 edit(s)]  
+2025-01-26 20:57:28,661	[INFO]	Best patch step: 22
+2025-01-26 20:58:15,821	[INFO]	Step: 45
+2025-01-26 20:58:15,821	[INFO]	Stop Steps: 50
+2025-01-26 20:58:16,402	[DEBUG]	EXEC>  SUCCESS 1015921.875
+2025-01-26 20:58:16,402	[INFO]	4-6     SUCCESS              +1015921.88 (30.97%) [1 edit(s)]  
+2025-01-26 20:58:16,402	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 11), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:58:16,402	[INFO]	Step: 46
+2025-01-26 20:58:16,402	[INFO]	Stop Steps: 50
+2025-01-26 20:58:16,859	[DEBUG]	EXEC>  SUCCESS 1013911.75
+2025-01-26 20:58:16,859	[INFO]	4-7     SUCCESS              +1013911.75 (30.91%) [1 edit(s)]  
+2025-01-26 20:58:16,859	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 8), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:58:16,859	[INFO]	Step: 47
+2025-01-26 20:58:16,859	[INFO]	Stop Steps: 50
+2025-01-26 20:58:17,262	[DEBUG]	EXEC>  SUCCESS 1009636.0
+2025-01-26 20:58:17,262	[INFO]	4-8     SUCCESS              +1009636.00 (30.78%) [1 edit(s)]  
+2025-01-26 20:58:17,262	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 12), '#include <cmath>\n#include <cstdio>\n#include <vector>\n\n#define MAX 10001\n\nusing namespace std;\n\nbool is_prime[MAX];\n\nvoid ComputePrimes() {\n    fill(is_prime, is_prime + MAX, true);\n    is_prime[0] = is_prime[1] = false; // 0 and 1 are not prime numbers\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:58:17,262	[INFO]	Step: 48
+2025-01-26 20:58:17,262	[INFO]	Stop Steps: 50
+2025-01-26 20:58:17,729	[DEBUG]	EXEC>  SUCCESS 1009701.25
+2025-01-26 20:58:17,730	[INFO]	4-9     SUCCESS               1009701.25 (30.79%) [1 edit(s)]  
+2025-01-26 20:58:17,730	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 13), '#include <cmath>\n#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        if (scanf("%d", &N) == EOF) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:58:17,730	[INFO]	Step: 49
+2025-01-26 20:58:17,730	[INFO]	Stop Steps: 50
+2025-01-26 20:58:18,128	[DEBUG]	EXEC>  SUCCESS 1012766.8125
+2025-01-26 20:58:18,128	[INFO]	4-10    SUCCESS               1012766.81 (30.88%) [1 edit(s)]  
+2025-01-26 20:58:18,128	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <bitset>\n\n#define MAX 10001\n\nusing namespace std;\n\nbitset<MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.set();\n    is_prime.reset(1);\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime.reset(j);\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    int N;\n    while (scanf("%d", &N) != EOF) {\n        int P = 0;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')"
+2025-01-26 20:58:18,129	[INFO]	Step: 50
+2025-01-26 20:58:18,129	[INFO]	Stop Steps: 50
+2025-01-26 20:58:18,129	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 20:58:18,129	[INFO]	Step: 50
+2025-01-26 20:58:18,129	[INFO]	Stop Steps: 50
+2025-01-26 20:58:18,969	[INFO]	~~~~ END ~~~~
+2025-01-26 20:58:18,969	[INFO]	Best patch step: 22
+2025-01-26 20:58:18,969	[INFO]	
+2025-01-26 20:58:18,969	[INFO]	==== REPORT ====
+2025-01-26 20:58:18,969	[INFO]	Termination: step budget
+2025-01-26 20:58:18,969	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0214_1737924750.log
+2025-01-26 20:58:18,969	[INFO]	Patch file: _magpie_logs/0214_1737924750.patch
+2025-01-26 20:58:18,969	[INFO]	Diff file: _magpie_logs/0214_1737924750.diff
+2025-01-26 20:58:18,969	[INFO]	Reference fitness: 3279828.88
+2025-01-26 20:58:18,969	[INFO]	Best fitness: 996169.19
+2025-01-26 20:58:18,969	[INFO]	
+2025-01-26 20:58:18,970	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 5), '#include <cmath>\n#include <cstdio>\n#include <array>\n\n#define MAX 10001\n\nusing namespace std;\n\narray<bool, MAX> is_prime;\n\nvoid ComputePrimes() {\n    is_prime.fill(true);\n    is_prime[0] = is_prime[1] = false;\n    for (int i = 2; i * i < MAX; ++i) {\n        if (is_prime[i]) {\n            for (int j = i * i; j < MAX; j += i) {\n                is_prime[j] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    ComputePrimes();\n    while (true) {\n        int N, P = 0;\n        scanf("%d", &N);\n        if (feof(stdin)) break;\n        for (int i = 1; i <= N; ++i) {\n            P += is_prime[N - i + 1] && is_prime[i];\n        }\n        printf("%d\\n", P);\n    }\n    return 0;\n}')
+2025-01-26 20:58:18,970	[INFO]	
+2025-01-26 20:58:18,970	[INFO]	==== DIFF ====
+

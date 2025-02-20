@@ -1,0 +1,425 @@
+2025-01-26 01:33:26,017	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6288409306116090
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0045
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-26 01:33:26,017	[DEBUG]	
+2025-01-26 01:33:26,017	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-26 01:33:26,018	[INFO]	~~~~ WARMUP ~~~~
+2025-01-26 01:33:26,992	[DEBUG]	EXEC>  SUCCESS 2328856.0
+2025-01-26 01:33:26,992	[INFO]	WARM    SUCCESS               2328856.00 (--) [0 edit(s)]  
+2025-01-26 01:33:27,721	[DEBUG]	EXEC>  SUCCESS 2335707.375
+2025-01-26 01:33:27,722	[INFO]	WARM    SUCCESS               2335707.38 (--) [0 edit(s)]  
+2025-01-26 01:33:28,461	[DEBUG]	EXEC>  SUCCESS 2367282.0625
+2025-01-26 01:33:28,461	[INFO]	WARM    SUCCESS               2367282.06 (--) [0 edit(s)]  
+2025-01-26 01:33:29,186	[DEBUG]	EXEC>  SUCCESS 2347750.875
+2025-01-26 01:33:29,186	[INFO]	WARM    SUCCESS               2347750.88 (--) [0 edit(s)]  
+2025-01-26 01:33:29,912	[DEBUG]	EXEC>  SUCCESS 2355673.125
+2025-01-26 01:33:29,913	[INFO]	WARM    SUCCESS               2355673.12 (--) [0 edit(s)]  
+2025-01-26 01:33:29,913	[INFO]	REF     SUCCESS               2355673.12 (--) [0 edit(s)]  
+2025-01-26 01:33:29,913	[INFO]	
+2025-01-26 01:33:29,913	[INFO]	~~~~ START ~~~~
+2025-01-26 01:33:59,709	[DEBUG]	EXEC>  SUCCESS 945163.9375
+2025-01-26 01:33:59,710	[INFO]	0-1     SUCCESS              *945163.94 (40.12%) [1 edit(s)]  
+2025-01-26 01:33:59,710	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:34:01,030	[DEBUG]	EXEC>  SUCCESS 969455.0625
+2025-01-26 01:34:01,030	[INFO]	0-2     SUCCESS               969455.06 (41.15%) [1 edit(s)]  
+2025-01-26 01:34:01,030	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:02,351	[DEBUG]	EXEC>  SUCCESS 947254.75
+2025-01-26 01:34:02,352	[INFO]	0-3     SUCCESS               947254.75 (40.21%) [1 edit(s)]  
+2025-01-26 01:34:02,352	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:03,669	[DEBUG]	EXEC>  SUCCESS 975093.375
+2025-01-26 01:34:03,669	[INFO]	0-4     SUCCESS               975093.38 (41.39%) [1 edit(s)]  
+2025-01-26 01:34:03,669	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:05,054	[DEBUG]	EXEC>  SUCCESS 1085173.6875
+2025-01-26 01:34:05,055	[INFO]	0-5     SUCCESS               1085173.69 (46.07%) [1 edit(s)]  
+2025-01-26 01:34:05,055	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    ll count[3] = {0}; // R, G, B counts\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n count[s[j] - \'R\']++;\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:06,377	[DEBUG]	EXEC>  SUCCESS 948696.0625
+2025-01-26 01:34:06,377	[INFO]	0-6     SUCCESS               948696.06 (40.27%) [1 edit(s)]  
+2025-01-26 01:34:06,377	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:07,781	[DEBUG]	EXEC>  SUCCESS 2354783.6875
+2025-01-26 01:34:07,782	[INFO]	0-7     SUCCESS               2354783.69 (99.96%) [1 edit(s)]  
+2025-01-26 01:34:07,782	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nvector<char> s(4010);\n\nint main() {\n    scanf("%lld", &n);\n    for (ll i = 1; i <= n; ++i) {\n        scanf(" %c", &s[i]);\n    }\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:09,101	[DEBUG]	EXEC>  SUCCESS 963523.75
+2025-01-26 01:34:09,101	[INFO]	0-8     SUCCESS               963523.75 (40.90%) [1 edit(s)]  
+2025-01-26 01:34:09,101	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:10,312	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-01-26 01:34:10,313	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:11,745	[DEBUG]	EXEC>  SUCCESS 951339.5625
+2025-01-26 01:34:11,745	[INFO]	0-10    SUCCESS               951339.56 (40.39%) [1 edit(s)]  
+2025-01-26 01:34:11,745	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:12,745	[INFO]	Step: 10
+2025-01-26 01:34:12,745	[INFO]	Stop Steps: 50
+2025-01-26 01:34:14,483	[DEBUG]	EXEC>  SUCCESS 2332758.8125
+2025-01-26 01:34:14,483	[INFO]	REF     SUCCESS               2332758.81 (--) [0 edit(s)]  
+2025-01-26 01:34:14,483	[INFO]	Best patch: 0
+2025-01-26 01:34:14,784	[DEBUG]	EXEC>  SUCCESS 957322.0625
+2025-01-26 01:34:14,784	[INFO]	BEST    SUCCESS              *957322.06 (41.04%) [0 edit(s)]  
+2025-01-26 01:34:14,784	[INFO]	Best patch step: 0
+2025-01-26 01:34:46,435	[INFO]	Step: 10
+2025-01-26 01:34:46,435	[INFO]	Stop Steps: 50
+2025-01-26 01:34:46,868	[DEBUG]	EXEC>  SUCCESS 970984.6875
+2025-01-26 01:34:46,869	[INFO]	1-1     SUCCESS              +970984.69 (41.62%) [1 edit(s)]  
+2025-01-26 01:34:46,869	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:46,869	[INFO]	Step: 11
+2025-01-26 01:34:46,869	[INFO]	Stop Steps: 50
+2025-01-26 01:34:47,174	[DEBUG]	EXEC>  SUCCESS 941723.5625
+2025-01-26 01:34:47,174	[INFO]	1-2     SUCCESS              *941723.56 (40.37%) [1 edit(s)]  
+2025-01-26 01:34:47,174	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:34:47,174	[INFO]	Step: 12
+2025-01-26 01:34:47,174	[INFO]	Stop Steps: 50
+2025-01-26 01:34:47,477	[DEBUG]	EXEC>  SUCCESS 952863.4375
+2025-01-26 01:34:47,477	[INFO]	1-3     SUCCESS               952863.44 (40.85%) [1 edit(s)]  
+2025-01-26 01:34:47,477	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:47,477	[INFO]	Step: 13
+2025-01-26 01:34:47,477	[INFO]	Stop Steps: 50
+2025-01-26 01:34:47,787	[DEBUG]	EXEC>  SUCCESS 948144.75
+2025-01-26 01:34:47,787	[INFO]	1-4     SUCCESS               948144.75 (40.64%) [1 edit(s)]  
+2025-01-26 01:34:47,787	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:47,787	[INFO]	Step: 14
+2025-01-26 01:34:47,787	[INFO]	Stop Steps: 50
+2025-01-26 01:34:48,091	[DEBUG]	EXEC>  SUCCESS 941908.6875
+2025-01-26 01:34:48,091	[INFO]	1-5     SUCCESS               941908.69 (40.38%) [1 edit(s)]  
+2025-01-26 01:34:48,091	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:48,091	[INFO]	Step: 15
+2025-01-26 01:34:48,091	[INFO]	Stop Steps: 50
+2025-01-26 01:34:48,395	[DEBUG]	EXEC>  SUCCESS 956661.375
+2025-01-26 01:34:48,395	[INFO]	1-6     SUCCESS               956661.38 (41.01%) [1 edit(s)]  
+2025-01-26 01:34:48,395	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:48,395	[INFO]	Step: 16
+2025-01-26 01:34:48,395	[INFO]	Stop Steps: 50
+2025-01-26 01:34:48,697	[DEBUG]	EXEC>  SUCCESS 951779.4375
+2025-01-26 01:34:48,697	[INFO]	1-7     SUCCESS               951779.44 (40.80%) [2 edit(s)]  
+2025-01-26 01:34:48,697	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Optimize the nested loop by limiting the range of j and avoiding redundant checks\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:48,697	[INFO]	Step: 17
+2025-01-26 01:34:48,697	[INFO]	Stop Steps: 50
+2025-01-26 01:34:49,012	[DEBUG]	EXEC>  SUCCESS 945799.125
+2025-01-26 01:34:49,013	[INFO]	1-8     SUCCESS               945799.12 (40.54%) [2 edit(s)]  
+2025-01-26 01:34:49,013	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:49,013	[INFO]	Step: 18
+2025-01-26 01:34:49,013	[INFO]	Stop Steps: 50
+2025-01-26 01:34:49,105	[INFO]	1-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 01:34:49,106	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Using a single loop to count invalid combinations\n    for (ll len = 1; len <= n; ++len) {\n        // Create a count array to track occurrences of each color in the current window\n        ll count[3] = {0}; // R, G, B\n        for (ll j = 1; j <= n; ++j) {\n count[s[j] - \'R\']++; // Map \'R\' to 0, \'G\' to 1, \'B\' to 2\n if (j >= 3 * len) {\n     // Check the last three positions\n     if (count[0] > 0 && count[1] > 0 && count[2] > 0) {\n         ans--;\n     }\n     // Slide the window\n     count[s[j - 3 * len] - \'R\']--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}\n\nFitness score: 888819.625')"
+2025-01-26 01:34:49,106	[INFO]	Step: 19
+2025-01-26 01:34:49,106	[INFO]	Stop Steps: 50
+2025-01-26 01:34:49,414	[DEBUG]	EXEC>  SUCCESS 956683.125
+2025-01-26 01:34:49,414	[INFO]	1-10    SUCCESS               956683.12 (41.01%) [2 edit(s)]  
+2025-01-26 01:34:49,414	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Use a single loop to count valid triplets instead of nested loops\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:49,414	[INFO]	Step: 20
+2025-01-26 01:34:49,414	[INFO]	Stop Steps: 50
+2025-01-26 01:34:49,679	[DEBUG]	EXEC>  SUCCESS 951005.0625
+2025-01-26 01:34:49,679	[INFO]	1-1     SUCCESS               951005.06 (40.77%) [1 edit(s)]  
+2025-01-26 01:34:49,679	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld%s", &n, s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:34:49,679	[INFO]	Step: 21
+2025-01-26 01:34:49,679	[INFO]	Stop Steps: 50
+2025-01-26 01:34:51,530	[DEBUG]	EXEC>  SUCCESS 2338789.875
+2025-01-26 01:34:51,530	[INFO]	REF     SUCCESS               2338789.88 (--) [0 edit(s)]  
+2025-01-26 01:34:51,530	[INFO]	Best patch: 2
+2025-01-26 01:34:51,834	[DEBUG]	EXEC>  SUCCESS 947932.1875
+2025-01-26 01:34:51,835	[INFO]	BEST    SUCCESS              *947932.19 (40.53%) [0 edit(s)]  
+2025-01-26 01:34:51,835	[INFO]	Best patch step: 11
+2025-01-26 01:35:26,290	[INFO]	Step: 21
+2025-01-26 01:35:26,291	[INFO]	Stop Steps: 50
+2025-01-26 01:35:26,723	[DEBUG]	EXEC>  SUCCESS 954083.1875
+2025-01-26 01:35:26,723	[INFO]	2-2     SUCCESS              +954083.19 (40.79%) [1 edit(s)]  
+2025-01-26 01:35:26,723	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:26,723	[INFO]	Step: 22
+2025-01-26 01:35:26,723	[INFO]	Stop Steps: 50
+2025-01-26 01:35:27,031	[DEBUG]	EXEC>  SUCCESS 954632.9375
+2025-01-26 01:35:27,031	[INFO]	2-3     SUCCESS               954632.94 (40.82%) [1 edit(s)]  
+2025-01-26 01:35:27,031	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:27,032	[INFO]	Step: 23
+2025-01-26 01:35:27,032	[INFO]	Stop Steps: 50
+2025-01-26 01:35:27,344	[DEBUG]	EXEC>  SUCCESS 976934.3125
+2025-01-26 01:35:27,345	[INFO]	2-4     SUCCESS               976934.31 (41.77%) [1 edit(s)]  
+2025-01-26 01:35:27,345	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:27,345	[INFO]	Step: 24
+2025-01-26 01:35:27,345	[INFO]	Stop Steps: 50
+2025-01-26 01:35:27,655	[DEBUG]	EXEC>  SUCCESS 965223.375
+2025-01-26 01:35:27,655	[INFO]	2-5     SUCCESS               965223.38 (41.27%) [1 edit(s)]  
+2025-01-26 01:35:27,655	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:27,655	[INFO]	Step: 25
+2025-01-26 01:35:27,655	[INFO]	Stop Steps: 50
+2025-01-26 01:35:27,961	[DEBUG]	EXEC>  SUCCESS 949338.8125
+2025-01-26 01:35:27,961	[INFO]	2-6     SUCCESS              +949338.81 (40.59%) [1 edit(s)]  
+2025-01-26 01:35:27,961	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:27,961	[INFO]	Step: 26
+2025-01-26 01:35:27,961	[INFO]	Stop Steps: 50
+2025-01-26 01:35:28,266	[DEBUG]	EXEC>  SUCCESS 949619.9375
+2025-01-26 01:35:28,266	[INFO]	2-7     SUCCESS               949619.94 (40.60%) [1 edit(s)]  
+2025-01-26 01:35:28,267	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:28,267	[INFO]	Step: 27
+2025-01-26 01:35:28,267	[INFO]	Stop Steps: 50
+2025-01-26 01:35:28,354	[INFO]	2-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 01:35:28,354	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>')"
+2025-01-26 01:35:28,354	[INFO]	Step: 28
+2025-01-26 01:35:28,354	[INFO]	Stop Steps: 50
+2025-01-26 01:35:28,671	[DEBUG]	EXEC>  SUCCESS 950174.875
+2025-01-26 01:35:28,671	[INFO]	2-9     SUCCESS               950174.88 (40.63%) [2 edit(s)]  
+2025-01-26 01:35:28,671	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans = 0, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Instead of a triple nested loop, we can use a single loop to count\n    // the occurrences of each character more efficiently.\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:28,671	[INFO]	Step: 29
+2025-01-26 01:35:28,671	[INFO]	Stop Steps: 50
+2025-01-26 01:35:28,977	[DEBUG]	EXEC>  SUCCESS 947400.0
+2025-01-26 01:35:28,977	[INFO]	2-10    SUCCESS              *947400.00 (40.51%) [3 edit(s)]  
+2025-01-26 01:35:28,977	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    // Use a single loop instead of nested loops to reduce complexity\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--; // Found a triplet that doesn\'t match\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:35:28,977	[INFO]	Step: 30
+2025-01-26 01:35:28,977	[INFO]	Stop Steps: 50
+2025-01-26 01:35:29,284	[DEBUG]	EXEC>  SUCCESS 963635.1875
+2025-01-26 01:35:29,284	[INFO]	2-1     SUCCESS               963635.19 (41.20%) [2 edit(s)]  
+2025-01-26 01:35:29,284	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Use a single pass to count valid triplets instead of nested loops\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:29,284	[INFO]	Step: 31
+2025-01-26 01:35:29,284	[INFO]	Stop Steps: 50
+2025-01-26 01:35:29,591	[DEBUG]	EXEC>  SUCCESS 956477.25
+2025-01-26 01:35:29,591	[INFO]	2-2     SUCCESS               956477.25 (40.90%) [1 edit(s)]  
+2025-01-26 01:35:29,591	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:29,591	[INFO]	Step: 32
+2025-01-26 01:35:29,591	[INFO]	Stop Steps: 50
+2025-01-26 01:35:29,903	[DEBUG]	EXEC>  SUCCESS 948430.4375
+2025-01-26 01:35:29,903	[INFO]	2-3     SUCCESS               948430.44 (40.55%) [1 edit(s)]  
+2025-01-26 01:35:29,903	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:29,904	[INFO]	Step: 33
+2025-01-26 01:35:29,904	[INFO]	Stop Steps: 50
+2025-01-26 01:35:30,368	[DEBUG]	EXEC>  SUCCESS 2458918.375
+2025-01-26 01:35:30,368	[INFO]	2-4     SUCCESS               2458918.38 (105.14%) [1 edit(s)]  
+2025-01-26 01:35:30,368	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <algorithm>\n#include <unordered_map>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    unordered_map<char, ll> count;\n    for (int i = 1; i <= n; i++) {\n        count[s[i]]++;\n    }\n    r = count[\'R\'];\n    g = count[\'G\'];\n    b = count[\'B\'];\n\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:35:30,368	[INFO]	Step: 34
+2025-01-26 01:35:30,368	[INFO]	Stop Steps: 50
+2025-01-26 01:35:32,110	[DEBUG]	EXEC>  SUCCESS 2342278.3125
+2025-01-26 01:35:32,110	[INFO]	REF     SUCCESS               2342278.31 (--) [0 edit(s)]  
+2025-01-26 01:35:32,110	[INFO]	Best patch: 2_11_17
+2025-01-26 01:35:32,425	[DEBUG]	EXEC>  SUCCESS 958059.5
+2025-01-26 01:35:32,425	[INFO]	BEST    SUCCESS              *958059.50 (40.90%) [0 edit(s)]  
+2025-01-26 01:35:32,425	[INFO]	Best patch step: 29
+2025-01-26 01:36:04,985	[INFO]	Step: 34
+2025-01-26 01:36:04,985	[INFO]	Stop Steps: 50
+2025-01-26 01:36:05,428	[DEBUG]	EXEC>  SUCCESS 970463.625
+2025-01-26 01:36:05,428	[INFO]	3-5     SUCCESS              +970463.62 (41.43%) [3 edit(s)]  
+2025-01-26 01:36:05,428	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    // Use a single loop instead of nested loops to reduce complexity\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--; // Found a triplet that doesn\'t match\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:05,428	[INFO]	Step: 35
+2025-01-26 01:36:05,428	[INFO]	Stop Steps: 50
+2025-01-26 01:36:05,733	[DEBUG]	EXEC>  SUCCESS 961129.0
+2025-01-26 01:36:05,733	[INFO]	3-6     SUCCESS              +961129.00 (41.03%) [1 edit(s)]  
+2025-01-26 01:36:05,733	[DEBUG]	patch(3-6)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:05,733	[INFO]	Step: 36
+2025-01-26 01:36:05,733	[INFO]	Stop Steps: 50
+2025-01-26 01:36:06,051	[DEBUG]	EXEC>  SUCCESS 978165.8125
+2025-01-26 01:36:06,051	[INFO]	3-7     SUCCESS               978165.81 (41.76%) [1 edit(s)]  
+2025-01-26 01:36:06,051	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--; // Found a triplet that doesn\'t match\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:06,051	[INFO]	Step: 37
+2025-01-26 01:36:06,051	[INFO]	Stop Steps: 50
+2025-01-26 01:36:06,381	[DEBUG]	EXEC>  SUCCESS 981480.25
+2025-01-26 01:36:06,381	[INFO]	3-8     SUCCESS               981480.25 (41.90%) [1 edit(s)]  
+2025-01-26 01:36:06,381	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--; // Found a triplet that doesn\'t match\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:06,381	[INFO]	Step: 38
+2025-01-26 01:36:06,381	[INFO]	Stop Steps: 50
+2025-01-26 01:36:06,693	[DEBUG]	EXEC>  SUCCESS 955492.5
+2025-01-26 01:36:06,693	[INFO]	3-9     SUCCESS              *955492.50 (40.79%) [1 edit(s)]  
+2025-01-26 01:36:06,693	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b; // Initial count of all combinations\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:36:06,694	[INFO]	Step: 39
+2025-01-26 01:36:06,694	[INFO]	Stop Steps: 50
+2025-01-26 01:36:07,003	[DEBUG]	EXEC>  SUCCESS 952834.75
+2025-01-26 01:36:07,003	[INFO]	3-10    SUCCESS              *952834.75 (40.68%) [1 edit(s)]  
+2025-01-26 01:36:07,003	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:36:07,003	[INFO]	Step: 40
+2025-01-26 01:36:07,003	[INFO]	Stop Steps: 50
+2025-01-26 01:36:07,170	[INFO]	3-1     TEST_CODE_ERROR       None (--) [4 edit(s)]  
+2025-01-26 01:36:07,170	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    // Use a single loop instead of nested loops to reduce complexity\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--; // Found a triplet that doesn\'t match\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    // Optimize the triplet check using a single pass approach\n    for (ll len = 1; len <= n; ++len) {\n        ll count[3] = {0}; // count[0] for \'R\', count[1] for \'G\', count[2] for \'B\'\n        for (ll j = 1; j <= n; ++j) {\n if (s[j] == \'R\') count[0]++;\n else if (s[j] == \'G\') count[1]++;\n else if (s[j] == \'B\') count[2]++;\n \n if (j >= 2 * len) {\n     // Ensure we only consider valid triplet ranges\n     ans -= count[0] * count[1] * count[2] - (s[j] == \'R\' ? count[1] * count[2] : (s[j] == \'G\' ? count[0] * count[2] : count[0] * count[1]));\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:07,170	[INFO]	Step: 41
+2025-01-26 01:36:07,170	[INFO]	Stop Steps: 50
+2025-01-26 01:36:07,254	[INFO]	3-2     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-01-26 01:36:07,254	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>')"
+2025-01-26 01:36:07,254	[INFO]	Step: 42
+2025-01-26 01:36:07,254	[INFO]	Stop Steps: 50
+2025-01-26 01:36:07,418	[INFO]	3-3     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-01-26 01:36:07,418	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Optimized the nested loop by using a single loop and a counter for valid triplets\n    for (ll len = 1; len <= n; ++len) {\n        ll count[3] = {0}; // Count for R, G, B\n        for (ll j = 1; j <= n; ++j) {\n if (s[j] == \'R\') count[0]++;\n else if (s[j] == \'G\') count[1]++;\n else if (s[j] == \'B\') count[2]++;\n if (j >= 3 * len) {\n     // Calculate the number of valid triplets\n     ans -= count[0] * count[1] * count[2];\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:07,418	[INFO]	Step: 43
+2025-01-26 01:36:07,419	[INFO]	Stop Steps: 50
+2025-01-26 01:36:07,737	[DEBUG]	EXEC>  SUCCESS 956793.625
+2025-01-26 01:36:07,737	[INFO]	3-4     SUCCESS               956793.62 (40.85%) [2 edit(s)]  
+2025-01-26 01:36:07,737	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b;\n    // Optimize the nested loop by avoiding redundant checks\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:07,737	[INFO]	Step: 44
+2025-01-26 01:36:07,737	[INFO]	Stop Steps: 50
+2025-01-26 01:36:08,008	[DEBUG]	EXEC>  SUCCESS 977656.625
+2025-01-26 01:36:08,009	[INFO]	3-5     SUCCESS               977656.62 (41.74%) [1 edit(s)]  
+2025-01-26 01:36:08,009	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), '#include <cstdio>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r, g, b;\nchar s[4010];\n\nint main() {\n    scanf("%lld %s", &n, s + 1);\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:08,009	[INFO]	Step: 45
+2025-01-26 01:36:08,009	[INFO]	Stop Steps: 50
+2025-01-26 01:36:09,748	[DEBUG]	EXEC>  SUCCESS 2349536.8125
+2025-01-26 01:36:09,748	[INFO]	REF     SUCCESS               2349536.81 (--) [0 edit(s)]  
+2025-01-26 01:36:09,748	[INFO]	Best patch: 11
+2025-01-26 01:36:10,052	[DEBUG]	EXEC>  SUCCESS 972287.5625
+2025-01-26 01:36:10,052	[INFO]	BEST    SUCCESS              *972287.56 (41.38%) [0 edit(s)]  
+2025-01-26 01:36:10,052	[INFO]	Best patch step: 39
+2025-01-26 01:36:41,334	[INFO]	Step: 45
+2025-01-26 01:36:41,334	[INFO]	Stop Steps: 50
+2025-01-26 01:36:41,760	[DEBUG]	EXEC>  SUCCESS 963409.0625
+2025-01-26 01:36:41,760	[INFO]	4-6     SUCCESS              *963409.06 (41.00%) [1 edit(s)]  
+2025-01-26 01:36:41,760	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:36:41,760	[INFO]	Step: 46
+2025-01-26 01:36:41,760	[INFO]	Stop Steps: 50
+2025-01-26 01:36:42,064	[DEBUG]	EXEC>  SUCCESS 940895.0
+2025-01-26 01:36:42,064	[INFO]	4-7     SUCCESS              *940895.00 (40.05%) [1 edit(s)]  
+2025-01-26 01:36:42,064	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b; // Initial count of all combinations\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+
+2025-01-26 01:36:42,064	[INFO]	Step: 47
+2025-01-26 01:36:42,064	[INFO]	Stop Steps: 50
+2025-01-26 01:36:42,368	[DEBUG]	EXEC>  SUCCESS 950066.25
+2025-01-26 01:36:42,369	[INFO]	4-8     SUCCESS               950066.25 (40.44%) [1 edit(s)]  
+2025-01-26 01:36:42,369	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n    \n    for (ll i = 1; i <= n; ++i) {\n        if (s[i] == \'R\') r++;\n        else if (s[i] == \'G\') g++;\n        else if (s[i] == \'B\') b++;\n    }\n    \n    ans = r * g * b; // Initial count of all combinations\n    for (ll len = 1; len <= n; ++len) {\n        for (ll j = 1; j <= n - 2 * len; ++j) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len]) {\n     ans--;\n }\n        }\n    }\n    \n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:42,369	[INFO]	Step: 48
+2025-01-26 01:36:42,369	[INFO]	Stop Steps: 50
+2025-01-26 01:36:42,676	[DEBUG]	EXEC>  SUCCESS 949258.75
+2025-01-26 01:36:42,676	[INFO]	4-9     SUCCESS               949258.75 (40.40%) [1 edit(s)]  
+2025-01-26 01:36:42,676	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b; // Initial count of all combinations\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:42,676	[INFO]	Step: 49
+2025-01-26 01:36:42,676	[INFO]	Stop Steps: 50
+2025-01-26 01:36:42,983	[DEBUG]	EXEC>  SUCCESS 944015.4375
+2025-01-26 01:36:42,984	[INFO]	4-10    SUCCESS               944015.44 (40.18%) [1 edit(s)]  
+2025-01-26 01:36:42,984	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b;\n\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-01-26 01:36:42,984	[INFO]	Step: 50
+2025-01-26 01:36:42,984	[INFO]	Stop Steps: 50
+2025-01-26 01:36:42,984	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-01-26 01:36:42,984	[INFO]	Step: 50
+2025-01-26 01:36:42,984	[INFO]	Stop Steps: 50
+2025-01-26 01:36:43,539	[INFO]	~~~~ END ~~~~
+2025-01-26 01:36:43,539	[INFO]	Best patch step: 46
+2025-01-26 01:36:43,539	[INFO]	
+2025-01-26 01:36:43,540	[INFO]	==== REPORT ====
+2025-01-26 01:36:43,540	[INFO]	Termination: step budget
+2025-01-26 01:36:43,540	[INFO]	Log file: /home/ubuntu/eoc/magpie2/_magpie_logs/0045_1737855206.log
+2025-01-26 01:36:43,540	[INFO]	Patch file: _magpie_logs/0045_1737855206.patch
+2025-01-26 01:36:43,540	[INFO]	Diff file: _magpie_logs/0045_1737855206.diff
+2025-01-26 01:36:43,540	[INFO]	Reference fitness: 2349536.81
+2025-01-26 01:36:43,540	[INFO]	Best fitness: 940895.00
+2025-01-26 01:36:43,540	[INFO]	
+2025-01-26 01:36:43,540	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\n\nll n, ans, r = 0, g = 0, b = 0;\nchar s[4010];\n\nint main() {\n    scanf("%lld", &n);\n    scanf("%s", s + 1);\n\n    for (int i = 1; i <= n; i++) {\n        if (s[i] == \'R\') r++;\n        if (s[i] == \'G\') g++;\n        if (s[i] == \'B\') b++;\n    }\n\n    ans = r * g * b; // Initial count of all combinations\n    for (int len = 1; len <= n; len++) {\n        for (int j = 1; j <= n - 2 * len; j++) {\n if (s[j] != s[j + len] && s[j] != s[j + 2 * len] && s[j + len] != s[j + 2 * len])\n     ans--;\n        }\n    }\n\n    printf("%lld\\n", ans);\n    return 0;\n}')
+2025-01-26 01:36:43,540	[INFO]	
+2025-01-26 01:36:43,540	[INFO]	==== DIFF ====
+

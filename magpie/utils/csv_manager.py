@@ -72,7 +72,11 @@ class CSVManager:
 
 
 class ResultsManager(CSVManager):
-    def __init__(self, logs_dir: str = "logs/train", filename: str = "llm_eoc"):
+    def __init__(
+        self,
+        logs_dir: str = "logs/train",
+        filename: str = "llm_eoc_pie_finetuned",
+    ):
         file_path = os.path.join(logs_dir, filename + ".csv")
         columns = [
             "id",
@@ -101,7 +105,7 @@ class ResultsManager(CSVManager):
 
 
 class PromptsDataset(CSVManager):
-    def __init__(self, dataset_dir: str = "logs/train"):
+    def __init__(self, dataset_dir: str = "logs/test"):
         file_path = os.path.join(dataset_dir, "prompts_dataset.csv")
         columns = [
             "unique_id",

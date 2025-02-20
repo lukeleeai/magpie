@@ -1,0 +1,261 @@
+{
+    "(10)": {
+        "children": [
+            {
+                "fitness": 2303212.375,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        ll current_value = arr[i]; // Store current value to avoid repeated access\n        for (int j = 1; j <= k && j <= i; j++) {\n            // Calculate the difference once and reuse it\n            ll diff = abs(current_value - arr[i - j]);\n            memo[i] = min(memo[i], memo[i - j] + diff);\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `memo` array and the inner loop condition, which can be optimized by reducing the number of `abs` calculations and using a more efficient update mechanism for the `memo` array."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2391394.25
+        ]
+    },
+    "(11)": {
+        "children": [
+            {
+                "fitness": 3332478.1875,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k;\nvector<ll> arr;\nll memo[100005];\n\nll solve() {\n    for (ll i = n - 2; i >= 0; --i) {\n        ll ans = 1e9;\n        for (int j = 1; j <= k && j + i < n; j++) {\n            ans = min(ans, abs(arr[i] - arr[i + j]) + memo[i + j]);\n        }\n        memo[i] = ans;\n    }\n    return memo[0];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, 0, sizeof memo); // Initialize to 0\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the `solve` function that uses recursion with memoization. The optimization can be achieved by utilizing a dynamic programming approach that avoids the recursive calls altogether, thus reducing overhead and improving performance."
+            },
+            {
+                "fitness": 3294932.8125,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k;\nvector<ll> arr;\nll memo[100005]; // Keeping memo as an array instead of using memset for optimization.\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    if (memo[i] != -1) // Optimize the check for memoization.\n        return memo[i];\n\n    ll ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return memo[i] = ans; // Store the result directly to memo[i].\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    fill_n(memo, 100005, -1); // Using fill_n for better readability.\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `memo` array, which could be optimized by using a more efficient approach to avoid unnecessary memory usage and improve cache performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3239193.375
+        ]
+    },
+    "(11x13x12)": {
+        "children": [
+            {
+                "fitness": 3292971.9375,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, my_abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+                "strategy": "Integrate the `my_abs` function from Parent 2 into the recursive solution of Parent 1, enhancing code clarity while maintaining the recursive structure."
+            },
+            {
+                "fitness": 3299508.875,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n    \n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n        \n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + my_abs(arr[i] - arr[i + j])});\n        }\n    }\n    \n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Merge the iterative stack-based approach from Parent 3 with the array initialization from Parent 2 to eliminate recursion and potentially improve performance."
+            },
+            {
+                "fitness": 3283365.125,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n\n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n\n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + my_abs(arr[i] - arr[i + j])});\n        }\n    }\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Combine the stack-based approach of Parent 3 with the array handling of Parent 1, while simplifying the `solve` function to reduce memory overhead and improve efficiency."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "11",
+            "13",
+            "12"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, my_abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve(0);\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n    \n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n        \n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + abs(arr[i] - arr[i + j])});\n        }\n    }\n    \n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3286589.125,
+            3288912.75,
+            3311264.5625
+        ]
+    },
+    "(12)": {
+        "children": [
+            {
+                "fitness": 2308906.0625,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the `solve` function that performs stack operations to calculate the minimum difference, which could be optimized by using a dynamic programming approach instead of a stack for better time complexity and reduced overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "12"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n    \n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n        \n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + abs(arr[i] - arr[i + j])});\n        }\n    }\n    \n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3311264.5625
+        ]
+    },
+    "(12_18x11x4x7)": {
+        "children": [
+            {
+                "fitness": 3277018.875,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, my_abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+                "strategy": "Merging the recursive function from Parent 2 (fitness: 3239193.375) with the absolute distance function from Parent 3 (fitness: 3252457.25). This crossover uses the efficient recursive memoization of Parent 2 while enhancing readability with a custom absolute function from Parent 3."
+            },
+            {
+                "fitness": 2391394.25,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Combine the memoization technique from Parent 1 (fitness: 2314179.625) and the vector usage from Parent 2 (fitness: 3239193.375). This crossover replaces the array with a vector for dynamic sizing while maintaining the memoization approach for optimal performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "12_18",
+            "11",
+            "4",
+            "7"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, my_abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n\n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n\n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + my_abs(arr[i] - arr[i + j])});\n        }\n    }\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2314179.625,
+            3239193.375,
+            3252457.25,
+            3283365.125
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 2300565.5625,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k;\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    vector<ll> dp(n, 1e9);\n    dp[n - 1] = 0; // Base case: no cost at the last element\n\n    for (ll i = n - 2; i >= 0; --i) {\n        for (int j = 1; j <= k && j + i < n; j++) {\n            dp[i] = min(dp[i], my_abs(arr[i] - arr[i + j]) + dp[i + j]);\n        }\n    }\n\n    return dp[0];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the recursive function `solve` that has performance implications due to its multiple calls and the potential for stack overflow. This can be optimized by utilizing an iterative approach with dynamic programming instead of recursion to reduce overhead and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, my_abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3252457.25
+        ]
+    },
+    "(4_22)": {
+        "children": [
+            {
+                "fitness": 2330431.9375,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k;\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    vector<ll> dp(n);\n    dp[n - 1] = 0; // Base case: no cost at the last element\n\n    for (ll i = 0; i < n - 1; ++i) {\n        dp[i] = 1e9; // Initialize only when needed\n    }\n\n    for (ll i = n - 2; i >= 0; --i) {\n        for (int j = 1; j <= k && j + i < n; j++) {\n            dp[i] = min(dp[i], my_abs(arr[i] - arr[i + j]) + dp[i + j]);\n        }\n    }\n\n    return dp[0];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `dp` vector with a large value. This can be optimized by using a more efficient initialization method that avoids unnecessary memory allocation and reduces the overhead of large constant values."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_22"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k;\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    vector<ll> dp(n, 1e9);\n    dp[n - 1] = 0; // Base case: no cost at the last element\n\n    for (ll i = n - 2; i >= 0; --i) {\n        for (int j = 1; j <= k && j + i < n; j++) {\n            dp[i] = min(dp[i], my_abs(arr[i] - arr[i + j]) + dp[i + j]);\n        }\n    }\n\n    return dp[0];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve();\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2306245.9375
+        ]
+    },
+    "(4_22x12_18x10x11)": {
+        "children": [
+            {
+                "fitness": 4271679.9375,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Combine the dynamic programming approach from Parent 2 with the initialization of the array from Parent 1 to enhance performance."
+            },
+            {
+                "fitness": 3338046.75,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+                "strategy": "Utilize the efficient initialization from Parent 1 while adopting the optimal recursive strategy from Parent 4 for better performance in the memoization process."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "4_22",
+            "12_18",
+            "10",
+            "11"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k;\nvector<ll> arr;\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    vector<ll> dp(n, 1e9);\n    dp[n - 1] = 0; // Base case: no cost at the last element\n\n    for (ll i = n - 2; i >= 0; --i) {\n        for (int j = 1; j <= k && j + i < n; j++) {\n            dp[i] = min(dp[i], my_abs(arr[i] - arr[i + j]) + dp[i + j]);\n        }\n    }\n\n    return dp[0];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve();\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve() {\n    memo[0] = 0; // Base case\n    for (ll i = 1; i < n; ++i) {\n        memo[i] = 1e9; // Initialize with a large number\n        for (int j = 1; j <= k && j <= i; j++) {\n            memo[i] = min(memo[i], memo[i - j] + abs(arr[i] - arr[i - j]));\n        }\n    }\n    return memo[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            2306245.9375,
+            2314050.5625,
+            2391394.25,
+            3266364.5
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 3283688.25,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <limits>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    ll ans = numeric_limits<ll>::max();\n    ll current_ans;\n    vector<ll> dp(n, numeric_limits<ll>::max());\n    dp[0] = 0;\n\n    for (ll i = 0; i < n; ++i) {\n        for (int j = 1; j <= k && i + j < n; j++) {\n            current_ans = dp[i] + my_abs(arr[i] - arr[i + j]);\n            dp[i + j] = min(dp[i + j], current_ans);\n        }\n    }\n    \n    return dp[n - 1];\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the use of a stack for DFS traversal in the `solve` function, which can be optimized by using an iterative approach with a loop instead of recursion with a stack, reducing overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n\n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n\n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + my_abs(arr[i] - arr[i + j])});\n        }\n    }\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3283365.125
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 3266364.5,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, memo[100005];\nvector<ll> arr;\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    arr.resize(n);\n    memset(memo, -1, sizeof memo);\n    for (ll &val : arr)\n        cin >> val;\n\n    cout << solve(0);\n    return 0;\n}\n",
+                "strategy": "Optimize memory usage by using a vector instead of arrays for dynamic memory allocation, which can help in reducing stack usage and improving cache performance."
+            },
+            {
+                "fitness": 3311264.5625,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n#include <stack>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    stack<pair<ll, ll>> s;\n    s.push({0, 0});\n    ll ans = 1e9;\n    \n    while (!s.empty()) {\n        auto [i, current_ans] = s.top();\n        s.pop();\n        \n        if (i == n - 1) {\n            ans = min(ans, current_ans);\n            continue;\n        }\n\n        if (~memo[i]) {\n            ans = min(ans, current_ans + memo[i]);\n            continue;\n        }\n\n        for (int j = 1; j <= k && j + i < n; j++) {\n            s.push({i + j, current_ans + abs(arr[i] - arr[i + j])});\n        }\n    }\n    \n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the recursive function by using an iterative approach with a stack to avoid potential stack overflow issues with deep recursion."
+            },
+            {
+                "fitness": 3294189.625,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include <iostream>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\ntypedef long long ll;\n\nll n, k, arr[100005], memo[100005];\n\ninline ll my_abs(ll x) {\n    return (x < 0) ? -x : x;\n}\n\nll solve(ll i) {\n    if (i == n - 1)\n        return 0;\n\n    ll &ans = memo[i];\n    if (~ans)\n        return ans;\n\n    ans = 1e9;\n    for (int j = 1; j <= k && j + i < n; j++)\n        ans = min(ans, my_abs(arr[i] - arr[i + j]) + solve(i + j));\n\n    return ans;\n}\n\nint main() {\n    cin >> n >> k;\n    memset(memo, -1, sizeof memo);\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve(0);\n    return 0;\n}\n",
+                "strategy": "Replace `abs()` calls with a custom function to eliminate potential overhead from function calls, especially for simple mathematical operations."
+            },
+            {
+                "fitness": 3310415.0625,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include \"stdc++.h\"\n\n#define abdelrahman010 ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);\n\ntypedef long long ll;\n\nusing namespace std;\n\nll n, k, arr[100005], memo[100005];\n\nll solve() {\n    ll ans = 0;\n    for (ll i = n - 2; i >= 0; --i) {\n        memo[i] = 1e9;\n        for (int j = 1; j <= k && j + i < n; j++) {\n            memo[i] = min(memo[i], abs(arr[i] - arr[i + j]) + memo[i + j]);\n        }\n    }\n    return memo[0];\n}\n\nint main() {\n    abdelrahman010\n    cin >> n >> k;\n    memset(memo, 0, sizeof memo); // Initialize to zero for iterative solution\n    for (int i = 0; i < n; i++)\n        cin >> arr[i];\n\n    cout << solve();\n    return 0;\n}\n",
+                "strategy": "Focus on the `solve` function, which uses a recursive approach with memoization to find the minimum cost. It can be optimized by reducing the number of recursive calls and using an iterative approach instead, which can help avoid the overhead of function calls and stack usage."
+            },
+            {
+                "fitness": 3332801.9375,
+                "new_code": "#pragma GCC optimize (\"O3\")\n\n#include \"stdc++.h\"\n\n#define abdelrahman010 ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);\n\ntypedef long long ll;\n\nusing namespace std;\n\nll n , k ,arr[100005] , memo[100005];\n\nll solve(ll i)\n\n{\n\n\tif(i == n - 1)\n\n\t\treturn 0;\n\n\tll &ans = memo[i];\n\n\tif(~ans)\n\n\t\treturn ans;\n\n\tans = 1e9;\n\n\tfor(int j = 1;j <= k && j + i < n;j++)\n\n\t\tans = min(ans , abs(arr[i] - arr[i + j]) + solve(i + j));\n\n\treturn ans;\n\n}\n\nint main()\n\n{\n\n\tabdelrahman010\n\n\tcin >> n >> k;\n\n\tmemset(memo , -1 , sizeof memo);\n\n\tfor(int i = 0;i < n;i++)\n\n\t\tcin >> arr[i];\n\n\tcout << solve(0);\n\n\treturn 0;\n\n}\n",
+                "strategy": "There are no mutations to apply for optimization in the given code."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#pragma GCC optimize (\"O3\")\n\n#include \"stdc++.h\"\n\n#define abdelrahman010 ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);\n\ntypedef long long ll;\n\nusing namespace std;\n\nll n , k ,arr[100005] , memo[100005];\n\nll solve(ll i)\n\n{\n\n\tif(i == n - 1)\n\n\t\treturn 0;\n\n\tll &ans = memo[i];\n\n\tif(~ans)\n\n\t\treturn ans;\n\n\tans = 1e9;\n\n\tfor(int j = 1;j <= k && j + i < n;j++)\n\n\t\tans = min(ans , abs(arr[i] - arr[i + j]) + solve(i + j));\n\n\treturn ans;\n\n}\n\nint main()\n\n{\n\n\tabdelrahman010\n\n\tcin >> n >> k;\n\n\tmemset(memo , -1 , sizeof memo);\n\n\tfor(int i = 0;i < n;i++)\n\n\t\tcin >> arr[i];\n\n\tcout << solve(0);\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3271198.6875
+        ]
+    }
+}
