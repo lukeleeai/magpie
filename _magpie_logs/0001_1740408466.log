@@ -1,0 +1,430 @@
+2025-02-24 14:47:46,161	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6047610382801864
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0001
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 14:47:46,161	[DEBUG]	
+2025-02-24 14:47:46,161	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 14:47:46,162	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 14:47:47,346	[DEBUG]	EXEC>  SUCCESS 3099169.5
+2025-02-24 14:47:47,346	[INFO]	WARM    SUCCESS               3099169.50 (--) [0 edit(s)]  
+2025-02-24 14:47:47,883	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:47:47,883	[INFO]	WARM    SUCCESS               3099246.00 (--) [0 edit(s)]  
+2025-02-24 14:47:48,431	[DEBUG]	EXEC>  SUCCESS 3099334.5
+2025-02-24 14:47:48,431	[INFO]	WARM    SUCCESS               3099334.50 (--) [0 edit(s)]  
+2025-02-24 14:47:48,958	[DEBUG]	EXEC>  SUCCESS 3099155.0
+2025-02-24 14:47:48,959	[INFO]	WARM    SUCCESS               3099155.00 (--) [0 edit(s)]  
+2025-02-24 14:47:49,485	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-24 14:47:49,486	[INFO]	WARM    SUCCESS               3099247.50 (--) [0 edit(s)]  
+2025-02-24 14:47:49,486	[INFO]	REF     SUCCESS               3099247.50 (--) [0 edit(s)]  
+2025-02-24 14:47:49,486	[INFO]	
+2025-02-24 14:47:49,486	[INFO]	~~~~ START ~~~~
+2025-02-24 14:48:13,700	[DEBUG]	EXEC>  SUCCESS 3099245.5
+2025-02-24 14:48:13,700	[INFO]	0-1     SUCCESS              *3099245.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:13,700	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Use log10 to calculate the number of digits\n        int intLength = (sum > 0) ? floor(log10(sum)) + 1 : 1;\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-24 14:48:15,227	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:48:15,227	[INFO]	0-2     SUCCESS              *3099156.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:15,227	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <sstream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        static const int lengthMap[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};\n        cout << (sum < 20 ? lengthMap[sum] : (sum < 100 ? 2 : 3)) << endl; // Simple length estimation\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-24 14:48:16,763	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-24 14:48:16,763	[INFO]	0-3     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:16,763	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) != EOF) {\n        int sum = a + b;\n        int intLength = 0;\n\n        while (sum != 0) {\n            sum /= 10;\n            intLength++;\n        }\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:18,296	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-24 14:48:18,297	[INFO]	0-4     SUCCESS               3099246.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:18,297	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : 0;\n\n        while (sum) {\n            sum /= 10;\n            intLength++;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:19,828	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-24 14:48:19,828	[INFO]	0-5     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:19,828	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << to_string(sum).length() << endl; // Use string length\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:21,362	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:48:21,362	[INFO]	0-6     SUCCESS               3099246.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:21,362	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum == 0) {\n            cout << 1 << endl;\n        } else {\n            int intLength = (sum < 10) ? 1 : (sum < 100) ? 2 : (sum < 1000) ? 3 : 4; // Estimate based on value\n            cout << intLength << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:22,903	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-24 14:48:22,903	[INFO]	0-7     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:22,903	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\nusing namespace std;\n\nint countDigits(int n) {\n    return (n == 0) ? 1 : (n < 10) ? 1 : 1 + countDigits(n / 10);\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << countDigits(sum) << endl; // Call recursive function\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:24,447	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-24 14:48:24,447	[INFO]	0-8     SUCCESS               3099157.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:24,447	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << lengthArray[sum] << endl; // Use pre-calculated array\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:25,981	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-24 14:48:25,981	[INFO]	0-9     SUCCESS               3099246.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:25,981	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <sstream>\nusing namespace std;\n\nvoid problemOne() {\n    string line;\n    while (getline(cin, line)) {\n        stringstream ss(line);\n        int a, b;\n        ss >> a >> b;\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : 0;\n\n        while (sum) {\n            sum /= 10;\n            intLength++;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:27,509	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:48:27,509	[INFO]	0-10    SUCCESS               3099246.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:48:27,509	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        const int maxDigits = 10; // Assuming max digits for typical integer sums\n        cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:48:28,510	[INFO]	Step: 10
+2025-02-24 14:48:28,510	[INFO]	Stop Steps: 50
+2025-02-24 14:48:30,026	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-24 14:48:30,026	[INFO]	REF     SUCCESS               3099156.00 (--) [0 edit(s)]  
+2025-02-24 14:48:30,026	[INFO]	Best patch: 1
+2025-02-24 14:48:30,564	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-24 14:48:30,565	[INFO]	BEST    SUCCESS               3099157.00 (100.00%) [0 edit(s)]  
+2025-02-24 14:48:30,565	[INFO]	Best patch step: 1
+2025-02-24 14:49:29,779	[INFO]	Step: 10
+2025-02-24 14:49:29,779	[INFO]	Stop Steps: 50
+2025-02-24 14:49:30,322	[DEBUG]	EXEC>  SUCCESS 3099194.0
+2025-02-24 14:49:30,322	[INFO]	1-1     SUCCESS              +3099194.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:30,323	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <sstream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        static const int lengthMap[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};\n        cout << (sum < 20 ? lengthMap[sum] : (sum < 100 ? 2 : 3)) << endl; // Simple length estimation\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:30,323	[INFO]	Step: 11
+2025-02-24 14:49:30,323	[INFO]	Stop Steps: 50
+2025-02-24 14:49:30,857	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-24 14:49:30,857	[INFO]	1-2     SUCCESS              +3099157.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:30,857	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << lengthArray[sum] << endl; // Use pre-calculated array\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:30,857	[INFO]	Step: 12
+2025-02-24 14:49:30,857	[INFO]	Stop Steps: 50
+2025-02-24 14:49:31,395	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-24 14:49:31,395	[INFO]	1-3     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:31,395	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << lengthArray[sum] << endl; // Use pre-calculated array for fast access\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:31,395	[INFO]	Step: 13
+2025-02-24 14:49:31,395	[INFO]	Stop Steps: 50
+2025-02-24 14:49:31,915	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:49:31,915	[INFO]	1-4     SUCCESS              +3099156.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:31,915	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            // Calculate digit length for larger sums\n            cout << (sum > 0 ? floor(log10(sum)) + 1 : 1) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:31,915	[INFO]	Step: 14
+2025-02-24 14:49:31,915	[INFO]	Stop Steps: 50
+2025-02-24 14:49:32,462	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-24 14:49:32,462	[INFO]	1-5     SUCCESS               3099157.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:32,462	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:32,462	[INFO]	Step: 15
+2025-02-24 14:49:32,462	[INFO]	Stop Steps: 50
+2025-02-24 14:49:32,989	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-24 14:49:32,989	[INFO]	1-6     SUCCESS               3099246.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:32,989	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:32,989	[INFO]	Step: 16
+2025-02-24 14:49:32,989	[INFO]	Stop Steps: 50
+2025-02-24 14:49:33,528	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:49:33,528	[INFO]	1-7     SUCCESS               3099156.50 (100.00%) [2 edit(s)]  
+2025-02-24 14:49:33,528	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <sstream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        static const int lengthMap[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};\n        cout << (sum < 20 ? lengthMap[sum] : (sum < 100 ? 2 : 3)) << endl; // Simple length estimation\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Changed static lengthMap to a simpler logic to avoid unnecessary checks\n        cout << (sum < 20 ? sum : (sum < 100 ? 2 : 3)) << endl; // Directly using sum for small values\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:33,528	[INFO]	Step: 17
+2025-02-24 14:49:33,528	[INFO]	Stop Steps: 50
+2025-02-24 14:49:34,052	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-24 14:49:34,052	[INFO]	1-8     SUCCESS              +3099156.00 (100.00%) [2 edit(s)]  
+2025-02-24 14:49:34,052	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << lengthArray[sum] << endl; // Use pre-calculated array\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\nusing namespace std;\n\nint digitCount(int num) {\n    if (num == 0) return 1;\n    int count = 0;\n    while (num > 0) {\n        count++;\n        num /= 10;\n    }\n    return count;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << digitCount(sum) << endl; // Calculate the number of digits directly\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:34,052	[INFO]	Step: 18
+2025-02-24 14:49:34,052	[INFO]	Stop Steps: 50
+2025-02-24 14:49:34,607	[DEBUG]	EXEC>  SUCCESS 3099245.5
+2025-02-24 14:49:34,607	[INFO]	1-9     SUCCESS               3099245.50 (100.00%) [2 edit(s)]  
+2025-02-24 14:49:34,607	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Use log10 to calculate the number of digits\n        int intLength = (sum > 0) ? floor(log10(sum)) + 1 : 1;\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Directly count the number of digits by converting to string\n        int intLength = (sum == 0) ? 1 : 0;\n        while (sum) {\n            sum /= 10;\n            intLength++;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:34,608	[INFO]	Step: 19
+2025-02-24 14:49:34,608	[INFO]	Stop Steps: 50
+2025-02-24 14:49:35,139	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-24 14:49:35,139	[INFO]	1-10    SUCCESS               3099246.50 (100.00%) [2 edit(s)]  
+2025-02-24 14:49:35,139	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        const int maxDigits = 10; // Assuming max digits for typical integer sums\n        cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <cmath> // Include cmath for log10\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Optimized digit counting using log10\n        int digitCount = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        cout << digitCount << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:49:35,139	[INFO]	Step: 20
+2025-02-24 14:49:35,139	[INFO]	Stop Steps: 50
+2025-02-24 14:49:35,671	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-24 14:49:35,671	[INFO]	1-1     SUCCESS               3099246.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:49:35,671	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n#include <sstream>\n\nusing namespace std;\n\nvoid problemOne(){\n    int a;\n    int b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = 0;\n        while (sum != 0) {\n            sum /= 10;\n            intLength += 1;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-24 14:49:35,671	[INFO]	Step: 21
+2025-02-24 14:49:35,671	[INFO]	Stop Steps: 50
+2025-02-24 14:49:37,282	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:49:37,282	[INFO]	REF     SUCCESS               3099246.00 (--) [0 edit(s)]  
+2025-02-24 14:49:37,282	[INFO]	Best patch: 1
+2025-02-24 14:49:37,873	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-24 14:49:37,874	[INFO]	BEST    SUCCESS              *3099157.50 (100.00%) [0 edit(s)]  
+2025-02-24 14:49:37,874	[INFO]	Best patch step: 1
+2025-02-24 14:50:13,103	[INFO]	Step: 21
+2025-02-24 14:50:13,103	[INFO]	Stop Steps: 50
+2025-02-24 14:50:13,677	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:50:13,677	[INFO]	2-2     SUCCESS              +3099246.00 (100.00%) [2 edit(s)]  
+2025-02-24 14:50:13,678	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << lengthArray[sum] << endl; // Use pre-calculated array\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\nusing namespace std;\n\nint digitCount(int num) {\n    if (num == 0) return 1;\n    int count = 0;\n    while (num > 0) {\n        count++;\n        num /= 10;\n    }\n    return count;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << digitCount(sum) << endl; // Calculate the number of digits directly\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:13,678	[INFO]	Step: 22
+2025-02-24 14:50:13,678	[INFO]	Stop Steps: 50
+2025-02-24 14:50:14,270	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-24 14:50:14,271	[INFO]	2-3     SUCCESS               3099247.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:50:14,271	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            // Calculate digit length for larger sums\n            cout << (sum > 0 ? floor(log10(sum)) + 1 : 1) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:14,271	[INFO]	Step: 23
+2025-02-24 14:50:14,271	[INFO]	Stop Steps: 50
+2025-02-24 14:50:14,884	[DEBUG]	EXEC>  SUCCESS 3099336.5
+2025-02-24 14:50:14,885	[INFO]	2-4     SUCCESS               3099336.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:50:14,885	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            cout << (sum > 0 ? floor(log10(sum)) + 1 : 1) << endl; // Calculate digit length for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:14,885	[INFO]	Step: 24
+2025-02-24 14:50:14,885	[INFO]	Stop Steps: 50
+2025-02-24 14:50:15,464	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:50:15,465	[INFO]	2-5     SUCCESS               3099246.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:50:15,465	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:15,465	[INFO]	Step: 25
+2025-02-24 14:50:15,465	[INFO]	Stop Steps: 50
+2025-02-24 14:50:16,067	[DEBUG]	EXEC>  SUCCESS 3099155.5
+2025-02-24 14:50:16,068	[INFO]	2-6     SUCCESS              *3099155.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:50:16,068	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            cout << (sum < 20 ? sum : (sum < 100 ? 2 : 3)) << endl; // Directly using sum for larger values\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-24 14:50:16,068	[INFO]	Step: 26
+2025-02-24 14:50:16,068	[INFO]	Stop Steps: 50
+2025-02-24 14:50:16,674	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-24 14:50:16,675	[INFO]	2-7     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:50:16,675	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum > 0 ? floor(log10(sum)) + 1 : 1) << endl; // Calculate digit length for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:16,675	[INFO]	Step: 27
+2025-02-24 14:50:16,675	[INFO]	Stop Steps: 50
+2025-02-24 14:50:17,284	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:50:17,284	[INFO]	2-8     SUCCESS               3099246.00 (100.00%) [3 edit(s)]  
+2025-02-24 14:50:17,285	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << lengthArray[sum] << endl; // Use pre-calculated array\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\nusing namespace std;\n\nint digitCount(int num) {\n    if (num == 0) return 1;\n    int count = 0;\n    while (num > 0) {\n        count++;\n        num /= 10;\n    }\n    return count;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << digitCount(sum) << endl; // Calculate the number of digits directly\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nint digitCount(int num) {\n    if (num == 0) return 1;\n    return static_cast<int>(log10(num)) + 1; // Use logarithm to calculate digit count\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << digitCount(sum) << endl; // Calculate the number of digits directly\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:17,285	[INFO]	Step: 28
+2025-02-24 14:50:17,285	[INFO]	Stop Steps: 50
+2025-02-24 14:50:17,884	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:50:17,884	[INFO]	2-9     SUCCESS               3099246.00 (100.00%) [2 edit(s)]  
+2025-02-24 14:50:17,884	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            // Calculate digit length for larger sums\n            cout << (sum > 0 ? floor(log10(sum)) + 1 : 1) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    \n    // Directly calculate the length based on the sum without an array\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 10) {\n            cout << 1 << endl; \n        } else if (sum < 100) {\n            cout << 2 << endl; \n        } else if (sum < 200) {\n            cout << 3 << endl; \n        } else {\n            // Calculate digit length for larger sums\n            cout << (sum > 0 ? floor(log10(sum)) + 1 : 1) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:17,884	[INFO]	Step: 29
+2025-02-24 14:50:17,885	[INFO]	Stop Steps: 50
+2025-02-24 14:50:18,508	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-24 14:50:18,509	[INFO]	2-10    SUCCESS               3099247.50 (100.00%) [3 edit(s)]  
+2025-02-24 14:50:18,509	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <sstream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        static const int lengthMap[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};\n        cout << (sum < 20 ? lengthMap[sum] : (sum < 100 ? 2 : 3)) << endl; // Simple length estimation\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Changed static lengthMap to a simpler logic to avoid unnecessary checks\n        cout << (sum < 20 ? sum : (sum < 100 ? 2 : 3)) << endl; // Directly using sum for small values\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 17), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Using a switch-case for clearer logic and potentially better performance for multiple conditions\n        int output;\n        if (sum < 20) {\n            output = sum;\n        } else if (sum < 100) {\n            output = 2;\n        } else {\n            output = 3;\n        }\n        cout << output << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:18,509	[INFO]	Step: 30
+2025-02-24 14:50:18,509	[INFO]	Stop Steps: 50
+2025-02-24 14:50:19,123	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-24 14:50:19,123	[INFO]	2-1     SUCCESS               3099156.00 (100.00%) [2 edit(s)]  
+2025-02-24 14:50:19,123	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum < 1000 ? 3 : maxDigits) << endl; // Reduced checks for sums >= 200\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:50:19,123	[INFO]	Step: 31
+2025-02-24 14:50:19,123	[INFO]	Stop Steps: 50
+2025-02-24 14:50:19,804	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-24 14:50:19,805	[INFO]	2-2     SUCCESS               3099157.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:50:19,805	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#import <iostream>\n#import <sstream>\n\nusing namespace std;\n\nvoid problemOne(){\n    int a;\n    int b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = 0;\n        while (sum != 0) {\n            sum /= 10;\n            intLength += 1;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-24 14:50:19,805	[INFO]	Step: 32
+2025-02-24 14:50:19,805	[INFO]	Stop Steps: 50
+2025-02-24 14:50:21,366	[DEBUG]	EXEC>  SUCCESS 3099158.0
+2025-02-24 14:50:21,366	[INFO]	REF     SUCCESS               3099158.00 (--) [0 edit(s)]  
+2025-02-24 14:50:21,366	[INFO]	Best patch: 6
+2025-02-24 14:50:21,932	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:50:21,932	[INFO]	BEST    SUCCESS              *3099156.50 (100.00%) [0 edit(s)]  
+2025-02-24 14:50:21,932	[INFO]	Best patch step: 25
+2025-02-24 14:51:00,385	[INFO]	Step: 32
+2025-02-24 14:51:00,385	[INFO]	Stop Steps: 50
+2025-02-24 14:51:00,930	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-24 14:51:00,931	[INFO]	3-3     SUCCESS              +3099157.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:00,931	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            cout << (sum < 20 ? sum : (sum < 100 ? 2 : 3)) << endl; // Directly using sum for larger values\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:00,931	[INFO]	Step: 33
+2025-02-24 14:51:00,931	[INFO]	Stop Steps: 50
+2025-02-24 14:51:01,460	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-24 14:51:01,460	[INFO]	3-4     SUCCESS               3099246.00 (100.00%) [2 edit(s)]  
+2025-02-24 14:51:01,460	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum < 1000 ? 3 : maxDigits) << endl; // Reduced checks for sums >= 200\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:01,460	[INFO]	Step: 34
+2025-02-24 14:51:01,461	[INFO]	Stop Steps: 50
+2025-02-24 14:51:01,994	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-24 14:51:01,994	[INFO]	3-5     SUCCESS              *3099156.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:01,994	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum < 1000 ? 3 : 10) << endl; // Reduced checks for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-24 14:51:01,995	[INFO]	Step: 35
+2025-02-24 14:51:01,995	[INFO]	Stop Steps: 50
+2025-02-24 14:51:02,517	[DEBUG]	EXEC>  SUCCESS 3099155.5
+2025-02-24 14:51:02,517	[INFO]	3-6     SUCCESS              *3099155.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:02,517	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            int intLength = 0;\n            int temp = sum;\n            while (temp != 0) {\n                temp /= 10;\n                intLength += 1;\n            }\n            cout << intLength << endl; // Directly calculate length for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-24 14:51:02,517	[INFO]	Step: 36
+2025-02-24 14:51:02,518	[INFO]	Stop Steps: 50
+2025-02-24 14:51:03,059	[DEBUG]	EXEC>  SUCCESS 3099169.0
+2025-02-24 14:51:03,060	[INFO]	3-7     SUCCESS               3099169.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:03,060	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:03,060	[INFO]	Step: 37
+2025-02-24 14:51:03,060	[INFO]	Stop Steps: 50
+2025-02-24 14:51:03,593	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-24 14:51:03,593	[INFO]	3-8     SUCCESS               3099157.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:03,593	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum < 1000 ? 3 : 10) << endl; // Optimize checks for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:03,593	[INFO]	Step: 38
+2025-02-24 14:51:03,593	[INFO]	Stop Steps: 50
+2025-02-24 14:51:04,129	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-24 14:51:04,130	[INFO]	3-9     SUCCESS               3099156.00 (100.00%) [2 edit(s)]  
+2025-02-24 14:51:04,130	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            cout << (sum < 20 ? sum : (sum < 100 ? 2 : 3)) << endl; // Directly using sum for larger values\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 20), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200];\n    // Pre-calculate lengths of sums from 0 to 199 in a single loop.\n    for (int i = 0; i < 200; i++) {\n        lengthArray[i] = (i < 10) ? 1 : (i < 100) ? 2 : 3;\n    }\n    lengthArray[0] = 1; // Set length for 0 after the loop\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Use pre-calculated array for sums < 200\n        } else {\n            cout << (sum < 20 ? sum : (sum < 100 ? 2 : 3)) << endl; // Directly using sum for larger values\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:04,130	[INFO]	Step: 39
+2025-02-24 14:51:04,130	[INFO]	Stop Steps: 50
+2025-02-24 14:51:04,653	[DEBUG]	EXEC>  SUCCESS 3099245.5
+2025-02-24 14:51:04,653	[INFO]	3-10    SUCCESS               3099245.50 (100.00%) [3 edit(s)]  
+2025-02-24 14:51:04,653	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum < 1000 ? 3 : maxDigits) << endl; // Reduced checks for sums >= 200\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 21), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Directly calculating the number of digits in the sum\n        int length = (sum == 0) ? 1 : static_cast<int>(log10(sum)) + 1; // log10 gives the number of digits\n        cout << (sum < 200 ? length : (sum < 1000 ? 3 : 10)) << endl; // Reduced checks\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:04,653	[INFO]	Step: 40
+2025-02-24 14:51:04,653	[INFO]	Stop Steps: 50
+2025-02-24 14:51:05,196	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:51:05,196	[INFO]	3-1     SUCCESS               3099156.50 (100.00%) [2 edit(s)]  
+2025-02-24 14:51:05,196	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 19), '#import <iostream>\n#import <sstream>\n\nusing namespace std;\n\nvoid problemOne(){\n    int a;\n    int b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = 0;\n        while (sum != 0) {\n            sum /= 10;\n            intLength += 1;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 22), '#include <iostream>\n#include <cmath>\n\nusing namespace std;\n\nvoid problemOne(){\n    int a;\n    int b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : floor(log10(abs(sum))) + 1; // Using logarithm to determine length\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-24 14:51:05,196	[INFO]	Step: 41
+2025-02-24 14:51:05,196	[INFO]	Stop Steps: 50
+2025-02-24 14:51:05,734	[DEBUG]	EXEC>  SUCCESS 3099155.5
+2025-02-24 14:51:05,734	[INFO]	3-2     SUCCESS               3099155.50 (100.00%) [2 edit(s)]  
+2025-02-24 14:51:05,734	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 23), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 10) {\n            cout << 1 << endl; // single digit sums\n        } else if (sum < 100) {\n            cout << 2 << endl; // two digit sums\n        } else if (sum < 1000) {\n            cout << 3 << endl; // three digit sums\n        } else {\n            cout << 4 << endl; // for sums >= 1000\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:05,734	[INFO]	Step: 42
+2025-02-24 14:51:05,734	[INFO]	Stop Steps: 50
+2025-02-24 14:51:06,265	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-24 14:51:06,265	[INFO]	3-3     SUCCESS               3099157.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:06,265	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = 0;\n        while (sum != 0) {\n            sum /= 10;\n            intLength += 1;\n        }\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:06,265	[INFO]	Step: 43
+2025-02-24 14:51:06,265	[INFO]	Stop Steps: 50
+2025-02-24 14:51:06,796	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-24 14:51:06,796	[INFO]	3-4     SUCCESS               3099156.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:06,796	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 25), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = 0;\n        while (sum) {\n            sum /= 10;\n            intLength++;\n        }\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:06,796	[INFO]	Step: 44
+2025-02-24 14:51:06,796	[INFO]	Stop Steps: 50
+2025-02-24 14:51:07,309	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:51:07,310	[INFO]	3-5     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:07,310	[DEBUG]	patch(3-5)="LineLLMMutation(('source.cpp', 26), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        // Using log10 to calculate digit length instead of looping\n        int intLength = (sum > 0) ? (int)log10(sum) + 1 : 1; \n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:07,310	[INFO]	Step: 45
+2025-02-24 14:51:07,310	[INFO]	Stop Steps: 50
+2025-02-24 14:51:07,826	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-24 14:51:07,827	[INFO]	3-6     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:07,827	[DEBUG]	patch(3-6)="LineLLMMutation(('source.cpp', 27), '#include <iostream>\n\nusing namespace std;\n\nint digitLength(int sum) {\n    return (sum > 0) ? (int)log10(sum) + 1 : 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        cout << digitLength(sum) << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:07,827	[INFO]	Step: 46
+2025-02-24 14:51:07,827	[INFO]	Stop Steps: 50
+2025-02-24 14:51:08,370	[DEBUG]	EXEC>  SUCCESS 3099170.5
+2025-02-24 14:51:08,370	[INFO]	3-7     SUCCESS               3099170.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:08,370	[DEBUG]	patch(3-7)="LineLLMMutation(('source.cpp', 28), '#include <iostream>\n\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int total = a + b;\n        int length = 0;\n        while (total) {\n            total /= 10;\n            length++;\n        }\n        cout << length << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:08,370	[INFO]	Step: 47
+2025-02-24 14:51:08,371	[INFO]	Stop Steps: 50
+2025-02-24 14:51:09,926	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:51:09,926	[INFO]	REF     SUCCESS               3099156.50 (--) [0 edit(s)]  
+2025-02-24 14:51:09,926	[INFO]	Best patch: 9
+2025-02-24 14:51:10,465	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-24 14:51:10,465	[INFO]	BEST    SUCCESS               3099247.50 (100.00%) [0 edit(s)]  
+2025-02-24 14:51:10,465	[INFO]	Best patch step: 35
+2025-02-24 14:51:41,023	[INFO]	Step: 47
+2025-02-24 14:51:41,023	[INFO]	Stop Steps: 50
+2025-02-24 14:51:41,568	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:51:41,568	[INFO]	4-8     SUCCESS              +3099156.50 (100.00%) [2 edit(s)]  
+2025-02-24 14:51:41,568	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    const int maxDigits = 10; // Assuming max digits for typical integer sums\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            cout << (sum == 0 ? 1 : (sum < 10 ? 1 : (sum < 100 ? 2 : (sum < 1000 ? 3 : maxDigits)))) << endl;\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 23), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 10) {\n            cout << 1 << endl; // single digit sums\n        } else if (sum < 100) {\n            cout << 2 << endl; // two digit sums\n        } else if (sum < 1000) {\n            cout << 3 << endl; // three digit sums\n        } else {\n            cout << 4 << endl; // for sums >= 1000\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:41,568	[INFO]	Step: 48
+2025-02-24 14:51:41,568	[INFO]	Stop Steps: 50
+2025-02-24 14:51:42,096	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-24 14:51:42,096	[INFO]	4-9     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-24 14:51:42,096	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            int intLength = 0;\n            int temp = sum;\n            while (temp != 0) {\n                temp /= 10;\n                intLength += 1;\n            }\n            cout << intLength << endl; // Directly calculate length for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:42,096	[INFO]	Step: 49
+2025-02-24 14:51:42,096	[INFO]	Stop Steps: 50
+2025-02-24 14:51:42,646	[DEBUG]	EXEC>  SUCCESS 3099336.0
+2025-02-24 14:51:42,646	[INFO]	4-10    SUCCESS               3099336.00 (100.01%) [1 edit(s)]  
+2025-02-24 14:51:42,646	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 12), '#include <iostream>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            int intLength = 0;\n            while (sum) {\n                sum /= 10;\n                intLength++;\n            }\n            cout << intLength << endl; // Directly calculate length for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-24 14:51:42,646	[INFO]	Step: 50
+2025-02-24 14:51:42,646	[INFO]	Stop Steps: 50
+2025-02-24 14:51:42,646	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 14:51:42,646	[INFO]	Step: 50
+2025-02-24 14:51:42,647	[INFO]	Stop Steps: 50
+2025-02-24 14:51:49,433	[INFO]	~~~~ END ~~~~
+2025-02-24 14:51:49,433	[INFO]	Best patch step: 35
+2025-02-24 14:51:49,433	[INFO]	
+2025-02-24 14:51:49,434	[INFO]	==== REPORT ====
+2025-02-24 14:51:49,434	[INFO]	Termination: step budget
+2025-02-24 14:51:49,434	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0001_1740408466.log
+2025-02-24 14:51:49,434	[INFO]	Patch file: _magpie_logs/0001_1740408466.patch
+2025-02-24 14:51:49,434	[INFO]	Diff file: _magpie_logs/0001_1740408466.diff
+2025-02-24 14:51:49,434	[INFO]	Reference fitness: 3099156.50
+2025-02-24 14:51:49,434	[INFO]	Best fitness: 3099156.50
+2025-02-24 14:51:49,434	[INFO]	
+2025-02-24 14:51:49,435	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    int lengthArray[200] = {}; // Pre-calculate lengths of sums from 0 to 199\n    for (int i = 0; i < 200; i++) lengthArray[i] = (i == 0) ? 1 : (i < 10) ? 1 : (i < 100) ? 2 : 3;\n\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum < 200) {\n            cout << lengthArray[sum] << endl; // Fast lookup for small sums\n        } else {\n            int intLength = 0;\n            int temp = sum;\n            while (temp != 0) {\n                temp /= 10;\n                intLength += 1;\n            }\n            cout << intLength << endl; // Directly calculate length for larger sums\n        }\n    }\n}\n\nint main() {\n    problemOne();\n}')
+2025-02-24 14:51:49,435	[INFO]	
+2025-02-24 14:51:49,435	[INFO]	==== DIFF ====
+

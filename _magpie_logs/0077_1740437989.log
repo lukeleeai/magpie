@@ -1,0 +1,225 @@
+2025-02-24 22:59:49,319	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 9023401895738949
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0077
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 22:59:49,319	[DEBUG]	
+2025-02-24 22:59:49,319	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 22:59:49,319	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 22:59:51,037	[DEBUG]	EXEC>  SUCCESS 6719000.0
+2025-02-24 22:59:51,037	[INFO]	WARM    SUCCESS               6719000.00 (--) [0 edit(s)]  
+2025-02-24 22:59:52,002	[DEBUG]	EXEC>  SUCCESS 6718947.0
+2025-02-24 22:59:52,002	[INFO]	WARM    SUCCESS               6718947.00 (--) [0 edit(s)]  
+2025-02-24 22:59:52,991	[DEBUG]	EXEC>  SUCCESS 6718998.0
+2025-02-24 22:59:52,991	[INFO]	WARM    SUCCESS               6718998.00 (--) [0 edit(s)]  
+2025-02-24 22:59:53,959	[DEBUG]	EXEC>  SUCCESS 6718998.0
+2025-02-24 22:59:53,959	[INFO]	WARM    SUCCESS               6718998.00 (--) [0 edit(s)]  
+2025-02-24 22:59:54,938	[DEBUG]	EXEC>  SUCCESS 6718909.0
+2025-02-24 22:59:54,938	[INFO]	WARM    SUCCESS               6718909.00 (--) [0 edit(s)]  
+2025-02-24 22:59:54,938	[INFO]	REF     SUCCESS               6718909.00 (--) [0 edit(s)]  
+2025-02-24 22:59:54,940	[INFO]	
+2025-02-24 22:59:54,940	[INFO]	~~~~ START ~~~~
+2025-02-24 23:00:48,862	[INFO]	0-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:48,862	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\ntypedef pair<int, int> pint;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:50,356	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:50,356	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\ntypedef pair<int, int> pint;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        float p = 1.0f / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static float dp[51][5001] = {};\n        dp[0][0] = 1.0f;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        float res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:51,866	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:51,866	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        vector<int> v(x), e(51), a(51);\n        for (int i = 0; i < x; ++i)\n            scanf("%d", &v[i]);\n        memset(e.data(), 0, e.size() * sizeof(int));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:53,348	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:53,348	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:54,900	[DEBUG]	EXEC>  SUCCESS 7701532.5
+2025-02-24 23:00:54,900	[INFO]	0-5     SUCCESS              +7701532.50 (114.62%) [1 edit(s)]  
+2025-02-24 23:00:54,900	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001];\n        memset(dp, 0, sizeof(dp));\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:56,387	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:56,387	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                double current_dp = dp[i][j] * p;\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += current_dp;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:57,869	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:57,869	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[5001] = {};\n        dp[0] = 1;\n        for (int i = 0; i < y; ++i) {\n            double next_dp[5001] = {};\n            for (int j = 0; j <= 5000; ++j) {\n                double current_dp = dp[j] * p;\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    next_dp[money] += current_dp;\n                }\n            }\n            memcpy(dp, next_dp, sizeof(dp));\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:00:59,361	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:00:59,361	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n#include <array>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        array<int, 4> v;\n        array<int, 51> e{}, a{};\n        for (int i = 0; i < x; ++i)\n            scanf("%d", &v[i]);\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:01:00,850	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:01:00,850	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    int event = e[to];\n                    if (event == 1)\n                        to = min(y, to + a[to]);\n                    else if (event == 2)\n                        money = min(5000, money + a[to]);\n                    else if (event == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:01:02,338	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:01:02,338	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                if (dp[i][j] > 0) {\n                    for (int k = 0; k < x; ++k) {\n                        int to = min(y, i + v[k]);\n                        int money = j;\n                        if (e[to] == 1)\n                            to = min(y, to + a[to]);\n                        else if (e[to] == 2)\n                            money = min(5000, money + a[to]);\n                        else if (e[to] == 3)\n                            money = max(0, money - a[to]);\n                        dp[to][money] += dp[i][j] * p;\n                    }\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:01:03,339	[INFO]	Step: 10
+2025-02-24 23:01:03,339	[INFO]	Stop Steps: 50
+2025-02-24 23:01:05,316	[DEBUG]	EXEC>  SUCCESS 6718909.0
+2025-02-24 23:01:05,316	[INFO]	REF     SUCCESS               6718909.00 (--) [0 edit(s)]  
+2025-02-24 23:01:05,316	[INFO]	Best patch step: None
+2025-02-24 23:02:17,601	[INFO]	Step: 10
+2025-02-24 23:02:17,601	[INFO]	Stop Steps: 50
+2025-02-24 23:02:18,148	[DEBUG]	EXEC>  SUCCESS 7701442.5
+2025-02-24 23:02:18,148	[INFO]	1-1     SUCCESS              +7701442.50 (114.62%) [1 edit(s)]  
+2025-02-24 23:02:18,148	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001];\n        memset(dp, 0, sizeof(dp));\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:18,148	[INFO]	Step: 11
+2025-02-24 23:02:18,148	[INFO]	Stop Steps: 50
+2025-02-24 23:02:18,677	[DEBUG]	EXEC>  SUCCESS 7701534.5
+2025-02-24 23:02:18,677	[INFO]	1-2     SUCCESS               7701534.50 (114.62%) [1 edit(s)]  
+2025-02-24 23:02:18,677	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001];\n        memset(dp, 0, sizeof(dp));\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:18,677	[INFO]	Step: 12
+2025-02-24 23:02:18,677	[INFO]	Stop Steps: 50
+2025-02-24 23:02:19,171	[INFO]	1-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:02:19,171	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51] = {0}; // Initialize a with zero\n        for (int i = 0; i < x; ++i)\n            scanf("%d", &v[i]);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n        static double dp[51][5001] = {0}; // Initialize dp with zero\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1) {\n                        to = min(y, to + a[to]);\n                    } else if (e[to] == 2) {\n                        money = min(5000, money + a[to]);\n                    } else if (e[to] == 3) {\n                        money = max(0, money - a[to]);\n                    }\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i) {\n            res += i * dp[y][i];\n        }\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:19,171	[INFO]	Step: 13
+2025-02-24 23:02:19,171	[INFO]	Stop Steps: 50
+2025-02-24 23:02:19,660	[INFO]	1-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:02:19,660	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51] = {0};\n        for (int i = 0; i < x; ++i) {\n            scanf("%d", &v[i]);\n        }\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n        static double dp[51][5001] = {0};\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1) {\n                        to = min(y, to + a[to]);\n                    } else if (e[to] == 2) {\n                        money = min(5000, money + a[to]);\n                    } else if (e[to] == 3) {\n                        money = max(0, money - a[to]);\n                    }\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i) {\n            res += i * dp[y][i];\n        }\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:19,660	[INFO]	Step: 14
+2025-02-24 23:02:19,661	[INFO]	Stop Steps: 50
+2025-02-24 23:02:20,150	[INFO]	1-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:02:20,150	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51] = {0}, a[51] = {0};\n        for (int i = 0; i < x; ++i) {\n            scanf("%d", &v[i]);\n        }\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n        static double dp[51][5001] = {0};\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1) {\n                        to = min(y, to + a[to]);\n                    } else if (e[to] == 2) {\n                        money = min(5000, money + a[to]);\n                    } else if (e[to] == 3) {\n                        money = max(0, money - a[to]);\n                    }\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i) {\n            res += i * dp[y][i];\n        }\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:20,150	[INFO]	Step: 15
+2025-02-24 23:02:20,150	[INFO]	Stop Steps: 50
+2025-02-24 23:02:20,689	[DEBUG]	EXEC>  SUCCESS 7701442.0
+2025-02-24 23:02:20,689	[INFO]	1-6     SUCCESS              +7701442.00 (114.62%) [2 edit(s)]  
+2025-02-24 23:02:20,689	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001];\n        memset(dp, 0, sizeof(dp));\n        dp[0][0] = 1;\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\nconst double EPS = 1e-8;\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x | y | z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n        static double dp[51][5001];\n        memset(dp, 0, sizeof(dp));\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n\n                    // Consolidate transition handling to reduce checks\n                    if (e[to] == 1) {\n                        to = min(y, to + a[to]);\n                    } else if (e[to] == 2) {\n                        money = min(5000, money + a[to]);\n                    } else if (e[to] == 3) {\n                        money = max(0, money - a[to]);\n                    }\n\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:20,690	[INFO]	Step: 16
+2025-02-24 23:02:20,690	[INFO]	Stop Steps: 50
+2025-02-24 23:02:21,210	[DEBUG]	EXEC>  SUCCESS 6663932.5
+2025-02-24 23:02:21,210	[INFO]	1-7     SUCCESS              *6663932.50 (99.18%) [1 edit(s)]  
+2025-02-24 23:02:21,210	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x|y|z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n\n        static double dp[51][5001];\n        for (int i = 0; i <= y; ++i)\n            for (int j = 0; j <= 5000; ++j)\n                dp[i][j] = 0;\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+
+2025-02-24 23:02:21,210	[INFO]	Step: 17
+2025-02-24 23:02:21,210	[INFO]	Stop Steps: 50
+2025-02-24 23:02:21,720	[INFO]	1-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:02:21,720	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x|y|z) {\n        double p = 1.0 / x;\n        vector<int> v(x), e(51, 0), a(51);\n        for (int i = 0; i < x; ++i)\n            scanf("%d", &v[i]);\n\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", &e[t], &a[t]);\n        }\n\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:21,720	[INFO]	Step: 18
+2025-02-24 23:02:21,720	[INFO]	Stop Steps: 50
+2025-02-24 23:02:22,358	[DEBUG]	EXEC>  SUCCESS 6642042.5
+2025-02-24 23:02:22,359	[INFO]	1-9     SUCCESS              *6642042.50 (98.86%) [1 edit(s)]  
+2025-02-24 23:02:22,359	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x|y|z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n\n        for (int i = 1; i <= y; ++i)\n            fill(dp[i], dp[i] + 5001, 0);\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                }\n            }\n        }\n\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+
+2025-02-24 23:02:22,359	[INFO]	Step: 19
+2025-02-24 23:02:22,359	[INFO]	Stop Steps: 50
+2025-02-24 23:02:22,851	[INFO]	1-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:02:22,851	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\ntypedef long long ll;\n\nint main() {\n    int x, y, z;\n    while (scanf("%d%d%d", &x, &y, &z), x|y|z) {\n        double p = 1.0 / x;\n        int v[4], e[51], a[51];\n        for (int i = 0; i < x; ++i)\n            scanf("%d", v + i);\n        memset(e, 0, sizeof(e));\n        for (int i = 0; i < z; ++i) {\n            int t;\n            scanf("%d", &t);\n            scanf("%d%d", e + t, a + t);\n        }\n\n        static double dp[51][5001] = {};\n        dp[0][0] = 1;\n\n        for (int i = 0; i < y; ++i) {\n            for (int j = 0; j <= 5000; ++j) {\n                bool updated = false; // Track if any updates occur\n                for (int k = 0; k < x; ++k) {\n                    int to = min(y, i + v[k]);\n                    int money = j;\n                    if (e[to] == 1)\n                        to = min(y, to + a[to]);\n                    else if (e[to] == 2)\n                        money = min(5000, money + a[to]);\n                    else if (e[to] == 3)\n                        money = max(0, money - a[to]);\n                    dp[to][money] += dp[i][j] * p;\n                    updated = true; // Mark as updated\n                }\n                if (!updated) break; // Early termination if no updates\n            }\n        }\n\n        double res = 0;\n        for (int i = 0; i <= 5000; ++i)\n            res += i * dp[y][i];\n        printf("%d\\n", (int)res);\n    }\n    return 0;\n}')"
+2025-02-24 23:02:22,851	[INFO]	Step: 20
+2025-02-24 23:02:22,851	[INFO]	Stop Steps: 50
+2025-02-24 23:02:24,827	[DEBUG]	EXEC>  SUCCESS 6718922.0
+2025-02-24 23:02:24,828	[INFO]	REF     SUCCESS               6718922.00 (--) [0 edit(s)]  
+2025-02-24 23:02:24,828	[INFO]	Best patch: 13
+2025-02-24 23:02:25,338	[DEBUG]	EXEC>  SUCCESS 6642049.5
+2025-02-24 23:02:25,338	[INFO]	BEST    SUCCESS              *6642049.50 (98.86%) [0 edit(s)]  
+2025-02-24 23:02:25,338	[INFO]	Best patch step: 18
+2025-02-24 23:04:00,462	[INFO]	~~~~ END ~~~~
+2025-02-24 23:04:00,462	[INFO]	Best patch step: 18

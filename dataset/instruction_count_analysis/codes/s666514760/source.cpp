@@ -1,0 +1,111 @@
+#include "stdc++.h"
+
+using namespace std;
+
+using ll = long long;
+
+using ii = pair<int, int>;
+
+using iii = pair<int, ii>;
+
+#define vt vector
+
+#define pq priority_queue
+
+#define pb push_back
+
+#define pf push_front
+
+#define mp make_pair
+
+#define fi first
+
+#define se second
+
+const int MOD = 1e9 + 7;
+
+const int INF = 2e9;
+
+const int N = 1e5 + 5;
+
+
+
+int n, m, a, b, ans;
+
+bool vis[N];
+
+vt<int> v[N];
+
+
+
+void dfs(int u) {
+
+    if(vis[u]) return;
+
+    vis[u] = true;
+
+    for(int x : v[u]) {
+
+        dfs(x);
+
+    }
+
+}
+
+
+
+void solve() {
+
+    int T = 1;
+
+    // cin >> T;
+
+    for(int tc = 1; tc <= T; tc++) {
+
+        cin >> n >> m;
+
+        while(m--) {
+
+            cin >> a >> b;
+
+            v[a].pb(b);
+
+            v[b].pb(a);
+
+        }
+
+        for(int i = 1; i <= n; i++) {
+
+            if(!vis[i]) {
+
+                dfs(i);
+
+                ans++;
+
+            }
+
+        }
+
+        cout << ans - 1 << "\n";
+
+    }
+
+}
+
+
+
+int main() {
+
+ 
+
+    ios_base::sync_with_stdio(0);
+
+    cin.tie(0); cout.tie(0);
+
+    
+
+    solve();
+
+    
+
+}

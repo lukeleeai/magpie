@@ -1,0 +1,63 @@
+#include"stdc++.h"
+
+using namespace std;
+
+#define pb push_back
+
+#define rep(i,n) for(int i=0;i<n;i++)
+
+#define rep1(i,n) for(int i=1;i<=n;i++)
+
+#define mp make_pair
+
+#define F first
+
+#define S second
+
+#define IOS ios_base::sync_with_stdio(0); cin.tie(0)
+
+typedef long long ll;
+
+vector<int> g[100005];
+
+ll q,n;
+
+
+
+int main()
+
+{
+
+    //IOS;
+
+    while(cin>>n)
+
+    {
+
+        ll sum=0;
+
+        ll A,B;
+
+        cin>>A>>B;
+
+        for(int i=1;i<=n;i++)
+
+        {
+
+            ll a=i/10000,b=(i%10000)/1000,c=(i%1000)/100,d=(i%100)/10,e=i%10;
+
+            if(a+b+c+d+e<=B&&a+b+c+d+e>=A) sum+=i;
+
+        }
+
+        cout<<sum<<"\n";
+
+    }
+
+
+
+    return 0;
+
+}
+
+

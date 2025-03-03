@@ -2,9 +2,9 @@
     "(0)": {
         "children": [
             {
-                "fitness": 3191945.0,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tstd::vector<int> octal;\n\n\t\twhile(n){\n\n\t\t\toctal.push_back(n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n\t\t\tn/=8;\n\n\t\t}\n\n\t\tstd::reverse(octal.begin(),octal.end());\n\n\t\tfor(auto a:octal)std::cout << a;\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Focus on the recursive function ToOctalNumber which handles octal conversion, by using an iterative approach with a stack to optimize it."
+                "fitness": 3099848.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the recursive function `ToOctalNumber` that could be optimized by using an iterative approach to avoid the overhead of recursive calls."
             }
         ],
         "operation_type": "mutation",
@@ -12,18 +12,42 @@
             "0"
         ],
         "parent_codes": [
-            "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3102969.5
+            3104193.0
+        ]
+    },
+    "(0_18)": {
+        "children": [
+            {
+                "fitness": 3104264.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    int octDigits[11]; // Enough space for octal digits (max 11 digits for 32-bit int)\n    int index = 0;\n\n    while (n > 0) {\n        int octDigit = n & 7;\n        octDigits[index++] = (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2); // Adjusting for octal representation\n        n >>= 3;\n    }\n\n    // Print digits in reverse order\n    for (int i = index - 1; i >= 0; --i) {\n        std::cout << octDigits[i];\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the function `ToOctalNumber` that converts an integer to its octal representation. The current implementation uses string manipulation and a reverse operation, which can be optimized by directly printing the digits in reverse order, avoiding extra space and time complexity from the string reversal."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_18"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3099848.5
         ]
     },
     "(1)": {
         "children": [
             {
-                "fitness": 3144035.375,
-                "new_code": "#include <iostream>\nusing namespace std;\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tint octal[20], cnt = 0;\n\n\t\twhile(n){\n\n\t\t\toctal[cnt++] = (n&7)<4?(n&7):(n&7)==4?5:(n&7)+2;\n\n\t\t\tn >>= 3;\n\n\t\t}\n\n\t\tfor(int i = cnt-1; i >= 0; i--)\n\n\t\t\tcout << octal[i];\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Focus on the function ToOctalNumber, which could be optimized by using an iterative approach instead of recursion for better performance."
+                "fitness": 3112473.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf(\"0\");\n        return;\n    }\n    \n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back(n & 7); // Get the last 3 bits\n        n >>= 3; // Shift right by 3 bits\n    }\n    \n    // Print digits in reverse order\n    for (int i = octalDigits.size() - 1; i >= 0; --i) {\n        printf(\"%d\", (octalDigits[i] < 4 ? octalDigits[i] : (octalDigits[i] == 4 ? 5 : octalDigits[i] + 2)));\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+                "strategy": "Focus on the recursive function `ToOctalNumber`, which could be optimized by eliminating recursion and using an iterative approach to reduce function call overhead and improve performance."
+            },
+            {
+                "fitness": 3095369.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+                "strategy": "Focus on the `ToOctalNumber` function, which involves multiple operations for converting a number to octal. The optimization can be done by minimizing string operations and using a direct output method to reduce overhead."
             }
         ],
         "operation_type": "mutation",
@@ -31,199 +55,99 @@
             "1"
         ],
         "parent_codes": [
-            "#include <iostream>\nusing namespace std;\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tcout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf(\"0\");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf(\"%s\", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3113188.875
+            3098754.0
         ]
     },
-    "(2)": {
+    "(1_15x5x1x0_18)": {
         "children": [
             {
-                "fitness": 3108175.9375,
-                "new_code": "#include <iostream>\n\nint main() {\n\n\tint n;\n\n\twhile (std::cin >> n, n) {\n\n\t\tint output[20], cnt = 0;\n\n\t\twhile (n) {\n\n\t\t\toutput[cnt++] = n % 8;\n\n\t\t\tn /= 8;\n\n\t\t}\n\n\t\tfor (int i = cnt - 1; i >= 0; --i) {\n\n\t\t\tstd::cout << (output[i] < 4 ? output[i] : output[i] == 4 ? 5 : output[i] + 2);\n\n\t\t}\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Focus on the implementation of recursive function ToOctalNumber that converts a decimal number to octal format, which could be optimized by using an iterative approach to reduce function call overhead."
-            }
-        ],
-        "operation_type": "mutation",
-        "parent_names": [
-            "2"
-        ],
-        "parent_codes": [
-            "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n/8);\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            3108714.3125
-        ]
-    },
-    "(2x6x3x0)": {
-        "children": [
-            {
-                "fitness": 3141332.9375,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Combine function A from Parent 1 (fitness: 3108714.3125) with function A from Parent 2 (fitness: 3122020.3125)."
+                "fitness": 3094947.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+                "strategy": "Combine the efficient output handling of Parent 1 with the improved logic and structure from Parent 2."
             },
             {
-                "fitness": 3113188.875,
-                "new_code": "#include <iostream>\nusing namespace std;\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tcout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Combine function A from Parent 3 (fitness: 3126517.0) with function A from Parent 4 (fitness: 3126594.3125)."
+                "fitness": 3098505.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf(\"0\");\n        return;\n    }\n    \n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf(\"%s\", result.c_str());  // Using printf for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+                "strategy": "Merge the optimized input/output strategies of Parent 3 with the efficient character handling of Parent 4."
             },
             {
-                "fitness": 3126197.375,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Combine function A from Parent 2 (fitness: 3122020.3125) with function A from Parent 3 (fitness: 3126517.0)."
+                "fitness": 3102007.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;  // Using cout for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+                "strategy": "Utilize the efficient octal conversion from Parent 1 while employing the dynamic string handling of Parent 3 to improve performance."
             },
             {
-                "fitness": 3129457.25,
-                "new_code": "#include <iostream>\nusing namespace std;\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n/8);\n\n\tcout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Combine function A from Parent 1 (fitness: 3108714.3125) with function A from Parent 4 (fitness: 3126594.3125)."
+                "fitness": 3097589.5,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char buffer[12];  // Enough for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(buffer, buffer + index);\n    std::cout.write(buffer, index);  // Using cout for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Combine the optimized memory handling from Parent 2 with the I/O performance enhancements from Parent 4."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
-            "2",
-            "6",
-            "3",
+            "1_15",
+            "5",
+            "1",
+            "0_18"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf(\"0\");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf(\"%s\", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3095461.0,
+            3097673.0,
+            3098933.5,
+            3099848.5
+        ]
+    },
+    "(1x8_10x8x0)": {
+        "children": [
+            {
+                "fitness": 3104201.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    if (n < 8) {\n        std::cout << (n < 4 ? n : (n == 4 ? 5 : n + 2));\n        return;\n    }\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2));\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Combine the clarity of the string manipulation method from Parent 1 with the performance enhancements found in Parent 4's recursive approach, optimizing both runtime and readability."
+            },
+            {
+                "fitness": 3097582.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Utilize the efficient output method from Parent 4 and combine it with the array storage from Parent 2 for storing octal digits, thus optimizing memory usage and runtime performance."
+            },
+            {
+                "fitness": 3099939.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Merge the optimized I/O approach from Parent 4 with the string manipulation strategy from Parent 1, improving efficiency in handling larger inputs while maintaining code simplicity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "8_10",
+            "8",
             "0"
         ],
         "parent_codes": [
-            "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n/8);\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-            "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-            "#include <iostream>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-            "#include <iostream>\nusing namespace std;\n\nvoid ToOctalNumber(int n){\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tcout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf(\"0\");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf(\"%s\", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    // Use an array to store octal digits\n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Print the octal digits in reverse order\n    for(int i = index - 1; i >= 0; i--) {\n        std::cout << result[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3108714.3125,
-            3122020.3125,
-            3126517.0,
-            3126594.3125
-        ]
-    },
-    "(3)": {
-        "children": [
-            {
-                "fitness": 1215152.0625,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Focus on the I/O operations, which could be optimized by replacing them with faster alternatives like scanf and printf."
-            }
-        ],
-        "operation_type": "mutation",
-        "parent_names": [
-            "3"
-        ],
-        "parent_codes": [
-            "#include <iostream>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            3126517.0
-        ]
-    },
-    "(3_12)": {
-        "children": [
-            {
-                "fitness": 1212382.25,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tint stack[32], top = 0;\n\n\twhile(n){\n\n\t\tstack[top++] = (n&7)<4?n&7:(n&7)==4?5:(n&7)+2;\n\n\t\tn >>= 3;\n\n\t}\n\n\twhile(top)printf(\"%c\", stack[--top]+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Focus on the recursive function that converts a number to its octal representation, which could be optimized by using an iterative approach to reduce function call overhead."
-            }
-        ],
-        "operation_type": "mutation",
-        "parent_names": [
-            "3_12"
-        ],
-        "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            1198617.0
-        ]
-    },
-    "(3_12x0x2_10x1)": {
-        "children": [
-            {
-                "fitness": 1214534.9375,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine function ToOctalNumber from Parent 1 (fitness: 1205484.0625) with main function from Parent 4 (fitness: 3113188.875)."
-            },
-            {
-                "fitness": 3139222.25,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tint output[20], cnt = 0;\n\n\t\twhile (n) {\n\n\t\t\toutput[cnt++] = n % 8;\n\n\t\t\tn /= 8;\n\n\t\t}\n\n\t\tfor (int i = cnt - 1; i >= 0; --i) {\n\n\t\t\tstd::cout << (output[i] < 4 ? output[i] : output[i] == 4 ? 5 : output[i] + 2);\n\n\t\t}\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Combine function ToOctalNumber from Parent 2 (fitness: 3102969.5) with main function from Parent 3 (fitness: 3108175.9375)."
-            },
-            {
-                "fitness": 1208938.8125,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine main function from Parent 1 (fitness: 1205484.0625) with function ToOctalNumber from Parent 4 (fitness: 3113188.875)."
-            }
-        ],
-        "operation_type": "crossover",
-        "parent_names": [
-            "3_12",
-            "0",
-            "2_10",
-            "1"
-        ],
-        "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-            "#include <iostream>\n\nint main() {\n\n\tint n;\n\n\twhile (std::cin >> n, n) {\n\n\t\tint output[20], cnt = 0;\n\n\t\twhile (n) {\n\n\t\t\toutput[cnt++] = n % 8;\n\n\t\t\tn /= 8;\n\n\t\t}\n\n\t\tfor (int i = cnt - 1; i >= 0; --i) {\n\n\t\t\tstd::cout << (output[i] < 4 ? output[i] : output[i] == 4 ? 5 : output[i] + 2);\n\n\t\t}\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-            "#include <iostream>\nusing namespace std;\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tcout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            1205484.0625,
-            3102969.5,
-            3108175.9375,
-            3113188.875
-        ]
-    },
-    "(3_12x6x4x5)": {
-        "children": [
-            {
-                "fitness": 1210848.4375,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine the recursive approach from Parent 1 (fitness: 1198617.0) with the octal conversion using division from Parent 4 (fitness: 3139222.25)."
-            },
-            {
-                "fitness": 1213440.75,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine the recursive approach from Parent 3 (fitness: 1214534.9375) with the octal conversion using division from Parent 2 (fitness: 1214071.0)."
-            },
-            {
-                "fitness": 3138052.5,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tint output[20], cnt = 0;\n\n\t\twhile (n) {\n\n\t\t\toutput[cnt++] = n % 8;\n\n\t\t\tn /= 8;\n\n\t\t}\n\n\t\tfor (int i = cnt - 1; i >= 0; --i) {\n\n\t\t\tstd::cout << (output[i] < 4 ? output[i] : output[i] == 4 ? 5 : output[i] + 2);\n\n\t\t}\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Combine the recursive approach from Parent 2 (fitness: 1214071.0) with the iterative approach from Parent 4 (fitness: 3139222.25)."
-            },
-            {
-                "fitness": 1207789.5625,
-                "new_code": "#include <cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine the iterative approach from Parent 4 (fitness: 3139222.25) with the recursive approach from Parent 1 (fitness: 1198617.0)."
-            }
-        ],
-        "operation_type": "crossover",
-        "parent_names": [
-            "3_12",
-            "6",
-            "4",
-            "5"
-        ],
-        "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tint output[20], cnt = 0;\n\n\t\twhile (n) {\n\n\t\t\toutput[cnt++] = n % 8;\n\n\t\t\tn /= 8;\n\n\t\t}\n\n\t\tfor (int i = cnt - 1; i >= 0; --i) {\n\n\t\t\tstd::cout << (output[i] < 4 ? output[i] : output[i] == 4 ? 5 : output[i] + 2);\n\n\t\t}\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            1198617.0,
-            1214071.0,
-            1214534.9375,
-            3139222.25
+            3098754.0,
+            3100741.0,
+            3100897.5,
+            3104193.0
         ]
     },
     "(4)": {
         "children": [
             {
-                "fitness": 1202225.875,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tint a[10], i = 0;\n\n\twhile(n){\n\n\t\ta[i++] = ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n\t\tn >>= 3;\n\n\t}\n\n\twhile(i--)printf(\"%c\",a[i]+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Focus on the use of recursion in the ToOctalNumber function, which could be optimized by using an iterative approach."
+                "fitness": 3113902.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) return;\n    std::vector<int> octDigits;\n    while (n > 0) {\n        int octDigit = n & 7;\n        octDigits.push_back(octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n        n >>= 3;\n    }\n    // Output the digits in reverse order since we collected them backwards\n    for (auto it = octDigits.rbegin(); it != octDigits.rend(); ++it) {\n        std::cout << *it;\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the recursive function `ToOctalNumber`, which has potential for optimization by replacing recursion with an iterative approach to reduce function call overhead and improve performance."
             }
         ],
         "operation_type": "mutation",
@@ -231,119 +155,182 @@
             "4"
         ],
         "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            1214534.9375
+            3105296.5
         ]
     },
-    "(6)": {
+    "(5)": {
         "children": [
             {
-                "fitness": 1194168.25,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Focus on the function ToOctalNumber that handles octal conversion, which could be optimized by simplifying the recursive approach."
+                "fitness": 3112870.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) return;\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n        n >>= 3;\n    }\n    std::reverse(octalDigits.begin(), octalDigits.end());\n    for (int digit : octalDigits) {\n        std::cout << digit;\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the recursive function `ToOctalNumber` that can be optimized by eliminating the recursion and using an iterative approach, which can improve performance and reduce stack usage."
+            },
+            {
+                "fitness": 3099848.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n\n    std::string result;  // Use string for dynamic size management\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result.push_back((octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0');\n        n >>= 3;\n    }\n    \n    std::reverse(result.begin(), result.end());  // Still need to reverse the string, but it's more efficient\n    std::cout << result;  // Use std::cout directly\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the `ToOctalNumber` function, which currently uses a character array and the `std::reverse` function for reversing the result. This can be optimized by using a `std::string` to build the octal representation directly, which eliminates the need for a separate reversal step and reduces memory overhead."
             }
         ],
         "operation_type": "mutation",
         "parent_names": [
-            "6"
+            "5"
         ],
         "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            1214071.0
+            3097673.0
         ]
     },
-    "(6_21)": {
+    "(8)": {
         "children": [
             {
-                "fitness": 3105834.6875,
-                "new_code": "#include<algorithm>\n#include<cmath>\n#include<cstdio>\n#include<cstring>\n#include<ctime>\n#include<iostream>\n#include<map>\n#include<queue>\n#include<set>\n#include<vector>\nusing namespace std;\nvoid ToOctalNumber(int n){\n\tif(!n)return;\n\tToOctalNumber(n >> 3);\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n}\nint main(){\n\tint n;\n\twhile(scanf(\"%d\", &n), n){\n\t\tToOctalNumber(n);\n\t\tprintf(\"\\n\");\n\t}\n}\n",
-                "strategy": "Focus on the I/O operations which could be optimized by using faster alternatives."
+                "fitness": 3100741.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    // Use an array to store octal digits\n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Print the octal digits in reverse order\n    for(int i = index - 1; i >= 0; i--) {\n        std::cout << result[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the conversion logic in `ToOctalNumber` function, which can be optimized by reducing the number of operations performed in the loop and avoiding `std::string` for better performance."
             }
         ],
         "operation_type": "mutation",
         "parent_names": [
-            "6_21"
+            "8"
         ],
         "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            1195659.375
+            3100822.0
         ]
     },
-    "(6_21x4_22x11x6)": {
+    "(8x1_15x5x11)": {
         "children": [
             {
-                "fitness": 1206984.3125,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tint a[10], i = 0;\n\n\twhile(n){\n\n\t\ta[i++] = ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n\t\tn >>= 3;\n\n\t}\n\n\twhile(i--)printf(\"%c\",a[i]+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine the recursive octal conversion from Parent 3 (fitness: 1207789.5625) with the iterative approach from Parent 2 (fitness: 1203978.625) but reversing their order of operations to create a new implementation."
+                "fitness": 3094948.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+                "strategy": "Combine the efficient output method from Parent 1 (using `putchar`) with the improved I/O performance from Parent 3 (using `std::ios::sync_with_stdio(false)`)."
             },
             {
-                "fitness": 1203116.0,
-                "new_code": "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Merge the ToOctalNumber function from Parent 1 (fitness: 1195659.375) with the main function from Parent 4 (fitness: 1208938.8125), maintaining the recursive method and structure but with slight modifications in formatting."
+                "fitness": 3103906.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(buffer, buffer + index);\n    std::cout.write(buffer, index);  // Using cout for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    std::vector<int> numbers;\n    int n;\n    while (std::cin >> n, n) {\n        numbers.push_back(n);\n    }\n    for (int number : numbers) {\n        ToOctalNumber(number);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Integrate the buffer management and performance optimizations from Parent 3 with the input handling techniques from Parent 2 for better readability and maintenance."
             },
             {
-                "fitness": 1217692.1875,
-                "new_code": "#include <cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n/8);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-                "strategy": "Combine the iterative approach from Parent 2 (fitness: 1203978.625) with the recursive structure from Parent 3 (fitness: 1207789.5625), creating a hybrid method for octal conversion."
+                "fitness": 3094949.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+                "strategy": "Combine the output efficiency of Parent 1 (using `putchar`) with the robust input handling of Parent 4 (using `std::ios::sync_with_stdio(false)` for efficiency)."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
-            "6_21",
-            "4_22",
-            "11",
-            "6"
+            "8",
+            "1_15",
+            "5",
+            "11"
         ],
         "parent_codes": [
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\tint a[10], i = 0;\n\n\twhile(n){\n\n\t\ta[i++] = ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n\t\tn >>= 3;\n\n\t}\n\n\twhile(i--)printf(\"%c\",a[i]+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include <cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n/8);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n",
-            "#include<cstdio>\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tprintf(\"%c\", ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2)+'0');\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tToOctalNumber(n);\n\n\t\tprintf(\"\\n\");\n\n\t}\n\n}\n"
+            "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char buffer[12];  // Enough for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    std::reverse(buffer, buffer + index);\n    std::cout.write(buffer, index);  // Using cout for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            1195659.375,
-            1203978.625,
-            1207789.5625,
-            1208938.8125
+            3094948.0,
+            3095467.0,
+            3097582.5,
+            3097589.5
+        ]
+    },
+    "(8x5x4x1)": {
+        "children": [
+            {
+                "fitness": 3104193.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Combine the optimized I/O from Parent 2 with the recursive structure of Parent 1."
+            },
+            {
+                "fitness": 3098933.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf(\"0\");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf(\"%s\", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+                "strategy": "Combine the iterative approach from Parent 1 with the output formatting of Parent 4, utilizing `printf` for performance."
+            },
+            {
+                "fitness": 3104194.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Integrate the recursive logic from Parent 3 with the performance optimizations from Parent 2, using efficient I/O."
+            },
+            {
+                "fitness": 3112757.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    printf(\"%d\", ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2));\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+                "strategy": "Merge the functionality of Parent 4's output mechanism with the clarity of Parent 1's logic, while retaining performance through `printf`."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "5",
+            "4",
+            "1"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    printf(\"%d\", ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2));\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3100822.0,
+            3104195.0,
+            3105296.5,
+            3112756.0
         ]
     },
     "(source)": {
         "children": [
             {
-                "fitness": 3126594.3125,
-                "new_code": "#include <iostream>\nusing namespace std;\n\nvoid ToOctalNumber(int n){\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tcout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tcout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Focus on the import statements and main function structure for potential improvements in efficiency."
+                "fitness": 3113968.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back(n % 8);\n        n /= 8;\n    }\n    for (auto it = octalDigits.rbegin(); it != octalDigits.rend(); ++it) {\n        std::cout << ( (*it) < 4 ? *it : (*it) == 4 ? 5 : *it + 2);\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Focus on the recursive function `ToOctalNumber`, which can be optimized by using an iterative approach to improve efficiency and reduce function call overhead."
             },
             {
-                "fitness": 3137171.875,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tint stack[20], top = -1;\n\n\twhile(n){\n\n\t\tstack[++top] = (n&7) < 4 ? (n&7) : (n&7) == 4 ? 5 : (n&7) + 2;\n\n\t\tn >>= 3;\n\n\t}\n\n\twhile(top >= 0)\n\n\t\tstd::cout << stack[top--];\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Change the recursion to a loop for performance improvement in deeper calls."
+                "fitness": 3112756.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    printf(\"%d\", ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2));\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf(\"\\n\");\n    }\n}\n",
+                "strategy": "Replace `std::cout` with `printf` for output as it can be more efficient for formatting and may improve runtime."
             },
             {
-                "fitness": 3146082.0,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n/8);\n\n\tstd::cout << (n%8<4?n%8:(n%8)==4?5:n%8+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Focus on the ToOctalNumber function's division and modulus operations for possible simplification."
+                "fitness": 3105296.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Use bit manipulation directly in the output calculation to reduce the number of operations in the `ToOctalNumber` function."
             },
             {
-                "fitness": 3126517.0,
-                "new_code": "#include <iostream>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Remove unnecessary includes for a cleaner code structure."
+                "fitness": 3104284.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Optimize the main function by using a single `std::ios::sync_with_stdio(false)` call to untie C++ streams from C streams for faster input/output."
             },
             {
-                "fitness": 3154099.5,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\t// Base case for recursion\n\n\tif(!n)return;\n\n\t// Recursive call to handle next digit\n\n\tToOctalNumber(n >> 3);\n\n\t// Outputting the last three bits according to octal conversion\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Emphasize clarity by incorporating comments to illustrate the function's recursive logic."
+                "fitness": 3113979.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back((n & 7) < 4 ? (n & 7) : ((n & 7) == 4 ? 5 : (n & 7) + 2));\n        n >>= 3;\n    }\n    for (auto it = octalDigits.rbegin(); it != octalDigits.rend(); ++it) {\n        std::cout << *it;\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Change to a non-recursive approach for the `ToOctalNumber` function to avoid potential stack overflow issues with larger numbers."
             },
             {
-                "fitness": 3145463.6875,
-                "new_code": "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tstd::vector<int> ans;\n\n\t\twhile(n){\n\n\t\t\tans.push_back((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n\t\t\tn >>= 3;\n\n\t\t}\n\n\t\tfor(auto it = ans.rbegin(); it != ans.rend(); ++it)\n\n\t\t\tstd::cout << *it;\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n",
-                "strategy": "Focus on the function ToOctalNumber, which could be optimized by using an iterative approach instead of recursion for better readability and potentially better performance."
+                "fitness": 3113874.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back((n & 7) < 4 ? (n & 7) : ((n & 7) == 4 ? 5 : (n & 7) + 2));\n        n >>= 3;\n    }\n    for (int i = octalDigits.size() - 1; i >= 0; --i) {\n        std::cout << octalDigits[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Replace recursive function calls with a loop to avoid stack overhead and improve performance."
+            },
+            {
+                "fitness": 3100897.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "Optimize memory usage by eliminating unnecessary data structures and directly outputting octal values."
+            },
+            {
+                "fitness": 3105206.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? n & 7 : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "No mutations applied as the original code is already optimal for the given task."
+            },
+            {
+                "fitness": 3105207.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n){\n    if(!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? n & 7 : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main(){\n    int n;\n    while(std::cin >> n, n){\n        ToOctalNumber(n);\n        std::cout << \"\\n\";\n    }\n}\n",
+                "strategy": "No mutations are applied as the original code is already optimized for its intended purpose. The recursive function ToOctalNumber is efficient and clear in its implementation. Maintaining clarity and simplicity in code is often more valuable than unnecessary optimizations."
             }
         ],
         "operation_type": "mutation",
@@ -354,7 +341,7 @@
             "#include <iostream>\n\n#include <vector>\n\n#include <algorithm>\n\n\n\nvoid ToOctalNumber(int n){\n\n\tif(!n)return;\n\n\tToOctalNumber(n >> 3);\n\n\tstd::cout << ((n&7)<4?n&7:(n&7)==4?5:(n&7)+2);\n\n}\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(std::cin >> n, n){\n\n\t\tToOctalNumber(n);\n\n\t\tstd::cout << \"\\n\";\n\n\t}\n\n}\n"
         ],
         "parent_fitnesses": [
-            3189542.0
+            3105297.0
         ]
     }
 }

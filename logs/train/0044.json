@@ -1,42 +1,179 @@
 {
-    "(0x1)": {
+    "(0)": {
         "children": [
             {
-                "fitness": 48819935.3125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ceil((double)ans/10/365)<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Merge the function and input/output logic from both parents, maintaining the recursive approach from Parent 2 (fitness: 48843028.5) and the formatting from Parent 1 (fitness: 3106034.0625)."
+                "fitness": 3100160.0,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nint a[MAX_KAIDAN + 1] = {0};   // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                  (now - 2 >= 0 ? a[now - 2] : 0) +\n                  (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the array usage and reducing the number of conditional checks in the loop for better performance. Instead of dynamically allocating an array based on `kaidan`, we can use a fixed-size array and optimize the loop by reducing the number of conditional checks."
             },
             {
-                "fitness": 3122502.0,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint dp[100][4];\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\tif(dp[now][1]==-1){\n\n\t\t\ta+=func(kaidan,now+1);\n\n\t\t\tdp[now][1]=a;\n\n\t\t}else{\n\n\t\t\ta=dp[now][1];\n\n\t\t}\n\n\t\tif(dp[now][2]==-1){\n\n\t\t\tb+=func(kaidan,now+2);\n\n\t\t\tdp[now][2]=b;\n\n\t\t}else{\n\n\t\t\tb=dp[now][2];\n\n\t\t}\n\n\t\tif(dp[now][3]==-1){\n\n\t\t\tc+=func(kaidan,now+3);\n\n\t\t\tdp[now][3]=c;\n\n\t\t}else{\n\n\t\t\tc=dp[now][3];\n\n\t\t}\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t    memset(dp,-1,sizeof(dp));\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the function definitions from Parent 2 (fitness: 48843028.5) with the memoization technique from Parent 1 (fitness: 3106034.0625)."
+                "fitness": 3100028.0,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1;  // Base case for n = 0\n    if (kaidan == 1) return 1;  // Base case for n = 1\n    if (kaidan == 2) return 2;  // Base case for n = 2\n\n    int a[3] = {1, 1, 2};  // Array to store results for last three values only\n\n    for (int now = 3; now <= kaidan; ++now) {\n        int current = a[(now - 1) % 3] + a[(now - 2) % 3] + a[(now - 3) % 3];\n        a[now % 3] = current;  // Update the current position using the rolling technique\n    }\n\n    return a[kaidan % 3];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the dynamic programming array allocation and the way results are calculated. The original code dynamically allocates an array based on the input size, which can be optimized by reducing the array size and using a rolling array technique to save space while maintaining functionality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0};  // Create an array to store results\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3100298.5
+        ]
+    },
+    "(0_10)": {
+        "children": [
+            {
+                "fitness": 3098676.0,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Only one way to reach step 1\n    if (kaidan == 2) return 2; // Two ways to reach step 2 (1+1, 2)\n    \n    int a0 = 1, a1 = 1, a2 = 2; // Base cases for 0, 1, and 2\n    int current;\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a0 + a1 + a2; // Sum of the last three results\n        a0 = a1; // Move forward in the series\n        a1 = a2;\n        a2 = current;\n    }\n\n    return current; // Return the result for the kaidan input\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the function `func` that calculates the number of ways to reach the `kaidan` steps. This can be optimized by using a dynamic programming approach with a sliding window technique to reduce the space complexity from O(n) to O(1)."
+            },
+            {
+                "fitness": 3098663.5,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1;  // Base case for kaidan = 0\n    if (kaidan == 1) return 1;  // Base case for kaidan = 1\n\n    int a[MAX_KAIDAN + 1] = {0}; // Create a static array to store results\n    a[0] = 1;  // Base case for 0\n    a[1] = 1;  // Base case for 1\n\n    for (int now = 2; now <= kaidan; ++now) {\n        a[now] = a[now - 1] + a[now - 2] + (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        cout << func(n) / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the array initialization and the function logic, which could be optimized by reducing memory usage and improving computation efficiency."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_10"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nint a[MAX_KAIDAN + 1] = {0};   // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                  (now - 2 >= 0 ? a[now - 2] : 0) +\n                  (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3100160.0
+        ]
+    },
+    "(0_10_14)": {
+        "children": [
+            {
+                "fitness": 3098678.5,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Only one way to reach step 1\n    if (kaidan == 2) return 2; // Two ways to reach step 2 (1+1, 2)\n    \n    int dp[MAX_KAIDAN + 1]; // Create an array to store results\n    dp[0] = 1; \n    dp[1] = 1; \n    dp[2] = 2; // Initialize base cases\n\n    for (int now = 3; now <= kaidan; ++now) {\n        dp[now] = dp[now - 1] + dp[now - 2] + dp[now - 3]; // Update using previous results\n    }\n\n    return dp[kaidan]; // Return the result for the kaidan input\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the function `func(int kaidan)` where the Fibonacci-like calculation is performed. By changing the method of storing previous results from three separate variables to an array, we can reduce the number of variables and potentially improve cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_10_14"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Only one way to reach step 1\n    if (kaidan == 2) return 2; // Two ways to reach step 2 (1+1, 2)\n    \n    int a0 = 1, a1 = 1, a2 = 2; // Base cases for 0, 1, and 2\n    int current;\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a0 + a1 + a2; // Sum of the last three results\n        a0 = a1; // Move forward in the series\n        a1 = a2;\n        a2 = current;\n    }\n\n    return current; // Return the result for the kaidan input\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3098766.0
+        ]
+    },
+    "(0_10x0x2_11x13)": {
+        "children": [
+            {
+                "fitness": 3100603.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nint a[MAX_KAIDAN + 1] = {0};   // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = 0; // Initialize to 0 for each iteration\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the static array initialization from Parent 1 with the more efficient array handling of Parent 2. This results in a hybrid approach that retains static allocation while optimizing the calculation method."
+            },
+            {
+                "fitness": 3103368.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> dp(kaidan + 1, 0); // Use a vector for dynamic sizing\n    dp[0] = 1; // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) dp[now] += dp[now - 1];\n        if (now - 2 >= 0) dp[now] += dp[now - 2];\n        if (now - 3 >= 0) dp[now] += dp[now - 3];\n    }\n\n    return dp[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Use the vector implementation from Parent 4 for dynamic sizing while incorporating the efficient calculation method from Parent 2. This allows for flexibility and reduces the risk of exceeding array bounds."
+            },
+            {
+                "fitness": 3100514.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 1000; // Define a maximum size for the input\nint a[MAX_SIZE + 1]; // Use a fixed-size array\n\nint func(int kaidan) {\n    a[0] = 1; // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = 0; // Initialize to 0 for each iteration\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Implement the base case and initialization from Parent 1, while using the loop structure from Parent 3. This optimizes the code by ensuring that all cases are handled correctly while maintaining clarity."
+            },
+            {
+                "fitness": 3103291.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> dp(kaidan + 1, 0); // Use a vector for dynamic sizing\n    dp[0] = 1; // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        dp[now] = 0; // Initialize to 0 for each iteration\n        if (now - 1 >= 0) dp[now] += dp[now - 1];\n        if (now - 2 >= 0) dp[now] += dp[now - 2];\n        if (now - 3 >= 0) dp[now] += dp[now - 3];\n    }\n\n    return dp[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the efficient use of vectors from Parent 4 with the calculation method of Parent 2. This results in a code that is both efficient in handling larger inputs and clear in its logic."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "0_10",
+            "0",
+            "2_11",
+            "13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nint a[MAX_KAIDAN + 1] = {0};   // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                  (now - 2 >= 0 ? a[now - 2] : 0) +\n                  (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0};  // Create an array to store results\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\nint a[MAX_SIZE + 1]; // Use a fixed-size array instead of a vector\n\nint func(int kaidan) {\n    a[0] = 1; // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = 0; // Initialize to 0 for each iteration\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    while (cin >> n) {\n        if (n == 0) break;\n\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1; // Base case: 1 way to stay at 0\n\n        for (int now = 1; now <= n; ++now) {\n            // Sum ways to reach the current position from the last three positions\n            if (now >= 1) dp[now] += dp[now - 1];\n            if (now >= 2) dp[now] += dp[now - 2];\n            if (now >= 3) dp[now] += dp[now - 3];\n        }\n\n        cout << dp[n] / 10 / 365 + 1 << endl; // Final result\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3100250.5,
+            3100298.5,
+            3100514.0,
+            3102930.5
+        ]
+    },
+    "(0_15)": {
+        "children": [
+            {
+                "fitness": 3098752.0,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1;  // Base case for n = 0\n    if (kaidan == 1) return 1;  // Base case for n = 1\n    if (kaidan == 2) return 2;  // Base case for n = 2\n\n    int a = 1, b = 1, c = 2;  // Variables to store last three results\n\n    for (int now = 3; now <= kaidan; ++now) {\n        int current = a + b + c;  // Calculate the current value\n        a = b;  // Update a to the previous b\n        b = c;  // Update b to the previous c\n        c = current;  // Update c to the current value\n    }\n\n    return c;  // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the `func` function which calculates values based on the input `kaidan`. The original implementation uses an array to store results of the last three Fibonacci-like values. This can be optimized by using only three integer variables instead of an array, reducing memory usage and potentially improving cache performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0_15"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1;  // Base case for n = 0\n    if (kaidan == 1) return 1;  // Base case for n = 1\n    if (kaidan == 2) return 2;  // Base case for n = 2\n\n    int a[3] = {1, 1, 2};  // Array to store results for last three values only\n\n    for (int now = 3; now <= kaidan; ++now) {\n        int current = a[(now - 1) % 3] + a[(now - 2) % 3] + a[(now - 3) % 3];\n        a[now % 3] = current;  // Update the current position using the rolling technique\n    }\n\n    return a[kaidan % 3];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3100028.0
+        ]
+    },
+    "(0x2x1)": {
+        "children": [
+            {
+                "fitness": 3103270.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> a(kaidan + 1, 0); // Use vector for dynamic sizing\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the efficient array storage from Parent 1 (fitness: 3100297.5) with the vector usage in Parent 2 (fitness: 3103361.5) to improve dynamic memory handling while maintaining performance."
+            },
+            {
+                "fitness": 3108205.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0}; // Use array for fixed size\n    a[0] = 1; \n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n    vector<int> results;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        results.push_back(ans / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the array initialization of Parent 3 (fitness: 3108116.5) with the vector output of Parent 2 (fitness: 3103361.5) to optimize the function while maintaining clarity in results storage."
+            },
+            {
+                "fitness": 3107828.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0}; // Array for fixed size\n    a[0] = 1; \n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                 (now - 2 >= 0 ? a[now - 2] : 0) +\n                 (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n    vector<int> results;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        results.push_back(ans / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Utilize the efficient memory handling of Parent 1 (fitness: 3100297.5) with the result collection strategy from Parent 3 (fitness: 3108116.5) to enhance performance while managing output results effectively."
+            },
+            {
+                "fitness": 3107898.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0}; // Array for fixed size\n    a[0] = 1; \n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                 (now - 2 >= 0 ? a[now - 2] : 0) +\n                 (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n;\n    vector<int> results;\n\n    while (true) {\n        cin >> n;\n        if (n == 0) break; // Stop condition\n        results.push_back(func(n) / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient reading of input from Parent 2 (fitness: 3103361.5) with the result storage approach from Parent 1 (fitness: 3100297.5) to streamline the code while ensuring clear output."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
             "0",
+            "2",
             "1"
         ],
         "parent_codes": [
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\nusing namespace std;\n\n\n\nint dp[100][4];\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\tif(dp[now][1]==-1){\n\n\t\t\ta+=func(kaidan,now+1);\n\n\t\t\tdp[now][1]=a;\n\n\t\t}else{\n\n\t\t\ta=dp[now][1];\n\n\t\t}\n\n\t\tif(dp[now][2]==-1){\n\n\t\t\tb+=func(kaidan,now+2);\n\n\t\t\tdp[now][2]=b;\n\n\t\t}else{\n\n\t\t\tb=dp[now][2];\n\n\t\t}\n\n\t\tif(dp[now][3]==-1){\n\n\t\t\tc+=func(kaidan,now+3);\n\n\t\t\tdp[now][3]=c;\n\n\t\t}else{\n\n\t\t\tc=dp[now][3];\n\n\t\t}\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t    memset(dp,-1,sizeof(dp));\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ceil((double)ans/10/365)<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n"
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0};  // Create an array to store results\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> a(kaidan + 1, 0);\n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0}; \n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n    vector<int> results;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        results.push_back(ans / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n"
         ],
         "parent_fitnesses": [
-            3106034.0625,
-            48843028.5
+            3100297.5,
+            3103361.5,
+            3108116.5
         ]
     },
     "(1)": {
         "children": [
             {
-                "fitness": 3205548.125,
-                "new_code": "#include <iostream>\n#include <cmath>\nusing namespace std;\n\n\n\nint main(){\n\n\tint n;\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[n+1];\n\n\t\tdp[0]=1;\n\n\t\tfor(int i=1;i<=n;i++){\n\n\t\t\tdp[i]=0;\n\n\t\t\tif(i>=1)dp[i]+=dp[i-1];\n\n\t\t\tif(i>=2)dp[i]+=dp[i-2];\n\n\t\t\tif(i>=3)dp[i]+=dp[i-3];\n\n\t\t}\n\n\n\n\t\tcout<<ceil((double)dp[n]/10/365)<<endl;\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the recursive function that calculates the number of ways to reach a certain step, which could be optimized by using dynamic programming to reduce the time complexity."
-            },
-            {
-                "fitness": 3156577.125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint dp[100];\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tdp[0]=1;\n\n\t\tfor(int i=1;i<=n;i++){\n\n\t\t\tdp[i]=0;\n\n\t\t\tif(i-1>=0)dp[i]+=dp[i-1];\n\n\t\t\tif(i-2>=0)dp[i]+=dp[i-2];\n\n\t\t\tif(i-3>=0)dp[i]+=dp[i-3];\n\n\t\t}\n\n\t\tcout<<dp[n]/10/365+1<<endl;\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the recursive function that calculates paths to the goal, which could be optimized by using an iterative method to avoid deep recursion and speed up computation."
+                "fitness": 3109181.5,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> a(kaidan + 1, 0); \n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n    vector<int> results;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        results.push_back(ans / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the dynamic array allocation in `func` that could be optimized by using a vector instead of a fixed-size array. This reduces memory usage and leverages the built-in memory management capabilities of the C++ STL, leading to better runtime performance."
             }
         ],
         "operation_type": "mutation",
@@ -44,223 +181,210 @@
             "1"
         ],
         "parent_codes": [
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint dp[100][4];\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\tif(dp[now][1]==-1){\n\n\t\t\ta+=func(kaidan,now+1);\n\n\t\t\tdp[now][1]=a;\n\n\t\t}else{\n\n\t\t\ta=dp[now][1];\n\n\t\t}\n\n\t\tif(dp[now][2]==-1){\n\n\t\t\tb+=func(kaidan,now+2);\n\n\t\t\tdp[now][2]=b;\n\n\t\t}else{\n\n\t\t\tb=dp[now][2];\n\n\t\t}\n\n\t\tif(dp[now][3]==-1){\n\n\t\t\tc+=func(kaidan,now+3);\n\n\t\t\tdp[now][3]=c;\n\n\t\t}else{\n\n\t\t\tc=dp[now][3];\n\n\t\t}\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t    memset(dp,-1,sizeof(dp));\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n"
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0}; \n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n    vector<int> results;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        results.push_back(ans / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n"
         ],
         "parent_fitnesses": [
-            3122502.0
+            3108116.5
         ]
     },
-    "(12)": {
+    "(13)": {
         "children": [
             {
-                "fitness": 1231923.5625,
-                "new_code": "#include <cstdio>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)==1){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the import sections that do not follow the standard input method, which could be optimized by using scanf instead of cin for faster input."
+                "fitness": 3102293.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        // Use a rolling array to save space\n        vector<int> dp(4, 0);\n        dp[0] = 1; // Base case: 1 way to stay at 0\n\n        for (int now = 1; now <= n; ++now) {\n            int current_index = now % 4; // Use modulo to cycle through the dp array\n            dp[current_index] = dp[(now - 1) % 4]; // From the last position\n            if (now >= 2) dp[current_index] += dp[(now - 2) % 4]; // From two positions back\n            if (now >= 3) dp[current_index] += dp[(now - 3) % 4]; // From three positions back\n        }\n\n        cout << dp[n % 4] / 10 / 365 + 1 << endl; // Final result\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the way we handle input and output, as well as reducing unnecessary computations in the dynamic programming array by using a rolling array approach. This will minimize memory usage and potentially improve performance."
             }
         ],
         "operation_type": "mutation",
         "parent_names": [
-            "12"
+            "13"
         ],
         "parent_codes": [
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n"
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    while (cin >> n) {\n        if (n == 0) break;\n\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1; // Base case: 1 way to stay at 0\n\n        for (int now = 1; now <= n; ++now) {\n            // Sum ways to reach the current position from the last three positions\n            if (now >= 1) dp[now] += dp[now - 1];\n            if (now >= 2) dp[now] += dp[now - 2];\n            if (now >= 3) dp[now] += dp[now - 3];\n        }\n\n        cout << dp[n] / 10 / 365 + 1 << endl; // Final result\n    }\n    return 0;\n}\n"
         ],
         "parent_fitnesses": [
-            3129838.25
+            3102930.5
         ]
     },
-    "(12_17x4_22x5_21x11)": {
+    "(2)": {
         "children": [
             {
-                "fitness": 3121178.3125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nlong long dp[100]; // iteration array\n\nlong long path_count(int steps){\n\n\tlong long dp[100] = {0}; // iteration array\n\n\tdp[0] = 1; // base case\n\n\tfor (int i = 0; i <= steps; i++) {\n\n\t\tif (i + 1 <= steps) dp[i + 1] += dp[i];\n\n\t\tif (i + 2 <= steps) dp[i + 2] += dp[i];\n\n\t\tif (i + 3 <= steps) dp[i + 3] += dp[i];\n\n\t}\n\n\treturn dp[steps];\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=path_count(n);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the main function from Parent 3 (fitness: 3121065.125) with the path_count function from Parent 4 (fitness: 3121774.4375)."
+                "fitness": 3100514.0,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\nint a[MAX_SIZE + 1]; // Use a fixed-size array instead of a vector\n\nint func(int kaidan) {\n    a[0] = 1; // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = 0; // Initialize to 0 for each iteration\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the use of the vector `a` for dynamic programming, which can be optimized by using a fixed-size array and reducing the memory overhead. This change will improve memory access patterns and potentially reduce cache misses, enhancing performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> a(kaidan + 1, 0);\n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3103361.5
+        ]
+    },
+    "(24x2_11_16_19x0_10_22x0_10_14)": {
+        "children": [
+            {
+                "fitness": 3098766.0,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000; // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Base case\n    if (kaidan == 2) return 2; // Base case\n\n    int a0 = 1, a1 = 1, a2 = 2; // Base cases for 0, 1, and 2\n    int current;\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a0 + a1 + a2; // Sum of the last three results\n        a0 = a1; // Move forward in the series\n        a1 = a2;\n        a2 = current;\n    }\n    \n    return current; // Return the result for the kaidan input\n}\n\nint main() {\n    int n;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        cout << func(n) / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the memoization approach from Parent 1 (fitness: 3056649.5) with the iterative approach of Parent 4 (fitness: 3098676.0) to improve performance and reduce memory usage."
             },
             {
-                "fitness": 3138401.4375,
-                "new_code": "#include <cstdio>\n\n#include <cstring>\n\n#include <algorithm>\n\n#include <iostream>\n\nusing namespace std;\n\n\n\nlong long dp[100]; // iteration array\n\nlong long path_count(int steps){\n\n\tlong long dp[100] = {0}; // iteration array\n\n\tdp[0] = 1; // base case\n\n\tfor (int i = 0; i <= steps; i++) {\n\n\t\tif (i + 1 <= steps) dp[i + 1] += dp[i];\n\n\t\tif (i + 2 <= steps) dp[i + 2] += dp[i];\n\n\t\tif (i + 3 <= steps) dp[i + 3] += dp[i];\n\n\t}\n\n\treturn dp[steps];\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)!=EOF){\n\n\t\tif(n==0)break;\n\n\t\tans=path_count(n);\n\n\t\tprintf(\"%lld\\n\",ans/10/365+1);\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the path_count function from Parent 4 (fitness: 3121774.4375) with the main function from Parent 3 (fitness: 3121065.125)."
+                "fitness": 3098754.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000; // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Base case\n\n    int a[MAX_KAIDAN + 1] = {0}; // Create a static array to store results\n    a[0] = 1; // Base case for 0\n    a[1] = 1; // Base case for 1\n\n    for (int now = 2; now <= kaidan; ++now) {\n        a[now] = a[now - 1] + a[now - 2] + (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        cout << func(n) / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the direct input handling and output formatting from Parent 2 (fitness: 3098661.5) with the efficient dynamic programming logic from Parent 3 (fitness: 3098663.5) to streamline the code further."
             },
             {
-                "fitness": 1219591.75,
-                "new_code": "#include <cstdio>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nlong long dp[100]; // iteration array\n\nlong long path_count(int steps){\n\n\tlong long dp[100] = {0}; // iteration array\n\n\tdp[0] = 1; // base case\n\n\tfor (int i = 0; i <= steps; i++) {\n\n\t\tif (i + 1 <= steps) dp[i + 1] += dp[i];\n\n\t\tif (i + 2 <= steps) dp[i + 2] += dp[i];\n\n\t\tif (i + 3 <= steps) dp[i + 3] += dp[i];\n\n\t}\n\n\treturn dp[steps];\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)==1){\n\n\t\tif(n==0)break;\n\n\t\tans=path_count(n);\n\n\t\tprintf(\"%lld\\n\",ans/10/365+1);\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the main function from Parent 1 (fitness: 1226723.75) with the path_count function from Parent 4 (fitness: 3121774.4375)."
+                "fitness": 3099844.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000; // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Base case\n    if (kaidan == 2) return 2; // Base case\n\n    int a0 = 1, a1 = 1, a2 = 2; // Base cases for 0, 1, and 2\n    int current;\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a0 + a1 + a2; // Sum of the last three results\n        a0 = a1; // Move forward in the series\n        a1 = a2;\n        a2 = current;\n    }\n\n    return current; // Return the result for the kaidan input\n}\n\nint main() {\n    int n;\n\n    while (scanf(\"%d\", &n) == 1) {\n        if (n == 0) break;\n        printf(\"%d\\n\", func(n) / 10 / 365 + 1);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Integrate the structure from Parent 4 (fitness: 3098676.0) with the optimized input/output from Parent 1 (fitness: 3056649.5) to maintain clarity while enhancing performance."
             },
             {
-                "fitness": 3112506.9375,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nlong long path_count(int steps){\n\n\tlong long dp[100] = {0}; // iteration array\n\n\tdp[0] = 1; // base case\n\n\tfor (int i = 0; i <= steps; i++) {\n\n\t\tif (i + 1 <= steps) dp[i + 1] += dp[i];\n\n\t\tif (i + 2 <= steps) dp[i + 2] += dp[i];\n\n\t\tif (i + 3 <= steps) dp[i + 3] += dp[i];\n\n\t}\n\n\treturn dp[steps];\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the main function from Parent 3 (fitness: 3121065.125) with the path_count function from Parent 1 (fitness: 1226723.75)."
+                "fitness": 3104201.5,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan, vector<int>& memo) {\n    if (kaidan == 0) return 1;\n    if (kaidan == 1) return 1;\n    if (kaidan == 2) return 2;\n\n    if (memo[kaidan] != -1) {\n        return memo[kaidan]; // Return cached result\n    }\n\n    memo[kaidan] = func(kaidan - 1, memo) + func(kaidan - 2, memo) + (kaidan - 3 >= 0 ? func(kaidan - 3, memo) : 0);\n    \n    return memo[kaidan];\n}\n\nint main() {\n    const int MAX_KAIDAN = 1000;\n    vector<int> memo(MAX_KAIDAN + 1, -1); // Create memoization vector\n    int n;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        cout << func(n, memo) / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the iterative approach from Parent 4 (fitness: 3098676.0) and the memoization strategy from Parent 1 (fitness: 3056649.5) to utilize the efficiency of both techniques."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
-            "12_17",
-            "4_22",
-            "5_21",
-            "11"
+            "24",
+            "2_11_16_19",
+            "0_10_22",
+            "0_10_14"
         ],
         "parent_codes": [
-            "#include <cstdio>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)==1){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <cstdio>\n\n#include <cstring>\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)!=EOF){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nlong long dp[100]; // iteration array\n\nlong long path_count(int steps){\n\n\tlong long dp[100] = {0}; // iteration array\n\n\tdp[0] = 1; // base case\n\n\tfor (int i = 0; i <= steps; i++) {\n\n\t\tif (i + 1 <= steps) dp[i + 1] += dp[i];\n\n\t\tif (i + 2 <= steps) dp[i + 2] += dp[i];\n\n\t\tif (i + 3 <= steps) dp[i + 3] += dp[i];\n\n\t}\n\n\treturn dp[steps];\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=path_count(n);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint func(int kaidan, int now, vector<int>& memo) {\n    if (now == kaidan) {\n        return 1;\n    } else if (now > kaidan) {\n        return 0;\n    }\n    \n    if (memo[now] != -1) {\n        return memo[now]; // Return cached result\n    }\n\n    memo[now] = func(kaidan, now + 1, memo) +\n                func(kaidan, now + 2, memo) +\n                func(kaidan, now + 3, memo);\n\n    return memo[now];\n}\n\nint main() {\n    int n, ans;\n\n    while (scanf(\"%d\", &n) == 1) {\n        if (n == 0) break;\n        vector<int> memo(n + 1, -1); // Create memoization vector\n        ans = func(n, 0, memo);\n        printf(\"%d\\n\", ans / 10 / 365 + 1);\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case for n=0\n    if (kaidan == 1) return 1; // Base case for n=1\n    if (kaidan == 2) return 2; // Base case for n=2\n\n    int a1 = 1, a2 = 1, a3 = 2; // Base cases for 0, 1, and 2\n    int current; // To store the current value\n\n    // Using an array to store the last three values for clarity\n    int values[3] = {1, 1, 2};\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = values[0] + values[1] + values[2]; // Current value is the sum of the last three\n        // Shift values\n        values[0] = values[1]; // Shift a1 to a2\n        values[1] = values[2]; // Shift a2 to a3\n        values[2] = current; // Update a3 to current value\n    }\n\n    return values[2]; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1;  // Base case for kaidan = 0\n    if (kaidan == 1) return 1;  // Base case for kaidan = 1\n\n    int a[MAX_KAIDAN + 1] = {0}; // Create a static array to store results\n    a[0] = 1;  // Base case for 0\n    a[1] = 1;  // Base case for 1\n\n    for (int now = 2; now <= kaidan; ++now) {\n        a[now] = a[now - 1] + a[now - 2] + (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        cout << func(n) / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Only one way to reach step 1\n    if (kaidan == 2) return 2; // Two ways to reach step 2 (1+1, 2)\n    \n    int a0 = 1, a1 = 1, a2 = 2; // Base cases for 0, 1, and 2\n    int current;\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a0 + a1 + a2; // Sum of the last three results\n        a0 = a1; // Move forward in the series\n        a1 = a2;\n        a2 = current;\n    }\n\n    return current; // Return the result for the kaidan input\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
         ],
         "parent_fitnesses": [
-            1226723.75,
-            1234612.6875,
-            3121065.125,
-            3121774.4375
+            3056649.5,
+            3098661.5,
+            3098663.5,
+            3098676.0
         ]
     },
-    "(12_17x6x5x4)": {
+    "(2_11)": {
         "children": [
             {
-                "fitness": 3121774.4375,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nlong long dp[100]; // iteration array\n\nlong long path_count(int steps){\n\n\tlong long dp[100] = {0}; // iteration array\n\n\tdp[0] = 1; // base case\n\n\tfor (int i = 0; i <= steps; i++) {\n\n\t\tif (i + 1 <= steps) dp[i + 1] += dp[i];\n\n\t\tif (i + 2 <= steps) dp[i + 2] += dp[i];\n\n\t\tif (i + 3 <= steps) dp[i + 3] += dp[i];\n\n\t}\n\n\treturn dp[steps];\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=path_count(n);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine function A from Parent 4 (fitness: 3116623.8125) with function B from Parent 2 (fitness: 3112104.4375)."
+                "fitness": 3098750.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case for n=0\n    if (kaidan == 1) return 1; // Base case for n=1\n    if (kaidan == 2) return 2; // Base case for n=2\n\n    int a1 = 1, a2 = 1, a3 = 2; // Base cases for 0, 1, and 2\n    int current; // To store the current value\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a1 + a2 + a3; // Current value is the sum of the last three\n        a1 = a2; // Shift a1 to a2\n        a2 = a3; // Shift a2 to a3\n        a3 = current; // Update a3 to current value\n    }\n\n    return a3; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization and accumulation process in the `func` function, which can be optimized by using dynamic programming with a reduced state space and avoiding unnecessary array accesses."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2_11"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\nint a[MAX_SIZE + 1]; // Use a fixed-size array instead of a vector\n\nint func(int kaidan) {\n    a[0] = 1; // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = 0; // Initialize to 0 for each iteration\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3100514.0
+        ]
+    },
+    "(2_11_16)": {
+        "children": [
+            {
+                "fitness": 3098759.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case for n=0\n    if (kaidan == 1) return 1; // Base case for n=1\n    if (kaidan == 2) return 2; // Base case for n=2\n\n    int a1 = 1, a2 = 1, a3 = 2; // Base cases for 0, 1, and 2\n    int current; // To store the current value\n\n    // Using an array to store the last three values for clarity\n    int values[3] = {1, 1, 2};\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = values[0] + values[1] + values[2]; // Current value is the sum of the last three\n        // Shift values\n        values[0] = values[1]; // Shift a1 to a2\n        values[1] = values[2]; // Shift a2 to a3\n        values[2] = current; // Update a3 to current value\n    }\n\n    return values[2]; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the `func` function that computes the sum of the last three values, which could be optimized by using a more space-efficient method to store only the necessary values instead of keeping all three previous results."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2_11_16"
+        ],
+        "parent_codes": [
+            "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case for n=0\n    if (kaidan == 1) return 1; // Base case for n=1\n    if (kaidan == 2) return 2; // Base case for n=2\n\n    int a1 = 1, a2 = 1, a3 = 2; // Base cases for 0, 1, and 2\n    int current; // To store the current value\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a1 + a2 + a3; // Current value is the sum of the last three\n        a1 = a2; // Shift a1 to a2\n        a2 = a3; // Shift a2 to a3\n        a3 = current; // Update a3 to current value\n    }\n\n    return a3; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3098661.5
+        ]
+    },
+    "(2_11_16x0_10_14x0_15x0_10)": {
+        "children": [
+            {
+                "fitness": 3099936.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case for n=0\n    if (kaidan == 1) return 1; // Base case for n=1\n    if (kaidan == 2) return 2; // Base case for n=2\n\n    int a[3] = {1, 1, 2}; // Base cases for 0, 1, and 2\n    for (int now = 3; now <= kaidan; ++now) {\n        a[now % 3] = a[(now - 1) % 3] + a[(now - 2) % 3] + a[(now - 3) % 3]; // Rolling sum\n    }\n\n    return a[kaidan % 3]; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the iterative logic from Parent 1 with the optimized array approach from Parent 3 to reduce space complexity while maintaining clarity."
+            },
+            {
+                "fitness": 3100168.0,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nint a[MAX_KAIDAN + 1] = {0};   // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n    if (kaidan == 0) return 1;\n    if (kaidan == 1) return 1;\n    if (kaidan == 2) return 2;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                  (now - 2 >= 0 ? a[now - 2] : 0) +\n                  (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n    return a[kaidan]; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the input handling from Parent 2 with the efficient calculation of the Fibonacci-like sequence from Parents 1 and 3, optimizing for speed and reducing redundant calculations."
+            },
+            {
+                "fitness": 3100250.5,
+                "new_code": "#include <iostream>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nlong long a[MAX_KAIDAN + 1] = {0}; // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                  (now - 2 >= 0 ? a[now - 2] : 0) +\n                  (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan]; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Integrate the array handling from Parent 4 with the more compact logic from Parent 2 to maintain a balance between performance and readability."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
-            "12_17",
-            "6",
-            "5",
-            "4"
+            "2_11_16",
+            "0_10_14",
+            "0_15",
+            "0_10"
         ],
         "parent_codes": [
-            "#include <cstdio>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)==1){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint path_count(int steps,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint one_step=0,two_steps=0,three_steps=0;\n\n\n\n\tif(now==steps){\n\n\t\treturn 1;\n\n\t}else if(now>steps){\n\n\t\treturn 0;\n\n\t}else{\n\n\t\tone_step+=path_count(steps,now+1);\n\n\t\ttwo_steps+=path_count(steps,now+2);\n\n\t\tthree_steps+=path_count(steps,now+3);\n\n\t}\n\n\n\n\treturn dp[now] = one_step+two_steps+three_steps; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=path_count(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
+            "#include <iostream>\nusing namespace std;\n\nconst int MAX_SIZE = 10000; // Define a maximum size for the input\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case for n=0\n    if (kaidan == 1) return 1; // Base case for n=1\n    if (kaidan == 2) return 2; // Base case for n=2\n\n    int a1 = 1, a2 = 1, a3 = 2; // Base cases for 0, 1, and 2\n    int current; // To store the current value\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a1 + a2 + a3; // Current value is the sum of the last three\n        a1 = a2; // Shift a1 to a2\n        a2 = a3; // Shift a2 to a3\n        a3 = current; // Update a3 to current value\n    }\n\n    return a3; // Return the result for kaidan\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1; // Base case\n    if (kaidan == 1) return 1; // Only one way to reach step 1\n    if (kaidan == 2) return 2; // Two ways to reach step 2 (1+1, 2)\n    \n    int a0 = 1, a1 = 1, a2 = 2; // Base cases for 0, 1, and 2\n    int current;\n\n    for (int now = 3; now <= kaidan; ++now) {\n        current = a0 + a1 + a2; // Sum of the last three results\n        a0 = a1; // Move forward in the series\n        a1 = a2;\n        a2 = current;\n    }\n\n    return current; // Return the result for the kaidan input\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    if (kaidan == 0) return 1;  // Base case for n = 0\n    if (kaidan == 1) return 1;  // Base case for n = 1\n    if (kaidan == 2) return 2;  // Base case for n = 2\n\n    int a[3] = {1, 1, 2};  // Array to store results for last three values only\n\n    for (int now = 3; now <= kaidan; ++now) {\n        int current = a[(now - 1) % 3] + a[(now - 2) % 3] + a[(now - 3) % 3];\n        a[now % 3] = current;  // Update the current position using the rolling technique\n    }\n\n    return a[kaidan % 3];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+            "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nconst int MAX_KAIDAN = 1000;  // Assume a reasonable upper limit for kaidan\nint a[MAX_KAIDAN + 1] = {0};   // Create a static array to store results\n\nint func(int kaidan) {\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        a[now] = (now - 1 >= 0 ? a[now - 1] : 0) +\n                  (now - 2 >= 0 ? a[now - 2] : 0) +\n                  (now - 3 >= 0 ? a[now - 3] : 0);\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n"
         ],
         "parent_fitnesses": [
-            1225773.8125,
-            3112104.4375,
-            3115270.125,
-            3116623.8125
-        ]
-    },
-    "(13x0x1x12)": {
-        "children": [
-            {
-                "fitness": 3116623.8125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the structure of the recursive function from Parent 2 with the main function and I/O operations from Parent 1."
-            },
-            {
-                "fitness": 3115270.125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Merge the recursive memoization logic from Parent 4 with the iteration logic from Parent 1, focusing on maintaining the iterative structure."
-            },
-            {
-                "fitness": 3137287.5625,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint path_count(int steps,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint one_step=0,two_steps=0,three_steps=0;\n\n\n\n\tif(now==steps){\n\n\t\treturn 1;\n\n\t}else if(now>steps){\n\n\t\treturn 0;\n\n\t}else{\n\n\t\tone_step+=path_count(steps,now+1);\n\n\t\ttwo_steps+=path_count(steps,now+2);\n\n\t\tthree_steps+=path_count(steps,now+3);\n\n\t}\n\n\n\n\treturn dp[now] = one_step+two_steps+three_steps; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=path_count(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Blend the recursive function from Parent 2 with the iterative main structure from Parent 4, while changing variable names for better clarity."
-            },
-            {
-                "fitness": 3130137.625,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int steps,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint one_step=0,two_steps=0,three_steps=0;\n\n\n\n\tif(now==steps){\n\n\t\treturn 1;\n\n\t}else if(now>steps){\n\n\t\treturn 0;\n\n\t}else{\n\n\t\tone_step+=func(steps,now+1);\n\n\t\ttwo_steps+=func(steps,now+2);\n\n\t\tthree_steps+=func(steps,now+3);\n\n\t}\n\n\n\n\treturn dp[now] = one_step+two_steps+three_steps; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Combine the recursive logic from Parent 3 with the iterative structure from Parent 1, focusing on retaining the essence of dynamic programming."
-            }
-        ],
-        "operation_type": "crossover",
-        "parent_names": [
-            "13",
-            "0",
-            "1",
-            "12"
-        ],
-        "parent_codes": [
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\nusing namespace std;\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\nusing namespace std;\n\n\n\nint dp[100][4];\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\tif(dp[now][1]==-1){\n\n\t\t\ta+=func(kaidan,now+1);\n\n\t\t\tdp[now][1]=a;\n\n\t\t}else{\n\n\t\t\ta=dp[now][1];\n\n\t\t}\n\n\t\tif(dp[now][2]==-1){\n\n\t\t\tb+=func(kaidan,now+2);\n\n\t\t\tdp[now][2]=b;\n\n\t\t}else{\n\n\t\t\tb=dp[now][2];\n\n\t\t}\n\n\t\tif(dp[now][3]==-1){\n\n\t\t\tc+=func(kaidan,now+3);\n\n\t\t\tdp[now][3]=c;\n\n\t\t}else{\n\n\t\t\tc=dp[now][3];\n\n\t\t}\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t    memset(dp,-1,sizeof(dp));\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint dp[100][4];\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\tif(dp[now][1]==-1){\n\n\t\t\ta+=func(kaidan,now+1);\n\n\t\t\tdp[now][1]=a;\n\n\t\t}else{\n\n\t\t\ta=dp[now][1];\n\n\t\t}\n\n\t\tif(dp[now][2]==-1){\n\n\t\t\tb+=func(kaidan,now+2);\n\n\t\t\tdp[now][2]=b;\n\n\t\t}else{\n\n\t\t\tb=dp[now][2];\n\n\t\t}\n\n\t\tif(dp[now][3]==-1){\n\n\t\t\tc+=func(kaidan,now+3);\n\n\t\t\tdp[now][3]=c;\n\n\t\t}else{\n\n\t\t\tc=dp[now][3];\n\n\t\t}\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t    memset(dp,-1,sizeof(dp));\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            3101489.875,
-            3120370.4375,
-            3122502.0,
-            3129838.25
-        ]
-    },
-    "(4)": {
-        "children": [
-            {
-                "fitness": 1207547.8125,
-                "new_code": "#include <cstdio>\n\n#include <cstring>\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)!=EOF){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the usage of `cin` and `cout`, which could be optimized by using `scanf` and `printf` for faster input and output."
-            }
-        ],
-        "operation_type": "mutation",
-        "parent_names": [
-            "4"
-        ],
-        "parent_codes": [
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            3116623.8125
-        ]
-    },
-    "(4_22)": {
-        "children": [
-            {
-                "fitness": 1235315.9375,
-                "new_code": "#include <cstdio>\n\n#include <cstring>\n\nint dp[100]; // memoization array\n\nint func(int stairs,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==stairs){\n\n\t\treturn 1;\n\n\t}else if(now>stairs){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(stairs,now+1);\n\n\t\tb+=func(stairs,now+2);\n\n\t\tc+=func(stairs,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)!=EOF){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the function naming and variable naming that does not follow common conventions, which could be optimized by improving their readability and adherence to conventions."
-            }
-        ],
-        "operation_type": "mutation",
-        "parent_names": [
-            "4_22"
-        ],
-        "parent_codes": [
-            "#include <cstdio>\n\n#include <cstring>\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(scanf(\"%d\",&n)!=EOF){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tprintf(\"%d\\n\",ans/10/365+1);\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            1234612.6875
-        ]
-    },
-    "(5)": {
-        "children": [
-            {
-                "fitness": 3121065.125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\t}\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the lines implementing the recursive function for calculating the number of ways to climb stairs, which could be optimized by using an iterative dynamic programming approach."
-            }
-        ],
-        "operation_type": "mutation",
-        "parent_names": [
-            "5"
-        ],
-        "parent_codes": [
-            "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            3115270.125
+            3098661.5,
+            3098766.0,
+            3100028.0,
+            3100160.0
         ]
     },
     "(source)": {
         "children": [
             {
-                "fitness": 3193561.0625,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring>\n\nusing namespace std;\n\n\n\nint dp[100][4];\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\tif(dp[now][1]==-1){\n\n\t\t\ta+=func(kaidan,now+1);\n\n\t\t\tdp[now][1]=a;\n\n\t\t}else{\n\n\t\t\ta=dp[now][1];\n\n\t\t}\n\n\t\tif(dp[now][2]==-1){\n\n\t\t\tb+=func(kaidan,now+2);\n\n\t\t\tdp[now][2]=b;\n\n\t\t}else{\n\n\t\t\tb=dp[now][2];\n\n\t\t}\n\n\t\tif(dp[now][3]==-1){\n\n\t\t\tc+=func(kaidan,now+3);\n\n\t\t\tdp[now][3]=c;\n\n\t\t}else{\n\n\t\t\tc=dp[now][3];\n\n\t\t}\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t    memset(dp,-1,sizeof(dp));\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the recursive function to reduce redundant calculations by employing memoization."
+                "fitness": 3100297.5,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0};  // Create an array to store results\n    a[0] = 1;  // Base case\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Replace recursive calls with iterative logic to avoid stack overflow and reduce function call overhead."
             },
             {
-                "fitness": 48976182.125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cmath>\n\nusing namespace std;\n\n\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ceil((double)ans/10/365)<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Optimize the recursive function to reduce the number of function calls by understanding the problem structure."
+                "fitness": 3108116.5,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    int a[kaidan + 1] = {0}; \n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n    vector<int> results;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        results.push_back(ans / 10 / 365 + 1);\n    }\n\n    for (int res : results) {\n        cout << res << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Reduce the number of output operations by storing results and printing them at once."
             },
             {
-                "fitness": 3129838.25,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\n#include <cstring> // for memset\n\nusing namespace std;\n\n\n\nint dp[100]; // memoization array\n\nint func(int kaidan,int now){\n\n\tif (dp[now] != -1) return dp[now]; // check memoization\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn dp[now] = a+b+c; // store result in memoization\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tmemset(dp, -1, sizeof(dp)); // initialize memoization array\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the recursive function that computes the number of ways to climb a staircase, which could be optimized by using memoization to store intermediate results and avoid redundant calculations."
+                "fitness": 3103271.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint func(int kaidan) {\n    vector<int> a(kaidan + 1, 0);\n    a[0] = 1;\n\n    for (int now = 1; now <= kaidan; ++now) {\n        if (now - 1 >= 0) a[now] += a[now - 1];\n        if (now - 2 >= 0) a[now] += a[now - 2];\n        if (now - 3 >= 0) a[now] += a[now - 3];\n    }\n\n    return a[kaidan];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        ans = func(n);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Optimize the array size by using a dynamic approach instead of a fixed size."
             },
             {
-                "fitness": 3139743.125,
-                "new_code": "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\nusing namespace std;\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tlong long dp[100] = {0}; // iteration array\n\n\t\tdp[0] = 1; // base case\n\n\t\tfor (int i = 0; i <= n; i++) {\n\n\t\t\tif (i + 1 <= n) dp[i + 1] += dp[i];\n\n\t\t\tif (i + 2 <= n) dp[i + 2] += dp[i];\n\n\t\t\tif (i + 3 <= n) dp[i + 3] += dp[i];\n\n\t\t}\n\n\t\tans=dp[n];\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n",
-                "strategy": "Focus on the recursive function, which could be optimized by changing recursion to iteration, thus improving performance and reducing function call overhead."
+                "fitness": 3102930.5,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    while (cin >> n) {\n        if (n == 0) break;\n\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1; // Base case: 1 way to stay at 0\n\n        for (int now = 1; now <= n; ++now) {\n            // Sum ways to reach the current position from the last three positions\n            if (now >= 1) dp[now] += dp[now - 1];\n            if (now >= 2) dp[now] += dp[now - 2];\n            if (now >= 3) dp[now] += dp[now - 3];\n        }\n\n        cout << dp[n] / 10 / 365 + 1 << endl; // Final result\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the recursive function `func` that calculates the number of ways to reach `kaidan` from `now`. This can be optimized by using dynamic programming to avoid recalculating results for the same `now` value multiple times, thus significantly improving performance and reducing the fitness score."
+            },
+            {
+                "fitness": 95539384.0,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\n#include <stack>\n#include <queue>\n\nusing namespace std;\n\nint func(int kaidan,int now){\n    int a=0,b=0,c=0;\n\n    if(now==kaidan){\n        return 1;\n    }else if(now>kaidan){\n        return 0;\n    }else{\n        a+=func(kaidan,now+1);\n        b+=func(kaidan,now+2);\n        c+=func(kaidan,now+3);\n    }\n\n    return a+b+c;\n}\n\nint main(){\n    int n,ans;\n\n    while(cin>>n){\n        if(n==0) break;\n        ans = func(n,0);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "No mutations applied as the original code is retained for analysis."
+            },
+            {
+                "fitness": 3108088.5,
+                "new_code": "#include <iostream>\n#include <string>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint func(int kaidan, int now, vector<int>& memo) {\n    if (now == kaidan) {\n        return 1;\n    } else if (now > kaidan) {\n        return 0;\n    }\n    \n    if (memo[now] != -1) {\n        return memo[now]; // Return cached result\n    }\n\n    memo[now] = func(kaidan, now + 1, memo) +\n                func(kaidan, now + 2, memo) +\n                func(kaidan, now + 3, memo);\n\n    return memo[now];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        vector<int> memo(n + 1, -1); // Create memoization vector\n        ans = func(n, 0, memo);\n        cout << ans / 10 / 365 + 1 << endl;\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the recursive function `func` which can lead to excessive computations and stack overflow for large inputs, potentially optimized using dynamic programming or memoization to store previously computed results."
+            },
+            {
+                "fitness": 3056648.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint func(int kaidan, int now, vector<int>& memo) {\n    if (now == kaidan) {\n        return 1;\n    } else if (now > kaidan) {\n        return 0;\n    }\n    \n    if (memo[now] != -1) {\n        return memo[now]; // Return cached result\n    }\n\n    memo[now] = func(kaidan, now + 1, memo) +\n                func(kaidan, now + 2, memo) +\n                func(kaidan, now + 3, memo);\n\n    return memo[now];\n}\n\nint main() {\n    int n, ans;\n\n    while (scanf(\"%d\", &n) == 1) {\n        if (n == 0) break;\n        vector<int> memo(n + 1, -1); // Create memoization vector\n        ans = func(n, 0, memo);\n        printf(\"%d\\n\", ans / 10 / 365 + 1);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the input reading process, replacing `cin` with `scanf` for potentially faster input operations, especially for larger datasets."
+            },
+            {
+                "fitness": 3102937.0,
+                "new_code": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\nint func(int kaidan, int now, vector<int>& memo) {\n    if (now == kaidan) {\n        return 1;\n    } else if (now > kaidan) {\n        return 0;\n    }\n    \n    if (memo[now] != -1) {\n        return memo[now]; // Return cached result\n    }\n\n    memo[now] = func(kaidan, now + 1, memo) +\n                func(kaidan, now + 2, memo) +\n                func(kaidan, now + 3, memo);\n\n    return memo[now];\n}\n\nint main() {\n    int n, ans;\n\n    while (cin >> n) {\n        if (n == 0) break;\n        vector<int> memo(n + 1, -1); // Create memoization vector\n        ans = func(n, 0, memo);\n        // Calculate the result directly to avoid divisions\n        printf(\"%d\\n\", (ans + 3650) / 3650); // Adjusted to prevent zero division\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on reducing the number of divisions in the output calculation, which could impact performance; instead, calculate the quotient directly without repeated divisions."
             }
         ],
         "operation_type": "mutation",
@@ -271,7 +395,7 @@
             "#include <iostream>\n\n#include <string>\n\n#include <algorithm>\n\n#include <stack>\n\n#include <queue>\n\nusing namespace std;\n\n\n\nint func(int kaidan,int now){\n\n\tint a=0,b=0,c=0;\n\n\n\n\tif(now==kaidan){\n\n\t\treturn 1;\n\n\t}else if(now>kaidan){\n\n\t\treturn 0;\n\n\t\t}else{\n\n\t\ta+=func(kaidan,now+1);\n\n\t\tb+=func(kaidan,now+2);\n\n\t\tc+=func(kaidan,now+3);\n\n\t\t}\n\n\n\n\treturn a+b+c;\n\n\n\n}\n\n\n\nint main(){\n\n\tint n,ans;\n\n\n\n\twhile(cin>>n){\n\n\t\tif(n==0)break;\n\n\t\tans=func(n,0);\n\n\t\tcout<<ans/10/365+1<<endl;\n\n\n\n\n\n\n\n\t}\n\n\n\n\n\n\treturn 0;\n\n}\n"
         ],
         "parent_fitnesses": [
-            48795924.1875
+            95539291.5
         ]
     }
 }

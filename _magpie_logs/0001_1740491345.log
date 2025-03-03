@@ -1,0 +1,432 @@
+2025-02-25 13:49:05,413	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7840167635395076
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0001
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-25 13:49:05,414	[DEBUG]	
+2025-02-25 13:49:05,414	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-25 13:49:05,414	[INFO]	~~~~ WARMUP ~~~~
+2025-02-25 13:49:06,397	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:49:06,397	[INFO]	WARM    SUCCESS               3099156.00 (--) [0 edit(s)]  
+2025-02-25 13:49:06,922	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-25 13:49:06,922	[INFO]	WARM    SUCCESS               3099157.50 (--) [0 edit(s)]  
+2025-02-25 13:49:07,433	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-25 13:49:07,433	[INFO]	WARM    SUCCESS               3099157.00 (--) [0 edit(s)]  
+2025-02-25 13:49:07,955	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:49:07,955	[INFO]	WARM    SUCCESS               3099156.00 (--) [0 edit(s)]  
+2025-02-25 13:49:08,471	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:49:08,472	[INFO]	WARM    SUCCESS               3099247.00 (--) [0 edit(s)]  
+2025-02-25 13:49:08,472	[INFO]	REF     SUCCESS               3099247.00 (--) [0 edit(s)]  
+2025-02-25 13:49:08,472	[INFO]	
+2025-02-25 13:49:08,472	[INFO]	~~~~ START ~~~~
+2025-02-25 13:49:38,639	[DEBUG]	EXEC>  SUCCESS 3099245.5
+2025-02-25 13:49:38,639	[INFO]	0-1     SUCCESS              *3099245.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:38,639	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+
+2025-02-25 13:49:40,182	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:49:40,182	[INFO]	0-2     SUCCESS              *3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:40,183	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+
+2025-02-25 13:49:41,718	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:49:41,719	[INFO]	0-3     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:41,719	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        if (sum == 0) {\n            cout << 1 << endl;\n        } else {\n            int intLength = log10(abs(sum)) + 1;\n            cout << intLength << endl;\n        }\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:43,268	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-25 13:49:43,269	[INFO]	0-4     SUCCESS               3099157.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:43,269	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << ((a + b == 0) ? 1 : log10(abs(a + b)) + 1) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:44,870	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:49:44,870	[INFO]	0-5     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:44,870	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:46,408	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:49:46,409	[INFO]	0-6     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:46,409	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:47,944	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-25 13:49:47,944	[INFO]	0-7     SUCCESS               3099247.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:47,944	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:49,472	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-25 13:49:49,473	[INFO]	0-8     SUCCESS               3099247.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:49,473	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        string sumStr = to_string(abs(sum));\n        cout << sumStr.length() << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:51,001	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:49:51,002	[INFO]	0-9     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:51,002	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:52,526	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-25 13:49:52,526	[INFO]	0-10    SUCCESS               3099247.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:49:52,526	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cmath>\n\nvoid problemOne(){\n    int a, b;\n    while (std::cin >> a >> b){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        std::cout << intLength << std::endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:49:53,527	[INFO]	Step: 10
+2025-02-25 13:49:53,527	[INFO]	Stop Steps: 50
+2025-02-25 13:49:55,060	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-25 13:49:55,060	[INFO]	REF     SUCCESS               3099157.50 (--) [0 edit(s)]  
+2025-02-25 13:49:55,060	[INFO]	Best patch: 1
+2025-02-25 13:49:55,580	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:49:55,581	[INFO]	BEST    SUCCESS              *3099156.00 (100.00%) [0 edit(s)]  
+2025-02-25 13:49:55,581	[INFO]	Best patch step: 1
+2025-02-25 13:50:29,527	[INFO]	Step: 10
+2025-02-25 13:50:29,527	[INFO]	Stop Steps: 50
+2025-02-25 13:50:30,055	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:50:30,056	[INFO]	1-1     SUCCESS              +3099156.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:30,056	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:30,056	[INFO]	Step: 11
+2025-02-25 13:50:30,056	[INFO]	Stop Steps: 50
+2025-02-25 13:50:30,576	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:50:30,576	[INFO]	1-2     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:30,576	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:30,576	[INFO]	Step: 12
+2025-02-25 13:50:30,576	[INFO]	Stop Steps: 50
+2025-02-25 13:50:31,093	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-25 13:50:31,093	[INFO]	1-3     SUCCESS               3099157.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:31,093	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:31,093	[INFO]	Step: 13
+2025-02-25 13:50:31,093	[INFO]	Stop Steps: 50
+2025-02-25 13:50:31,625	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:50:31,625	[INFO]	1-4     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:31,625	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", ((a + b == 0) ? 1 : log10(abs(a + b)) + 1));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:31,625	[INFO]	Step: 14
+2025-02-25 13:50:31,625	[INFO]	Stop Steps: 50
+2025-02-25 13:50:32,148	[DEBUG]	EXEC>  SUCCESS 3099155.5
+2025-02-25 13:50:32,149	[INFO]	1-5     SUCCESS              *3099155.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:32,149	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+
+2025-02-25 13:50:32,149	[INFO]	Step: 15
+2025-02-25 13:50:32,149	[INFO]	Stop Steps: 50
+2025-02-25 13:50:32,689	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:50:32,689	[INFO]	1-6     SUCCESS               3099156.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:32,690	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:32,690	[INFO]	Step: 16
+2025-02-25 13:50:32,690	[INFO]	Stop Steps: 50
+2025-02-25 13:50:33,218	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:50:33,218	[INFO]	1-7     SUCCESS               3099247.00 (100.00%) [2 edit(s)]  
+2025-02-25 13:50:33,218	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:33,218	[INFO]	Step: 17
+2025-02-25 13:50:33,218	[INFO]	Stop Steps: 50
+2025-02-25 13:50:33,743	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-25 13:50:33,743	[INFO]	1-8     SUCCESS               3099157.00 (100.00%) [2 edit(s)]  
+2025-02-25 13:50:33,743	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        int sum = a + b;\n        // Using log10 to calculate the number of digits\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum)) + 1);\n        cout << intLength << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:33,744	[INFO]	Step: 18
+2025-02-25 13:50:33,744	[INFO]	Stop Steps: 50
+2025-02-25 13:50:34,263	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:50:34,263	[INFO]	1-9     SUCCESS               3099156.00 (100.00%) [2 edit(s)]  
+2025-02-25 13:50:34,264	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 1;\n        if (sum != 0) {\n            intLength = static_cast<int>(log10(static_cast<double>(abs(sum)))) + 1;\n        }\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:34,264	[INFO]	Step: 19
+2025-02-25 13:50:34,264	[INFO]	Stop Steps: 50
+2025-02-25 13:50:34,791	[DEBUG]	EXEC>  SUCCESS 3099336.0
+2025-02-25 13:50:34,792	[INFO]	1-10    SUCCESS               3099336.00 (100.01%) [2 edit(s)]  
+2025-02-25 13:50:34,792	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << ((a + b == 0) ? 1 : log10(abs(a + b)) + 1) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cmath>\n#include <cstdlib>\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) != EOF){\n        printf("%d\\n", ((a + b == 0) ? 1 : (int)(log10(abs(a + b)) + 1)));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:50:34,792	[INFO]	Step: 20
+2025-02-25 13:50:34,792	[INFO]	Stop Steps: 50
+2025-02-25 13:50:35,306	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-25 13:50:35,307	[INFO]	1-1     SUCCESS               3099157.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:50:35,307	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n#include <cmath>  // Include the cmath library for logarithms\n\nusing namespace std;\n\nvoid problemOne() {\n    int a;\n    int b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1; // Calculate the number of digits using log10\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:50:35,307	[INFO]	Step: 21
+2025-02-25 13:50:35,307	[INFO]	Stop Steps: 50
+2025-02-25 13:50:36,846	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:50:36,846	[INFO]	REF     SUCCESS               3099156.00 (--) [0 edit(s)]  
+2025-02-25 13:50:36,846	[INFO]	Best patch: 2
+2025-02-25 13:50:37,364	[DEBUG]	EXEC>  SUCCESS 3099248.0
+2025-02-25 13:50:37,364	[INFO]	BEST    SUCCESS               3099248.00 (100.00%) [0 edit(s)]  
+2025-02-25 13:50:37,364	[INFO]	Best patch step: 14
+2025-02-25 13:51:10,004	[INFO]	Step: 21
+2025-02-25 13:51:10,004	[INFO]	Stop Steps: 50
+2025-02-25 13:51:10,556	[DEBUG]	EXEC>  SUCCESS 3099155.0
+2025-02-25 13:51:10,557	[INFO]	2-2     SUCCESS              *3099155.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:10,557	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+
+2025-02-25 13:51:10,557	[INFO]	Step: 22
+2025-02-25 13:51:10,557	[INFO]	Stop Steps: 50
+2025-02-25 13:51:11,079	[DEBUG]	EXEC>  SUCCESS 3099170.5
+2025-02-25 13:51:11,079	[INFO]	2-3     SUCCESS               3099170.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:11,079	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:11,079	[INFO]	Step: 23
+2025-02-25 13:51:11,079	[INFO]	Stop Steps: 50
+2025-02-25 13:51:11,699	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-25 13:51:11,699	[INFO]	2-4     SUCCESS               3099246.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:11,699	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:11,699	[INFO]	Step: 24
+2025-02-25 13:51:11,699	[INFO]	Stop Steps: 50
+2025-02-25 13:51:12,286	[DEBUG]	EXEC>  SUCCESS 3099337.5
+2025-02-25 13:51:12,287	[INFO]	2-5     SUCCESS               3099337.50 (100.01%) [1 edit(s)]  
+2025-02-25 13:51:12,287	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:12,287	[INFO]	Step: 25
+2025-02-25 13:51:12,287	[INFO]	Stop Steps: 50
+2025-02-25 13:51:12,814	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:51:12,814	[INFO]	2-6     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:12,814	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:12,814	[INFO]	Step: 26
+2025-02-25 13:51:12,814	[INFO]	Stop Steps: 50
+2025-02-25 13:51:13,321	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:51:13,321	[INFO]	2-7     SUCCESS               3099247.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:13,321	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 1;\n        if (sum != 0) {\n            intLength = static_cast<int>(log10(static_cast<double>(abs(sum)))) + 1;\n        }\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:13,322	[INFO]	Step: 27
+2025-02-25 13:51:13,322	[INFO]	Stop Steps: 50
+2025-02-25 13:51:13,839	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:51:13,839	[INFO]	2-8     SUCCESS               3099156.50 (100.00%) [2 edit(s)]  
+2025-02-25 13:51:13,839	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = sum == 0 ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:13,839	[INFO]	Step: 28
+2025-02-25 13:51:13,839	[INFO]	Stop Steps: 50
+2025-02-25 13:51:14,392	[DEBUG]	EXEC>  SUCCESS 3099158.0
+2025-02-25 13:51:14,393	[INFO]	2-9     SUCCESS               3099158.00 (100.00%) [2 edit(s)]  
+2025-02-25 13:51:14,393	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    int digits = 1;\n    while (sum >= 10 || sum <= -10) {\n        sum /= 10;\n        ++digits;\n    }\n    return digits;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:14,393	[INFO]	Step: 29
+2025-02-25 13:51:14,393	[INFO]	Stop Steps: 50
+2025-02-25 13:51:14,909	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-25 13:51:14,909	[INFO]	2-10    SUCCESS               3099246.50 (100.00%) [3 edit(s)]  
+2025-02-25 13:51:14,909	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : log10(abs(sum)) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 1;\n        if (sum != 0) {\n            intLength = static_cast<int>(log10(static_cast<double>(abs(sum)))) + 1;\n        }\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        if (sum == 0) {\n            intLength = 1;\n        } else {\n            int absSum = sum < 0 ? -sum : sum;\n            while (absSum > 0) {\n                absSum /= 10;\n                intLength++;\n            }\n        }\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:14,909	[INFO]	Step: 30
+2025-02-25 13:51:14,909	[INFO]	Stop Steps: 50
+2025-02-25 13:51:15,438	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-25 13:51:15,438	[INFO]	2-1     SUCCESS               3099246.50 (100.00%) [2 edit(s)]  
+2025-02-25 13:51:15,438	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    if (sum == 0) return 1;\n    int digits = 0;\n    if (sum < 0) sum = -sum;\n    while (sum > 0) {\n        sum /= 10;\n        digits++;\n    }\n    return digits;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << endl;\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:15,438	[INFO]	Step: 31
+2025-02-25 13:51:15,438	[INFO]	Stop Steps: 50
+2025-02-25 13:51:15,954	[DEBUG]	EXEC>  SUCCESS 3099245.5
+2025-02-25 13:51:15,955	[INFO]	2-2     SUCCESS               3099245.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:15,955	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n#include <cmath> // Import cmath for log10 function\n\nusing namespace std;\n\nvoid problemOne() {\n    int a;\n    int b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum)) + 1); // Use log10 to determine digit count\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:15,955	[INFO]	Step: 32
+2025-02-25 13:51:15,955	[INFO]	Stop Steps: 50
+2025-02-25 13:51:17,498	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:51:17,498	[INFO]	REF     SUCCESS               3099156.00 (--) [0 edit(s)]  
+2025-02-25 13:51:17,498	[INFO]	Best patch: 2
+2025-02-25 13:51:18,015	[DEBUG]	EXEC>  SUCCESS 3099247.0
+2025-02-25 13:51:18,015	[INFO]	BEST    SUCCESS               3099247.00 (100.00%) [0 edit(s)]  
+2025-02-25 13:51:18,015	[INFO]	Best patch step: 21
+2025-02-25 13:51:44,798	[INFO]	Step: 32
+2025-02-25 13:51:44,798	[INFO]	Stop Steps: 50
+2025-02-25 13:51:45,326	[DEBUG]	EXEC>  SUCCESS 3099158.0
+2025-02-25 13:51:45,327	[INFO]	3-3     SUCCESS              +3099158.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:45,327	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:45,327	[INFO]	Step: 33
+2025-02-25 13:51:45,327	[INFO]	Stop Steps: 50
+2025-02-25 13:51:45,834	[DEBUG]	EXEC>  SUCCESS 3099246.5
+2025-02-25 13:51:45,834	[INFO]	3-4     SUCCESS               3099246.50 (100.00%) [2 edit(s)]  
+2025-02-25 13:51:45,834	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = sum == 0 ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:45,834	[INFO]	Step: 34
+2025-02-25 13:51:45,834	[INFO]	Stop Steps: 50
+2025-02-25 13:51:46,357	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:51:46,357	[INFO]	3-5     SUCCESS              +3099156.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:46,357	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:46,357	[INFO]	Step: 35
+2025-02-25 13:51:46,357	[INFO]	Stop Steps: 50
+2025-02-25 13:51:46,885	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:51:46,885	[INFO]	3-6     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:46,885	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n\ninline int getNumDigits(int sum) {\n    int digits = 1;\n    while (sum >= 10 || sum <= -10) {\n        sum /= 10;\n        ++digits;\n    }\n    return digits;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:46,885	[INFO]	Step: 36
+2025-02-25 13:51:46,885	[INFO]	Stop Steps: 50
+2025-02-25 13:51:47,395	[DEBUG]	EXEC>  SUCCESS 3099155.5
+2025-02-25 13:51:47,396	[INFO]	3-7     SUCCESS              *3099155.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:47,396	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-25 13:51:47,396	[INFO]	Step: 37
+2025-02-25 13:51:47,396	[INFO]	Stop Steps: 50
+2025-02-25 13:51:47,932	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-25 13:51:47,932	[INFO]	3-8     SUCCESS               3099157.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:51:47,933	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:47,933	[INFO]	Step: 38
+2025-02-25 13:51:47,933	[INFO]	Stop Steps: 50
+2025-02-25 13:51:48,449	[DEBUG]	EXEC>  SUCCESS 3099158.0
+2025-02-25 13:51:48,449	[INFO]	3-9     SUCCESS               3099158.00 (100.00%) [2 edit(s)]  
+2025-02-25 13:51:48,449	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <cmath> // Include cmath for the log10 function\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : (int)log10(abs(sum)) + 1; // Use log10 to calculate the number of digits\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:48,449	[INFO]	Step: 39
+2025-02-25 13:51:48,449	[INFO]	Stop Steps: 50
+2025-02-25 13:51:48,985	[DEBUG]	EXEC>  SUCCESS 3099246.0
+2025-02-25 13:51:48,985	[INFO]	3-10    SUCCESS               3099246.00 (100.00%) [3 edit(s)]  
+2025-02-25 13:51:48,985	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = 0;\n        do {\n            sum /= 10;\n            intLength++;\n        } while (sum != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        int sum = a + b;\n        int intLength = sum == 0 ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 21), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        if (sum == 0) {\n            cout << "1\\n";\n        } else {\n            cout << static_cast<int>(log10(abs(sum))) + 1 << \'\\n\';\n        }\n    }\n}\n\nint main(){\n    problemOne();\n}')"
+2025-02-25 13:51:48,985	[INFO]	Step: 40
+2025-02-25 13:51:48,985	[INFO]	Stop Steps: 50
+2025-02-25 13:51:49,504	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-25 13:51:49,504	[INFO]	3-1     SUCCESS               3099157.00 (100.00%) [3 edit(s)]  
+2025-02-25 13:51:49,504	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    int digits = 1;\n    while (sum >= 10 || sum <= -10) {\n        sum /= 10;\n        ++digits;\n    }\n    return digits;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    if (sum == 0) return 1;\n    return static_cast<int>(log10(abs(sum))) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:49,504	[INFO]	Step: 41
+2025-02-25 13:51:49,504	[INFO]	Stop Steps: 50
+2025-02-25 13:51:50,037	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:51:50,037	[INFO]	3-2     SUCCESS               3099156.00 (100.00%) [2 edit(s)]  
+2025-02-25 13:51:50,037	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2){\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main(){\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 23), "#include <iostream>\n#include <cmath>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : log10(abs(sum)) + 1;\n}\n\nvoid problemOne(){\n    int a, b;\n    while (cin >> a >> b){\n        cout << getNumDigits(a + b) << '\\n';\n    }\n}\n\nint main(){\n    ios::sync_with_stdio(false); // Disable synchronization for faster I/O\n    cin.tie(nullptr); // Untie cin from cout\n    problemOne();\n}")"
+2025-02-25 13:51:50,037	[INFO]	Step: 42
+2025-02-25 13:51:50,037	[INFO]	Stop Steps: 50
+2025-02-25 13:51:50,554	[DEBUG]	EXEC>  SUCCESS 3099336.0
+2025-02-25 13:51:50,555	[INFO]	3-3     SUCCESS               3099336.00 (100.01%) [1 edit(s)]  
+2025-02-25 13:51:50,555	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <iostream>\n#include <cmath>\nusing namespace std;\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        cout << intLength << endl;\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:51:50,555	[INFO]	Step: 43
+2025-02-25 13:51:50,555	[INFO]	Stop Steps: 50
+2025-02-25 13:51:52,095	[DEBUG]	EXEC>  SUCCESS 3099284.0
+2025-02-25 13:51:52,095	[INFO]	REF     SUCCESS               3099284.00 (--) [0 edit(s)]  
+2025-02-25 13:51:52,095	[INFO]	Best patch: 10
+2025-02-25 13:51:52,616	[DEBUG]	EXEC>  SUCCESS 3099247.5
+2025-02-25 13:51:52,616	[INFO]	BEST    SUCCESS              *3099247.50 (100.00%) [0 edit(s)]  
+2025-02-25 13:51:52,616	[INFO]	Best patch step: 36
+2025-02-25 13:52:25,399	[INFO]	Step: 43
+2025-02-25 13:52:25,399	[INFO]	Stop Steps: 50
+2025-02-25 13:52:25,934	[DEBUG]	EXEC>  SUCCESS 3099157.0
+2025-02-25 13:52:25,934	[INFO]	4-4     SUCCESS              *3099157.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:52:25,934	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-25 13:52:25,934	[INFO]	Step: 44
+2025-02-25 13:52:25,934	[INFO]	Stop Steps: 50
+2025-02-25 13:52:26,451	[DEBUG]	EXEC>  SUCCESS 3099156.0
+2025-02-25 13:52:26,451	[INFO]	4-5     SUCCESS              *3099156.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:52:26,451	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+
+2025-02-25 13:52:26,451	[INFO]	Step: 45
+2025-02-25 13:52:26,452	[INFO]	Stop Steps: 50
+2025-02-25 13:52:26,985	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:52:26,985	[INFO]	4-6     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:52:26,985	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), "#include <iostream>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    int digits = 1;\n    while (sum >= 10 || sum <= -10) {\n        sum /= 10;\n        ++digits;\n    }\n    return digits;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << getNumDigits(a + b) << '\\n';\n    }\n}\n\nint main() {\n    ios::sync_with_stdio(false); // Disable synchronization for faster I/O\n    cin.tie(nullptr); // Untie cin from cout\n    problemOne();\n}")"
+2025-02-25 13:52:26,986	[INFO]	Step: 46
+2025-02-25 13:52:26,986	[INFO]	Stop Steps: 50
+2025-02-25 13:52:27,500	[DEBUG]	EXEC>  SUCCESS 3099156.5
+2025-02-25 13:52:27,500	[INFO]	4-7     SUCCESS               3099156.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:52:27,500	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:52:27,500	[INFO]	Step: 47
+2025-02-25 13:52:27,500	[INFO]	Stop Steps: 50
+2025-02-25 13:52:28,015	[DEBUG]	EXEC>  SUCCESS 3099248.5
+2025-02-25 13:52:28,015	[INFO]	4-8     SUCCESS               3099248.50 (100.00%) [1 edit(s)]  
+2025-02-25 13:52:28,015	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), "#include <iostream>\nusing namespace std;\n\ninline int getNumDigits(int sum) {\n    int digits = 1;\n    while (sum >= 10 || sum <= -10) {\n        sum /= 10;\n        ++digits;\n    }\n    return digits;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (cin >> a >> b) {\n        cout << getNumDigits(a + b) << '\\n';\n    }\n}\n\nint main() {\n    ios::sync_with_stdio(false); // Disable synchronization for faster I/O\n    cin.tie(nullptr); // Untie cin from cout\n    problemOne();\n}")"
+2025-02-25 13:52:28,015	[INFO]	Step: 48
+2025-02-25 13:52:28,015	[INFO]	Stop Steps: 50
+2025-02-25 13:52:28,558	[DEBUG]	EXEC>  SUCCESS 3099338.0
+2025-02-25 13:52:28,558	[INFO]	4-9     SUCCESS               3099338.00 (100.00%) [1 edit(s)]  
+2025-02-25 13:52:28,558	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:52:28,558	[INFO]	Step: 49
+2025-02-25 13:52:28,559	[INFO]	Stop Steps: 50
+2025-02-25 13:52:29,075	[DEBUG]	EXEC>  SUCCESS 3099157.5
+2025-02-25 13:52:29,075	[INFO]	4-10    SUCCESS               3099157.50 (100.00%) [2 edit(s)]  
+2025-02-25 13:52:29,075	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cmath>\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        int sum = a + b;\n        int intLength = 0;\n        int temp = sum < 0 ? -sum : sum; // handle negative number\n        do {\n            temp /= 10;\n            intLength++;\n        } while (temp != 0);\n        printf("%d\\n", intLength);\n    }\n}\n\nint main() {\n    problemOne();\n}')"
+2025-02-25 13:52:29,075	[INFO]	Step: 50
+2025-02-25 13:52:29,075	[INFO]	Stop Steps: 50
+2025-02-25 13:52:29,075	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-25 13:52:29,075	[INFO]	Step: 50
+2025-02-25 13:52:29,075	[INFO]	Stop Steps: 50
+2025-02-25 13:52:36,617	[INFO]	~~~~ END ~~~~
+2025-02-25 13:52:36,617	[INFO]	Best patch step: 44
+2025-02-25 13:52:36,617	[INFO]	
+2025-02-25 13:52:36,617	[INFO]	==== REPORT ====
+2025-02-25 13:52:36,617	[INFO]	Termination: step budget
+2025-02-25 13:52:36,617	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0001_1740491345.log
+2025-02-25 13:52:36,617	[INFO]	Patch file: _magpie_logs/0001_1740491345.patch
+2025-02-25 13:52:36,617	[INFO]	Diff file: _magpie_logs/0001_1740491345.diff
+2025-02-25 13:52:36,617	[INFO]	Reference fitness: 3099284.00
+2025-02-25 13:52:36,617	[INFO]	Best fitness: 3099156.00
+2025-02-25 13:52:36,618	[INFO]	
+2025-02-25 13:52:36,618	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cmath>\n\ninline int getNumDigits(int sum) {\n    return (sum == 0) ? 1 : static_cast<int>(log10(abs(sum))) + 1;\n}\n\nvoid problemOne() {\n    int a, b;\n    while (scanf("%d %d", &a, &b) == 2) {\n        printf("%d\\n", getNumDigits(a + b));\n    }\n}\n\nint main() {\n    problemOne();\n}')
+2025-02-25 13:52:36,618	[INFO]	
+2025-02-25 13:52:36,619	[INFO]	==== DIFF ====
+

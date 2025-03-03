@@ -1,0 +1,41 @@
+#include<stdio.h>
+
+int main()
+
+{
+
+	int n;
+
+	int sum=0;
+
+	scanf("%d",&n);
+
+	while(n>0)
+
+	{
+
+		sum+=n%10;
+
+		n/=10; 
+
+	 } 
+
+	 if(sum==1)
+
+	 {
+
+	 	printf("10");
+
+	 	return 0;
+
+	 }
+
+	 else 
+
+	 {
+
+	 	printf("%d",sum);
+
+	 }
+
+ } 

@@ -1,15 +1,29 @@
 {
+    "(0)": {
+        "children": [
+            {
+                "fitness": 3101802.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <cmath> // Include cmath for pow function\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    int multiplierPower = 0; // Track power of 10\n    while (n > 0) {\n        s += t[n & 7] * pow(10, multiplierPower); // Use pow to calculate power of 10\n        multiplierPower++; // Increment the power\n        n >>= 3; // Right shift by 3 to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Focus on the `solve` function where the multiplication of the `multiplier` can be optimized by using a power of ten calculation instead of multiplying in a loop. This will reduce the number of operations and improve performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND instead of modulus\n        multiplier *= 10;\n        n >>= 3; // Right shift by 3 to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3097974.5
+        ]
+    },
     "(1)": {
         "children": [
             {
-                "fitness": 3108264.125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the function `solve` that converts a number from octal to decimal, which could be optimized by improving variable naming for clarity."
-            },
-            {
-                "fitness": 3133142.25,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octalToDecimal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << octalToDecimal(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the function name 'solve', which is not descriptive of its purpose. Renaming it to 'octalToDecimal' would enhance clarity."
+                "fitness": 3097990.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long int s = 0;\n    int i = 1;\n    while (n > 0) {\n        s += (long long int)t[n & 7] * i; // Use bitwise AND to get the last 3 bits (mod 8)\n        n >>= 3; // Right shift to divide by 8\n        i *= 10;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Focus on the `solve` function, which could be optimized by eliminating the use of a `for` loop that continuously divides `n` by 8. Instead, we can use a more efficient approach that directly computes the result using bit manipulation, which will reduce the number of iterations and improve runtime."
             }
         ],
         "operation_type": "mutation",
@@ -17,56 +31,85 @@
             "1"
         ],
         "parent_codes": [
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n"
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for (int i = 1; n > 0; i *= 10, n /= 8)\n        s += (long long int)t[n % 8] * i;\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3096151.1875
+            3097990.0
         ]
     },
-    "(1x3x2x1_11)": {
+    "(1x3x4x2)": {
         "children": [
             {
-                "fitness": 3110240.8125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine solve function from Parent 4 (fitness: 3108264.125) with main function from Parent 3 (fitness: 3104273.125)."
+                "fitness": 3097974.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND instead of modulus\n        multiplier *= 10;\n        n >>= 3; // Right shift by 3 to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Combine the efficient bit manipulation approach from Parent 2 with the result storage mechanism of Parent 1. This allows for optimized calculation and storing results to minimize repeated I/O operations."
             },
             {
-                "fitness": 3178065.8125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\n\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine main function from Parent 1 (fitness: 3096151.1875) with solve function from Parent 3 (fitness: 3104273.125)."
+                "fitness": 3097974.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; \n        multiplier *= 10;\n        n /= 8; // Regular division by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Integrate the efficient multiplication and division logic from Parent 2 with the array storage of results from Parent 1 to improve performance during multiple inputs."
+            },
+            {
+                "fitness": 3105395.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Combine the maintainability and clarity of Parent 3 with the optimized variable handling from Parent 4, simplifying multiplication logic while preserving performance."
+            },
+            {
+                "fitness": 3097885.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Merge the robustness of result storage from Parent 1 with the efficient processing logic of Parent 4 to provide both performance and output management."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
             "1",
             "3",
-            "2",
-            "1_11"
+            "4",
+            "2"
         ],
         "parent_codes": [
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}\n"
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for (int i = 1; n > 0; i *= 10, n /= 8)\n        s += (long long int)t[n % 8] * i;\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND instead of modulus\n        multiplier *= 10;\n        n >>= 3; // Right shift by 3 to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1;\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        n /= 8;\n        multiplier *= 10;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3096151.1875,
-            3101030.375,
-            3104273.125,
-            3108264.125
+            3097990.0,
+            3105304.0,
+            3105305.5,
+            3105305.5
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 3105380.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nconst long long powersOfTen[19] = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000,\n                                     100000000000, 1000000000000, 10000000000000, 100000000000000, 1000000000000000,\n                                     10000000000000000, 100000000000000000, 1000000000000000000 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    int index = 0; // To keep track of the current position in the powers of ten\n    while (n > 0) {\n        s += t[n % 8] * powersOfTen[index];\n        n /= 8;\n        index++;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Focus on the while loop in the `solve` function that performs base conversion, which could be optimized by eliminating the repeated multiplication by using an array to store powers of 10."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3105305.5
         ]
     },
     "(3)": {
         "children": [
             {
-                "fitness": 3112637.375,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0, i=1;\n\n\tfor(; n >0; n /= 8){\n\n\t\ts += (long long int)t[n%8]*i;\n\n\t\ti *= 10;\n\n\t}\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the solve function's loop structure, which could be optimized by changing the order of operations to minimize the number of multiplications and improve readability."
+                "fitness": 3110390.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <string>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100];\nint index = 0;\n\nlong long int solve(int n) {\n    string s; \n    while (n > 0) {\n        s = to_string(t[n % 8]) + s; // Prepend the digit to the string\n        n /= 8;\n    }\n    return stoll(s); // Convert the string back to long long\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n);\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]);\n    }\n}\n",
+                "strategy": "Focus on the `solve` function, which repeatedly multiplies a `multiplier` by 10 in each iteration of the while loop. This can be optimized by using a string to build the number instead of performing repeated multiplications, which can lead to better performance."
             },
             {
-                "fitness": 1227038.75,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the input/output method which could be optimized by replacing `cin` and `cout` with `scanf` and `printf` for faster execution."
+                "fitness": 3098349.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    // Using an array to store the powers of 10 to avoid repeated multiplication\n    long long multiplier[20]; \n    multiplier[0] = 1;\n    for (int i = 1; i < 20; i++) {\n        multiplier[i] = multiplier[i - 1] * 10;\n    }\n    \n    int i = 0;\n    while (n > 0) {\n        s += t[n % 8] * multiplier[i++];\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Focus on optimizing the `solve` function to reduce the number of multiplications and enhance performance by using an array for precomputed values based on the input's octal representation."
             }
         ],
         "operation_type": "mutation",
@@ -74,216 +117,191 @@
             "3"
         ],
         "parent_codes": [
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n"
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3101030.375
+            3097885.5
         ]
     },
-    "(3_16)": {
+    "(3x1x1x0)": {
         "children": [
             {
-                "fitness": 1209831.125,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", octal_to_decimal(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the function name \"solve\" which could be optimized by renaming it to something more descriptive like \"octal_to_decimal\" to better reflect its functionality."
+                "fitness": 3097974.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Combine the efficient input handling from Parent 4 with the clear multiplication logic from Parent 1."
+            },
+            {
+                "fitness": 3097901.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0;\n    for (int i = 1; n > 0; i *= 10, n >>= 3) // Use right shift for division\n        s += (long long)t[n & 7] * i; // Combine bitwise AND for efficiency\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Combine the clear logic of solving from Parent 3 with the optimized storage and printing from Parent 4 for better performance."
+            },
+            {
+                "fitness": 3097885.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; // Using modulus for clarity\n        multiplier *= 10;\n        n >>= 3; // Right shift for division by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Integrate the array handling from Parent 1 with the division logic from Parent 4, ensuring clarity and performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "3",
+            "1",
+            "1",
+            "0"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; \n        multiplier *= 10;\n        n /= 8; // Regular division by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for (int i = 1; n > 0; i *= 10, n /= 8)\n        s += (long long int)t[n % 8] * i;\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND instead of modulus\n        multiplier *= 10;\n        n >>= 3; // Right shift by 3 to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3097883.5,
+            3097884.5,
+            3097900.5,
+            3097974.5
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 3108085.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\n#include <string>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    string result;\n    while (n > 0) {\n        result = to_string(t[n % 8]) + result; // Build the result as a string\n        n /= 8;\n    }\n    return stoll(result); // Convert the result string back to long long\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Focus on the `solve` function, which calculates a value based on the input `n`. The current implementation uses a multiplication approach to convert the base-8 representation to a base-10-like output. This can be optimized by reducing the number of multiplications and using a direct string construction method for better performance."
+            },
+            {
+                "fitness": 3108609.0,
+                "new_code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    vector<long long> results; // Use vector for dynamic size\n    while (cin >> n, n) {\n        results.push_back(solve(n)); // Store results in vector\n    }\n    for (const auto& result : results) {\n        cout << result << endl; // Print results using cout for better performance\n    }\n}\n",
+                "strategy": "Focus on the `solve` function, which performs calculations using a loop and bitwise operations. The mutation optimizes the way results are stored and printed to reduce overhead by using a vector instead of a static array and improves the input/output operations."
             }
         ],
         "operation_type": "mutation",
         "parent_names": [
-            "3_16"
+            "4"
         ],
         "parent_codes": [
-            "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n"
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            1219282.9375
+            3097884.5
         ]
     },
-    "(3_16x11x8x19)": {
+    "(4x1x6x3)": {
         "children": [
             {
-                "fitness": 1228668.9375,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine main function from Parent 1 (fitness: 1219282.9375) with solve function from Parent 4 (fitness: 3115883.8125)."
+                "fitness": 3097975.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; // Using modulus for clarity\n        multiplier *= 10;\n        n >>= 3; // Right shift for efficiency\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Combine the efficient bitwise operations from Parent 1 with the clearer division approach from Parent 2 to enhance performance while maintaining readability."
             },
             {
-                "fitness": 1235084.9375,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)conversion_table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine solve function from Parent 3 (fitness: 1235549.0) with conversion_table from Parent 2 (fitness: 1222592.6875)."
+                "fitness": 3097885.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Merge the optimized storage and processing from Parent 4 with the efficient multiplication and division from Parent 3 to minimize performance overhead."
             },
             {
-                "fitness": 3125890.6875,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}\n",
-                "strategy": "Combine solve function from Parent 4 (fitness: 3115883.8125) with main function from Parent 2 (fitness: 1222592.6875)."
-            },
-            {
-                "fitness": 1230368.1875,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine solve function from Parent 1 (fitness: 1219282.9375) with main function from Parent 3 (fitness: 1235549.0)."
+                "fitness": 3097974.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n /= 8; // Regular division for clarity\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Combine the result storage optimization from Parent 1 with the clarity of variable initialization from Parent 4 to improve maintainability and performance."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
-            "3_16",
-            "11",
-            "8",
-            "19"
-        ],
-        "parent_codes": [
-            "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-            "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)conversion_table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-            "#include <cstdio>\n\nusing namespace std;\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}\n"
-        ],
-        "parent_fitnesses": [
-            1219282.9375,
-            1222592.6875,
-            1235549.0,
-            3115883.8125
-        ]
-    },
-    "(3_16x19x6x3)": {
-        "children": [
-            {
-                "fitness": 1235549.0,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the I/O operations of Parent 2 (fitness: 3109134.625) with the logic of Parent 1 (fitness: 1219653.5625)."
-            },
-            {
-                "fitness": 3127095.9375,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the function name and comments of Parent 3 (fitness: 3110240.8125) with the I/O operations of Parent 2 (fitness: 3109134.625)."
-            },
-            {
-                "fitness": 3135734.0625,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the logic and comments from Parent 1 (fitness: 1219653.5625) with the structure of Parent 4 (fitness: 3132144.1875)."
-            },
-            {
-                "fitness": 1233646.6875,
-                "new_code": "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)conversion_table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the I/O operations of Parent 1 (fitness: 1219653.5625) with the logic of Parent 3 (fitness: 3110240.8125)."
-            }
-        ],
-        "operation_type": "crossover",
-        "parent_names": [
-            "3_16",
-            "19",
+            "4",
+            "1",
             "6",
             "3"
         ],
         "parent_codes": [
-            "#include <cstdio>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( scanf(\"%d\", &n), n ){\n\n\t\tprintf(\"%lld\\n\", solve(n));\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int conversion_table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int octal_to_decimal(int octal_number){\n\n\tlong long int decimal_number=0;\n\n\tfor(int i=1 ; octal_number >0; i *= 10 , octal_number /= 8)\n\n\t\tdecimal_number += (long long int)conversion_table[octal_number%8]*i;\n\n\treturn decimal_number;\n\n}\n\n\n\nint main(){\n\n    int octal_number;\n\n\n\n    while( cin >> octal_number , octal_number ){\n\n\t\tcout << octal_to_decimal(octal_number) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n"
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; \n        multiplier *= 10;\n        n /= 8; // Regular division by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; // Using modulus for clarity\n        multiplier *= 10;\n        n >>= 3; // Right shift for division by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            1219653.5625,
-            3109134.625,
-            3110240.8125,
-            3132144.1875
+            3097884.5,
+            3097885.0,
+            3097885.5,
+            3097885.5
         ]
     },
-    "(8x1x4x3)": {
+    "(4x8x9x10)": {
         "children": [
             {
-                "fitness": 3151389.8125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the main structure from Parent 1 (fitness: 3097393.3125) with the solve function from Parent 2 (fitness: 3106394.75)."
+                "fitness": 3097884.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; // Using modulus for clarity\n        multiplier *= 10;\n        n >>= 3; // Right shift for efficiency\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Combine the efficient bitwise operation from Parent 1 with the clarity of modulus from Parent 2 to create a more readable and efficient `solve` function."
             },
             {
-                "fitness": 3122153.1875,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine function A from Parent 4 (fitness: 3121788.375) with function B from Parent 3 (fitness: 3120515.4375)."
-            },
-            {
-                "fitness": 3104273.125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the main structure from Parent 3 (fitness: 3120515.4375) with the solve function from Parent 1 (fitness: 3097393.3125)."
-            },
-            {
-                "fitness": 3132144.1875,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Combine the main structure from Parent 2 (fitness: 3106394.75) with the solve function from Parent 4 (fitness: 3121788.375)."
+                "fitness": 3097884.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n /= 8; // Regular division for clarity\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Merge the optimized main loop from Parent 3 with the clarity of the division operation from Parent 4 to enhance performance while maintaining readability."
             }
         ],
         "operation_type": "crossover",
         "parent_names": [
-            "8",
-            "1",
             "4",
-            "3"
+            "8",
+            "9",
+            "10"
         ],
         "parent_codes": [
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-            "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n"
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n % 8] * multiplier; // Using modulus for clarity\n        multiplier *= 10;\n        n >>= 3; // Right shift for efficiency\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n >>= 3; // Right shift to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+            "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND for efficiency\n        multiplier *= 10;\n        n /= 8; // Regular division for clarity\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n"
         ],
         "parent_fitnesses": [
-            3097393.3125,
-            3106394.75,
-            3120515.4375,
-            3121788.375
+            3097885.0,
+            3097885.0,
+            3097885.5,
+            3097974.5
         ]
     },
     "(source)": {
         "children": [
             {
-                "fitness": 3121988.75,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the overall structure to make it more C++ idiomatic."
+                "fitness": 3105321.0,
+                "new_code": "#include <iostream>\n#include <cstdio> // Added for printf\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for (int i = 1; n > 0; i *= 10, n /= 8)\n        s += (long long int)t[n % 8] * i;\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n)); // Changed cout to printf\n    }\n}\n",
+                "strategy": "Replace `cout` with `printf` for faster output."
             },
             {
-                "fitness": 3137757.8125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int table[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)table[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the `const int t[8]` array definition to improve its readability."
+                "fitness": 3097900.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\nlong long results[100]; // Array for results\nint index = 0; // To track results\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for (int i = 1; n > 0; i *= 10, n /= 8)\n        s += (long long int)t[n % 8] * i;\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        results[index++] = solve(n); // Store results\n    }\n    for (int i = 0; i < index; i++) {\n        printf(\"%lld\\n\", results[i]); // Print results in one go\n    }\n}\n",
+                "strategy": "Use an array for output results instead of printing immediately to avoid multiple I/O operations."
             },
             {
-                "fitness": 3121788.375,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Function to convert to base 8\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Read until zero input\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the `main` function structure to enhance clarity with comments."
+                "fitness": 3105305.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1; // Use a multiplier to avoid repeated multiplication\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Optimize the loop for computing the solution by directly manipulating the base conversion without using multiplication in each iteration."
             },
             {
-                "fitness": 3120515.4375,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i; // Calculate octal digit\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the `solve` function to add inline comments for better understanding."
+                "fitness": 3105306.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        s += t[n & 7] * multiplier; // Using bitwise AND instead of modulus\n        multiplier *= 10;\n        n >>= 3; // Right shift by 3 to divide by 8\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Use bit manipulation for base conversion instead of division for potentially better performance."
             },
             {
-                "fitness": 3128343.875,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n; // User input for decimal number\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the `int n;` declaration to explain its purpose in the program."
+                "fitness": 3105305.5,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long s = 0; \n    long long multiplier = 1;\n    while (n > 0) {\n        s += t[n % 8] * multiplier;\n        n /= 8;\n        multiplier *= 10;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Eliminate unnecessary calculations in the loop by directly accumulating results in a more concise manner."
             },
             {
-                "fitness": 3127546.875,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    // Loop until zero is entered\n\n    while( cin >> n && n != 0 ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the `while` loop to enhance its structure for clarity."
+                "fitness": 3105526.0,
+                "new_code": "#include <iostream>\n#include <cstdio>\nusing namespace std;\n\nlong long int solve(int n) {\n    long long s = 0, multiplier = 1; \n    while (n > 0) {\n        int remainder = n % 8;\n        s += (remainder == 0 ? 0 : remainder == 1 ? 1 : remainder == 2 ? 2 :\n              remainder == 3 ? 3 : remainder == 4 ? 5 : remainder == 5 ? 7 :\n              remainder == 6 ? 8 : 9) * multiplier; \n        multiplier *= 10;\n        n /= 8;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        printf(\"%lld\\n\", solve(n));\n    }\n}\n",
+                "strategy": "Reduce the size of the `const int t[8]` array by using a switch statement for better space efficiency."
             },
             {
-                "fitness": 3110778.3125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n// Convert decimal to octal\n\nlong long int decimalToOctal(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << decimalToOctal(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the function name `solve` to rename it for better clarity."
+                "fitness": 3100506.5,
+                "new_code": "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for(int i = 1; n > 0; i *= 10, n /= 8) {\n        s += (long long int)t[n % 8] * i;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while(cin >> n, n) {\n        cout << solve(n) << endl;\n    }\n}\n",
+                "strategy": "No mutations are applied as the original code is already optimized for readability and performance."
             },
             {
-                "fitness": 3140618.625,
-                "new_code": "#include <bits/stdc++.h>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the `#include` directive to employ a common shortcut for including standard libraries."
+                "fitness": 3100506.5,
+                "new_code": "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n    long long int s=0;\n    for(int i=1 ; n >0; i *= 10 , n /= 8)\n        s += (long long int)t[n%8]*i;\n    return s;\n}\n\nint main(){\n    int n;\n    while( cin >> n , n ){\n        cout << solve(n) << endl;\n    }\n}\n",
+                "strategy": "No mutations were performed as the original code already exhibits a clear and functional approach to converting a number from base 8 to base 10. The implementation is straightforward, and further optimizations could potentially complicate the code without significant performance benefits."
             },
             {
-                "fitness": 3122460.0625,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int octalDigits[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\nlong long int convertToDecimal(int n){\n\n\tlong long int decimalValue=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\tdecimalValue += (long long int)octalDigits[n%8]*i;\n\n\treturn decimalValue;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << convertToDecimal(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "Focus on the overall structure and readability, which could be optimized by simplifying the logic and improving variable naming."
-            },
-            {
-                "fitness": 3115883.8125,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n}\n",
-                "strategy": "Focus on the overall structure and readability of the code, which could be optimized by reducing unnecessary comments and organizing the code better."
-            },
-            {
-                "fitness": 3129911.6875,
-                "new_code": "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n/*void solve(int n){\n\n    if(n >= 8)\n\n        solve(n / 8);\n\n    cout << table[n % 8] ;\n\n}*/\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n",
-                "strategy": "No mutation."
+                "fitness": 3100506.5,
+                "new_code": "#include <iostream>\n\nusing namespace std;\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\nlong long int solve(int n) {\n    long long int s = 0;\n    for (int i = 1; n > 0; i *= 10, n /= 8) {\n        s += (long long int)t[n % 8] * i;\n    }\n    return s;\n}\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        cout << solve(n) << endl;\n    }\n}\n",
+                "strategy": "The original code contains a recursive function that is commented out. Instead of using the recursive approach, a more efficient iterative method can be used to compute the same result, which avoids the overhead of recursion."
             }
         ],
         "operation_type": "mutation",
@@ -294,7 +312,7 @@
             "#include <iostream>\n\nusing namespace std;\n\n\n\nconst int t[8] = { 0, 1, 2, 3, 5, 7, 8, 9 };\n\n\n\n/*void solve(int n){\n\n    if(n >= 8)\n\n        solve(n / 8);\n\n    cout << table[n % 8] ;\n\n}*/\n\n\n\nlong long int solve(int n){\n\n\tlong long int s=0;\n\n\tfor(int i=1 ; n >0; i *= 10 , n /= 8)\n\n\t\ts += (long long int)t[n%8]*i;\n\n\treturn s;\n\n}\n\nint main(){\n\n    int n;\n\n\n\n    while( cin >> n , n ){\n\n\t\tcout << solve(n) << endl;\n\n    }\n\n\n\n}\n"
         ],
         "parent_fitnesses": [
-            3115063.125
+            3100597.0
         ]
     }
 }

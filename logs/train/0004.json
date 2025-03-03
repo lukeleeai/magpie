@@ -1,0 +1,414 @@
+{
+    "(1)": {
+        "children": [
+            {
+                "fitness": 40296650.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    \n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Precompute the cumulative count of primes\n    vector<long> primeCount(NUM + 1, 0);\n    for (long i = 1; i <= NUM; i++) {\n        primeCount[i] = primeCount[i - 1] + (primeNum[i] ? 1 : 0);\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        printf(\"%ld\\n\", primeCount[n]);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the prime number generation and counting section, which could be optimized by using a more efficient way to count primes up to `n` using the Sieve of Eratosthenes and reducing the need for checking the vector in the second loop."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            26421227.0
+        ]
+    },
+    "(14)": {
+        "children": [
+            {
+                "fitness": 11646048.0,
+                "new_code": "#include <cstdio>\n#include <cstring> // Include string.h for memset\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization and filling of the `primeNum` array, which can be optimized by reducing the number of iterations and avoiding unnecessary checks for non-prime numbers."
+            },
+            {
+                "fitness": 26421266.0,
+                "new_code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    long n;\n    const long NUM = 1000000;\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF && n <= NUM) {\n        long counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization and prime detection logic, which could be optimized by using a more efficient algorithm for finding prime numbers (Sieve of Eratosthenes), and limiting the size of the array to the maximum value of `n` entered by the user. This reduces memory usage and enhances performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "14"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11645338.0
+        ]
+    },
+    "(14_15)": {
+        "children": [
+            {
+                "fitness": 18528258.5,
+                "new_code": "#include <cstdio>\n#include <cstring> // Include string.h for memset\n#include <vector> // Include vector for dynamic storage\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    vector<long> primeCount(NUM + 1, 0); // Create a vector to hold cumulative counts of primes\n    for (long i = 1; i <= NUM; i++) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i]; // Build cumulative count of primes\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        printf(\"%ld\\n\", primeCount[n]); // Output the count of primes up to n directly\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on optimizing the inner loop that counts the prime numbers, which could be optimized by using a more efficient approach to count primes without iterating through all numbers for each input."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "14_15"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring> // Include string.h for memset\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11646048.0
+        ]
+    },
+    "(14x8x6_11x8_10)": {
+        "children": [
+            {
+                "fitness": 26410846.0,
+                "new_code": "#include <cstdio>\n#include <bitset>\n#include <vector>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the efficient prime checking logic from Parent 2 with the bitset implementation from Parent 3 to optimize memory usage while maintaining performance."
+            },
+            {
+                "fitness": 26418977.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the Sieve of Eratosthenes logic from Parent 4 with the efficient iteration from Parent 1, retaining the vector for better memory management."
+            },
+            {
+                "fitness": 26410641.0,
+                "new_code": "#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the memory-efficient bitset from Parent 3 with the prime counting logic of Parent 2 to optimize the performance and reduce memory footprint."
+            },
+            {
+                "fitness": 26419174.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Integrate the loop efficiency from Parent 1 with the vector-based storage from Parent 4, while maintaining the prime counting logic."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "14",
+            "8",
+            "6_11",
+            "8_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11645337.5,
+            11993351.5,
+            26410845.0,
+            26419068.5
+        ]
+    },
+    "(19)": {
+        "children": [
+            {
+                "fitness": 26421173.5,
+                "new_code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; ++i) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the primeNum array and the logic within the prime number sieve loop to enhance performance and reduce memory usage."
+            },
+            {
+                "fitness": 26421172.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use vector for better memory management\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Sieve of Eratosthenes optimization\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input and count primes\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the inner loop that marks non-prime numbers; optimize the way we handle the prime number marking by using a more efficient algorithm like the Sieve of Eratosthenes and reducing the memory usage."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "19"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11645338.5
+        ]
+    },
+    "(19x14x14_15x8)": {
+        "children": [
+            {
+                "fitness": 11645958.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine efficient initialization from Parent 3 with the prime number sieve logic from Parent 1 to reduce overhead and improve performance."
+            },
+            {
+                "fitness": 26412528.0,
+                "new_code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst long NUM = 1000000;\nvector<bool> primeNum(NUM + 1, true); // Use vector for dynamic sizing\n\nint main() {\n    long n;\n    long counter = 0;\n\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n    for (long i = 2; i * i <= NUM; i++) { // Efficient loop condition\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Leverage the vector usage from Parent 4 to manage the prime numbers while integrating the loop efficiency from Parent 2's sieve logic."
+            },
+            {
+                "fitness": 26412323.0,
+                "new_code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst long NUM = 1000000;\nvector<bool> primeNum(NUM + 1, true);\n\nint main() {\n    long n;\n    long counter = 0;\n\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Efficient marking\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++; // Count 2 if within range\n        for (long i = 3; i <= n; i += 2) { // Skip even numbers\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Combine the optimized prime counting logic from Parent 4 with the efficient sieve from Parent 3 to minimize memory usage and enhance counting performance."
+            },
+            {
+                "fitness": 26412414.5,
+                "new_code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst long NUM = 1000000;\nvector<bool> primeNum(NUM + 1, true);\n\nint main() {\n    long n;\n    long counter = 0;\n\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false; // Efficient marking\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++; // Count 2 if applicable\n        for (long i = 3; i <= n; i += 2) { // Count only odd primes\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the efficient loop structure of Parent 1 with the dynamic memory management of Parent 4 to enhance performance while maintaining clarity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19",
+            "14",
+            "14_15",
+            "8"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring> // Include string.h for memset\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11645249.5,
+            11645338.0,
+            11646048.0,
+            11993351.0
+        ]
+    },
+    "(19x24x14x8)": {
+        "children": [
+            {
+                "fitness": 11645959.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the core logic of prime number marking from Parent 1 with the efficient initialization from Parent 4, while enhancing readability and maintaining performance."
+            },
+            {
+                "fitness": 16952863.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i < NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Integrate the double loop structure from Parent 1 with the memset initialization from Parent 4 for a more compact and efficient prime calculation."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "19",
+            "24",
+            "14",
+            "8"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11645338.5,
+            11645339.0,
+            11645339.5,
+            11645958.0
+        ]
+    },
+    "(5)": {
+        "children": [
+            {
+                "fitness": 26421175.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the nested loops that mark non-prime numbers, which could be optimized by reducing the number of iterations and leveraging better memory usage for the prime number sieve."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "5"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            26421138.0
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 26410845.0,
+                "new_code": "#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `primeNum` vector and the counting of prime numbers. The initialization can be optimized by using a bitset instead of a vector, which reduces memory usage and potentially improves cache performance. Additionally, we can optimize the counting of prime numbers by leveraging the fact that we only need to check up to `n` instead of `NUM` in the second loop."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            26421133.5
+        ]
+    },
+    "(6_11)": {
+        "children": [
+            {
+                "fitness": 40285863.5,
+                "new_code": "#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Precompute a prefix sum array to count primes up to each index\n    unsigned long primeCount[NUM + 1] = {0};\n    for (long i = 1; i <= NUM; i++) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        // Directly use the precomputed primeCount array to get the number of primes up to n\n        printf(\"%lu\\n\", primeCount[n]);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the loop that counts the number of primes up to `n`, which could be optimized by using a more efficient counting method that avoids repeated checks against the `bitset` for every input."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6_11"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            26410845.0
+        ]
+    },
+    "(8)": {
+        "children": [
+            {
+                "fitness": 26419068.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the way the prime numbers are generated and stored in the `primeNum` vector. The current implementation uses a boolean array to track prime numbers, but we can optimize it by using a more efficient prime sieve algorithm and leveraging more direct I/O operations."
+            },
+            {
+                "fitness": 26420969.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Optimized Sieve of Eratosthenes\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = (n >= 2) ? 1 : 0; // Count 2 as prime if n >= 2\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `primeNum` vector and the inner loop that marks non-prime numbers, which could be optimized by using a more efficient sieve approach and reducing unnecessary checks."
+            },
+            {
+                "fitness": 26421069.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n    \n    // Start marking from 2 and only iterate through odd numbers\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        // Only check odd numbers for primes\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the inner loop of the Sieve of Eratosthenes, which could be optimized by reducing the number of iterations and improving the way we mark non-prime numbers."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11993351.0
+        ]
+    },
+    "(8_10)": {
+        "children": [
+            {
+                "fitness": 26418979.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes in a single loop\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = (n >= 2) ? 1 : 0; // Count 2 if n >= 2\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the prime number sieve and the counting loop, which can be optimized by consolidating the counting of prime numbers into a single loop to reduce overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "8_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            26419068.5
+        ]
+    },
+    "(8x6x5x1)": {
+        "children": [
+            {
+                "fitness": 26421023.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Utilize the parallel processing approach from Parent 3 and the direct counting method from Parent 1, creating an efficient and modern solution."
+            },
+            {
+                "fitness": 26421134.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Merge the input handling of Parent 2 with the efficient prime number generation technique from Parent 1, while maintaining parallel processing from Parent 3."
+            },
+            {
+                "fitness": 26421147.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient input method and prime counting from Parent 2 with the sieve logic of Parent 4 while using `unsigned long` to ensure larger counter range."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "8",
+            "6",
+            "5",
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            11993351.0,
+            26421133.5,
+            26421138.0,
+            26421227.0
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 26434923.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10);\n    primeNum[0] = primeNum[1] = false;\n    fill(primeNum.begin() + 2, primeNum.begin() + NUM + 10, true);\n\n    long i, ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (long j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Optimize the initialization of the boolean array by using `std::vector`, which can help with memory management and potentially reduce overhead."
+            },
+            {
+                "fitness": 26421227.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Replace the inner loop with a more efficient method to mark composites, using the Sieve of Eratosthenes more effectively by starting from `ii` instead of iterating through all elements."
+            },
+            {
+                "fitness": 40296709.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    vector<bool> primeNum(NUM + 10, true);\n    vector<long> primeCount(NUM + 10, 0);\n    \n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    for (long i = 1; i <= NUM; ++i) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        printf(\"%ld\\n\", primeCount[n]);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Utilize a more efficient way of counting primes by using a precomputed count array to reduce the time complexity of the counting operation in the query phase."
+            },
+            {
+                "fitness": 40302732.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <sstream>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    vector<long> primeCount(NUM + 10, 0);\n    \n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    for (long i = 1; i <= NUM; ++i) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    vector<long> inputs;\n    long input;\n    while (scanf(\"%ld\", &input) != EOF) {\n        inputs.push_back(input);\n    }\n\n    for (long num : inputs) {\n        printf(\"%ld\\n\", primeCount[num]);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Avoid repeated calls to `scanf` by reading input in bulk and processing it, which can significantly reduce input time for larger datasets."
+            },
+            {
+                "fitness": 26421138.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Introduce a parallelization strategy using OpenMP to speed up the marking of composite numbers in the Sieve of Eratosthenes."
+            },
+            {
+                "fitness": 26421225.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%lu\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Change the data type of the counter variable to `unsigned long` to potentially improve performance and avoid negative values."
+            },
+            {
+                "fitness": 40296622.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    vector<long> primeCount(NUM + 10, 0);\n    for (long i = 1; i <= NUM; ++i) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        printf(\"%ld\\n\", primeCount[n]);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Precompute the prime numbers up to a certain threshold and use a smaller array for the counting operation, reducing memory usage and improving cache performance."
+            },
+            {
+                "fitness": 11993351.0,
+                "new_code": "#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "Optimize the inner loop by skipping even numbers, as they are not prime (except for 2), reducing the number of iterations significantly."
+            },
+            {
+                "fitness": 11645339.5,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "No mutations are applied as the original code is already optimized for its purpose, efficiently calculating prime numbers using the Sieve of Eratosthenes and handling input/output in a straightforward manner."
+            },
+            {
+                "fitness": 11645339.5,
+                "new_code": "#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf(\"%ld\", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf(\"%ld\\n\", counter);\n    }\n\n    return 0;\n}\n",
+                "strategy": "No mutations are applied as the original code is already optimized for its purpose of finding prime numbers up to a specified limit. The structure and logic are efficient for the Sieve of Eratosthenes algorithm being implemented, and further modifications could potentially degrade performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n\n\n\nusing namespace std;\n\n\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n\tlong counter = 0;\n\n\tbool primeNum[NUM + 10];\n\n\n\n\tlong i, ii, j, len = NUM + 10;\n\n\n\n\tprimeNum[0] = primeNum[1] = false;\n\n\tfor (i = 2; i < len; i++) primeNum[i] = true;\n\n\n\n\tii = 4;\n\n    for(i = 2; ii < NUM;) {\n\n        if (primeNum[i]) {\n\n            for (j = ii; j < NUM; j += i) {\n\n                primeNum[j] = false;\n\n            }\n\n        }\n\n\n\n        i++;\n\n        ii = i * i;\n\n    }\n\n\n\n    while (scanf(\"%ld\", &n) != EOF) {\n\n        counter = 0;\n\n\n\n        for (i = 0; i <= n; i++) {\n\n            if (primeNum[i]) counter++;\n\n        }\n\n\n\n        printf(\"%ld\\n\", counter);\n\n    }\n\n\n\n    return 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            11645338.5
+        ]
+    }
+}

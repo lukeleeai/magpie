@@ -1,0 +1,423 @@
+2025-02-24 15:30:03,056	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 4995557559198935
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0009
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 15:30:03,057	[DEBUG]	
+2025-02-24 15:30:03,057	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 15:30:03,057	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 15:30:04,750	[DEBUG]	EXEC>  SUCCESS 3101712.0
+2025-02-24 15:30:04,751	[INFO]	WARM    SUCCESS               3101712.00 (--) [0 edit(s)]  
+2025-02-24 15:30:06,014	[DEBUG]	EXEC>  SUCCESS 3101713.0
+2025-02-24 15:30:06,014	[INFO]	WARM    SUCCESS               3101713.00 (--) [0 edit(s)]  
+2025-02-24 15:30:07,285	[DEBUG]	EXEC>  SUCCESS 3101801.5
+2025-02-24 15:30:07,286	[INFO]	WARM    SUCCESS               3101801.50 (--) [0 edit(s)]  
+2025-02-24 15:30:08,547	[DEBUG]	EXEC>  SUCCESS 3101802.0
+2025-02-24 15:30:08,547	[INFO]	WARM    SUCCESS               3101802.00 (--) [0 edit(s)]  
+2025-02-24 15:30:09,794	[DEBUG]	EXEC>  SUCCESS 3101802.0
+2025-02-24 15:30:09,794	[INFO]	WARM    SUCCESS               3101802.00 (--) [0 edit(s)]  
+2025-02-24 15:30:09,794	[INFO]	REF     SUCCESS               3101802.00 (--) [0 edit(s)]  
+2025-02-24 15:30:09,795	[INFO]	
+2025-02-24 15:30:09,795	[INFO]	~~~~ START ~~~~
+2025-02-24 15:31:00,486	[DEBUG]	EXEC>  SUCCESS 3054894.5
+2025-02-24 15:31:00,487	[INFO]	0-1     SUCCESS              *3054894.50 (98.49%) [1 edit(s)]  
+2025-02-24 15:31:00,487	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T); // Faster input\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO"); // Faster output\n    }\n    return 0;\n}')"
+
+2025-02-24 15:31:01,955	[DEBUG]	EXEC>  SUCCESS 3045544.5
+2025-02-24 15:31:01,956	[INFO]	0-2     SUCCESS              *3045544.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:31:01,956	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-24 15:31:03,428	[DEBUG]	EXEC>  SUCCESS 3050249.5
+2025-02-24 15:31:03,428	[INFO]	0-3     SUCCESS               3050249.50 (98.34%) [1 edit(s)]  
+2025-02-24 15:31:03,428	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:04,841	[DEBUG]	EXEC>  SUCCESS 3054937.0
+2025-02-24 15:31:04,842	[INFO]	0-4     SUCCESS               3054937.00 (98.49%) [1 edit(s)]  
+2025-02-24 15:31:04,842	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (a[i] > pre && dfs(i + 1, x, a[i])) return true;\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:06,213	[DEBUG]	EXEC>  SUCCESS 3052393.5
+2025-02-24 15:31:06,214	[INFO]	0-5     SUCCESS               3052393.50 (98.41%) [1 edit(s)]  
+2025-02-24 15:31:06,214	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        int preCheck = 0;\n        for (int j = 0; j < 10; j++) if (x & (1 << j)) {\n            if (a[j] < preCheck) return false;\n            preCheck = a[j];\n        }\n        return true;\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:07,674	[DEBUG]	EXEC>  SUCCESS 3056792.5
+2025-02-24 15:31:07,674	[INFO]	0-6     SUCCESS               3056792.50 (98.55%) [1 edit(s)]  
+2025-02-24 15:31:07,674	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <stack>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool iterative_dfs(int x, int pre) {\n    stack<pair<int, int>> st;\n    st.push({1, x});\n    while (!st.empty()) {\n        auto [i, currX] = st.top(); st.pop();\n        if (i == 10) {\n            if (check(currX)) return true;\n            continue;\n        }\n        if (a[i] > pre) st.push({i + 1, currX});\n        st.push({i + 1, currX | (1 << i)});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(iterative_dfs(0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:08,917	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 15:31:08,917	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool dfs(int x, int pre) {\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i) && a[i] < pre) return false;\n        if (a[i] > pre) return dfs(x | (1 << i), a[i]);\n    }\n    return true;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:10,298	[DEBUG]	EXEC>  SUCCESS 3054895.0
+2025-02-24 15:31:10,298	[INFO]	0-8     SUCCESS               3054895.00 (98.49%) [1 edit(s)]  
+2025-02-24 15:31:10,299	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:11,716	[DEBUG]	EXEC>  SUCCESS 3054986.5
+2025-02-24 15:31:11,716	[INFO]	0-9     SUCCESS               3054986.50 (98.49%) [1 edit(s)]  
+2025-02-24 15:31:11,716	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:13,119	[DEBUG]	EXEC>  SUCCESS 3055009.0
+2025-02-24 15:31:13,120	[INFO]	0-10    SUCCESS               3055009.00 (98.49%) [1 edit(s)]  
+2025-02-24 15:31:13,120	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i += 2) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n        if (i + 1 < 10 && (x & (1 << (i + 1)))) {\n            if (a[i + 1] < pre) return false;\n            pre = a[i + 1];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:31:14,120	[INFO]	Step: 10
+2025-02-24 15:31:14,120	[INFO]	Stop Steps: 50
+2025-02-24 15:31:16,385	[DEBUG]	EXEC>  SUCCESS 3101802.0
+2025-02-24 15:31:16,385	[INFO]	REF     SUCCESS               3101802.00 (--) [0 edit(s)]  
+2025-02-24 15:31:16,385	[INFO]	Best patch: 1
+2025-02-24 15:31:16,829	[DEBUG]	EXEC>  SUCCESS 3045635.0
+2025-02-24 15:31:16,829	[INFO]	BEST    SUCCESS              *3045635.00 (98.19%) [0 edit(s)]  
+2025-02-24 15:31:16,829	[INFO]	Best patch step: 1
+2025-02-24 15:32:21,612	[INFO]	Step: 10
+2025-02-24 15:32:21,612	[INFO]	Stop Steps: 50
+2025-02-24 15:32:22,061	[DEBUG]	EXEC>  SUCCESS 3045543.5
+2025-02-24 15:32:22,061	[INFO]	1-1     SUCCESS              *3045543.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:32:22,061	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-24 15:32:22,061	[INFO]	Step: 11
+2025-02-24 15:32:22,061	[INFO]	Stop Steps: 50
+2025-02-24 15:32:22,547	[DEBUG]	EXEC>  SUCCESS 3050340.5
+2025-02-24 15:32:22,548	[INFO]	1-2     SUCCESS               3050340.50 (98.34%) [1 edit(s)]  
+2025-02-24 15:32:22,548	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:32:22,548	[INFO]	Step: 12
+2025-02-24 15:32:22,548	[INFO]	Stop Steps: 50
+2025-02-24 15:32:22,992	[DEBUG]	EXEC>  SUCCESS 3045633.5
+2025-02-24 15:32:22,992	[INFO]	1-3     SUCCESS               3045633.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:32:22,992	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:32:22,993	[INFO]	Step: 13
+2025-02-24 15:32:22,993	[INFO]	Stop Steps: 50
+2025-02-24 15:32:23,364	[DEBUG]	EXEC>  SUCCESS 3052475.5
+2025-02-24 15:32:23,365	[INFO]	1-4     SUCCESS               3052475.50 (98.41%) [1 edit(s)]  
+2025-02-24 15:32:23,365	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        int preCheck = 0;\n        for (int j = 0; j < 10; j++) if (x & (1 << j)) {\n            if (a[j] < preCheck) return false;\n            preCheck = a[j];\n        }\n        return true;\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T); // Faster input\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO"); // Faster output\n    }\n    return 0;\n}')"
+2025-02-24 15:32:23,365	[INFO]	Step: 14
+2025-02-24 15:32:23,365	[INFO]	Stop Steps: 50
+2025-02-24 15:32:23,764	[DEBUG]	EXEC>  SUCCESS 3051984.5
+2025-02-24 15:32:23,764	[INFO]	1-5     SUCCESS               3051984.50 (98.39%) [1 edit(s)]  
+2025-02-24 15:32:23,764	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:32:23,764	[INFO]	Step: 15
+2025-02-24 15:32:23,765	[INFO]	Stop Steps: 50
+2025-02-24 15:32:24,128	[DEBUG]	EXEC>  SUCCESS 3052386.0
+2025-02-24 15:32:24,128	[INFO]	1-6     SUCCESS               3052386.00 (98.41%) [1 edit(s)]  
+2025-02-24 15:32:24,128	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        int preCheck = 0;\n        for (int j = 0; j < 10; j++) if (x & (1 << j)) {\n            if (a[j] < preCheck) return false;\n            preCheck = a[j];\n        }\n        return true;\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T); // Faster input\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO"); // Faster output\n    }\n    return 0;\n}')"
+2025-02-24 15:32:24,128	[INFO]	Step: 16
+2025-02-24 15:32:24,128	[INFO]	Stop Steps: 50
+2025-02-24 15:32:24,441	[DEBUG]	EXEC>  SUCCESS 3051594.0
+2025-02-24 15:32:24,441	[INFO]	1-7     SUCCESS               3051594.00 (98.38%) [2 edit(s)]  
+2025-02-24 15:32:24,441	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool **memo; // Dynamic memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    memo = new bool*[11]; // Allocate memoization array\n    for (int i = 0; i < 11; ++i) {\n        memo[i] = new bool[1024];\n        memset(memo[i], 0, sizeof(bool) * 1024); // Initialize to false\n    }\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    \n    for (int i = 0; i < 11; ++i) delete[] memo[i]; // Free allocated memory\n    delete[] memo;\n    return 0;\n}')"
+2025-02-24 15:32:24,441	[INFO]	Step: 17
+2025-02-24 15:32:24,441	[INFO]	Stop Steps: 50
+2025-02-24 15:32:24,908	[DEBUG]	EXEC>  SUCCESS 3050249.5
+2025-02-24 15:32:24,908	[INFO]	1-8     SUCCESS               3050249.50 (98.34%) [2 edit(s)]  
+2025-02-24 15:32:24,908	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = -1; // Initialize pre to -1 to handle the first comparison correctly\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:32:24,908	[INFO]	Step: 18
+2025-02-24 15:32:24,909	[INFO]	Stop Steps: 50
+2025-02-24 15:32:25,155	[INFO]	1-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 15:32:25,155	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        int preCheck = 0;\n        for (int j = 0; j < 10; j++) if (x & (1 << j)) {\n            if (a[j] < preCheck) return false;\n            preCheck = a[j];\n        }\n        return true;\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool dp[10][1 << 10];\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        int preCheck = 0;\n        for (int j = 0; j < 10; j++) if (x & (1 << j)) {\n            if (a[j] < preCheck) return false;\n            preCheck = a[j];\n        }\n        return true;\n    }\n    if (dp[i][x] != -1) return dp[i][x]; // Check memoization table\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n    \n    return dp[i][x] = temp; // Store result in memoization table\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    memset(dp, -1, sizeof(dp)); // Initialize memoization table\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:32:25,155	[INFO]	Step: 19
+2025-02-24 15:32:25,155	[INFO]	Stop Steps: 50
+2025-02-24 15:32:25,447	[DEBUG]	EXEC>  SUCCESS 3053358.5
+2025-02-24 15:32:25,447	[INFO]	1-10    SUCCESS               3053358.50 (98.44%) [2 edit(s)]  
+2025-02-24 15:32:25,447	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T); // Faster input\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO"); // Faster output\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[1024][20]; // Memoization array to store results of (x, i)\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo[x][i]) return false; // Check if this state was already computed\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n    \n    memo[x][i] = temp; // Store result in memoization array\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T); // Faster input\n    while (T--) {\n        memset(memo, 0, sizeof(memo)); // Clear memoization array for each test case\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start dfs with pre set to -1\n    }\n    return 0;\n}')"
+2025-02-24 15:32:25,448	[INFO]	Step: 20
+2025-02-24 15:32:25,448	[INFO]	Stop Steps: 50
+2025-02-24 15:32:26,723	[DEBUG]	EXEC>  SUCCESS 3101802.5
+2025-02-24 15:32:26,723	[INFO]	1-1     SUCCESS               3101802.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:32:26,723	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include"stdc++.h"\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    cin >> T;\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:32:26,723	[INFO]	Step: 21
+2025-02-24 15:32:26,723	[INFO]	Stop Steps: 50
+2025-02-24 15:32:28,989	[DEBUG]	EXEC>  SUCCESS 3101727.0
+2025-02-24 15:32:28,989	[INFO]	REF     SUCCESS               3101727.00 (--) [0 edit(s)]  
+2025-02-24 15:32:28,989	[INFO]	Best patch: 1
+2025-02-24 15:32:29,434	[DEBUG]	EXEC>  SUCCESS 3045544.0
+2025-02-24 15:32:29,434	[INFO]	BEST    SUCCESS              *3045544.00 (98.19%) [0 edit(s)]  
+2025-02-24 15:32:29,435	[INFO]	Best patch step: 10
+2025-02-24 15:33:57,617	[INFO]	Step: 21
+2025-02-24 15:33:57,617	[INFO]	Stop Steps: 50
+2025-02-24 15:33:58,068	[DEBUG]	EXEC>  SUCCESS 3045544.0
+2025-02-24 15:33:58,068	[INFO]	2-2     SUCCESS              +3045544.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:33:58,068	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:33:58,068	[INFO]	Step: 22
+2025-02-24 15:33:58,068	[INFO]	Stop Steps: 50
+2025-02-24 15:33:58,514	[DEBUG]	EXEC>  SUCCESS 3045543.5
+2025-02-24 15:33:58,515	[INFO]	2-3     SUCCESS              *3045543.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:33:58,515	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-24 15:33:58,515	[INFO]	Step: 23
+2025-02-24 15:33:58,515	[INFO]	Stop Steps: 50
+2025-02-24 15:33:58,986	[DEBUG]	EXEC>  SUCCESS 3050251.0
+2025-02-24 15:33:58,986	[INFO]	2-4     SUCCESS               3050251.00 (98.34%) [1 edit(s)]  
+2025-02-24 15:33:58,986	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false; // Keep the logic from Parent 4.\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre); // Optimized return logic from Parent 3.\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:33:58,986	[INFO]	Step: 24
+2025-02-24 15:33:58,986	[INFO]	Stop Steps: 50
+2025-02-24 15:33:59,391	[DEBUG]	EXEC>  SUCCESS 3051984.0
+2025-02-24 15:33:59,391	[INFO]	2-5     SUCCESS               3051984.00 (98.40%) [1 edit(s)]  
+2025-02-24 15:33:59,391	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:33:59,391	[INFO]	Step: 25
+2025-02-24 15:33:59,392	[INFO]	Stop Steps: 50
+2025-02-24 15:33:59,783	[DEBUG]	EXEC>  SUCCESS 3052080.5
+2025-02-24 15:33:59,783	[INFO]	2-6     SUCCESS               3052080.50 (98.40%) [1 edit(s)]  
+2025-02-24 15:33:59,783	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\nbool memo[11][1024];\n\nbool check(int x) {\n    int pre = -1; // Initialize pre to -1 to handle the first comparison correctly\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Maintain clarity from Parent 3\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:33:59,783	[INFO]	Step: 26
+2025-02-24 15:33:59,783	[INFO]	Stop Steps: 50
+2025-02-24 15:34:00,266	[DEBUG]	EXEC>  SUCCESS 3050161.0
+2025-02-24 15:34:00,266	[INFO]	2-7     SUCCESS               3050161.00 (98.34%) [1 edit(s)]  
+2025-02-24 15:34:00,266	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = -1; // Initialize pre to -1 for correct checks\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Keep clarity from Parent 3\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:34:00,266	[INFO]	Step: 27
+2025-02-24 15:34:00,266	[INFO]	Stop Steps: 50
+2025-02-24 15:34:00,727	[DEBUG]	EXEC>  SUCCESS 3045617.0
+2025-02-24 15:34:00,727	[INFO]	2-8     SUCCESS               3045617.00 (98.19%) [2 edit(s)]  
+2025-02-24 15:34:00,727	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Changed the check function to simplify the loop\nbool check(int x) {\n    int last = -1; // Initialize to -1 to handle the first comparison correctly\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Changed to <= for a strict increasing condition\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Changed to start from index 0 and pre to -1\n    }\n    return 0;\n}')"
+2025-02-24 15:34:00,728	[INFO]	Step: 28
+2025-02-24 15:34:00,728	[INFO]	Stop Steps: 50
+2025-02-24 15:34:01,171	[DEBUG]	EXEC>  SUCCESS 3045578.5
+2025-02-24 15:34:01,171	[INFO]	2-9     SUCCESS               3045578.50 (98.19%) [2 edit(s)]  
+2025-02-24 15:34:01,171	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10]; // Optimized size of memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n\n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Bitwise operation to include current element\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:34:01,171	[INFO]	Step: 29
+2025-02-24 15:34:01,171	[INFO]	Stop Steps: 50
+2025-02-24 15:34:01,784	[DEBUG]	EXEC>  SUCCESS 3062262.5
+2025-02-24 15:34:01,784	[INFO]	2-10    SUCCESS               3062262.50 (98.73%) [3 edit(s)]  
+2025-02-24 15:34:01,784	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = -1; // Initialize pre to -1 to handle the first comparison correctly\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvector<int> a(10);\nunordered_map<int, bool> memo; // Memoization map\n\nbool check(int x) {\n    int pre = -1; // Initialize pre to -1 to handle the first comparison correctly\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= pre) return false; // Changed to <= for clarity\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    int state = (x << 10) | pre; // Create a unique state representation\n    if (memo.count(state)) return memo[state]; // Check if we already computed this state\n\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Don\'t include current element\n    temp = temp || dfs(i + 1, x | (1 << i), pre); // Include current element\n\n    memo[state] = temp; // Store the result in memoization map\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        memo.clear(); // Clear memoization map for each test case\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:34:01,784	[INFO]	Step: 30
+2025-02-24 15:34:01,784	[INFO]	Stop Steps: 50
+2025-02-24 15:34:02,377	[DEBUG]	EXEC>  SUCCESS 3062279.5
+2025-02-24 15:34:02,378	[INFO]	2-1     SUCCESS               3062279.50 (98.73%) [2 edit(s)]  
+2025-02-24 15:34:02,378	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nvector<int> a(10);\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvector<int> a(10);\nunordered_map<int, bool> memo;\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    int state = (x << 10) | i; // Combine x and i to create a unique state\n    if (memo.count(state)) return memo[state]; // Check if already computed\n    \n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    temp = temp || dfs(i + 1, x | (1 << i), pre);\n    \n    memo[state] = temp; // Store the result in memoization map\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        memo.clear(); // Clear memoization map for each test case\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:34:02,378	[INFO]	Step: 31
+2025-02-24 15:34:02,378	[INFO]	Stop Steps: 50
+2025-02-24 15:34:03,610	[DEBUG]	EXEC>  SUCCESS 3101713.0
+2025-02-24 15:34:03,610	[INFO]	2-2     SUCCESS               3101713.00 (100.00%) [1 edit(s)]  
+2025-02-24 15:34:03,610	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include"stdc++.h"\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    cin >> T;\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:34:03,610	[INFO]	Step: 32
+2025-02-24 15:34:03,610	[INFO]	Stop Steps: 50
+2025-02-24 15:34:05,932	[DEBUG]	EXEC>  SUCCESS 3101711.5
+2025-02-24 15:34:05,932	[INFO]	REF     SUCCESS               3101711.50 (--) [0 edit(s)]  
+2025-02-24 15:34:05,932	[INFO]	Best patch: 0
+2025-02-24 15:34:06,380	[DEBUG]	EXEC>  SUCCESS 3045543.5
+2025-02-24 15:34:06,380	[INFO]	BEST    SUCCESS              *3045543.50 (98.19%) [0 edit(s)]  
+2025-02-24 15:34:06,381	[INFO]	Best patch step: 22
+2025-02-24 15:35:10,013	[INFO]	Step: 32
+2025-02-24 15:35:10,013	[INFO]	Stop Steps: 50
+2025-02-24 15:35:10,486	[DEBUG]	EXEC>  SUCCESS 3045634.0
+2025-02-24 15:35:10,486	[INFO]	3-3     SUCCESS              +3045634.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:35:10,487	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:35:10,487	[INFO]	Step: 33
+2025-02-24 15:35:10,487	[INFO]	Stop Steps: 50
+2025-02-24 15:35:10,966	[DEBUG]	EXEC>  SUCCESS 3045545.5
+2025-02-24 15:35:10,967	[INFO]	3-4     SUCCESS              +3045545.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:35:10,967	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:35:10,967	[INFO]	Step: 34
+2025-02-24 15:35:10,967	[INFO]	Stop Steps: 50
+2025-02-24 15:35:11,471	[DEBUG]	EXEC>  SUCCESS 3045667.5
+2025-02-24 15:35:11,471	[INFO]	3-5     SUCCESS               3045667.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:35:11,471	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10]; // Optimized size of memoization array\n\n// Improved check function for strict increasing condition\nbool check(int x) {\n    int last = -1; // Initialize to -1\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n\n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Bitwise operation to include current element\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:35:11,472	[INFO]	Step: 35
+2025-02-24 15:35:11,472	[INFO]	Stop Steps: 50
+2025-02-24 15:35:11,872	[INFO]	3-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 15:35:11,872	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10]; // Optimized size of memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n\n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Include current element using bitwise operation\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, a[0]) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:35:11,872	[INFO]	Step: 36
+2025-02-24 15:35:11,872	[INFO]	Stop Steps: 50
+2025-02-24 15:35:12,354	[DEBUG]	EXEC>  SUCCESS 3045578.5
+2025-02-24 15:35:12,354	[INFO]	3-7     SUCCESS               3045578.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:35:12,354	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Enhanced check function for strict increasing condition\nbool check(int x) {\n    int last = -1; // Initialize to -1\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    \n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Include current element using bitwise operation\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:35:12,354	[INFO]	Step: 37
+2025-02-24 15:35:12,354	[INFO]	Stop Steps: 50
+2025-02-24 15:35:12,800	[DEBUG]	EXEC>  SUCCESS 3045723.0
+2025-02-24 15:35:12,800	[INFO]	3-8     SUCCESS               3045723.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:35:12,800	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Simplified check function for clarity\nbool check(int x) {\n    int last = -1; // Initialize to -1 for the first comparison\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n\n    // Proceed if the current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Include current element using bitwise operation\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO"); // Start from index 1\n    }\n    return 0;\n}')"
+2025-02-24 15:35:12,800	[INFO]	Step: 38
+2025-02-24 15:35:12,800	[INFO]	Stop Steps: 50
+2025-02-24 15:35:13,189	[INFO]	3-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 15:35:13,189	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return memo[i][x]; // Return the stored result directly\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Skip current element\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre); // Include current element\n    return memo[i][x] = temp; // Store result\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0 and pre = -1\n    }\n    return 0;\n}')"
+2025-02-24 15:35:13,189	[INFO]	Step: 39
+2025-02-24 15:35:13,189	[INFO]	Stop Steps: 50
+2025-02-24 15:35:13,440	[INFO]	3-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 15:35:13,440	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    // Early exit if precondition fails\n    if (pre < 0) return false; \n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    \n    // Only recurse if a[i] is greater than pre to minimize calls\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    \n    // Combine checks in a single call to reduce depth\n    temp |= dfs(i + 1, x | (1 << i), pre);\n    \n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Adjusted initial call\n    }\n    return 0;\n}')"
+2025-02-24 15:35:13,440	[INFO]	Step: 40
+2025-02-24 15:35:13,441	[INFO]	Stop Steps: 50
+2025-02-24 15:35:13,960	[DEBUG]	EXEC>  SUCCESS 3045675.0
+2025-02-24 15:35:13,961	[INFO]	3-1     SUCCESS               3045675.00 (98.19%) [3 edit(s)]  
+2025-02-24 15:35:13,961	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 10]; // Optimized size of memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n\n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Bitwise operation to include current element\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1 << 11]; // Increased size for better state representation\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) \n        if (x & (1 << i)) {\n            if (a[i] < pre) \n                return false;\n            pre = a[i];\n        }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n\n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Bitwise operation to include current element\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:35:13,961	[INFO]	Step: 41
+2025-02-24 15:35:13,961	[INFO]	Stop Steps: 50
+2025-02-24 15:35:14,830	[DEBUG]	EXEC>  SUCCESS 3045667.5
+2025-02-24 15:35:14,830	[INFO]	3-2     SUCCESS               3045667.50 (98.19%) [3 edit(s)]  
+2025-02-24 15:35:14,830	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Changed the check function to simplify the loop\nbool check(int x) {\n    int last = -1; // Initialize to -1 to handle the first comparison correctly\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Changed to <= for a strict increasing condition\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Changed to start from index 0 and pre to -1\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Simplified check function to improve performance\nbool check(int x) {\n    int last = -1;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Maintain strict increasing condition\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    // Optimize the second dfs call to skip unnecessary bits\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Efficiently start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:35:14,831	[INFO]	Step: 42
+2025-02-24 15:35:14,831	[INFO]	Stop Steps: 50
+2025-02-24 15:35:16,101	[DEBUG]	EXEC>  SUCCESS 3101802.0
+2025-02-24 15:35:16,101	[INFO]	3-3     SUCCESS               3101802.00 (100.00%) [1 edit(s)]  
+2025-02-24 15:35:16,101	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include"stdc++.h"\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    cin >> T;\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:35:16,101	[INFO]	Step: 43
+2025-02-24 15:35:16,102	[INFO]	Stop Steps: 50
+2025-02-24 15:35:18,362	[DEBUG]	EXEC>  SUCCESS 3101802.5
+2025-02-24 15:35:18,362	[INFO]	REF     SUCCESS               3101802.50 (--) [0 edit(s)]  
+2025-02-24 15:35:18,362	[INFO]	Best patch: 0
+2025-02-24 15:35:18,826	[DEBUG]	EXEC>  SUCCESS 3045556.5
+2025-02-24 15:35:18,826	[INFO]	BEST    SUCCESS              *3045556.50 (98.19%) [0 edit(s)]  
+2025-02-24 15:35:18,826	[INFO]	Best patch step: 22
+2025-02-24 15:36:18,888	[INFO]	Step: 43
+2025-02-24 15:36:18,888	[INFO]	Stop Steps: 50
+2025-02-24 15:36:19,360	[DEBUG]	EXEC>  SUCCESS 3045633.0
+2025-02-24 15:36:19,360	[INFO]	4-4     SUCCESS              +3045633.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:36:19,361	[DEBUG]	patch(4-4)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:36:19,361	[INFO]	Step: 44
+2025-02-24 15:36:19,361	[INFO]	Stop Steps: 50
+2025-02-24 15:36:19,820	[DEBUG]	EXEC>  SUCCESS 3045668.0
+2025-02-24 15:36:19,820	[INFO]	4-5     SUCCESS               3045668.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:36:19,820	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Enhanced check function for strict increasing condition\nbool check(int x) {\n    int last = -1; // Initialize to -1\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    \n    // Only proceed if current element is greater than previous\n    if (a[i] > pre) \n        temp = dfs(i + 1, x, a[i]);\n\n    // Include current element using bitwise operation\n    if (!temp) \n        temp = dfs(i + 1, x | (1 << i), pre);\n\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:36:19,820	[INFO]	Step: 45
+2025-02-24 15:36:19,820	[INFO]	Stop Steps: 50
+2025-02-24 15:36:20,269	[DEBUG]	EXEC>  SUCCESS 3045579.0
+2025-02-24 15:36:20,270	[INFO]	4-6     SUCCESS              +3045579.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:36:20,270	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Enhanced check function for strict increasing condition\nbool check(int x) {\n    int last = -1; // Initialize to -1\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:36:20,270	[INFO]	Step: 46
+2025-02-24 15:36:20,270	[INFO]	Stop Steps: 50
+2025-02-24 15:36:20,737	[DEBUG]	EXEC>  SUCCESS 3045578.0
+2025-02-24 15:36:20,737	[INFO]	4-7     SUCCESS              +3045578.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:36:20,737	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Simplified check function to improve performance\nbool check(int x) {\n    int last = -1;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Maintain strict increasing condition\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    // Optimize the second dfs call to skip unnecessary bits\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Efficiently start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:36:20,737	[INFO]	Step: 47
+2025-02-24 15:36:20,737	[INFO]	Stop Steps: 50
+2025-02-24 15:36:21,188	[DEBUG]	EXEC>  SUCCESS 3045668.5
+2025-02-24 15:36:21,188	[INFO]	4-8     SUCCESS               3045668.50 (98.19%) [1 edit(s)]  
+2025-02-24 15:36:21,188	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Enhanced check function for clarity and performance\nbool check(int x) {\n    int last = -1; // Initialize to -1 for strict checking\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing check\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]); // Use memoization to avoid recomputation\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre); // Include current element\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:36:21,188	[INFO]	Step: 48
+2025-02-24 15:36:21,188	[INFO]	Stop Steps: 50
+2025-02-24 15:36:21,628	[DEBUG]	EXEC>  SUCCESS 3045669.0
+2025-02-24 15:36:21,628	[INFO]	4-9     SUCCESS               3045669.00 (98.19%) [1 edit(s)]  
+2025-02-24 15:36:21,628	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\n// Enhanced check function for strict increasing condition\nbool check(int x) {\n    int last = -1; // Initialize to -1\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] <= last) return false; // Strictly increasing\n            last = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) \n            scanf("%d", &a[i]); // Efficient input handling\n        puts(dfs(0, 0, -1) ? "YES" : "NO"); // Start from index 0\n    }\n    return 0;\n}')"
+2025-02-24 15:36:21,628	[INFO]	Step: 49
+2025-02-24 15:36:21,628	[INFO]	Stop Steps: 50
+2025-02-24 15:36:21,867	[INFO]	4-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 15:36:21,867	[DEBUG]	patch(4-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs_iterative() {\n    for (int i = 0; i < (1 << 10); ++i) {\n        bool temp = true;\n        for (int j = 0, pre = 0; j < 10; ++j) {\n            if (i & (1 << j)) {\n                if (a[j] < pre) {\n                    temp = false;\n                    break;\n                }\n                pre = a[j];\n            }\n        }\n        if (temp) return true;\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs_iterative() ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-24 15:36:21,867	[INFO]	Step: 50
+2025-02-24 15:36:21,867	[INFO]	Stop Steps: 50
+2025-02-24 15:36:21,867	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 15:36:21,867	[INFO]	Step: 50
+2025-02-24 15:36:21,867	[INFO]	Stop Steps: 50
+2025-02-24 15:36:25,886	[INFO]	~~~~ END ~~~~
+2025-02-24 15:36:25,887	[INFO]	Best patch step: 22
+2025-02-24 15:36:25,887	[INFO]	
+2025-02-24 15:36:25,887	[INFO]	==== REPORT ====
+2025-02-24 15:36:25,887	[INFO]	Termination: step budget
+2025-02-24 15:36:25,887	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0009_1740411003.log
+2025-02-24 15:36:25,887	[INFO]	Patch file: _magpie_logs/0009_1740411003.patch
+2025-02-24 15:36:25,887	[INFO]	Diff file: _magpie_logs/0009_1740411003.diff
+2025-02-24 15:36:25,887	[INFO]	Reference fitness: 3101802.50
+2025-02-24 15:36:25,887	[INFO]	Best fitness: 3045556.50
+2025-02-24 15:36:25,888	[INFO]	
+2025-02-24 15:36:25,888	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint a[20];\nbool memo[11][1024]; // Memoization array\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i)) {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) return check(x);\n    if (memo[i][x]) return false; // Use memoization to avoid recomputation\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    if (!temp) temp = dfs(i + 1, x | (1 << i), pre);\n    memo[i][x] = temp; // Store result\n    return temp;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        puts(dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')
+2025-02-24 15:36:25,888	[INFO]	
+2025-02-24 15:36:25,889	[INFO]	==== DIFF ====
+

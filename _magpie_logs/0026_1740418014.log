@@ -1,0 +1,404 @@
+2025-02-24 17:26:54,472	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 3824025466683395
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0026
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 17:26:54,472	[DEBUG]	
+2025-02-24 17:26:54,472	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 17:26:54,472	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 17:26:55,544	[DEBUG]	EXEC>  SUCCESS 3319485.5
+2025-02-24 17:26:55,544	[INFO]	WARM    SUCCESS               3319485.50 (--) [0 edit(s)]  
+2025-02-24 17:26:56,129	[DEBUG]	EXEC>  SUCCESS 3319485.0
+2025-02-24 17:26:56,129	[INFO]	WARM    SUCCESS               3319485.00 (--) [0 edit(s)]  
+2025-02-24 17:26:56,738	[DEBUG]	EXEC>  SUCCESS 3319576.0
+2025-02-24 17:26:56,738	[INFO]	WARM    SUCCESS               3319576.00 (--) [0 edit(s)]  
+2025-02-24 17:26:57,337	[DEBUG]	EXEC>  SUCCESS 3319575.0
+2025-02-24 17:26:57,337	[INFO]	WARM    SUCCESS               3319575.00 (--) [0 edit(s)]  
+2025-02-24 17:26:57,937	[DEBUG]	EXEC>  SUCCESS 3319574.5
+2025-02-24 17:26:57,937	[INFO]	WARM    SUCCESS               3319574.50 (--) [0 edit(s)]  
+2025-02-24 17:26:57,937	[INFO]	REF     SUCCESS               3319574.50 (--) [0 edit(s)]  
+2025-02-24 17:26:57,938	[INFO]	
+2025-02-24 17:26:57,938	[INFO]	~~~~ START ~~~~
+2025-02-24 17:27:51,973	[DEBUG]	EXEC>  SUCCESS 3053105.0
+2025-02-24 17:27:51,973	[INFO]	0-1     SUCCESS              *3053105.00 (91.97%) [1 edit(s)]  
+2025-02-24 17:27:51,973	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+
+2025-02-24 17:27:53,696	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:27:53,696	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\ntypedef struct {\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(cin >> n) {\n        if (!n) break;\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool found = false;\n        for(const auto& entry : sales_map) {\n            if(entry.second >= 1000000) {\n                found = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!found) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:27:55,438	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:27:55,438	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <string>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n) {\n        if (!n) break;\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                cout << entry.first << endl;\n            }\n        }\n        if (!count) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:27:57,142	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:27:57,142	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n) {\n        if (!n) break;\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                cout << entry.first << endl;\n            }\n        }\n        if (!count) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:27:58,867	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:27:58,867	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:28:00,634	[DEBUG]	EXEC>  SUCCESS 3148472.0
+2025-02-24 17:28:00,635	[INFO]	0-6     SUCCESS               3148472.00 (94.85%) [1 edit(s)]  
+2025-02-24 17:28:00,635	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <string>\n#include <map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:28:01,848	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-02-24 17:28:01,848	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n#include <map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:28:03,545	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:28:03,546	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        if (sales_map.empty()) {\n            cout << "NA" << endl;\n            continue;\n        }\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                cout << entry.first << endl;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 17:28:05,337	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:28:05,337	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <string>\n#include <unordered_map>\n#include <algorithm>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        \n        auto it = std::count_if(sales_map.begin(), sales_map.end(), [](const auto& entry) {\n            return entry.second >= 1000000;\n        });\n        \n        if (it == 0) cout << "NA" << endl;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                cout << entry.first << endl;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 17:28:07,058	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:28:07,058	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    do {\n        cin >> n;\n        if (n == 0) break;\n        unordered_map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        if (sales_map.empty()) {\n            cout << "NA" << endl;\n            continue;\n        }\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                cout << entry.first << endl;\n            }\n        }\n    } while (n != 0);\n    return 0;\n}')"
+2025-02-24 17:28:08,059	[INFO]	Step: 10
+2025-02-24 17:28:08,059	[INFO]	Stop Steps: 50
+2025-02-24 17:28:09,675	[DEBUG]	EXEC>  SUCCESS 3319574.5
+2025-02-24 17:28:09,675	[INFO]	REF     SUCCESS               3319574.50 (--) [0 edit(s)]  
+2025-02-24 17:28:09,675	[INFO]	Best patch: 0
+2025-02-24 17:28:09,960	[DEBUG]	EXEC>  SUCCESS 3053024.5
+2025-02-24 17:28:09,960	[INFO]	BEST    SUCCESS              *3053024.50 (91.97%) [0 edit(s)]  
+2025-02-24 17:28:09,960	[INFO]	Best patch step: 0
+2025-02-24 17:28:45,697	[INFO]	Step: 10
+2025-02-24 17:28:45,697	[INFO]	Stop Steps: 50
+2025-02-24 17:28:45,987	[DEBUG]	EXEC>  SUCCESS 3053024.0
+2025-02-24 17:28:45,988	[INFO]	1-1     SUCCESS              *3053024.00 (91.97%) [1 edit(s)]  
+2025-02-24 17:28:45,988	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+
+2025-02-24 17:28:45,988	[INFO]	Step: 11
+2025-02-24 17:28:45,988	[INFO]	Stop Steps: 50
+2025-02-24 17:28:46,758	[DEBUG]	EXEC>  SUCCESS 3148382.0
+2025-02-24 17:28:46,759	[INFO]	1-2     SUCCESS               3148382.00 (94.84%) [1 edit(s)]  
+2025-02-24 17:28:46,759	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <string>\n#include <map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:28:46,759	[INFO]	Step: 12
+2025-02-24 17:28:46,759	[INFO]	Stop Steps: 50
+2025-02-24 17:28:47,535	[DEBUG]	EXEC>  SUCCESS 3148472.5
+2025-02-24 17:28:47,536	[INFO]	1-3     SUCCESS               3148472.50 (94.85%) [1 edit(s)]  
+2025-02-24 17:28:47,536	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <string>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    string id; // Using string for automatic memory management\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            staff s;\n            long long price;\n            int bnum;\n            cin >> s.id >> price >> bnum;\n            sales_map[s.id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:28:47,536	[INFO]	Step: 13
+2025-02-24 17:28:47,536	[INFO]	Stop Steps: 50
+2025-02-24 17:28:48,285	[DEBUG]	EXEC>  SUCCESS 3111854.5
+2025-02-24 17:28:48,285	[INFO]	1-4     SUCCESS               3111854.50 (93.74%) [1 edit(s)]  
+2025-02-24 17:28:48,285	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:28:48,285	[INFO]	Step: 14
+2025-02-24 17:28:48,285	[INFO]	Stop Steps: 50
+2025-02-24 17:28:49,038	[DEBUG]	EXEC>  SUCCESS 3111767.0
+2025-02-24 17:28:49,038	[INFO]	1-5     SUCCESS               3111767.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:28:49,039	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <string>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:28:49,039	[INFO]	Step: 15
+2025-02-24 17:28:49,039	[INFO]	Stop Steps: 50
+2025-02-24 17:28:49,790	[DEBUG]	EXEC>  SUCCESS 3111765.5
+2025-02-24 17:28:49,790	[INFO]	1-6     SUCCESS               3111765.50 (93.74%) [1 edit(s)]  
+2025-02-24 17:28:49,790	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <string>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:28:49,790	[INFO]	Step: 16
+2025-02-24 17:28:49,790	[INFO]	Stop Steps: 50
+2025-02-24 17:28:50,045	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-02-24 17:28:50,045	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n#include <unordered_map>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        unordered_map<string, int> id_map; // Hashmap to store IDs and their corresponding index\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            string str_id(id); // Convert char array to string for hashmap\n            if (id_map.find(str_id) == id_map.end()) {\n                // ID not found, add new staff entry\n                id_map[str_id] = i - pt; // Store the index for the new entry\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                // ID found, update the sales\n                int m = id_map[str_id];\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:28:50,045	[INFO]	Step: 17
+2025-02-24 17:28:50,045	[INFO]	Stop Steps: 50
+2025-02-24 17:28:50,751	[INFO]	1-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:28:50,752	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <string>\n#include <map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n#include <string>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(cin >> n && n) {\n        unordered_map<string, long long> sales_map; // Changed map to unordered_map for faster access\n        for(int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:28:50,752	[INFO]	Step: 18
+2025-02-24 17:28:50,752	[INFO]	Stop Steps: 50
+2025-02-24 17:28:51,476	[INFO]	1-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:28:51,477	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while (cin >> n) {\n        if (!n) break;\n\n        unordered_map<string, long long> salesMap; // Using unordered_map for dynamic storage\n        long long price;\n        int bnum;\n\n        for (int i = 0; i < n; i++) {\n            string id;\n            cin >> id >> price >> bnum;\n\n            salesMap[id] += price * bnum; // Directly accumulate sales\n        }\n\n        bool found = false;\n        for (const auto& entry : salesMap) {\n            if (entry.second >= 1000000) {\n                found = true;\n                cout << entry.first << endl;\n            }\n        }\n\n        if (!found) cout << "NA" << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 17:28:51,477	[INFO]	Step: 19
+2025-02-24 17:28:51,477	[INFO]	Stop Steps: 50
+2025-02-24 17:28:52,109	[INFO]	1-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:28:52,110	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while (scanf("%lld", &n) == 1) {\n        if (!n) break;\n\n        unordered_map<string, long long> salesMap; // Using unordered_map for dynamic storage\n        long long price;\n        int bnum;\n\n        for (int i = 0; i < n; i++) {\n            char id[100]; // Use char array for faster input\n            scanf("%s %lld %d", id, &price, &bnum); // Fast input\n\n            salesMap[id] += price * bnum; // Directly accumulate sales\n        }\n\n        bool found = false;\n        for (const auto& entry : salesMap) {\n            if (entry.second >= 1000000) {\n                found = true;\n                printf("%s\\n", entry.first.c_str()); // Fast output\n            }\n        }\n\n        if (!found) printf("NA\\n"); // Fast output\n    }\n\n    return 0;\n}')"
+2025-02-24 17:28:52,110	[INFO]	Step: 20
+2025-02-24 17:28:52,110	[INFO]	Stop Steps: 50
+2025-02-24 17:28:53,741	[DEBUG]	EXEC>  SUCCESS 3319574.0
+2025-02-24 17:28:53,742	[INFO]	REF     SUCCESS               3319574.00 (--) [0 edit(s)]  
+2025-02-24 17:28:53,742	[INFO]	Best patch: 0
+2025-02-24 17:28:54,013	[DEBUG]	EXEC>  SUCCESS 3053016.0
+2025-02-24 17:28:54,013	[INFO]	BEST    SUCCESS              *3053016.00 (91.97%) [0 edit(s)]  
+2025-02-24 17:28:54,013	[INFO]	Best patch step: 10
+2025-02-24 17:31:55,639	[INFO]	Step: 20
+2025-02-24 17:31:55,640	[INFO]	Stop Steps: 50
+2025-02-24 17:31:55,938	[DEBUG]	EXEC>  SUCCESS 3053115.0
+2025-02-24 17:31:55,938	[INFO]	2-1     SUCCESS              +3053115.00 (91.97%) [1 edit(s)]  
+2025-02-24 17:31:55,938	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:55,938	[INFO]	Step: 21
+2025-02-24 17:31:55,938	[INFO]	Stop Steps: 50
+2025-02-24 17:31:56,689	[DEBUG]	EXEC>  SUCCESS 3111766.5
+2025-02-24 17:31:56,689	[INFO]	2-2     SUCCESS               3111766.50 (93.74%) [1 edit(s)]  
+2025-02-24 17:31:56,689	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <string>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:56,689	[INFO]	Step: 22
+2025-02-24 17:31:56,690	[INFO]	Stop Steps: 50
+2025-02-24 17:31:57,450	[DEBUG]	EXEC>  SUCCESS 3111766.0
+2025-02-24 17:31:57,450	[INFO]	2-3     SUCCESS               3111766.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:31:57,450	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:57,450	[INFO]	Step: 23
+2025-02-24 17:31:57,450	[INFO]	Stop Steps: 50
+2025-02-24 17:31:58,202	[DEBUG]	EXEC>  SUCCESS 3111676.0
+2025-02-24 17:31:58,202	[INFO]	2-4     SUCCESS               3111676.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:31:58,202	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:58,202	[INFO]	Step: 24
+2025-02-24 17:31:58,202	[INFO]	Stop Steps: 50
+2025-02-24 17:31:58,965	[DEBUG]	EXEC>  SUCCESS 3111682.5
+2025-02-24 17:31:58,966	[INFO]	2-5     SUCCESS               3111682.50 (93.74%) [1 edit(s)]  
+2025-02-24 17:31:58,966	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:58,966	[INFO]	Step: 25
+2025-02-24 17:31:58,966	[INFO]	Stop Steps: 50
+2025-02-24 17:31:59,713	[DEBUG]	EXEC>  SUCCESS 3111856.0
+2025-02-24 17:31:59,714	[INFO]	2-6     SUCCESS               3111856.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:31:59,714	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:59,714	[INFO]	Step: 26
+2025-02-24 17:31:59,714	[INFO]	Stop Steps: 50
+2025-02-24 17:31:59,972	[INFO]	2-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-02-24 17:31:59,972	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\n#include <unordered_map>\nusing namespace std;\n\ntypedef struct {\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        unordered_map<string, long long> salesMap;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            salesMap[id] += price * bnum;\n        }\n        int count = 0;\n        for(const auto& entry : salesMap) {\n            if(entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:31:59,972	[INFO]	Step: 27
+2025-02-24 17:31:59,972	[INFO]	Stop Steps: 50
+2025-02-24 17:32:00,709	[INFO]	2-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:32:00,709	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <string>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <iostream>\n#include <string>\n#include <unordered_map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        unordered_map<string, long long> sales_map; // Changed to unordered_map\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum; // Accumulating sales\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:00,709	[INFO]	Step: 28
+2025-02-24 17:32:00,709	[INFO]	Stop Steps: 50
+2025-02-24 17:32:01,316	[DEBUG]	EXEC>  SUCCESS 3260359.5
+2025-02-24 17:32:01,317	[INFO]	2-9     SUCCESS               3260359.50 (98.22%) [2 edit(s)]  
+2025-02-24 17:32:01,317	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <string>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <string>\n#include <cstdio>\nusing namespace std;\n\nconst int MAX_ID_LENGTH = 21;\nconst int MAX_SALES_COUNT = 10000; // Assuming a reasonable upper limit for unique IDs\nlong long sales[MAX_SALES_COUNT] = {0}; // Array to store sales for each ID\nstring ids[MAX_SALES_COUNT]; // Array to store IDs\nint id_count = 0;\n\nint get_id_index(const string& id) {\n    for (int i = 0; i < id_count; i++) {\n        if (ids[i] == id) {\n            return i;\n        }\n    }\n    return -1; // Not found\n}\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        id_count = 0; // Reset for each case\n        for(int i = 0; i < n; i++) {\n            char id[MAX_ID_LENGTH];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            string id_str(id);\n            int index = get_id_index(id_str);\n            if (index == -1) {\n                ids[id_count] = id_str; // Store new ID\n                sales[id_count] = price * bnum; // Initialize sales\n                id_count++;\n            } else {\n                sales[index] += price * bnum; // Update existing sales\n            }\n        }\n        int count = 0;\n        for (int i = 0; i < id_count; i++) {\n            if (sales[i] >= 1000000) {\n                count++;\n                printf("%s\\n", ids[i].c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:01,317	[INFO]	Step: 29
+2025-02-24 17:32:01,317	[INFO]	Stop Steps: 50
+2025-02-24 17:32:02,030	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:32:02,030	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <iostream>\n#include <unordered_map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        unordered_map<string, long long> sales_map;  // Changed map to unordered_map\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:02,030	[INFO]	Step: 30
+2025-02-24 17:32:02,031	[INFO]	Stop Steps: 50
+2025-02-24 17:32:02,767	[INFO]	2-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:32:02,767	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\nint main(void) {\n    long long n;\n\n    while (cin >> n) {\n        if (!n) break;\n\n        unordered_map<string, long long> salesMap; // Use a hashmap for efficient access\n\n        for (int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n\n            cin >> id >> price >> bnum;\n            salesMap[id] += price * bnum; // Directly update the sales in the hashmap\n        }\n\n        int count = 0;\n        for (const auto& entry : salesMap) {\n            if (entry.second >= 1000000) {\n                count++;\n                cout << entry.first << endl; // Output the IDs with sales >= 1,000,000\n            }\n        }\n\n        if (!count) cout << "NA" << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 17:32:02,767	[INFO]	Step: 31
+2025-02-24 17:32:02,767	[INFO]	Stop Steps: 50
+2025-02-24 17:32:04,373	[DEBUG]	EXEC>  SUCCESS 3319672.5
+2025-02-24 17:32:04,373	[INFO]	REF     SUCCESS               3319672.50 (--) [0 edit(s)]  
+2025-02-24 17:32:04,373	[INFO]	Best patch: 0
+2025-02-24 17:32:04,651	[DEBUG]	EXEC>  SUCCESS 3053015.5
+2025-02-24 17:32:04,652	[INFO]	BEST    SUCCESS              *3053015.50 (91.97%) [0 edit(s)]  
+2025-02-24 17:32:04,652	[INFO]	Best patch step: 10
+2025-02-24 17:32:55,736	[INFO]	Step: 31
+2025-02-24 17:32:55,736	[INFO]	Stop Steps: 50
+2025-02-24 17:32:56,024	[DEBUG]	EXEC>  SUCCESS 3053023.5
+2025-02-24 17:32:56,024	[INFO]	3-2     SUCCESS              +3053023.50 (91.97%) [1 edit(s)]  
+2025-02-24 17:32:56,024	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:56,025	[INFO]	Step: 32
+2025-02-24 17:32:56,025	[INFO]	Stop Steps: 50
+2025-02-24 17:32:56,778	[DEBUG]	EXEC>  SUCCESS 3111675.0
+2025-02-24 17:32:56,778	[INFO]	3-3     SUCCESS               3111675.00 (93.73%) [1 edit(s)]  
+2025-02-24 17:32:56,778	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:56,778	[INFO]	Step: 33
+2025-02-24 17:32:56,778	[INFO]	Stop Steps: 50
+2025-02-24 17:32:57,545	[DEBUG]	EXEC>  SUCCESS 3111765.0
+2025-02-24 17:32:57,545	[INFO]	3-4     SUCCESS               3111765.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:32:57,545	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 8), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:57,545	[INFO]	Step: 34
+2025-02-24 17:32:57,545	[INFO]	Stop Steps: 50
+2025-02-24 17:32:58,297	[DEBUG]	EXEC>  SUCCESS 3111766.5
+2025-02-24 17:32:58,297	[INFO]	3-5     SUCCESS               3111766.50 (93.74%) [1 edit(s)]  
+2025-02-24 17:32:58,297	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:58,297	[INFO]	Step: 35
+2025-02-24 17:32:58,297	[INFO]	Stop Steps: 50
+2025-02-24 17:32:59,043	[DEBUG]	EXEC>  SUCCESS 3111675.5
+2025-02-24 17:32:59,043	[INFO]	3-6     SUCCESS               3111675.50 (93.73%) [1 edit(s)]  
+2025-02-24 17:32:59,043	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <iostream>\n#include <map>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:59,043	[INFO]	Step: 36
+2025-02-24 17:32:59,044	[INFO]	Stop Steps: 50
+2025-02-24 17:32:59,791	[DEBUG]	EXEC>  SUCCESS 3111856.0
+2025-02-24 17:32:59,791	[INFO]	3-7     SUCCESS               3111856.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:32:59,792	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 11), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:32:59,792	[INFO]	Step: 37
+2025-02-24 17:32:59,792	[INFO]	Stop Steps: 50
+2025-02-24 17:33:00,059	[INFO]	3-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-02-24 17:33:00,059	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n#include <cstring>\n#include <unordered_map>\nusing namespace std;\n\ntypedef struct {\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        unordered_map<string, long long> staffSales; // Use unordered_map for faster lookups\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            staffSales[id] += price * bnum; // Accumulate sales directly in the map\n        }\n        int count = 0;\n        for(const auto& entry : staffSales) {\n            if(entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:00,059	[INFO]	Step: 38
+2025-02-24 17:33:00,059	[INFO]	Stop Steps: 50
+2025-02-24 17:33:00,782	[INFO]	3-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:33:00,782	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <iostream>\n#include <unordered_map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        unordered_map<string, long long> sales_map; // Changed map to unordered_map\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:00,782	[INFO]	Step: 39
+2025-02-24 17:33:00,782	[INFO]	Stop Steps: 50
+2025-02-24 17:33:01,514	[INFO]	3-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:33:01,514	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while (cin >> n && n) {\n        unordered_map<string, long long> sales_map;\n        for (int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n            cin >> id >> price >> bnum;\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                cout << entry.first << endl;\n            }\n        }\n        if (!hasSales) cout << "NA" << endl;\n    }\n    return 0;\n}')"
+2025-02-24 17:33:01,515	[INFO]	Step: 40
+2025-02-24 17:33:01,515	[INFO]	Stop Steps: 50
+2025-02-24 17:33:02,244	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:33:02,244	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <iostream>\n#include <unordered_map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        unordered_map<string, long long> sales_map; // Changed to unordered_map\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        bool hasSales = false;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                hasSales = true;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if (!hasSales) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:02,244	[INFO]	Step: 41
+2025-02-24 17:33:02,244	[INFO]	Stop Steps: 50
+2025-02-24 17:33:02,971	[INFO]	3-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:33:02,971	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 23), '#include <iostream>\n#include <string>\n#include <unordered_map>\n\nusing namespace std;\n\ntypedef struct {\n    string id;\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n\n    while (cin >> n) {\n        if (!n) break;\n\n        unordered_map<string, long long> salesMap; // Using a hashmap for faster lookup\n        long long totalSales = 0;\n\n        for (int i = 0; i < n; i++) {\n            string id;\n            long long price;\n            int bnum;\n\n            cin >> id >> price >> bnum;\n            salesMap[id] += price * bnum; // Accumulate sales directly in the hashmap\n        }\n\n        int count = 0;\n        for (const auto& entry : salesMap) {\n            if (entry.second >= 1000000) {\n                count++;\n                cout << entry.first << endl;\n            }\n        }\n\n        if (!count) cout << "NA" << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 17:33:02,971	[INFO]	Step: 42
+2025-02-24 17:33:02,971	[INFO]	Stop Steps: 50
+2025-02-24 17:33:04,574	[DEBUG]	EXEC>  SUCCESS 3319486.0
+2025-02-24 17:33:04,574	[INFO]	REF     SUCCESS               3319486.00 (--) [0 edit(s)]  
+2025-02-24 17:33:04,574	[INFO]	Best patch: 0
+2025-02-24 17:33:04,849	[DEBUG]	EXEC>  SUCCESS 3053024.0
+2025-02-24 17:33:04,850	[INFO]	BEST    SUCCESS              *3053024.00 (91.97%) [0 edit(s)]  
+2025-02-24 17:33:04,850	[INFO]	Best patch step: 10
+2025-02-24 17:33:50,522	[INFO]	Step: 42
+2025-02-24 17:33:50,522	[INFO]	Stop Steps: 50
+2025-02-24 17:33:50,813	[DEBUG]	EXEC>  SUCCESS 3053104.0
+2025-02-24 17:33:50,813	[INFO]	4-3     SUCCESS              +3053104.00 (91.98%) [1 edit(s)]  
+2025-02-24 17:33:50,813	[DEBUG]	patch(4-3)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:50,813	[INFO]	Step: 43
+2025-02-24 17:33:50,813	[INFO]	Stop Steps: 50
+2025-02-24 17:33:51,565	[DEBUG]	EXEC>  SUCCESS 3111830.0
+2025-02-24 17:33:51,565	[INFO]	4-4     SUCCESS               3111830.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:33:51,565	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:51,565	[INFO]	Step: 44
+2025-02-24 17:33:51,565	[INFO]	Stop Steps: 50
+2025-02-24 17:33:52,323	[DEBUG]	EXEC>  SUCCESS 3111677.0
+2025-02-24 17:33:52,323	[INFO]	4-5     SUCCESS               3111677.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:33:52,323	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 12), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:52,323	[INFO]	Step: 45
+2025-02-24 17:33:52,323	[INFO]	Stop Steps: 50
+2025-02-24 17:33:53,079	[DEBUG]	EXEC>  SUCCESS 3111675.5
+2025-02-24 17:33:53,079	[INFO]	4-6     SUCCESS               3111675.50 (93.74%) [1 edit(s)]  
+2025-02-24 17:33:53,079	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 13), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        staff staff1[4001];\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum; // Using map for aggregation\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:53,079	[INFO]	Step: 46
+2025-02-24 17:33:53,079	[INFO]	Stop Steps: 50
+2025-02-24 17:33:53,844	[DEBUG]	EXEC>  SUCCESS 3111676.0
+2025-02-24 17:33:53,844	[INFO]	4-7     SUCCESS               3111676.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:33:53,845	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 14), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        staff staff1[4001];\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum; // Efficient aggregation\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:53,845	[INFO]	Step: 47
+2025-02-24 17:33:53,845	[INFO]	Stop Steps: 50
+2025-02-24 17:33:54,592	[DEBUG]	EXEC>  SUCCESS 3111677.0
+2025-02-24 17:33:54,592	[INFO]	4-8     SUCCESS               3111677.00 (93.74%) [1 edit(s)]  
+2025-02-24 17:33:54,592	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 15), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum; // Efficiently aggregate using map\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:54,592	[INFO]	Step: 48
+2025-02-24 17:33:54,592	[INFO]	Stop Steps: 50
+2025-02-24 17:33:54,851	[INFO]	4-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-02-24 17:33:54,851	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <cstring>\n#include <unordered_map>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        unordered_map<string, long long> salesMap; // Using an unordered_map for faster lookups\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            string idStr(id);\n            salesMap[idStr] += price * bnum; // Accumulate sales directly in the map\n        }\n        int count = 0;\n        for(const auto& entry : salesMap) {\n            if(entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str()); // Output the ID\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:54,851	[INFO]	Step: 49
+2025-02-24 17:33:54,851	[INFO]	Stop Steps: 50
+2025-02-24 17:33:55,560	[INFO]	4-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 17:33:55,560	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <map>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        map<string, long long> sales_map;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <iostream>\n#include <unordered_map>\n#include <cstdio>\nusing namespace std;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1 && n) {\n        unordered_map<string, long long> sales_map; // Changed to unordered_map\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            sales_map[id] += price * bnum;\n        }\n        int count = 0;\n        for (const auto& entry : sales_map) {\n            if (entry.second >= 1000000) {\n                count++;\n                printf("%s\\n", entry.first.c_str());\n            }\n        }\n        if(count == 0) printf("NA\\n");\n    }\n    return 0;\n}')"
+2025-02-24 17:33:55,560	[INFO]	Step: 50
+2025-02-24 17:33:55,560	[INFO]	Stop Steps: 50
+2025-02-24 17:33:55,560	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 17:33:55,560	[INFO]	Step: 50
+2025-02-24 17:33:55,560	[INFO]	Stop Steps: 50
+2025-02-24 17:33:58,283	[INFO]	~~~~ END ~~~~
+2025-02-24 17:33:58,283	[INFO]	Best patch step: 10
+2025-02-24 17:33:58,283	[INFO]	
+2025-02-24 17:33:58,283	[INFO]	==== REPORT ====
+2025-02-24 17:33:58,283	[INFO]	Termination: step budget
+2025-02-24 17:33:58,283	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0026_1740418014.log
+2025-02-24 17:33:58,283	[INFO]	Patch file: _magpie_logs/0026_1740418014.patch
+2025-02-24 17:33:58,283	[INFO]	Diff file: _magpie_logs/0026_1740418014.diff
+2025-02-24 17:33:58,283	[INFO]	Reference fitness: 3319486.00
+2025-02-24 17:33:58,283	[INFO]	Best fitness: 3053024.00
+2025-02-24 17:33:58,283	[INFO]	
+2025-02-24 17:33:58,284	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef struct {\n    char id[21]; // Assume ID length is limited to 20 characters\n    long long sales;\n} staff;\n\nint main(void) {\n    long long n;\n    while(scanf("%lld", &n) == 1) {\n        if(!n) break;\n        staff staff1[4001];\n        int pt = 0;\n        for(int i = 0; i < n; i++) {\n            char id[21];\n            long long price;\n            int bnum;\n            scanf("%s %lld %d", id, &price, &bnum);\n            int m = -1;\n            for(int j = 0; j < i; j++) {\n                if(strcmp(id, staff1[j].id) == 0) {\n                    pt++;\n                    m = j;\n                    break;\n                }\n            }\n            if(m == -1) {\n                strcpy(staff1[i - pt].id, id);\n                staff1[i - pt].sales = price * bnum;\n            } else {\n                staff1[m].sales += price * bnum;\n            }\n        }\n        int count = 0;\n        for(int i = 0; i < n - pt; i++) {\n            if(staff1[i].sales >= 1000000) {\n                count++;\n                printf("%s\\n", staff1[i].id);\n            }\n        }\n        if(!count) printf("NA\\n");\n    }\n    return 0;\n}')
+2025-02-24 17:33:58,284	[INFO]	
+2025-02-24 17:33:58,284	[INFO]	==== DIFF ====
+

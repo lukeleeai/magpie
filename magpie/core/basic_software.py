@@ -526,11 +526,16 @@ class BasicSoftware(AbstractSoftware):
             stdout = exec_result.stdout.decode(magpie.settings.output_encoding)
             # average the numbers
             try:
-                cpu_cycles = [int(line) for line in stdout.splitlines()][
-                    4:
-                ]  # skip the first warmups
-                run_result.fitness = sum(cpu_cycles) / len(cpu_cycles)
+                # cpu_cycles = [int(line) for line in stdout.splitlines()][
+                #     4:
+                # ]  # skip the first warmups
+                # run_result.fitness = sum(cpu_cycles) / len(cpu_cycles)
+                instruction_counts = [int(line.split()[-1].replace(",", "")) for line in stdout.splitlines()]
+                run_result.fitness = sum(instruction_counts) / len(instruction_counts)
+
             except ValueError:
+                instruction_counts = ([int(line.split()[-1].replace(",", "")) for line in stdout.splitlines()])
+                print(sum(instruction_counts) / len(instruction_counts))
                 run_result.status = "PARSE_ERROR"
 
         # if "[software] fitness" is "output", we check STDOUT for the string "MAGPIE_FITNESS:"

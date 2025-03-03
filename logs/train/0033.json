@@ -1,0 +1,433 @@
+{
+    "(0)": {
+        "children": [
+            {
+                "fitness": 3134952.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nconst int MAX_N = 100000; // Define a maximum size for the array to avoid stack overflow\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        static int nums[MAX_N]; // Use a static array instead of dynamic allocation\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                sum += (nums[j] & nums[(j+i)%n]) ? 1 : 0; // Count only when there's an overlap\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the way the array is initialized and the calculation of the sum in the nested loop. By replacing the dynamic allocation of the array with a fixed size and using a more efficient method for summing the values, we can optimize performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "0"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n]; // Use a plain array instead of vector\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.5
+        ]
+    },
+    "(1)": {
+        "children": [
+            {
+                "fitness": 3054395.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <vector>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        vector<int> nums(n, 0); // Use vector instead of a raw array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the dynamic allocation of the `nums` array, which can be optimized by using a vector for better memory management and performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "1"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.0
+        ]
+    },
+    "(10)": {
+        "children": [
+            {
+                "fitness": 3048610.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <cstdlib> // Include for dynamic memory allocation\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int* nums = (int*)malloc(n * sizeof(int)); // Dynamic allocation\n        memset(nums, 0, n * sizeof(int)); // Updated to match dynamic allocation size\n\n        reep(i, 1, n)\n            nums[(i * i) % n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n        \n        free(nums); // Free allocated memory\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the definition and initialization of the `nums` array, which can be optimized by using dynamic memory allocation to avoid stack overflow for large `n`."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047134.0
+        ]
+    },
+    "(10x8x11x7)": {
+        "children": [
+            {
+                "fitness": 3047222.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Using optimized computeSum\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the `computeSum` function from Parent 1 (fitness: 3047134.0) and the main loop structure from Parent 4 (fitness: 3047223.5) to optimize the computation and reduce redundant operations."
+            },
+            {
+                "fitness": 3047224.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Directly using computeSum\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the initialization and memory setup from Parent 3 (fitness: 3047223.0) with the computational logic of Parent 2 (fitness: 3047222.5) to increase clarity and maintainability."
+            },
+            {
+                "fitness": 3047223.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = computeSum(nums, n, i) * 2; // Directly using computeSum\n            printf(\"%d\\n\", totalSum);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the efficient input handling from Parent 2 (fitness: 3047222.5) with the summation logic of Parent 4 (fitness: 3047223.5) to enhance performance and code structure."
+            },
+            {
+                "fitness": 3047224.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Integrate the efficient initialization of arrays from Parent 4 (fitness: 3047223.5) with the computation logic from Parent 3 (fitness: 3047223.0) to streamline the process and ensure clarity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10",
+            "8",
+            "11",
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = computeSum(nums, n, i) * 2; // Directly using computeSum\n            printf(\"%d\\n\", totalSum);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047134.0,
+            3047222.5,
+            3047223.0,
+            3047223.5
+        ]
+    },
+    "(1x7x3x4_10)": {
+        "children": [
+            {
+                "fitness": 3047224.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = 0; // Reset totalSum for each i\n            rep(j, n) {\n                totalSum += nums[j] & nums[(j+i)%n]; // Use index calculation from Parent 1\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the index calculation from Parent 1 with the totalSum reset logic from Parent 2 to streamline the summation calculation."
+            },
+            {
+                "fitness": 3047224.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the inline function from Parent 4 to calculate the sum while integrating the initializations and logic flow from Parent 3 for improved readability and structure."
+            },
+            {
+                "fitness": 3047171.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the functionality of the `computeSum` function from Parent 4 with the loop structure from Parent 1, improving the clarity of the index computation while maintaining the summation logic."
+            },
+            {
+                "fitness": 3047222.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums)); // Use memset from Parent 2\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and memset approach from Parent 2 with the efficient index handling method from Parent 4 to reduce redundant calculations and improve performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "1",
+            "7",
+            "3",
+            "4_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.0,
+            3047133.5,
+            3047133.5,
+            3047134.0
+        ]
+    },
+    "(2)": {
+        "children": [
+            {
+                "fitness": 3134709.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nconst int max_n = 100000; // Define a maximum size for the static array\n\nint main() {\n    int n;\n    while (scanf(\"%d\", &n), n) {\n        int nums[max_n]; // Use a static array to avoid dynamic allocation\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i * i) % n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j + i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the dynamic allocation of the `nums` array, which could be optimized by using a static array with a predefined size, thereby reducing overhead and avoiding potential stack overflow for larger `n`. Additionally, the index calculation can be simplified to avoid redundancy."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047223.0
+        ]
+    },
+    "(3)": {
+        "children": [
+            {
+                "fitness": 3134708.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nconst int MAX_N = 100000; // Define a maximum size for the array\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[MAX_N]; // Use static array\n        memset(nums, 0, sizeof(nums)); // You can also keep this for safety\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the line that initializes the `nums` array and the memset operation, which can be optimized by using a static array allocation instead of dynamic size based on `n`, reducing overhead during memory allocation."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "3"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.5
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 3047134.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the function `computeSum`, which can be optimized by avoiding the repeated modulo operations inside the loop, thus reducing computational overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.5
+        ]
+    },
+    "(4_10)": {
+        "children": [
+            {
+                "fitness": 3047223.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    int idx; // Declare idx outside the loop\n    rep(j, n) {\n        idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `computeSum` function where the index is calculated using a modulo operation. This can be optimized by avoiding repeated calculations of `idx` inside the loop. Instead, we can calculate it outside the loop and accumulate the results directly, which reduces unnecessary operations and improves performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047134.0
+        ]
+    },
+    "(4x7x0x2)": {
+        "children": [
+            {
+                "fitness": 3047135.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = 0; // Reset totalSum for each i\n            rep(j, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the optimized loop structure from Parent 1 with the total sum computation from Parent 2 to enhance performance while maintaining clarity."
+            },
+            {
+                "fitness": 3047222.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the efficient array initialization and the for-loop structure from Parent 3 with the enhanced total sum calculation from Parent 4."
+            },
+            {
+                "fitness": 3047223.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the inline function `computeSum` from Parent 1 with the total sum logic from Parent 2 to encapsulate the sum calculation and enhance readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "4",
+            "7",
+            "0",
+            "2"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n]; // Use a plain array instead of vector\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.5,
+            3047133.5,
+            3047133.5,
+            3047223.0
+        ]
+    },
+    "(5x7x7_16x6)": {
+        "children": [
+            {
+                "fitness": 3047312.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the initialization and array usage from Parent 3 with the computeSum function from Parent 4, aiming to enhance performance while maintaining clarity."
+            },
+            {
+                "fitness": 3047224.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize the array initialization from Parent 3 and integrate the loop structure from Parent 2 to minimize redundancy in totalSum calculation."
+            },
+            {
+                "fitness": 3047223.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Merge the loop and memory functions from Parent 1 with the computeSum logic from Parent 4, aiming for enhanced readability and performance by using inline functions."
+            },
+            {
+                "fitness": 3047223.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = computeSum(nums, n, i) * 2; // Directly using computeSum\n            printf(\"%d\\n\", totalSum);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Combine the array handling from Parent 2 with the inline computeSum from Parent 4, optimizing the totalSum calculation through improved index management."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "5",
+            "7",
+            "7_16",
+            "6"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array\n        for(int i = 0; i < n; ++i) {\n            nums[i] = 0;\n        }\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.0,
+            3047133.5,
+            3047137.0,
+            3047171.0
+        ]
+    },
+    "(6)": {
+        "children": [
+            {
+                "fitness": 3047393.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int doubledNums[n]; // Precompute doubled indices\n        reep(i, 0, n) {\n            doubledNums[i] = nums[(i * 2) % n]; // Store precomputed values\n        }\n\n        reep(i, 1, (n + 1) / 2) {\n            printf(\"%d\\n\", computeSum(doubledNums, n, i) * 2); // Use precomputed values\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `computeSum` function, particularly the inner loop where the index is calculated. This can be optimized by eliminating the modulo operation during each iteration by using a fixed size array instead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "6"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047171.0
+        ]
+    },
+    "(7)": {
+        "children": [
+            {
+                "fitness": 3047137.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array\n        for(int i = 0; i < n; ++i) {\n            nums[i] = 0;\n        }\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the `memset` line that initializes the `nums` array, which could be optimized by using a simple loop to avoid potential overhead from `memset` and enhance readability."
+            },
+            {
+                "fitness": 3054485.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <vector>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        vector<int> nums(n, 0); // Use vector for dynamic sizing\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization and usage of the `nums` array to reduce memory allocation overhead and improve performance by using a vector instead. This allows for dynamic sizing and reduces the memory footprint."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047133.5
+        ]
+    },
+    "(7_16)": {
+        "children": [
+            {
+                "fitness": 3047227.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array using std::fill\n        std::fill(nums, nums + n, 0);\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Focus on the initialization of the `nums` array, which can be optimized by using `std::fill` instead of a loop for better readability and potentially improved performance due to compiler optimizations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "7_16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array\n        for(int i = 0; i < n; ++i) {\n            nums[i] = 0;\n        }\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n"
+        ],
+        "parent_fitnesses": [
+            3047137.0
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 3047133.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n]; // Use a plain array instead of vector\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Optimize memory usage by using a single array instead of a vector for the `nums` array, given that the size is known beforehand."
+            },
+            {
+                "fitness": 3106648.5,
+                "new_code": "#include <iostream>\n#include <vector>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        vector<int> nums(n, 0);\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            cout << sum * 2 << endl; // Use cout for output\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Replace `scanf` with `cin` for input to improve readability and avoid buffer issues."
+            },
+            {
+                "fitness": 3047223.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Reduce the number of operations in the inner loop by calculating `nums[j] & nums[(j+i)%n]` only once and storing the result in a variable."
+            },
+            {
+                "fitness": 3052119.5,
+                "new_code": "#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf(\"%d\", &n), n) {\n        bitset<100000> nums; // Using bitset for boolean operations\n\n        reep(i, 1, n)\n            nums[(i*i)%n] = 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Use a bitset instead of an integer array to optimize memory usage and performance when dealing with boolean values."
+            },
+            {
+                "fitness": 3047222.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf(\"%d\\n\", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Inline small functions to reduce the function call overhead and improve performance."
+            },
+            {
+                "fitness": 3058309.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n        vector<int> results; // Vector to store results\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            results.push_back(sum * 2); // Store result\n        }\n\n        for (int res : results)\n            printf(\"%d\\n\", res); // Print all results at once\n    }\n    return 0;\n}\n",
+                "strategy": "Reduce the number of times `printf` is called by storing results in a vector and printing them all at once."
+            },
+            {
+                "fitness": 3057144.5,
+                "new_code": "#include <cstdio>\n#include <vector>\n#include <numeric> // Include for std::accumulate\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            vector<int> temp(n); // Temporary vector for accumulation\n            rep(j, n)\n                temp[j] = nums[j] & nums[(j+i)%n];\n\n            int sum = accumulate(temp.begin(), temp.end(), 0); // Use accumulate for summation\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Utilize `std::accumulate` to simplify and optimize the summation process."
+            },
+            {
+                "fitness": 3047223.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf(\"%d\\n\", totalSum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Change the main loop to utilize a single loop for calculating the sums, thereby minimizing nested loops."
+            },
+            {
+                "fitness": 3047383.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            int sum = 0;\n            reep(j, 0, n) {\n                int index = (j + i) % n;\n                if (nums[j] & nums[index])\n                    sum++;\n            }\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "Use a single loop to calculate the sum while also checking conditions within the loop to reduce overhead."
+            },
+            {
+                "fitness": 3054394.5,
+                "new_code": "#include <vector>\n#include <algorithm>\n#include <string>\n#include <map>\n#include <set>\n#include <queue>\n#include <cstring>\n#include <deque>\n#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\nint main()\n{\n    int n;\n    while(scanf(\"%d\", &n), n){\n        vi nums(n, 0);\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n        reep(i, 1, (n+1)/2){\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "No mutations are performed to maintain the original structure and logic of the code, ensuring stability in the current implementation."
+            },
+            {
+                "fitness": 3054574.0,
+                "new_code": "#include <vector>\n#include <algorithm>\n#include <string>\n#include <map>\n#include <set>\n#include <queue>\n#include <cstring>\n#include <deque>\n#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\nint main() {\n    int n;\n    while(scanf(\"%d\", &n), n) {\n        vi nums(n, 0);\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf(\"%d\\n\", sum * 2);\n        }\n    }\n    return 0;\n}\n",
+                "strategy": "No mutations were applied to maintain the original code structure and logic, as the goal is to generate 0 mutations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include <vector>\n\n#include <algorithm>\n\n#include <string>\n\n#include <map>\n\n#include <set>\n\n#include <queue>\n\n#include <cstring>\n\n#include <deque>\n\n#include <cstdio>\n\n#include <cmath>\n\n\n\nusing namespace std;\n\n\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\n#define rep(i,n) reep(i, 0, n)\n\n\n\ntypedef vector<int> vi;\n\ntypedef vector<vi> vvi;\n\ntypedef pair<int,int> pii;\n\n\n\nint main()\n\n{\n\n\tint n;\n\n\twhile(scanf(\"%d\", &n), n){\n\n\t\tvi nums(n, 0);\n\n\t\treep(i, 1, n)\n\n\t\t\tnums[(i*i)%n] |= 1;\n\n\t\treep(i, 1, (n+1)/2){\n\n\t\t\tint sum = 0;\n\n\t\t\trep(j, n)\n\n\t\t\t\tsum += nums[j] & nums[(j+i)%n];\n\n\t\t\tprintf(\"%d\\n\", sum * 2);\n\n\t\t}\n\n\t}\n\n\n\n\treturn 0;\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3054393.5
+        ]
+    }
+}

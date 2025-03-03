@@ -1,0 +1,421 @@
+2025-02-25 14:37:59,786	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 323268341954266
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0009
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-25 14:37:59,787	[DEBUG]	
+2025-02-25 14:37:59,787	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-25 14:37:59,787	[INFO]	~~~~ WARMUP ~~~~
+2025-02-25 14:38:01,467	[DEBUG]	EXEC>  SUCCESS 3101739.5
+2025-02-25 14:38:01,467	[INFO]	WARM    SUCCESS               3101739.50 (--) [0 edit(s)]  
+2025-02-25 14:38:02,682	[DEBUG]	EXEC>  SUCCESS 3101739.5
+2025-02-25 14:38:02,682	[INFO]	WARM    SUCCESS               3101739.50 (--) [0 edit(s)]  
+2025-02-25 14:38:03,959	[DEBUG]	EXEC>  SUCCESS 3101828.0
+2025-02-25 14:38:03,960	[INFO]	WARM    SUCCESS               3101828.00 (--) [0 edit(s)]  
+2025-02-25 14:38:05,210	[DEBUG]	EXEC>  SUCCESS 3101829.5
+2025-02-25 14:38:05,211	[INFO]	WARM    SUCCESS               3101829.50 (--) [0 edit(s)]  
+2025-02-25 14:38:06,497	[DEBUG]	EXEC>  SUCCESS 3101740.0
+2025-02-25 14:38:06,497	[INFO]	WARM    SUCCESS               3101740.00 (--) [0 edit(s)]  
+2025-02-25 14:38:06,498	[INFO]	REF     SUCCESS               3101740.00 (--) [0 edit(s)]  
+2025-02-25 14:38:06,498	[INFO]	
+2025-02-25 14:38:06,498	[INFO]	~~~~ START ~~~~
+2025-02-25 14:38:24,026	[DEBUG]	EXEC>  SUCCESS 3098097.0
+2025-02-25 14:38:24,026	[INFO]	0-1     SUCCESS              *3098097.00 (99.88%) [1 edit(s)]  
+2025-02-25 14:38:24,026	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+
+2025-02-25 14:38:26,259	[DEBUG]	EXEC>  SUCCESS 3101830.0
+2025-02-25 14:38:26,259	[INFO]	0-2     SUCCESS               3101830.00 (100.00%) [1 edit(s)]  
+2025-02-25 14:38:26,259	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tcin >> T;\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:28,489	[DEBUG]	EXEC>  SUCCESS 3101739.0
+2025-02-25 14:38:28,489	[INFO]	0-3     SUCCESS               3101739.00 (100.00%) [1 edit(s)]  
+2025-02-25 14:38:28,489	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tcin >> T;\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:30,705	[DEBUG]	EXEC>  SUCCESS 3098277.5
+2025-02-25 14:38:30,705	[INFO]	0-4     SUCCESS               3098277.50 (99.89%) [1 edit(s)]  
+2025-02-25 14:38:30,705	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:32,904	[DEBUG]	EXEC>  SUCCESS 3101739.0
+2025-02-25 14:38:32,904	[INFO]	0-5     SUCCESS               3101739.00 (100.00%) [1 edit(s)]  
+2025-02-25 14:38:32,904	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tcin >> T;\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:35,145	[DEBUG]	EXEC>  SUCCESS 3101739.5
+2025-02-25 14:38:35,145	[INFO]	0-6     SUCCESS               3101739.50 (100.00%) [1 edit(s)]  
+2025-02-25 14:38:35,145	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tcin >> T;\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:37,384	[DEBUG]	EXEC>  SUCCESS 3098278.5
+2025-02-25 14:38:37,384	[INFO]	0-7     SUCCESS               3098278.50 (99.89%) [1 edit(s)]  
+2025-02-25 14:38:37,384	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:39,630	[DEBUG]	EXEC>  SUCCESS 3101739.0
+2025-02-25 14:38:39,631	[INFO]	0-8     SUCCESS               3101739.00 (100.00%) [1 edit(s)]  
+2025-02-25 14:38:39,631	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tcin >> T;\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:41,867	[DEBUG]	EXEC>  SUCCESS 3101829.5
+2025-02-25 14:38:41,867	[INFO]	0-9     SUCCESS               3101829.50 (100.00%) [1 edit(s)]  
+2025-02-25 14:38:41,867	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tcin >> T;\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:44,127	[DEBUG]	EXEC>  SUCCESS 3098097.5
+2025-02-25 14:38:44,127	[INFO]	0-10    SUCCESS               3098097.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:38:44,127	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:38:45,128	[INFO]	Step: 10
+2025-02-25 14:38:45,128	[INFO]	Stop Steps: 50
+2025-02-25 14:38:47,390	[DEBUG]	EXEC>  SUCCESS 3101740.0
+2025-02-25 14:38:47,390	[INFO]	REF     SUCCESS               3101740.00 (--) [0 edit(s)]  
+2025-02-25 14:38:47,390	[INFO]	Best patch: 0
+2025-02-25 14:38:48,634	[DEBUG]	EXEC>  SUCCESS 3098187.0
+2025-02-25 14:38:48,634	[INFO]	BEST    SUCCESS              *3098187.00 (99.89%) [0 edit(s)]  
+2025-02-25 14:38:48,634	[INFO]	Best patch step: 0
+2025-02-25 14:39:06,566	[INFO]	Step: 10
+2025-02-25 14:39:06,566	[INFO]	Stop Steps: 50
+2025-02-25 14:39:07,805	[DEBUG]	EXEC>  SUCCESS 3098097.5
+2025-02-25 14:39:07,805	[INFO]	1-1     SUCCESS              *3098097.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:39:07,805	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+
+2025-02-25 14:39:07,806	[INFO]	Step: 11
+2025-02-25 14:39:07,806	[INFO]	Stop Steps: 50
+2025-02-25 14:39:09,005	[DEBUG]	EXEC>  SUCCESS 3098201.5
+2025-02-25 14:39:09,005	[INFO]	1-2     SUCCESS               3098201.50 (99.89%) [1 edit(s)]  
+2025-02-25 14:39:09,005	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 9), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:39:09,005	[INFO]	Step: 12
+2025-02-25 14:39:09,005	[INFO]	Stop Steps: 50
+2025-02-25 14:39:10,849	[DEBUG]	EXEC>  SUCCESS 3098186.5
+2025-02-25 14:39:10,849	[INFO]	1-3     SUCCESS               3098186.50 (99.89%) [1 edit(s)]  
+2025-02-25 14:39:10,849	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:39:10,849	[INFO]	Step: 13
+2025-02-25 14:39:10,849	[INFO]	Stop Steps: 50
+2025-02-25 14:39:12,631	[DEBUG]	EXEC>  SUCCESS 3098097.0
+2025-02-25 14:39:12,632	[INFO]	1-4     SUCCESS              *3098097.00 (99.88%) [1 edit(s)]  
+2025-02-25 14:39:12,632	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-25 14:39:12,632	[INFO]	Step: 14
+2025-02-25 14:39:12,632	[INFO]	Stop Steps: 50
+2025-02-25 14:39:14,469	[DEBUG]	EXEC>  SUCCESS 3098097.0
+2025-02-25 14:39:14,470	[INFO]	1-5     SUCCESS               3098097.00 (99.88%) [1 edit(s)]  
+2025-02-25 14:39:14,470	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:39:14,470	[INFO]	Step: 15
+2025-02-25 14:39:14,470	[INFO]	Stop Steps: 50
+2025-02-25 14:39:16,266	[DEBUG]	EXEC>  SUCCESS 3098096.5
+2025-02-25 14:39:16,267	[INFO]	1-6     SUCCESS              *3098096.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:39:16,267	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-25 14:39:16,267	[INFO]	Step: 16
+2025-02-25 14:39:16,267	[INFO]	Stop Steps: 50
+2025-02-25 14:39:17,495	[DEBUG]	EXEC>  SUCCESS 3098187.0
+2025-02-25 14:39:17,495	[INFO]	1-7     SUCCESS               3098187.00 (99.89%) [2 edit(s)]  
+2025-02-25 14:39:17,495	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include "stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:39:17,495	[INFO]	Step: 17
+2025-02-25 14:39:17,495	[INFO]	Stop Steps: 50
+2025-02-25 14:39:18,722	[DEBUG]	EXEC>  SUCCESS 3098097.0
+2025-02-25 14:39:18,722	[INFO]	1-8     SUCCESS               3098097.00 (99.88%) [2 edit(s)]  
+2025-02-25 14:39:18,722	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 9), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:39:18,722	[INFO]	Step: 18
+2025-02-25 14:39:18,723	[INFO]	Stop Steps: 50
+2025-02-25 14:39:19,302	[INFO]	1-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-25 14:39:19,302	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 3), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        sort(a, a + 10); // Sort the array to potentially reduce the search space\n        printf("%s\\n", dfs(0, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:39:19,302	[INFO]	Step: 19
+2025-02-25 14:39:19,302	[INFO]	Stop Steps: 50
+2025-02-25 14:39:20,513	[DEBUG]	EXEC>  SUCCESS 3095046.0
+2025-02-25 14:39:20,514	[INFO]	1-10    SUCCESS              *3095046.00 (99.78%) [2 edit(s)]  
+2025-02-25 14:39:20,514	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 6), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tscanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+
+2025-02-25 14:39:20,514	[INFO]	Step: 20
+2025-02-25 14:39:20,514	[INFO]	Stop Steps: 50
+2025-02-25 14:39:21,759	[DEBUG]	EXEC>  SUCCESS 3098097.0
+2025-02-25 14:39:21,760	[INFO]	1-1     SUCCESS               3098097.00 (99.88%) [1 edit(s)]  
+2025-02-25 14:39:21,760	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include"stdc++.h"\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:39:21,760	[INFO]	Step: 21
+2025-02-25 14:39:21,760	[INFO]	Stop Steps: 50
+2025-02-25 14:39:24,007	[DEBUG]	EXEC>  SUCCESS 3101830.5
+2025-02-25 14:39:24,007	[INFO]	REF     SUCCESS               3101830.50 (--) [0 edit(s)]  
+2025-02-25 14:39:24,008	[INFO]	Best patch: 6_13
+2025-02-25 14:39:25,252	[DEBUG]	EXEC>  SUCCESS 3095046.5
+2025-02-25 14:39:25,252	[INFO]	BEST    SUCCESS              *3095046.50 (99.78%) [0 edit(s)]  
+2025-02-25 14:39:25,252	[INFO]	Best patch step: 19
+2025-02-25 14:39:57,599	[INFO]	Step: 21
+2025-02-25 14:39:57,599	[INFO]	Stop Steps: 50
+2025-02-25 14:39:58,846	[DEBUG]	EXEC>  SUCCESS 3094958.5
+2025-02-25 14:39:58,846	[INFO]	2-2     SUCCESS              *3094958.50 (99.78%) [2 edit(s)]  
+2025-02-25 14:39:58,846	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 6), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tscanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+
+2025-02-25 14:39:58,846	[INFO]	Step: 22
+2025-02-25 14:39:58,846	[INFO]	Stop Steps: 50
+2025-02-25 14:40:00,630	[DEBUG]	EXEC>  SUCCESS 3098097.5
+2025-02-25 14:40:00,630	[INFO]	2-3     SUCCESS               3098097.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:40:00,630	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:00,630	[INFO]	Step: 23
+2025-02-25 14:40:00,630	[INFO]	Stop Steps: 50
+2025-02-25 14:40:02,421	[DEBUG]	EXEC>  SUCCESS 3094956.5
+2025-02-25 14:40:02,421	[INFO]	2-4     SUCCESS              *3094956.50 (99.78%) [1 edit(s)]  
+2025-02-25 14:40:02,421	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-25 14:40:02,421	[INFO]	Step: 24
+2025-02-25 14:40:02,421	[INFO]	Stop Steps: 50
+2025-02-25 14:40:04,211	[DEBUG]	EXEC>  SUCCESS 3098187.5
+2025-02-25 14:40:04,211	[INFO]	2-5     SUCCESS               3098187.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:40:04,211	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:04,211	[INFO]	Step: 25
+2025-02-25 14:40:04,212	[INFO]	Stop Steps: 50
+2025-02-25 14:40:05,996	[DEBUG]	EXEC>  SUCCESS 3094956.5
+2025-02-25 14:40:05,996	[INFO]	2-6     SUCCESS               3094956.50 (99.78%) [1 edit(s)]  
+2025-02-25 14:40:05,996	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:05,996	[INFO]	Step: 26
+2025-02-25 14:40:05,997	[INFO]	Stop Steps: 50
+2025-02-25 14:40:07,777	[DEBUG]	EXEC>  SUCCESS 3098187.5
+2025-02-25 14:40:07,777	[INFO]	2-7     SUCCESS               3098187.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:40:07,777	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:07,777	[INFO]	Step: 27
+2025-02-25 14:40:07,777	[INFO]	Stop Steps: 50
+2025-02-25 14:40:08,909	[INFO]	2-8     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-02-25 14:40:08,909	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 6), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tscanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tscanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n\t\tprintf("%s\\n", dfs(0, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:40:08,909	[INFO]	Step: 28
+2025-02-25 14:40:08,909	[INFO]	Stop Steps: 50
+2025-02-25 14:40:10,719	[DEBUG]	EXEC>  SUCCESS 3098110.0
+2025-02-25 14:40:10,720	[INFO]	2-9     SUCCESS               3098110.00 (99.88%) [2 edit(s)]  
+2025-02-25 14:40:10,720	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:10,720	[INFO]	Step: 29
+2025-02-25 14:40:10,720	[INFO]	Stop Steps: 50
+2025-02-25 14:40:12,498	[DEBUG]	EXEC>  SUCCESS 3098103.0
+2025-02-25 14:40:12,498	[INFO]	2-10    SUCCESS               3098103.00 (99.88%) [2 edit(s)]  
+2025-02-25 14:40:12,498	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    while (x)\n    {\n        int i = __builtin_ctz(x); // Get the index of the least significant bit set\n        if (a[i] < pre) return false;\n        pre = a[i];\n        x ^= (1 << i); // Clear the least significant bit set\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:12,498	[INFO]	Step: 30
+2025-02-25 14:40:12,499	[INFO]	Stop Steps: 50
+2025-02-25 14:40:14,340	[DEBUG]	EXEC>  SUCCESS 3098411.5
+2025-02-25 14:40:14,341	[INFO]	2-1     SUCCESS               3098411.50 (99.89%) [2 edit(s)]  
+2025-02-25 14:40:14,341	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    if (a[i] > pre)\n    {\n        if (dfs(i + 1, x, a[i])) return true;\n    }\n    return dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:14,341	[INFO]	Step: 31
+2025-02-25 14:40:14,341	[INFO]	Stop Steps: 50
+2025-02-25 14:40:16,075	[INFO]	2-2     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-25 14:40:16,075	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    char buffer[100];\n    while (T--)\n    {\n        fgets(buffer, sizeof(buffer), stdin);\n        sscanf(buffer, "%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:16,076	[INFO]	Step: 32
+2025-02-25 14:40:16,076	[INFO]	Stop Steps: 50
+2025-02-25 14:40:17,871	[DEBUG]	EXEC>  SUCCESS 3110889.0
+2025-02-25 14:40:17,871	[INFO]	2-3     SUCCESS               3110889.00 (100.29%) [2 edit(s)]  
+2025-02-25 14:40:17,871	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\nunordered_map<int, bool> memo;\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    if (memo.find(x) != memo.end()) return memo[x];\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    memo[x] = temp || dfs(i + 1, x | (1 << i), pre);\n    return memo[x];\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        memo.clear();\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:17,871	[INFO]	Step: 33
+2025-02-25 14:40:17,872	[INFO]	Stop Steps: 50
+2025-02-25 14:40:19,102	[DEBUG]	EXEC>  SUCCESS 3098186.5
+2025-02-25 14:40:19,102	[INFO]	2-4     SUCCESS               3098186.50 (99.88%) [3 edit(s)]  
+2025-02-25 14:40:19,102	[DEBUG]	patch(2-4)="LineLLMMutation(('source.cpp', 9), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:19,102	[INFO]	Step: 34
+2025-02-25 14:40:19,102	[INFO]	Stop Steps: 50
+2025-02-25 14:40:20,894	[DEBUG]	EXEC>  SUCCESS 3098187.5
+2025-02-25 14:40:20,894	[INFO]	2-5     SUCCESS               3098187.50 (99.88%) [2 edit(s)]  
+2025-02-25 14:40:20,894	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 1), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:20,894	[INFO]	Step: 35
+2025-02-25 14:40:20,894	[INFO]	Stop Steps: 50
+2025-02-25 14:40:22,727	[DEBUG]	EXEC>  SUCCESS 3110152.0
+2025-02-25 14:40:22,727	[INFO]	2-6     SUCCESS               3110152.00 (100.27%) [2 edit(s)]  
+2025-02-25 14:40:22,728	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 1), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\nunordered_map<int, bool> memo;\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    if (memo.find(x) != memo.end()) {\n        return memo[x];\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    bool result = temp || dfs(i + 1, x | (1 << i), pre);\n    memo[x] = result;\n    return result;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        memo.clear();\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:22,728	[INFO]	Step: 36
+2025-02-25 14:40:22,728	[INFO]	Stop Steps: 50
+2025-02-25 14:40:24,557	[INFO]	2-7     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-25 14:40:24,558	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 1), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        sort(a, a + 10);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:24,558	[INFO]	Step: 37
+2025-02-25 14:40:24,558	[INFO]	Stop Steps: 50
+2025-02-25 14:40:26,342	[DEBUG]	EXEC>  SUCCESS 3098187.0
+2025-02-25 14:40:26,343	[INFO]	2-8     SUCCESS               3098187.00 (99.88%) [2 edit(s)]  
+2025-02-25 14:40:26,343	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 1), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:26,343	[INFO]	Step: 38
+2025-02-25 14:40:26,343	[INFO]	Stop Steps: 50
+2025-02-25 14:40:28,106	[INFO]	2-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-25 14:40:28,106	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 1), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 26), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    stack<pair<int, pair<int, int>>> st;\n    st.push({i, {x, pre}});\n    while (!st.empty()) {\n        auto [i, p] = st.top();\n        st.pop();\n        if (i == 10) {\n            return check(x);\n        }\n        if (a[i] > p.second) st.push({i + 1, {p.first, a[i]}});\n        st.push({i + 1, {p.first | (1 << i), p.second}});\n    }\n    return false;\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:28,106	[INFO]	Step: 39
+2025-02-25 14:40:28,106	[INFO]	Stop Steps: 50
+2025-02-25 14:40:29,301	[DEBUG]	EXEC>  SUCCESS 3098276.0
+2025-02-25 14:40:29,302	[INFO]	2-10    SUCCESS               3098276.00 (99.89%) [1 edit(s)]  
+2025-02-25 14:40:29,302	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 27), '#include"stdc++.h"\n\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}')"
+2025-02-25 14:40:29,302	[INFO]	Step: 40
+2025-02-25 14:40:29,302	[INFO]	Stop Steps: 50
+2025-02-25 14:40:31,564	[DEBUG]	EXEC>  SUCCESS 3101739.0
+2025-02-25 14:40:31,564	[INFO]	REF     SUCCESS               3101739.00 (--) [0 edit(s)]  
+2025-02-25 14:40:31,564	[INFO]	Best patch: 4
+2025-02-25 14:40:33,433	[DEBUG]	EXEC>  SUCCESS 3095046.5
+2025-02-25 14:40:33,433	[INFO]	BEST    SUCCESS              *3095046.50 (99.78%) [0 edit(s)]  
+2025-02-25 14:40:33,434	[INFO]	Best patch step: 23
+2025-02-25 14:40:52,407	[INFO]	Step: 40
+2025-02-25 14:40:52,407	[INFO]	Stop Steps: 50
+2025-02-25 14:40:54,196	[DEBUG]	EXEC>  SUCCESS 3094955.5
+2025-02-25 14:40:54,197	[INFO]	3-1     SUCCESS              *3094955.50 (99.78%) [1 edit(s)]  
+2025-02-25 14:40:54,197	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 4), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-25 14:40:54,197	[INFO]	Step: 41
+2025-02-25 14:40:54,197	[INFO]	Stop Steps: 50
+2025-02-25 14:40:55,961	[DEBUG]	EXEC>  SUCCESS 3094955.5
+2025-02-25 14:40:55,961	[INFO]	3-2     SUCCESS               3094955.50 (99.78%) [1 edit(s)]  
+2025-02-25 14:40:55,961	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 6), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:55,961	[INFO]	Step: 42
+2025-02-25 14:40:55,962	[INFO]	Stop Steps: 50
+2025-02-25 14:40:57,750	[DEBUG]	EXEC>  SUCCESS 3098096.5
+2025-02-25 14:40:57,750	[INFO]	3-3     SUCCESS               3098096.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:40:57,750	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 8), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:57,751	[INFO]	Step: 43
+2025-02-25 14:40:57,751	[INFO]	Stop Steps: 50
+2025-02-25 14:40:58,985	[DEBUG]	EXEC>  SUCCESS 3095055.5
+2025-02-25 14:40:58,986	[INFO]	3-4     SUCCESS               3095055.50 (99.78%) [1 edit(s)]  
+2025-02-25 14:40:58,986	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 9), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:40:58,986	[INFO]	Step: 44
+2025-02-25 14:40:58,986	[INFO]	Stop Steps: 50
+2025-02-25 14:41:00,777	[DEBUG]	EXEC>  SUCCESS 3098097.5
+2025-02-25 14:41:00,777	[INFO]	3-5     SUCCESS               3098097.50 (99.88%) [1 edit(s)]  
+2025-02-25 14:41:00,777	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 10), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:41:00,777	[INFO]	Step: 45
+2025-02-25 14:41:00,778	[INFO]	Stop Steps: 50
+2025-02-25 14:41:02,553	[DEBUG]	EXEC>  SUCCESS 3095137.0
+2025-02-25 14:41:02,553	[INFO]	3-6     SUCCESS               3095137.00 (99.79%) [1 edit(s)]  
+2025-02-25 14:41:02,553	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 11), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:41:02,553	[INFO]	Step: 46
+2025-02-25 14:41:02,553	[INFO]	Stop Steps: 50
+2025-02-25 14:41:04,350	[DEBUG]	EXEC>  SUCCESS 3095136.5
+2025-02-25 14:41:04,350	[INFO]	3-7     SUCCESS               3095136.50 (99.79%) [2 edit(s)]  
+2025-02-25 14:41:04,350	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 4), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 28), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:41:04,350	[INFO]	Step: 47
+2025-02-25 14:41:04,350	[INFO]	Stop Steps: 50
+2025-02-25 14:41:06,135	[DEBUG]	EXEC>  SUCCESS 3095046.0
+2025-02-25 14:41:06,136	[INFO]	3-8     SUCCESS               3095046.00 (99.78%) [2 edit(s)]  
+2025-02-25 14:41:06,136	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 6), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 29), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:41:06,136	[INFO]	Step: 48
+2025-02-25 14:41:06,136	[INFO]	Stop Steps: 50
+2025-02-25 14:41:06,718	[DEBUG]	EXEC>  SUCCESS 3051690.5
+2025-02-25 14:41:06,719	[INFO]	3-9     SUCCESS              *3051690.50 (98.39%) [3 edit(s)]  
+2025-02-25 14:41:06,719	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 6), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tscanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') | LineLLMMutation(('source.cpp', 30), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+
+2025-02-25 14:41:06,719	[INFO]	Step: 49
+2025-02-25 14:41:06,719	[INFO]	Stop Steps: 50
+2025-02-25 14:41:08,509	[DEBUG]	EXEC>  SUCCESS 3098096.5
+2025-02-25 14:41:08,509	[INFO]	3-10    SUCCESS               3098096.50 (99.88%) [2 edit(s)]  
+2025-02-25 14:41:08,509	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 3), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 31), '#include <bits/stdc++.h>\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n    int pre = 0;\n    for (int i = 0; i < 10; i++) if (x & (1 << i))\n    {\n        if (a[i] < pre) return false;\n        pre = a[i];\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n    if (i == 10)\n    {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n    int T;\n    scanf("%d", &T);\n    while (T--)\n    {\n        for (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')"
+2025-02-25 14:41:08,509	[INFO]	Step: 50
+2025-02-25 14:41:08,509	[INFO]	Stop Steps: 50
+2025-02-25 14:41:08,510	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-25 14:41:08,510	[INFO]	Step: 50
+2025-02-25 14:41:08,510	[INFO]	Stop Steps: 50
+2025-02-25 14:41:15,027	[INFO]	~~~~ END ~~~~
+2025-02-25 14:41:15,027	[INFO]	Best patch step: 48
+2025-02-25 14:41:15,028	[INFO]	
+2025-02-25 14:41:15,028	[INFO]	==== REPORT ====
+2025-02-25 14:41:15,028	[INFO]	Termination: step budget
+2025-02-25 14:41:15,028	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0009_1740494279.log
+2025-02-25 14:41:15,028	[INFO]	Patch file: _magpie_logs/0009_1740494279.patch
+2025-02-25 14:41:15,028	[INFO]	Diff file: _magpie_logs/0009_1740494279.diff
+2025-02-25 14:41:15,028	[INFO]	Reference fitness: 3101739.00
+2025-02-25 14:41:15,028	[INFO]	Best fitness: 3051690.50
+2025-02-25 14:41:15,028	[INFO]	
+2025-02-25 14:41:15,029	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 6), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tfor (int i = 0; i < 10; i++) scanf("%d", &a[i]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') + LineLLMMutation(('source.cpp', 13), '#include"stdc++.h"\nusing namespace std;\n\nint a[20];\n\nbool check(int x)\n{\n\tint pre = 0;\n\tfor (int i = 0; i < 10; i++) if (x & (1 << i))\n\t{\n\t\tif (a[i] < pre) return false;\n\t\tpre = a[i];\n\t}\n\treturn true;\n}\n\nbool dfs(int i, int x, int pre)\n{\n\tif (i == 10)\n\t{\n\t\treturn check(x);\n\t}\n\tbool temp = false;\n\tif (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n\treturn temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main()\n{\n\tint T;\n\tscanf("%d", &T);\n\twhile (T--)\n\t{\n\t\tscanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n\t\tprintf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n\t}\n\treturn 0;\n}') + LineLLMMutation(('source.cpp', 30), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nint a[20];\n\nbool check(int x) {\n    int pre = 0;\n    for (int i = 0; i < 10; i++) {\n        if (x & (1 << i)) {\n            if (a[i] < pre) return false;\n            pre = a[i];\n        }\n    }\n    return true;\n}\n\nbool dfs(int i, int x, int pre) {\n    if (i == 10) {\n        return check(x);\n    }\n    bool temp = false;\n    if (a[i] > pre) temp = dfs(i + 1, x, a[i]);\n    return temp || dfs(i + 1, x | (1 << i), pre);\n}\n\nint main() {\n    int T;\n    scanf("%d", &T);\n    while (T--) {\n        scanf("%d %d %d %d %d %d %d %d %d %d", &a[0], &a[1], &a[2], &a[3], &a[4], &a[5], &a[6], &a[7], &a[8], &a[9]);\n        printf("%s\\n", dfs(1, 0, a[0]) ? "YES" : "NO");\n    }\n    return 0;\n}')
+2025-02-25 14:41:15,029	[INFO]	
+2025-02-25 14:41:15,029	[INFO]	==== DIFF ====
+

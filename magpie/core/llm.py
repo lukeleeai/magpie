@@ -1,9 +1,10 @@
 from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain.prompts import ChatPromptTemplate
 import os
 import re
 import textwrap
-
+import time
 
 class LLMBase:
     def __init__(self):
@@ -14,14 +15,21 @@ class LLMBase:
     def llm(self):
         # Lazy load the LLM to avoid deepcopy/pickle errors with thread locks
         if self._llm is None:
-            self._llm = ChatOpenAI(
-                # model="gpt-4o-mini",
-                model="gpt-4o",
-                # model="ft:gpt-4o-mini-2024-07-18:prompt-infection::Au7BGrZS",  # PIE-finetuned
+            # Ues Mistral
+            self._llm = ChatMistralAI(
+                model="codestral-latest",
                 temperature=0.7,
-                openai_api_key=os.getenv("OPENAI_API_KEY"),
-                openai_organization=os.getenv("OPENAI_ORG"),
+                mistralai_api_key=os.getenv("MISTRAL_API_KEY"),
             )
+
+            # self._llm = ChatOpenAI(
+            #     # model="gpt-4o-mini",
+            #     model="gpt-4o",
+            #     # model="ft:gpt-4o-mini-2024-07-18:prompt-infection::Au7BGrZS",  # PIE-finetuned
+            #     temperature=0.7,
+            #     openai_api_key=os.getenv("OPENAI_API_KEY"),
+            #     openai_organization=os.getenv("OPENAI_ORG"),
+            # )
         return self._llm
 
     def extract_strategies(self, text: str) -> list:
@@ -150,8 +158,8 @@ class LLMCrossover(LLMBase):
             Now, here are the parent codes with their fitness scores:
             {codes_and_fitnesses}
 
-            Return the best {num_offsprings} crossovers.
-            Strictly follow the output format (e.g. strategy: ..., code: ...):
+            Return the best {num_offsprings} crossovers. We highly want diverse crossovers.
+            Strictly follow the output format (e.g. strategy: ..., code: ...)  (dont use ** to wrap the strategy or code):
             """
         )
     )
@@ -302,8 +310,8 @@ class LLMMutation(LLMBase):
             {code}
             Fitness score: {fitness}
 
-            Return the best {num_offsprings} mutations.
-            Strictly follow the output format (e.g. strategy: ..., code: ...):
+            Return the best {num_offsprings} mutations. We highly want diverse mutations.
+            Strictly follow the output format (e.g. strategy: ..., code: ...) (dont use ** to wrap the strategy or code):
             """
         )
     )
@@ -317,6 +325,7 @@ class LLMMutation(LLMBase):
     ) -> str:
         max_attempts = 3
         attempt = 0
+        num_offsprings = max(1, num_offsprings)
 
         while attempt < max_attempts:
             attempt += 1
@@ -325,7 +334,12 @@ class LLMMutation(LLMBase):
                 fitness=target_fitness,
                 num_offsprings=num_offsprings,
             )
-            response = self.llm.invoke(messages)
+            try:
+                response = self.llm.invoke(messages)
+            except Exception as e:
+                print("Error: ", e)
+                time.sleep(1)
+                continue
 
             print(f"Attempt {attempt}: Response: ", response.content)
 
@@ -335,6 +349,7 @@ class LLMMutation(LLMBase):
             if strategies and codes and len(strategies) == len(codes):
                 return strategies, codes
 
+            print("Num offsprings: ", num_offsprings)
             print("Mismatch or empty strategies/codes, retrying...")
 
         raise ValueError(
@@ -389,10 +404,7 @@ class LLMTestAugmentation(LLMBase):
             - Analyze the computational complexity of the source code
             - Modify the numeric values or strings in the test input to increase execution time
             - Keep the same number of input lines and maintain input format validity
-            - Target ~10x longer execution time through algorithmic complexity, not repetition
             - Ensure the modified input remains valid for the source code
-
-            Example: If the code has O(N²) complexity and processes numbers, increasing the magnitude of those numbers (where appropriate) will increase execution time more effectively than duplicating test cases.
 
             Context:
             The test will be run using:
@@ -404,8 +416,12 @@ class LLMTestAugmentation(LLMBase):
             Current test input (test_input.txt):
             {test_input}
 
-            Generate 10 lines of test input.
+            Generate 3 lines of test input that will slow down the code so that it at least takes 1 second to run (but less than 3 seconds).
             Please provide the modified test input wrapped in triple backticks (```).
+            For example,
+            ```
+            harder test cases here
+            ```
             """
         )
     )
@@ -418,9 +434,16 @@ class LLMTestAugmentation(LLMBase):
             )
             response = self.llm.invoke(messages)
 
+            # print("Response: ", response.content)
+
             augmented_test_input = self.extract_test_input(response.content)
+
+            # print("Augmented test input: ", augmented_test_input)
             if augmented_test_input:
                 return augmented_test_input
+
+            print("Failed to generate a parsable test input")
+            print("Model response: ", response.content)
 
         raise ValueError("Failed to augment the test input after 3 attempts.")
 

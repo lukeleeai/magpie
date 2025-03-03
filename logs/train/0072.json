@@ -1,0 +1,234 @@
+{
+    "(13)": {
+        "children": [
+            {
+                "fitness": 3126268.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <set>\nusing namespace std;\n\nvector<set<int>> g(26);\nbool visit[26];\n\nvoid dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) {\n            dfs(neighbor);\n        }\n    }\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && !g[i].empty()) {\n            dfs(i);\n            res++;\n        }\n    }\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear();\n        vector<int> pre(26, 0), suf(26, 0);\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            int i;\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Focus on the depth-first search (DFS) implementation to reduce unnecessary recursive calls and improve efficiency by avoiding checking visited nodes repeatedly."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <vector>\n#include <set>\nusing namespace std;\n\nvector<set<int>> g(26);\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear();\n        vector<int> pre(26, 0), suf(26, 0);\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            int i;\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3126448.5
+        ]
+    },
+    "(18)": {
+        "children": [
+            {
+                "fitness": 3175159.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <cstring>\nusing namespace std;\n\nvector<bool> visit(26, false);\nvector<vector<bool>> g(26, vector<bool>(26, false));\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++) {\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && dfs(i)) res++;\n    }\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s; // Use std::string for dynamic input\n\n    while (cin >> n && n) {\n        visit.assign(26, false); // Reset visit array\n        vector<int> pre(26, 0), suf(26, 0); // Use vector for dynamic size\n        g.assign(26, vector<bool>(26, false)); // Reset graph\n\n        for (int i = 0; i < n; i++) {\n            cin >> s; // Use std::cin for input\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) cout << \"NG\\n\";\n        else {\n            bool balanced = true;\n            for (int i = 0; i < 26; i++) {\n                if (pre[i] != suf[i]) {\n                    balanced = false;\n                    break;\n                }\n            }\n            cout << (balanced ? \"OK\\n\" : \"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Focus on memory management and input handling. The original code uses a character array for input, which can be replaced with a more efficient approach using `std::string`. This reduces the overhead of managing a fixed-size buffer and improves readability. Additionally, using `std::vector` for dynamic resizing of the graph could optimize memory usage and management."
+            },
+            {
+                "fitness": 3060426.5,
+                "new_code": "#include <cstdio>\n#include <cstring>\n#include <vector>\nusing namespace std;\n\nvector<bool> visit(26);\nbool g[26][26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++) {\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && dfs(i)) res++;\n    }\n    return res;\n}\n\nint main() {\n    int i, n, pre[26], suf[26], h, t;\n    char s[100]; // buffer for input strings\n\n    while (scanf(\"%d\", &n) && n) {\n        fill(visit.begin(), visit.end(), false);\n        memset(pre, 0, sizeof(pre));\n        memset(suf, 0, sizeof(suf));\n        memset(g, false, sizeof(g));\n\n        for (i = 0; i < n; i++) {\n            scanf(\"%s\", s);\n            h = s[0] - 'a', t = s[(int)strlen(s) - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Focus on the use of `bool visit[26]` which is used to track visited nodes in depth-first search (DFS). This array can be replaced with a more efficient `std::vector<bool>` to reduce memory overhead and improve cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "18"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nbool visit[26], g[26][26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++) {\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && dfs(i)) res++;\n    }\n    return res;\n}\n\nint main() {\n    int i, n, pre[26], suf[26], h, t;\n    char s[100]; // buffer for input strings\n\n    while (scanf(\"%d\", &n) && n) {\n        memset(visit, false, sizeof(visit));\n        memset(pre, 0, sizeof(pre));\n        memset(suf, 0, sizeof(suf));\n        memset(g, false, sizeof(g));\n\n        for (i = 0; i < n; i++) {\n            scanf(\"%s\", s);\n            h = s[0] - 'a', t = s[(int)strlen(s) - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3052263.5
+        ]
+    },
+    "(18x3x4x13)": {
+        "children": [
+            {
+                "fitness": 3125537.0,
+                "new_code": "#include <iostream>\n#include <array>\n#include <set>\nusing namespace std;\n\narray<set<int>, 26> g; // Using set for dynamic graph representation\narray<bool, 26> visit;\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Merge the DFS traversal logic from Parent 2 (using `array` for graph representation) with the clearer `graph_num` function from Parent 4 (using `set` for graph representation)."
+            },
+            {
+                "fitness": 3125257.0,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <set>\nusing namespace std;\n\nvector<set<int>> g(26);\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear();\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Combine input handling from Parent 3 (using `string` for input) with the optimal graph representation and DFS from Parent 4 (using `vector` and `set`)."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "18",
+            "3",
+            "4",
+            "13"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nbool visit[26], g[26][26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++) {\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && dfs(i)) res++;\n    }\n    return res;\n}\n\nint main() {\n    int i, n, pre[26], suf[26], h, t;\n    char s[100]; // buffer for input strings\n\n    while (scanf(\"%d\", &n) && n) {\n        memset(visit, false, sizeof(visit));\n        memset(pre, 0, sizeof(pre));\n        memset(suf, 0, sizeof(suf));\n        memset(g, false, sizeof(g));\n\n        for (i = 0; i < n; i++) {\n            scanf(\"%s\", s);\n            h = s[0] - 'a', t = s[(int)strlen(s) - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+            "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<bool, 26> visit;\narray<array<bool, 26>, 26> g;\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        for (int i = 0; i < 26; i++)\n            for (int j = 0; j < 26; j++) g[i][j] = false;\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            bool ok = true;\n            for (int i = 0; i < 26; i++) if (g[i][0] != g[0][i]) ok = false;\n            if (ok) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+            "#include <iostream>\n#include <array>\n#include <vector>\n#include <set>\nusing namespace std;\n\narray<set<int>, 26> g; // Using set for dynamic graph representation\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <set>\nusing namespace std;\n\nvector<set<int>> g(26);\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear();\n        vector<int> pre(26, 0), suf(26, 0);\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            int i;\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3052353.5,
+            3123864.5,
+            3125538.0,
+            3126448.5
+        ]
+    },
+    "(18x4_21x23x3)": {
+        "children": [
+            {
+                "fitness": 3119002.5,
+                "new_code": "#include <iostream>\n#include <array>\n#include <vector>\nusing namespace std;\n\narray<vector<int>, 26> g; // Using vector for better performance\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n    \n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].push_back(t); // Use push_back for better performance\n            g[t].push_back(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Combine the graph construction logic from Parent 2 with the DFS implementation from Parent 1 to enhance readability and performance."
+            },
+            {
+                "fitness": 3123934.5,
+                "new_code": "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<bool, 26> visit;\narray<array<bool, 26>, 26> g;\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        g.fill({}); // Clear graph using fill\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Merge the DFS logic from Parent 3 with the array initialization strategy from Parent 4, ensuring clean initialization and clarity."
+            },
+            {
+                "fitness": 3123933.5,
+                "new_code": "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<array<bool, 26>, 26> g;\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        g.fill({}); // Clear graph using fill\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = true;\n            g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Incorporate the efficient input handling from Parent 1 with the performance-oriented structure from Parent 2, using `array` for graph representation."
+            },
+            {
+                "fitness": 3124024.5,
+                "new_code": "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<bool, 26> visit;\narray<array<bool, 26>, 26> g;\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        g.fill({}); // Clear graph using fill\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = g[t][h] = true; // Efficient edge representation\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Combine the clearer input handling from Parent 4 with the efficient DFS from Parent 1 while retaining the use of `array` for tracking visited nodes."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "18",
+            "4_21",
+            "23",
+            "3"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nbool visit[26], g[26][26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++) {\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && dfs(i)) res++;\n    }\n    return res;\n}\n\nint main() {\n    int i, n, pre[26], suf[26], h, t;\n    char s[100]; // buffer for input strings\n\n    while (scanf(\"%d\", &n) && n) {\n        memset(visit, false, sizeof(visit));\n        memset(pre, 0, sizeof(pre));\n        memset(suf, 0, sizeof(suf));\n        memset(g, false, sizeof(g));\n\n        for (i = 0; i < n; i++) {\n            scanf(\"%s\", s);\n            h = s[0] - 'a', t = s[(int)strlen(s) - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+            "#include <iostream>\n#include <array>\n#include <vector>\nusing namespace std;\n\narray<vector<int>, 26> g; // Using vector for better performance\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].push_back(t); // Use push_back instead of insert\n            g[t].push_back(h); // Use push_back instead of insert\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+            "#include<iostream>\n\nusing namespace std;\n\nbool visit[26],g[26][26];\n\nbool dfs(int v){\n  visit[v] = true;\n  bool f = false;\n  for(int i=0;i<26;i++)\n    if(g[v][i]){\n      f = true;\n      if(!visit[i])dfs(i);\n    }\n  return f;\n}\n\nint graph_num(void){\n  int res = 0;\n  for(int i=0;i<26;i++)\n    if(!visit[i] && dfs(i))res++;\n  return res;\n}\n\nint main(){\n  int i,n,pre[26],suf[26],h,t;\n  string s;\n\n  while(cin>>n && n){\n    for(i=0;i<26;i++){\n      visit[i] = false;\n      pre[i] = suf[i] = 0;\n      for(int j=0;j<26;j++)g[i][j] = false;\n    }\n\n    for(i=0;i<n;i++){\n      cin >> s;\n      h = s[0]-'a', t = s[(int)s.size()-1]-'a';\n      pre[h]++;\n      suf[t]++;\n      g[h][t] = g[t][h] = true;\n    }\n\n    if(graph_num() != 1)printf(\"NG\\n\");\n    else{\n      for(i=0;i<26;i++)if(pre[i] != suf[i])break;\n      if(i==26)printf(\"OK\\n\");\n      else printf(\"NG\\n\");\n    }\n  }\n}\n",
+            "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<bool, 26> visit;\narray<array<bool, 26>, 26> g;\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        for (int i = 0; i < 26; i++)\n            for (int j = 0; j < 26; j++) g[i][j] = false;\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            bool ok = true;\n            for (int i = 0; i < 26; i++) if (g[i][0] != g[0][i]) ok = false;\n            if (ok) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3052263.5,
+            3119002.5,
+            3123740.5,
+            3123955.0
+        ]
+    },
+    "(23)": {
+        "children": [
+            {
+                "fitness": 3143728.5,
+                "new_code": "#include<iostream>\n#include<stack>\n\nusing namespace std;\n\nbool visit[26], g[26][26];\n\nbool iterative_dfs(int start) {\n    stack<int> s;\n    s.push(start);\n    visit[start] = true;\n    bool f = false;\n\n    while (!s.empty()) {\n        int v = s.top();\n        s.pop();\n        for (int i = 0; i < 26; i++) {\n            if (g[v][i]) {\n                f = true;\n                if (!visit[i]) {\n                    visit[i] = true;\n                    s.push(i);\n                }\n            }\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && iterative_dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int i, n, pre[26], suf[26], h, t;\n    string s;\n\n    while (cin >> n && n) {\n        for (i = 0; i < 26; i++) {\n            visit[i] = false;\n            pre[i] = suf[i] = 0;\n            for (int j = 0; j < 26; j++) g[i][j] = false;\n        }\n\n        for (i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[(int)s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Focus on the `dfs` function that performs depth-first search. This function can be optimized by using an iterative approach instead of recursion to avoid potential stack overflow issues and improve performance in cases of deep graphs."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "23"
+        ],
+        "parent_codes": [
+            "#include<iostream>\n\nusing namespace std;\n\nbool visit[26],g[26][26];\n\nbool dfs(int v){\n  visit[v] = true;\n  bool f = false;\n  for(int i=0;i<26;i++)\n    if(g[v][i]){\n      f = true;\n      if(!visit[i])dfs(i);\n    }\n  return f;\n}\n\nint graph_num(void){\n  int res = 0;\n  for(int i=0;i<26;i++)\n    if(!visit[i] && dfs(i))res++;\n  return res;\n}\n\nint main(){\n  int i,n,pre[26],suf[26],h,t;\n  string s;\n\n  while(cin>>n && n){\n    for(i=0;i<26;i++){\n      visit[i] = false;\n      pre[i] = suf[i] = 0;\n      for(int j=0;j<26;j++)g[i][j] = false;\n    }\n\n    for(i=0;i<n;i++){\n      cin >> s;\n      h = s[0]-'a', t = s[(int)s.size()-1]-'a';\n      pre[h]++;\n      suf[t]++;\n      g[h][t] = g[t][h] = true;\n    }\n\n    if(graph_num() != 1)printf(\"NG\\n\");\n    else{\n      for(i=0;i<26;i++)if(pre[i] != suf[i])break;\n      if(i==26)printf(\"OK\\n\");\n      else printf(\"NG\\n\");\n    }\n  }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3123740.5
+        ]
+    },
+    "(3x13)": {
+        "children": [
+            {
+                "fitness": 3125538.0,
+                "new_code": "#include <iostream>\n#include <array>\n#include <vector>\n#include <set>\nusing namespace std;\n\narray<set<int>, 26> g; // Using set for dynamic graph representation\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Combine the data structure initialization from Parent 1 with the DFS function from Parent 2 to enhance efficiency while maintaining clarity."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "3",
+            "13"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<bool, 26> visit;\narray<array<bool, 26>, 26> g;\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        for (int i = 0; i < 26; i++)\n            for (int j = 0; j < 26; j++) g[i][j] = false;\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            bool ok = true;\n            for (int i = 0; i < 26; i++) if (g[i][0] != g[0][i]) ok = false;\n            if (ok) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+            "#include <iostream>\n#include <vector>\n#include <set>\nusing namespace std;\n\nvector<set<int>> g(26);\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear();\n        vector<int> pre(26, 0), suf(26, 0);\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            int i;\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3123863.5,
+            3126538.0
+        ]
+    },
+    "(4)": {
+        "children": [
+            {
+                "fitness": 3119002.5,
+                "new_code": "#include <iostream>\n#include <array>\n#include <vector>\nusing namespace std;\n\narray<vector<int>, 26> g; // Using vector for better performance\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].push_back(t); // Use push_back instead of insert\n            g[t].push_back(h); // Use push_back instead of insert\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Focus on the graph representation and traversal efficiency by replacing `set` with `vector` for adjacency lists, which can improve performance due to lower overhead and better cache locality."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <array>\n#include <vector>\n#include <set>\nusing namespace std;\n\narray<set<int>, 26> g; // Using set for dynamic graph representation\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3125538.0
+        ]
+    },
+    "(4_21)": {
+        "children": [
+            {
+                "fitness": 3119822.0,
+                "new_code": "#include <iostream>\n#include <array>\n#include <vector>\nusing namespace std;\n\narray<vector<int>, 26> g; // Using vector for better performance\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].resize(0); // Use resize instead of clear for potential performance improvement\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].push_back(t); // Use push_back instead of insert\n            g[t].push_back(h); // Use push_back instead of insert\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n",
+                "strategy": "Focus on the line that clears the graph for each input. Instead of using `clear()` on each vector, we can optimize memory management by using a single `resize()` call to set the size of the vectors to zero, which may improve performance by avoiding multiple allocations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "4_21"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <array>\n#include <vector>\nusing namespace std;\n\narray<vector<int>, 26> g; // Using vector for better performance\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear(); // Clear graph for each input\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h].push_back(t); // Use push_back instead of insert\n            g[t].push_back(h); // Use push_back instead of insert\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else printf(\"OK\\n\");\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3119002.5
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 3123955.0,
+                "new_code": "#include <iostream>\n#include <array>\nusing namespace std;\n\narray<bool, 26> visit;\narray<array<bool, 26>, 26> g;\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++)\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        visit.fill(false);\n        for (int i = 0; i < 26; i++)\n            for (int j = 0; j < 26; j++) g[i][j] = false;\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            bool ok = true;\n            for (int i = 0; i < 26; i++) if (g[i][0] != g[0][i]) ok = false;\n            if (ok) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Use `std::array` instead of raw arrays for better type safety and easier management."
+            },
+            {
+                "fitness": 3126448.5,
+                "new_code": "#include <iostream>\n#include <vector>\n#include <set>\nusing namespace std;\n\nvector<set<int>> g(26);\nbool visit[26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    for (int neighbor : g[v]) {\n        if (!visit[neighbor]) dfs(neighbor);\n    }\n    return !g[v].empty();\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++)\n        if (!visit[i] && dfs(i)) res++;\n    return res;\n}\n\nint main() {\n    int n, h, t;\n    string s;\n\n    while (cin >> n && n) {\n        fill_n(visit, 26, false);\n        for (int i = 0; i < 26; i++) g[i].clear();\n        vector<int> pre(26, 0), suf(26, 0);\n\n        for (int i = 0; i < n; i++) {\n            cin >> s;\n            h = s[0] - 'a', t = s[s.size() - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h].insert(t);\n            g[t].insert(h);\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            int i;\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Utilize a more efficient data structure for the graph representation by using a vector of sets instead of a 2D array, which can reduce memory usage and improve the connectivity checks."
+            },
+            {
+                "fitness": 3052354.0,
+                "new_code": "#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nbool visit[26], g[26][26];\n\nbool dfs(int v) {\n    visit[v] = true;\n    bool f = false;\n    for (int i = 0; i < 26; i++) {\n        if (g[v][i]) {\n            f = true;\n            if (!visit[i]) dfs(i);\n        }\n    }\n    return f;\n}\n\nint graph_num(void) {\n    int res = 0;\n    for (int i = 0; i < 26; i++) {\n        if (!visit[i] && dfs(i)) res++;\n    }\n    return res;\n}\n\nint main() {\n    int i, n, pre[26], suf[26], h, t;\n    char s[100]; // buffer for input strings\n\n    while (scanf(\"%d\", &n) && n) {\n        memset(visit, false, sizeof(visit));\n        memset(pre, 0, sizeof(pre));\n        memset(suf, 0, sizeof(suf));\n        memset(g, false, sizeof(g));\n\n        for (i = 0; i < n; i++) {\n            scanf(\"%s\", s);\n            h = s[0] - 'a', t = s[(int)strlen(s) - 1] - 'a';\n            pre[h]++;\n            suf[t]++;\n            g[h][t] = g[t][h] = true;\n        }\n\n        if (graph_num() != 1) printf(\"NG\\n\");\n        else {\n            for (i = 0; i < 26; i++) if (pre[i] != suf[i]) break;\n            if (i == 26) printf(\"OK\\n\");\n            else printf(\"NG\\n\");\n        }\n    }\n}\n",
+                "strategy": "Optimize input/output operations by replacing `cin` and `cout` with `scanf` and `printf`, which are generally faster for handling large inputs in competitive programming contexts."
+            },
+            {
+                "fitness": 3123740.5,
+                "new_code": "#include<iostream>\n\nusing namespace std;\n\nbool visit[26],g[26][26];\n\nbool dfs(int v){\n  visit[v] = true;\n  bool f = false;\n  for(int i=0;i<26;i++)\n    if(g[v][i]){\n      f = true;\n      if(!visit[i])dfs(i);\n    }\n  return f;\n}\n\nint graph_num(void){\n  int res = 0;\n  for(int i=0;i<26;i++)\n    if(!visit[i] && dfs(i))res++;\n  return res;\n}\n\nint main(){\n  int i,n,pre[26],suf[26],h,t;\n  string s;\n\n  while(cin>>n && n){\n    for(i=0;i<26;i++){\n      visit[i] = false;\n      pre[i] = suf[i] = 0;\n      for(int j=0;j<26;j++)g[i][j] = false;\n    }\n\n    for(i=0;i<n;i++){\n      cin >> s;\n      h = s[0]-'a', t = s[(int)s.size()-1]-'a';\n      pre[h]++;\n      suf[t]++;\n      g[h][t] = g[t][h] = true;\n    }\n\n    if(graph_num() != 1)printf(\"NG\\n\");\n    else{\n      for(i=0;i<26;i++)if(pre[i] != suf[i])break;\n      if(i==26)printf(\"OK\\n\");\n      else printf(\"NG\\n\");\n    }\n  }\n}\n",
+                "strategy": "No mutations were applied in order to maintain the original functionality and structure of the code while evaluating its performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include<iostream>\n\nusing namespace std;\n\n\n\nbool visit[26],g[26][26];\n\n\n\nbool dfs(int v){\n\n  visit[v] = true;\n\n  bool f = false;\n\n  for(int i=0;i<26;i++)\n\n    if(g[v][i]){\n\n      f = true;\n\n      if(!visit[i])dfs(i);\n\n    }\n\n  return f;\n\n}\n\n\n\nint graph_num(void){\n\n  int res = 0;\n\n  for(int i=0;i<26;i++)\n\n    if(!visit[i] && dfs(i))res++;\n\n  return res;\n\n}\n\n\n\nint main(){\n\n  int i,n,pre[26],suf[26],h,t;\n\n  string s;\n\n\n\n  while(cin>>n && n){\n\n    for(i=0;i<26;i++){\n\n      visit[i] = false;\n\n      pre[i] = suf[i] = 0;\n\n      for(int j=0;j<26;j++)g[i][j] = false;\n\n    }\n\n\n\n    for(i=0;i<n;i++){\n\n      cin >> s;\n\n      h = s[0]-'a', t = s[(int)s.size()-1]-'a';\n\n\n\n      pre[h]++;\n\n      suf[t]++;\n\n      g[h][t] = g[t][h] = true;\n\n    }\n\n\n\n    if(graph_num() != 1)printf(\"NG\\n\");\n\n    else{\n\n      for(i=0;i<26;i++)if(pre[i] != suf[i])break;\n\n\n\n      if(i==26)printf(\"OK\\n\");\n\n      else printf(\"NG\\n\");\n\n    }\n\n  }\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3123651.5
+        ]
+    }
+}

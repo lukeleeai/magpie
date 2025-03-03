@@ -1,0 +1,423 @@
+2025-02-24 15:03:12,894	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7095241261944972
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0004
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 15:03:12,895	[DEBUG]	
+2025-02-24 15:03:12,895	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 15:03:12,895	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 15:03:13,746	[DEBUG]	EXEC>  SUCCESS 11645338.5
+2025-02-24 15:03:13,747	[INFO]	WARM    SUCCESS               11645338.50 (--) [0 edit(s)]  
+2025-02-24 15:03:14,029	[DEBUG]	EXEC>  SUCCESS 11645249.0
+2025-02-24 15:03:14,029	[INFO]	WARM    SUCCESS               11645249.00 (--) [0 edit(s)]  
+2025-02-24 15:03:14,307	[DEBUG]	EXEC>  SUCCESS 11645249.5
+2025-02-24 15:03:14,308	[INFO]	WARM    SUCCESS               11645249.50 (--) [0 edit(s)]  
+2025-02-24 15:03:14,582	[DEBUG]	EXEC>  SUCCESS 11645248.0
+2025-02-24 15:03:14,582	[INFO]	WARM    SUCCESS               11645248.00 (--) [0 edit(s)]  
+2025-02-24 15:03:14,872	[DEBUG]	EXEC>  SUCCESS 11645248.5
+2025-02-24 15:03:14,873	[INFO]	WARM    SUCCESS               11645248.50 (--) [0 edit(s)]  
+2025-02-24 15:03:14,873	[INFO]	REF     SUCCESS               11645248.50 (--) [0 edit(s)]  
+2025-02-24 15:03:14,873	[INFO]	
+2025-02-24 15:03:14,873	[INFO]	~~~~ START ~~~~
+2025-02-24 15:04:06,391	[DEBUG]	EXEC>  SUCCESS 26434923.5
+2025-02-24 15:04:06,392	[INFO]	0-1     SUCCESS              +26434923.50 (227.00%) [1 edit(s)]  
+2025-02-24 15:04:06,392	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10);\n    primeNum[0] = primeNum[1] = false;\n    fill(primeNum.begin() + 2, primeNum.begin() + NUM + 10, true);\n\n    long i, ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (long j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:07,781	[DEBUG]	EXEC>  SUCCESS 26421227.0
+2025-02-24 15:04:07,781	[INFO]	0-2     SUCCESS              +26421227.00 (226.88%) [1 edit(s)]  
+2025-02-24 15:04:07,781	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:09,198	[DEBUG]	EXEC>  SUCCESS 40296709.0
+2025-02-24 15:04:09,199	[INFO]	0-3     SUCCESS               40296709.00 (346.04%) [1 edit(s)]  
+2025-02-24 15:04:09,199	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    vector<bool> primeNum(NUM + 10, true);\n    vector<long> primeCount(NUM + 10, 0);\n    \n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    for (long i = 1; i <= NUM; ++i) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        printf("%ld\\n", primeCount[n]);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:10,933	[DEBUG]	EXEC>  SUCCESS 40302732.0
+2025-02-24 15:04:10,934	[INFO]	0-4     SUCCESS               40302732.00 (346.09%) [1 edit(s)]  
+2025-02-24 15:04:10,934	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <sstream>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    vector<long> primeCount(NUM + 10, 0);\n    \n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    for (long i = 1; i <= NUM; ++i) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    vector<long> inputs;\n    long input;\n    while (scanf("%ld", &input) != EOF) {\n        inputs.push_back(input);\n    }\n\n    for (long num : inputs) {\n        printf("%ld\\n", primeCount[num]);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:12,223	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 15:04:12,223	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <array>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    array<bool, NUM + 10> primeNum{};\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i] == false) continue;\n        for (long j = i * i; j < NUM; j += i) {\n            primeNum[j] = false;\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:13,602	[DEBUG]	EXEC>  SUCCESS 26421138.0
+2025-02-24 15:04:13,603	[INFO]	0-6     SUCCESS              +26421138.00 (226.88%) [1 edit(s)]  
+2025-02-24 15:04:13,603	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:14,999	[DEBUG]	EXEC>  SUCCESS 26421133.5
+2025-02-24 15:04:15,000	[INFO]	0-7     SUCCESS              +26421133.50 (226.88%) [1 edit(s)]  
+2025-02-24 15:04:15,000	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:16,419	[DEBUG]	EXEC>  SUCCESS 40296622.0
+2025-02-24 15:04:16,419	[INFO]	0-8     SUCCESS               40296622.00 (346.03%) [1 edit(s)]  
+2025-02-24 15:04:16,419	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    vector<long> primeCount(NUM + 10, 0);\n    for (long i = 1; i <= NUM; ++i) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        printf("%ld\\n", primeCount[n]);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:17,797	[DEBUG]	EXEC>  SUCCESS 11993351.0
+2025-02-24 15:04:17,797	[INFO]	0-9     SUCCESS              +11993351.00 (102.99%) [1 edit(s)]  
+2025-02-24 15:04:17,797	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:04:19,332	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 15:04:19,333	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nvoid simpleSieve(long limit, vector<long>& primes) {\n    vector<bool> mark(limit + 1, true);\n    for (long p = 2; p * p <= limit; p++) {\n        if (mark[p]) {\n            for (long i = p * p; i <= limit; i += p) {\n                mark[i] = false;\n            }\n        }\n    }\n    for (long p = 2; p <= limit; p++) {\n        if (mark[p]) primes.push_back(p);\n    }\n}\n\nvoid segmentedSieve(long n) {\n    long limit = floor(sqrt(n)) + 1;\n    vector<long> primes;\n    simpleSieve(limit, primes);\n\n    long low = limit;\n    long high = limit * 2;\n\n    while (low < n) {\n        if (high > n) high = n;\n\n        vector<bool> mark(high - low + 1, true);\n        for (long i : primes) {\n            long minMult = max(i * i, (low + i - 1) / i * i);\n            for (long j = minMult; j < high; j += i) {\n                mark[j - low] = false;\n            }\n        }\n\n        for (long i = low; i < high; i++) {\n            if (mark[i - low]) printf("%ld\\n", i);\n        }\n\n        low += limit;\n        high += limit;\n    }\n}\n\nint main() {\n    long n;\n    while (scanf("%ld", &n) != EOF) {\n        segmentedSieve(n);\n    }\n    return 0;\n}')"
+2025-02-24 15:04:20,333	[INFO]	Step: 10
+2025-02-24 15:04:20,333	[INFO]	Stop Steps: 50
+2025-02-24 15:04:21,628	[DEBUG]	EXEC>  SUCCESS 11645339.0
+2025-02-24 15:04:21,628	[INFO]	REF     SUCCESS               11645339.00 (--) [0 edit(s)]  
+2025-02-24 15:04:21,628	[INFO]	Best patch step: None
+2025-02-24 15:05:06,680	[INFO]	Step: 10
+2025-02-24 15:05:06,680	[INFO]	Stop Steps: 50
+2025-02-24 15:05:07,071	[DEBUG]	EXEC>  SUCCESS 11993351.5
+2025-02-24 15:05:07,071	[INFO]	1-1     SUCCESS              +11993351.50 (102.99%) [1 edit(s)]  
+2025-02-24 15:05:07,071	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:07,072	[INFO]	Step: 11
+2025-02-24 15:05:07,072	[INFO]	Stop Steps: 50
+2025-02-24 15:05:07,457	[DEBUG]	EXEC>  SUCCESS 26421225.0
+2025-02-24 15:05:07,458	[INFO]	1-2     SUCCESS               26421225.00 (226.88%) [1 edit(s)]  
+2025-02-24 15:05:07,458	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:07,458	[INFO]	Step: 12
+2025-02-24 15:05:07,458	[INFO]	Stop Steps: 50
+2025-02-24 15:05:07,846	[DEBUG]	EXEC>  SUCCESS 26421023.5
+2025-02-24 15:05:07,846	[INFO]	1-3     SUCCESS               26421023.50 (226.88%) [1 edit(s)]  
+2025-02-24 15:05:07,847	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:07,847	[INFO]	Step: 13
+2025-02-24 15:05:07,847	[INFO]	Stop Steps: 50
+2025-02-24 15:05:08,255	[DEBUG]	EXEC>  SUCCESS 26421134.5
+2025-02-24 15:05:08,255	[INFO]	1-4     SUCCESS               26421134.50 (226.88%) [1 edit(s)]  
+2025-02-24 15:05:08,255	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:08,255	[INFO]	Step: 14
+2025-02-24 15:05:08,255	[INFO]	Stop Steps: 50
+2025-02-24 15:05:08,645	[DEBUG]	EXEC>  SUCCESS 26421147.0
+2025-02-24 15:05:08,645	[INFO]	1-5     SUCCESS               26421147.00 (226.88%) [1 edit(s)]  
+2025-02-24 15:05:08,645	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:08,646	[INFO]	Step: 15
+2025-02-24 15:05:08,646	[INFO]	Stop Steps: 50
+2025-02-24 15:05:09,033	[DEBUG]	EXEC>  SUCCESS 26421023.5
+2025-02-24 15:05:09,033	[INFO]	1-6     SUCCESS               26421023.50 (226.88%) [1 edit(s)]  
+2025-02-24 15:05:09,033	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:09,033	[INFO]	Step: 16
+2025-02-24 15:05:09,033	[INFO]	Stop Steps: 50
+2025-02-24 15:05:09,559	[DEBUG]	EXEC>  SUCCESS 26419068.5
+2025-02-24 15:05:09,559	[INFO]	1-7     SUCCESS               26419068.50 (226.86%) [2 edit(s)]  
+2025-02-24 15:05:09,559	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:09,559	[INFO]	Step: 17
+2025-02-24 15:05:09,559	[INFO]	Stop Steps: 50
+2025-02-24 15:05:10,029	[DEBUG]	EXEC>  SUCCESS 26410845.0
+2025-02-24 15:05:10,029	[INFO]	1-8     SUCCESS               26410845.00 (226.79%) [2 edit(s)]  
+2025-02-24 15:05:10,029	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:10,029	[INFO]	Step: 18
+2025-02-24 15:05:10,029	[INFO]	Stop Steps: 50
+2025-02-24 15:05:10,426	[DEBUG]	EXEC>  SUCCESS 26421175.5
+2025-02-24 15:05:10,427	[INFO]	1-9     SUCCESS               26421175.50 (226.88%) [2 edit(s)]  
+2025-02-24 15:05:10,427	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <vector>\n#include <omp.h>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    #pragma omp parallel for\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:10,427	[INFO]	Step: 19
+2025-02-24 15:05:10,427	[INFO]	Stop Steps: 50
+2025-02-24 15:05:10,896	[DEBUG]	EXEC>  SUCCESS 40296650.5
+2025-02-24 15:05:10,896	[INFO]	1-10    SUCCESS               40296650.50 (346.03%) [2 edit(s)]  
+2025-02-24 15:05:10,896	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    \n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Precompute the cumulative count of primes\n    vector<long> primeCount(NUM + 1, 0);\n    for (long i = 1; i <= NUM; i++) {\n        primeCount[i] = primeCount[i - 1] + (primeNum[i] ? 1 : 0);\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        printf("%ld\\n", primeCount[n]);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:05:10,896	[INFO]	Step: 20
+2025-02-24 15:05:10,896	[INFO]	Stop Steps: 50
+2025-02-24 15:05:11,177	[DEBUG]	EXEC>  SUCCESS 11645337.5
+2025-02-24 15:05:11,178	[INFO]	1-1     SUCCESS              *11645337.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:05:11,178	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 15:05:11,178	[INFO]	Step: 21
+2025-02-24 15:05:11,178	[INFO]	Stop Steps: 50
+2025-02-24 15:05:12,463	[DEBUG]	EXEC>  SUCCESS 11645430.0
+2025-02-24 15:05:12,464	[INFO]	REF     SUCCESS               11645430.00 (--) [0 edit(s)]  
+2025-02-24 15:05:12,464	[INFO]	Best patch: 14
+2025-02-24 15:05:12,750	[DEBUG]	EXEC>  SUCCESS 11645252.0
+2025-02-24 15:05:12,750	[INFO]	BEST    SUCCESS              *11645252.00 (100.00%) [0 edit(s)]  
+2025-02-24 15:05:12,750	[INFO]	Best patch step: 20
+2025-02-24 15:06:26,509	[INFO]	Step: 21
+2025-02-24 15:06:26,509	[INFO]	Stop Steps: 50
+2025-02-24 15:06:26,806	[DEBUG]	EXEC>  SUCCESS 11645338.0
+2025-02-24 15:06:26,806	[INFO]	2-2     SUCCESS              +11645338.00 (100.00%) [1 edit(s)]  
+2025-02-24 15:06:26,806	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:26,807	[INFO]	Step: 22
+2025-02-24 15:06:26,807	[INFO]	Stop Steps: 50
+2025-02-24 15:06:27,191	[DEBUG]	EXEC>  SUCCESS 11993351.0
+2025-02-24 15:06:27,191	[INFO]	2-3     SUCCESS               11993351.00 (102.99%) [1 edit(s)]  
+2025-02-24 15:06:27,191	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:27,191	[INFO]	Step: 23
+2025-02-24 15:06:27,191	[INFO]	Stop Steps: 50
+2025-02-24 15:06:27,692	[DEBUG]	EXEC>  SUCCESS 26410846.0
+2025-02-24 15:06:27,692	[INFO]	2-4     SUCCESS               26410846.00 (226.79%) [1 edit(s)]  
+2025-02-24 15:06:27,692	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <bitset>\n#include <vector>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:27,692	[INFO]	Step: 24
+2025-02-24 15:06:27,693	[INFO]	Stop Steps: 50
+2025-02-24 15:06:28,215	[DEBUG]	EXEC>  SUCCESS 26418977.5
+2025-02-24 15:06:28,215	[INFO]	2-5     SUCCESS               26418977.50 (226.86%) [1 edit(s)]  
+2025-02-24 15:06:28,215	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:28,216	[INFO]	Step: 25
+2025-02-24 15:06:28,216	[INFO]	Stop Steps: 50
+2025-02-24 15:06:28,671	[DEBUG]	EXEC>  SUCCESS 26410641.0
+2025-02-24 15:06:28,671	[INFO]	2-6     SUCCESS               26410641.00 (226.79%) [1 edit(s)]  
+2025-02-24 15:06:28,672	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:28,672	[INFO]	Step: 26
+2025-02-24 15:06:28,672	[INFO]	Stop Steps: 50
+2025-02-24 15:06:29,183	[DEBUG]	EXEC>  SUCCESS 26419174.0
+2025-02-24 15:06:29,183	[INFO]	2-7     SUCCESS               26419174.00 (226.86%) [1 edit(s)]  
+2025-02-24 15:06:29,183	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:29,183	[INFO]	Step: 27
+2025-02-24 15:06:29,183	[INFO]	Stop Steps: 50
+2025-02-24 15:06:29,490	[DEBUG]	EXEC>  SUCCESS 11646048.0
+2025-02-24 15:06:29,490	[INFO]	2-8     SUCCESS               11646048.00 (100.01%) [2 edit(s)]  
+2025-02-24 15:06:29,490	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring> // Include string.h for memset\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:29,490	[INFO]	Step: 28
+2025-02-24 15:06:29,490	[INFO]	Stop Steps: 50
+2025-02-24 15:06:29,879	[DEBUG]	EXEC>  SUCCESS 26420969.0
+2025-02-24 15:06:29,879	[INFO]	2-9     SUCCESS               26420969.00 (226.88%) [2 edit(s)]  
+2025-02-24 15:06:29,879	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Optimized Sieve of Eratosthenes\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = (n >= 2) ? 1 : 0; // Count 2 as prime if n >= 2\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:29,879	[INFO]	Step: 29
+2025-02-24 15:06:29,879	[INFO]	Stop Steps: 50
+2025-02-24 15:06:30,376	[DEBUG]	EXEC>  SUCCESS 40285863.5
+2025-02-24 15:06:30,376	[INFO]	2-10    SUCCESS               40285863.50 (345.94%) [3 edit(s)]  
+2025-02-24 15:06:30,376	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    unsigned long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        // Count primes only up to n\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%lu\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\nconst long NUM = 1000000;\n\nint main() {\n    long n;\n    unsigned long counter = 0;\n\n    // Use bitset for better performance and reduced memory usage\n    bitset<NUM + 10> primeNum;\n    primeNum.set(); // Set all bits to true\n    primeNum[0] = primeNum[1] = false; // 0 and 1 are not prime\n\n    for (long i = 2; i * i < NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Precompute a prefix sum array to count primes up to each index\n    unsigned long primeCount[NUM + 1] = {0};\n    for (long i = 1; i <= NUM; i++) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i];\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        // Directly use the precomputed primeCount array to get the number of primes up to n\n        printf("%lu\\n", primeCount[n]);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:30,377	[INFO]	Step: 30
+2025-02-24 15:06:30,377	[INFO]	Stop Steps: 50
+2025-02-24 15:06:30,894	[DEBUG]	EXEC>  SUCCESS 26418979.5
+2025-02-24 15:06:30,895	[INFO]	2-1     SUCCESS               26418979.50 (226.86%) [3 edit(s)]  
+2025-02-24 15:06:30,895	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter;\n\n    // Use a vector to store prime numbers\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Implementing the Sieve of Eratosthenes\n    for (long i = 2; i <= sqrt(NUM); i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input until EOF and count primes in a single loop\n    while (scanf("%ld", &n) != EOF) {\n        counter = (n >= 2) ? 1 : 0; // Count 2 if n >= 2\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:06:30,895	[INFO]	Step: 31
+2025-02-24 15:06:30,895	[INFO]	Stop Steps: 50
+2025-02-24 15:06:31,168	[DEBUG]	EXEC>  SUCCESS 11645249.5
+2025-02-24 15:06:31,169	[INFO]	2-2     SUCCESS              *11645249.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:06:31,169	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 15:06:31,169	[INFO]	Step: 32
+2025-02-24 15:06:31,169	[INFO]	Stop Steps: 50
+2025-02-24 15:06:32,457	[DEBUG]	EXEC>  SUCCESS 11645338.5
+2025-02-24 15:06:32,458	[INFO]	REF     SUCCESS               11645338.50 (--) [0 edit(s)]  
+2025-02-24 15:06:32,458	[INFO]	Best patch: 19
+2025-02-24 15:06:32,786	[DEBUG]	EXEC>  SUCCESS 11645338.5
+2025-02-24 15:06:32,786	[INFO]	BEST    SUCCESS               11645338.50 (100.00%) [0 edit(s)]  
+2025-02-24 15:06:32,786	[INFO]	Best patch step: 31
+2025-02-24 15:07:21,666	[INFO]	Step: 32
+2025-02-24 15:07:21,666	[INFO]	Stop Steps: 50
+2025-02-24 15:07:21,950	[DEBUG]	EXEC>  SUCCESS 11645338.5
+2025-02-24 15:07:21,950	[INFO]	3-3     SUCCESS              +11645338.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:07:21,950	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:21,950	[INFO]	Step: 33
+2025-02-24 15:07:21,950	[INFO]	Stop Steps: 50
+2025-02-24 15:07:22,228	[DEBUG]	EXEC>  SUCCESS 11645339.5
+2025-02-24 15:07:22,228	[INFO]	3-4     SUCCESS               11645339.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:07:22,228	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:22,228	[INFO]	Step: 34
+2025-02-24 15:07:22,228	[INFO]	Stop Steps: 50
+2025-02-24 15:07:22,498	[DEBUG]	EXEC>  SUCCESS 11645958.0
+2025-02-24 15:07:22,499	[INFO]	3-5     SUCCESS               11645958.00 (100.01%) [1 edit(s)]  
+2025-02-24 15:07:22,499	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:22,499	[INFO]	Step: 35
+2025-02-24 15:07:22,499	[INFO]	Stop Steps: 50
+2025-02-24 15:07:22,892	[DEBUG]	EXEC>  SUCCESS 26412528.0
+2025-02-24 15:07:22,892	[INFO]	3-6     SUCCESS               26412528.00 (226.81%) [1 edit(s)]  
+2025-02-24 15:07:22,892	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst long NUM = 1000000;\nvector<bool> primeNum(NUM + 1, true); // Use vector for dynamic sizing\n\nint main() {\n    long n;\n    long counter = 0;\n\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n    for (long i = 2; i * i <= NUM; i++) { // Efficient loop condition\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:22,892	[INFO]	Step: 36
+2025-02-24 15:07:22,892	[INFO]	Stop Steps: 50
+2025-02-24 15:07:23,293	[DEBUG]	EXEC>  SUCCESS 26412323.0
+2025-02-24 15:07:23,293	[INFO]	3-7     SUCCESS               26412323.00 (226.81%) [1 edit(s)]  
+2025-02-24 15:07:23,294	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst long NUM = 1000000;\nvector<bool> primeNum(NUM + 1, true);\n\nint main() {\n    long n;\n    long counter = 0;\n\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Efficient marking\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++; // Count 2 if within range\n        for (long i = 3; i <= n; i += 2) { // Skip even numbers\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:23,294	[INFO]	Step: 37
+2025-02-24 15:07:23,294	[INFO]	Stop Steps: 50
+2025-02-24 15:07:23,686	[DEBUG]	EXEC>  SUCCESS 26412414.5
+2025-02-24 15:07:23,686	[INFO]	3-8     SUCCESS               26412414.50 (226.81%) [1 edit(s)]  
+2025-02-24 15:07:23,686	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst long NUM = 1000000;\nvector<bool> primeNum(NUM + 1, true);\n\nint main() {\n    long n;\n    long counter = 0;\n\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false; // Efficient marking\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++; // Count 2 if applicable\n        for (long i = 3; i <= n; i += 2) { // Count only odd primes\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:23,686	[INFO]	Step: 38
+2025-02-24 15:07:23,686	[INFO]	Stop Steps: 50
+2025-02-24 15:07:24,069	[DEBUG]	EXEC>  SUCCESS 26421173.5
+2025-02-24 15:07:24,070	[INFO]	3-9     SUCCESS               26421173.50 (226.88%) [2 edit(s)]  
+2025-02-24 15:07:24,070	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; ++i) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:24,070	[INFO]	Step: 39
+2025-02-24 15:07:24,070	[INFO]	Stop Steps: 50
+2025-02-24 15:07:24,463	[DEBUG]	EXEC>  SUCCESS 26421266.0
+2025-02-24 15:07:24,463	[INFO]	3-10    SUCCESS               26421266.00 (226.88%) [2 edit(s)]  
+2025-02-24 15:07:24,463	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    long n;\n    const long NUM = 1000000;\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF && n <= NUM) {\n        long counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:24,463	[INFO]	Step: 40
+2025-02-24 15:07:24,463	[INFO]	Stop Steps: 50
+2025-02-24 15:07:24,854	[DEBUG]	EXEC>  SUCCESS 18528258.5
+2025-02-24 15:07:24,854	[INFO]	3-1     SUCCESS               18528258.50 (159.10%) [3 edit(s)]  
+2025-02-24 15:07:24,854	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring> // Include string.h for memset\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cstring> // Include string.h for memset\n#include <vector> // Include vector for dynamic storage\n\nusing namespace std;\n\nconst long NUM = 1000000; // Use const for compile-time constant\nbool primeNum[NUM + 1]; // Adjust size to NUM + 1 for clarity\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // More efficient initialization\n    primeNum[0] = primeNum[1] = false; // Set 0 and 1 as non-prime\n\n    for (long i = 2; i * i <= NUM; i++) { // Loop until i * i <= NUM\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    vector<long> primeCount(NUM + 1, 0); // Create a vector to hold cumulative counts of primes\n    for (long i = 1; i <= NUM; i++) {\n        primeCount[i] = primeCount[i - 1] + primeNum[i]; // Build cumulative count of primes\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        printf("%ld\\n", primeCount[n]); // Output the count of primes up to n directly\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:24,854	[INFO]	Step: 41
+2025-02-24 15:07:24,854	[INFO]	Stop Steps: 50
+2025-02-24 15:07:25,248	[DEBUG]	EXEC>  SUCCESS 26421069.0
+2025-02-24 15:07:25,248	[INFO]	3-2     SUCCESS               26421069.00 (226.88%) [2 edit(s)]  
+2025-02-24 15:07:25,248	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 10, true);\n    primeNum[0] = primeNum[1] = false;\n    for (long i = 3; i * i < NUM; i += 2) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i * 2) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        for (long i = 3; i <= n; i += 2) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n    \n    // Start marking from 2 and only iterate through odd numbers\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        if (n >= 2) counter++;\n        // Only check odd numbers for primes\n        for (long i = 3; i <= n; i += 2) {\n            if (i <= NUM && primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:25,248	[INFO]	Step: 42
+2025-02-24 15:07:25,248	[INFO]	Stop Steps: 50
+2025-02-24 15:07:25,529	[DEBUG]	EXEC>  SUCCESS 11645339.0
+2025-02-24 15:07:25,529	[INFO]	3-3     SUCCESS               11645339.00 (100.00%) [1 edit(s)]  
+2025-02-24 15:07:25,529	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:07:25,529	[INFO]	Step: 43
+2025-02-24 15:07:25,529	[INFO]	Stop Steps: 50
+2025-02-24 15:07:26,825	[DEBUG]	EXEC>  SUCCESS 11645249.0
+2025-02-24 15:07:26,825	[INFO]	REF     SUCCESS               11645249.00 (--) [0 edit(s)]  
+2025-02-24 15:07:26,825	[INFO]	Best patch: 19
+2025-02-24 15:07:27,106	[DEBUG]	EXEC>  SUCCESS 11645263.0
+2025-02-24 15:07:27,106	[INFO]	BEST    SUCCESS               11645263.00 (100.00%) [0 edit(s)]  
+2025-02-24 15:07:27,106	[INFO]	Best patch step: 31
+2025-02-24 15:08:13,882	[INFO]	Step: 43
+2025-02-24 15:08:13,882	[INFO]	Stop Steps: 50
+2025-02-24 15:08:14,165	[DEBUG]	EXEC>  SUCCESS 11645248.5
+2025-02-24 15:08:14,165	[INFO]	4-4     SUCCESS              *11645248.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:08:14,165	[DEBUG]	patch(4-4)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 15:08:14,165	[INFO]	Step: 44
+2025-02-24 15:08:14,166	[INFO]	Stop Steps: 50
+2025-02-24 15:08:14,443	[DEBUG]	EXEC>  SUCCESS 11645339.5
+2025-02-24 15:08:14,443	[INFO]	4-5     SUCCESS               11645339.50 (100.00%) [1 edit(s)]  
+2025-02-24 15:08:14,443	[DEBUG]	patch(4-5)="LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:08:14,443	[INFO]	Step: 45
+2025-02-24 15:08:14,444	[INFO]	Stop Steps: 50
+2025-02-24 15:08:14,732	[DEBUG]	EXEC>  SUCCESS 11645959.0
+2025-02-24 15:08:14,733	[INFO]	4-6     SUCCESS               11645959.00 (100.01%) [1 edit(s)]  
+2025-02-24 15:08:14,733	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:08:14,733	[INFO]	Step: 46
+2025-02-24 15:08:14,733	[INFO]	Stop Steps: 50
+2025-02-24 15:08:15,009	[DEBUG]	EXEC>  SUCCESS 16952863.0
+2025-02-24 15:08:15,010	[INFO]	4-7     SUCCESS               16952863.00 (145.58%) [1 edit(s)]  
+2025-02-24 15:08:15,010	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i < NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j < NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:08:15,010	[INFO]	Step: 47
+2025-02-24 15:08:15,010	[INFO]	Stop Steps: 50
+2025-02-24 15:08:15,294	[DEBUG]	EXEC>  SUCCESS 11645957.5
+2025-02-24 15:08:15,294	[INFO]	4-8     SUCCESS               11645957.50 (100.01%) [1 edit(s)]  
+2025-02-24 15:08:15,294	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:08:15,294	[INFO]	Step: 48
+2025-02-24 15:08:15,294	[INFO]	Stop Steps: 50
+2025-02-24 15:08:15,568	[DEBUG]	EXEC>  SUCCESS 11645959.0
+2025-02-24 15:08:15,568	[INFO]	4-9     SUCCESS               11645959.00 (100.01%) [1 edit(s)]  
+2025-02-24 15:08:15,568	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\nusing namespace std;\n\nconst long NUM = 1000000;\nbool primeNum[NUM + 1];\n\nint main() {\n    long n;\n    long counter = 0;\n\n    memset(primeNum, true, sizeof(primeNum)); // Efficient initialization\n    primeNum[0] = primeNum[1] = false;\n\n    for (long i = 2; i * i <= NUM; i++) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) { // Start marking from i*i\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:08:15,568	[INFO]	Step: 49
+2025-02-24 15:08:15,569	[INFO]	Stop Steps: 50
+2025-02-24 15:08:15,952	[DEBUG]	EXEC>  SUCCESS 26421172.0
+2025-02-24 15:08:15,952	[INFO]	4-10    SUCCESS               26421172.00 (226.88%) [2 edit(s)]  
+2025-02-24 15:08:15,952	[DEBUG]	patch(4-10)="LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    const long NUM = 1000000;\n    long n;\n    long counter = 0;\n\n    // Use vector for better memory management\n    vector<bool> primeNum(NUM + 1, true);\n    primeNum[0] = primeNum[1] = false;\n\n    // Sieve of Eratosthenes optimization\n    for (long i = 2; i * i <= NUM; ++i) {\n        if (primeNum[i]) {\n            for (long j = i * i; j <= NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n    }\n\n    // Read input and count primes\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n        for (long i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')"
+2025-02-24 15:08:15,952	[INFO]	Step: 50
+2025-02-24 15:08:15,952	[INFO]	Stop Steps: 50
+2025-02-24 15:08:15,953	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 15:08:15,953	[INFO]	Step: 50
+2025-02-24 15:08:15,953	[INFO]	Stop Steps: 50
+2025-02-24 15:08:21,552	[INFO]	~~~~ END ~~~~
+2025-02-24 15:08:21,552	[INFO]	Best patch step: 43
+2025-02-24 15:08:21,552	[INFO]	
+2025-02-24 15:08:21,553	[INFO]	==== REPORT ====
+2025-02-24 15:08:21,553	[INFO]	Termination: step budget
+2025-02-24 15:08:21,553	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0004_1740409392.log
+2025-02-24 15:08:21,553	[INFO]	Patch file: _magpie_logs/0004_1740409392.patch
+2025-02-24 15:08:21,553	[INFO]	Diff file: _magpie_logs/0004_1740409392.diff
+2025-02-24 15:08:21,553	[INFO]	Reference fitness: 11645249.00
+2025-02-24 15:08:21,553	[INFO]	Best fitness: 11645248.50
+2025-02-24 15:08:21,553	[INFO]	
+2025-02-24 15:08:21,554	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 19), '#include <cstdio>\n\nusing namespace std;\n\nint main() {\n\n    long NUM = 1000000;\n\n    long n;\n\n    long counter = 0;\n\n    bool primeNum[NUM + 10];\n\n    long i, ii, j, len = NUM + 10;\n\n    primeNum[0] = primeNum[1] = false;\n    for (i = 2; i < len; i++) primeNum[i] = true;\n\n    ii = 4;\n\n    for(i = 2; ii < NUM;) {\n        if (primeNum[i]) {\n            for (j = ii; j < NUM; j += i) {\n                primeNum[j] = false;\n            }\n        }\n\n        i++;\n        ii = i * i;\n    }\n\n    while (scanf("%ld", &n) != EOF) {\n        counter = 0;\n\n        for (i = 0; i <= n; i++) {\n            if (primeNum[i]) counter++;\n        }\n\n        printf("%ld\\n", counter);\n    }\n\n    return 0;\n}')
+2025-02-24 15:08:21,554	[INFO]	
+2025-02-24 15:08:21,554	[INFO]	==== DIFF ====
+

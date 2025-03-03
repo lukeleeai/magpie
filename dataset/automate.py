@@ -4,7 +4,7 @@ import glob
 import argparse
 import subprocess
 from magpie.core.llm import LLMTestAugmentation
-
+import pandas as pd
 
 visited_test_cases = set()
 
@@ -86,7 +86,6 @@ def create_run_file(
 
     # get source.cpp inside data_dir
     print(f"source code: {data_dir}/source.cpp")
-    print(f"test case dir: {test_case_dir}/augmented_input.0.txt")
     print("-----")
     with open(f"{data_dir}/source.cpp", "r") as f:
         source_code = f.read()
@@ -94,18 +93,24 @@ def create_run_file(
     with open(f"{data_dir}/run.sh", "w") as f:
         f.write("#!/usr/bin/env bash\n\n")
         f.write("mkdir -p perf\n")
-        print("Num runs: ", num_runs)
-        print("Max runs: ", max_runs)
-        print("Num input files: ", len(input_files))
+        # print("Num runs: ", num_runs)
+        # print("Max runs: ", max_runs)
+        # print("Num input files: ", len(input_files))
         while num_runs < max_runs:
             for input_file in input_files:
                 f.write(
-                    f"perf stat -e cycles,task-clock ./build/src_code < {to_tilde_path(input_file)} 2>&1 | "
-                    "awk '/cycles/ {cycles=$1} /elapsed/ {time=$1} END {print cycles, time}'\n"
+                    f"perf stat -e cycles,task-clock,instructions ./build/src_code < {to_tilde_path(input_file)} 2>&1 | "
+                    "awk '/cycles/ {cycles=$1} /elapsed/ {time=$1} /instructions/ {instructions=$1} END {print cycles, time, instructions}'\n"
                 )
             num_runs += 1
 
     num_runs = 0
+
+    return
+
+    # if the augemented_run.sh exists, just return
+    if os.path.exists(f"{data_dir}/augmented_run.sh"):
+        return
 
     with open(f"{data_dir}/augmented_run.sh", "w") as f:
         f.write("#!/usr/bin/env bash\n\n")
@@ -119,11 +124,7 @@ def create_run_file(
                 # create augmented input file
                 # first get the input file content
                 with open(input_file, "r") as input_f:
-                    input_content = input_f.read()
-
-                # print("Source code: ", source_code)
-
-                # print("Input content: \n", input_content)
+                    input_content = input_f.read() 
 
                 augmented_input_content = input_content
 
@@ -132,6 +133,7 @@ def create_run_file(
                     augmented_input_content = llm.augment_test(
                         source_code, input_content
                     )
+                    print("Augmented input content: ", augmented_input_content)
                 else:
                     augmented_input_content = input_content
 
@@ -267,20 +269,33 @@ def create_scenario_file(data_dir, one_shot=False):
         f.write(scenario_content)
 
 
-def create_source_cpp_file(data_dir, src_code):
+
+
+def create_cpp_file(data_dir, code, filename):
     # Replace the non-standard <bits/stdc++.h> with a custom "stdc++.h" header
     # because <bits/stdc++.h> is a GCC-specific header not available in Clang
     # or other compilers by default. The custom "stdc++.h" includes necessary
     # standard headers for cross-compiler compatibility.
-    src_code = src_code.replace("<bits/stdc++.h>", '"stdc++.h"')
-    with open(f"{data_dir}/source.cpp", "w") as f:
-        f.write(src_code)
+    code = code.replace("<bits/stdc++.h>", '"stdc++.h"')
+    with open(f"{data_dir}/{filename}", "w") as f:
+        f.write(code)
 
 
-def create_target_cpp_file(data_dir, tgt_code):
-    tgt_code = tgt_code.replace("<bits/stdc++.h>", '"stdc++.h"')
-    with open(f"{data_dir}/target.cpp", "w") as f:
-        f.write(tgt_code)
+
+# def create_source_cpp_file(data_dir, src_code):
+#     # Replace the non-standard <bits/stdc++.h> with a custom "stdc++.h" header
+#     # because <bits/stdc++.h> is a GCC-specific header not available in Clang
+#     # or other compilers by default. The custom "stdc++.h" includes necessary
+#     # standard headers for cross-compiler compatibility.
+#     src_code = src_code.replace("<bits/stdc++.h>", '"stdc++.h"')
+#     with open(f"{data_dir}/source.cpp", "w") as f:
+#         f.write(src_code)
+
+
+# def create_target_cpp_file(data_dir, tgt_code):
+#     tgt_code = tgt_code.replace("<bits/stdc++.h>", '"stdc++.h"')
+#     with open(f"{data_dir}/target.cpp", "w") as f:
+#         f.write(tgt_code)
 
 
 def copy_stdc_file(data_dir):
@@ -294,25 +309,34 @@ def generate_data(
     data,
     index,
     one_shot=False,
-    use_target_code=True,
+    use_target_code=False,
+    data_dir=None,
     dataset_name="test",
     max_runs=20,
     llm=None,
 ):
     # Create directory with padded number (e.g., 0000, 0001, etc.)
     id = f"{index:04d}"
-    if use_target_code:
-        data_dir = f"dataset/magpie_dataset/target_code/{id}"
-    else:
-        data_dir = f"dataset/magpie_dataset/{dataset_name}/{id}"
+    if data_dir == None:
+        if use_target_code:
+            data_dir = f"dataset/magpie_dataset/target_code/{id}"
+        else:
+            data_dir = f"dataset/magpie_dataset/{dataset_name}/{id}"
     print("Generating data for", data_dir)
     os.makedirs(data_dir, exist_ok=True)
 
+
     # Create all necessary files
-    if use_target_code:
-        create_target_cpp_file(data_dir, data["tgt_code"])
+    # check if data is a pd series
+    # if it is, then we need to get the code from the series
+    if isinstance(data, pd.Series):
+        create_cpp_file(data_dir, data["code"], "source.cpp")
     else:
-        create_source_cpp_file(data_dir, data["src_code"])
+        if use_target_code:
+            create_cpp_file(data_dir, data["tgt_code"], "target.cpp")
+        else:
+            create_cpp_file(data_dir, data["src_code"], "source.cpp")
+            
     copy_stdc_file(data_dir)
     make_cmake_file(data_dir)
     make_setup_file(data_dir)
@@ -326,7 +350,7 @@ def generate_dataset(
     num_data=10,
     dataset_name="test",
     one_shot=False,
-    use_target_code=True,
+    use_target_code=False,
     max_runs=20,
 ):
     samples = load_jsonl_samples(num_data, dataset_name)
@@ -337,7 +361,7 @@ def generate_dataset(
             i,
             one_shot,
             use_target_code,
-            dataset_name,
+            dataset_name=dataset_name,
             max_runs=max_runs,
             llm=llm,
         )
@@ -364,12 +388,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--max_runs",
         type=int,
-        default=20,
+        default=1,
         help="Number of runs to repeat the code execution",
     )
     parser.add_argument(
         "--use_target_code",
         action="store_true",
+        default=False,
         help="Use target code",
     )
 

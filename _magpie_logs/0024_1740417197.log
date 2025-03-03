@@ -1,0 +1,170 @@
+2025-02-24 17:13:17,393	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 58872493343988
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0024
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 17:13:17,394	[DEBUG]	
+2025-02-24 17:13:17,394	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 17:13:17,394	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 17:13:18,386	[DEBUG]	EXEC>  SUCCESS 3519188.0
+2025-02-24 17:13:18,386	[INFO]	WARM    SUCCESS               3519188.00 (--) [0 edit(s)]  
+2025-02-24 17:13:18,922	[DEBUG]	EXEC>  SUCCESS 3519195.5
+2025-02-24 17:13:18,923	[INFO]	WARM    SUCCESS               3519195.50 (--) [0 edit(s)]  
+2025-02-24 17:13:19,488	[DEBUG]	EXEC>  SUCCESS 3519287.0
+2025-02-24 17:13:19,488	[INFO]	WARM    SUCCESS               3519287.00 (--) [0 edit(s)]  
+2025-02-24 17:13:20,045	[DEBUG]	EXEC>  SUCCESS 3519199.5
+2025-02-24 17:13:20,045	[INFO]	WARM    SUCCESS               3519199.50 (--) [0 edit(s)]  
+2025-02-24 17:13:20,591	[DEBUG]	EXEC>  SUCCESS 3519278.5
+2025-02-24 17:13:20,592	[INFO]	WARM    SUCCESS               3519278.50 (--) [0 edit(s)]  
+2025-02-24 17:13:20,592	[INFO]	REF     SUCCESS               3519278.50 (--) [0 edit(s)]  
+2025-02-24 17:13:20,593	[INFO]	
+2025-02-24 17:13:20,593	[INFO]	~~~~ START ~~~~
+2025-02-24 17:15:09,918	[DEBUG]	EXEC>  SUCCESS 3550124.0
+2025-02-24 17:15:09,918	[INFO]	0-1     SUCCESS              +3550124.00 (100.88%) [1 edit(s)]  
+2025-02-24 17:15:09,918	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <stdio.h>\n#include <vector>\nusing namespace std;\n\nint ifield[1001][1001] = {0};\n\nint main() {\n    vector<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf("%c", &N);\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf("%c", &cfield[j][i]);\n                if (cfield[j][i] == \'*\') {\n                    x.push_back(j);\n                    y.push_back(i);\n                    longth.push_back(0);\n                    ifield[j][i] = 9;\n                }\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (ifield[j][i] == 0 && (i == 0 || i == n - 1 || j == 0 || j == n - 1)) {\n                    ifield[j][i] = 1;\n                    x.push_back(j);\n                    y.push_back(i);\n                    longth.push_back(1);\n                    memlongth = 1;\n                }\n            }\n        }\n\n        while (!x.empty()) {\n            for (int i = 0; i < 9; i++) {\n                if (0 <= x.front() + dx1[i] && x.front() + dx1[i] < n &&\n                    0 <= y.front() + dy1[i] && y.front() + dy1[i] < n &&\n                    ifield[x.front() + dx1[i]][y.front() + dy1[i]] == 0) {\n                    ifield[x.front() + dx1[i]][y.front() + dy1[i]] = longth.front() + 1;\n                    x.push_back(x.front() + dx1[i]);\n                    y.push_back(y.front() + dy1[i]);\n                    longth.push_back(longth.front() + 1);\n                    memlongth = longth.front() + 1;\n                }\n            }\n            x.erase(x.begin());\n            y.erase(y.begin());\n            longth.erase(longth.begin());\n        }\n\n        ans = (memlongth == 0) ? 0 : memlongth * 2 - 1;\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = 0; j < n - 1; j++) {\n                if (ifield[j][i] == memlongth) {\n                    for (int k = 0; k < 3; k++) {\n                        if (ifield[j + dx2[k]][i + dy2[k]] == memlongth);\n                        else break;\n                        if (k == 2) ans = memlongth * 2;\n                    }\n                }\n            }\n        }\n\n        printf("%d\\n", ans);\n    }\n}')"
+2025-02-24 17:15:11,428	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:15:11,428	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <stdio.h>\n#include <array>\n#include <queue>\nusing namespace std;\n\nconstexpr int MAX_SIZE = 1001;\narray<array<int, MAX_SIZE>, MAX_SIZE> ifield = {0};\n\nint main() {\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        array<array<char, 1010>, 1010> cfield = {0};\n        char N;\n\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf("%c", &N);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf("%c", &cfield[j][i]);\n                if (cfield[j][i] == \'*\') {\n                    x.push(j);\n                    y.push(i);\n                    longth.push(0);\n                    ifield[j][i] = 9;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:15:42,875	[INFO]	0-3     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:15:42,875	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <stdio.h>\n#include <queue>\nusing namespace std;\n\nint ifield[1001][1001] = {0};\n\nint main() {\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf(" %c", &N); // Note the space before %c to consume the newline character\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf(" %c", &cfield[j][i]); // Space character before %c to skip whitespace\n                if (cfield[j][i] == \'*\') {\n                    x.push(j);\n                    y.push(i);\n                    longth.push(0);\n                    ifield[j][i] = 9;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:16:14,260	[INFO]	0-4     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:16:14,260	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <stdio.h>\n#include <queue>\nusing namespace std;\n\nvoid processField(int n, int ifield[1001][1001]) {\n    queue<int> x, y, longth;\n    int memlongth = 0, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n + 1; j++) {\n            ifield[j][i] = 0;\n        }\n    }\n\n    // Rest of the processing...\n}\n\nint main() {\n    while (1) {\n        int n;\n        scanf("%d", &n);\n        if (n == 0) return 0;\n\n        int ifield[1001][1001] = {0};\n        processField(n, ifield);\n        // Further logic...\n    }\n}')"
+2025-02-24 17:16:45,741	[INFO]	0-5     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:16:45,742	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <stdio.h>\n#include <queue>\nusing namespace std;\n\nint ifield[1001][1001] = {0};\n\nint main() {\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf(" %c", &N);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf(" %c", &cfield[j][i]);\n                if (cfield[j][i] == \'*\') {\n                    x.push(j);\n                    y.push(i);\n                    longth.push(0);\n                    ifield[j][i] = 9;\n                }\n                else if (ifield[j][i] == 0 && (i == 0 || i == n - 1 || j == 0 || j == n - 1)) {\n                    ifield[j][i] = 1;\n                    x.push(j);\n                    y.push(i);\n                    longth.push(1);\n                    memlongth = 1;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:16:47,198	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 17:16:47,199	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <stdio.h>\n#include <queue>\nusing namespace std;\n\nvoid initializeField(int ifield[1001][1001], int n) {\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n + 1; j++) {\n            ifield[j][i] = 0;\n        }\n    }\n}\n\nint main() {\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf(" %c", &N);\n\n        int ifield[1001][1001] = {0};\n        initializeField(ifield, n);\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:17:18,668	[INFO]	0-7     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:17:18,668	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <stdio.h>\n#include <queue>\nusing namespace std;\n\nint ifield[1001][1001] = {0};\n\nint main() {\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf(" %c", &N);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf(" %c", &cfield[j][i]);\n                if (cfield[j][i] == \'*\') {\n                    x.push(j);\n                    y.push(i);\n                    longth.push(0);\n                    ifield[j][i] = 9;\n                } else if (ifield[j][i] == 0 && !(i && i != n - 1 && j && j != n - 1)) {\n                    ifield[j][i] = 1;\n                    x.push(j);\n                    y.push(i);\n                    longth.push(1);\n                    memlongth = 1;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:17:50,074	[INFO]	0-8     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:17:50,074	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <stdio.h>\n#include <deque>\nusing namespace std;\n\nint ifield[1001][1001] = {0};\n\nint main() {\n    deque<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf(" %c", &N);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf(" %c", &cfield[j][i]);\n                if (cfield[j][i] == \'*\') {\n                    x.push_back(j);\n                    y.push_back(i);\n                    longth.push_back(0);\n                    ifield[j][i] = 9;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:18:21,542	[INFO]	0-9     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:18:21,542	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <stdio.h>\n#include <queue>\nusing namespace std;\n\nint ifield[1001][1001] = {0};\n\nint main() {\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        memlongth = 0;\n        char cfield[1010][1010] = {0}, N;\n        scanf(" %c", &N);\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                ifield[j][i] = 0;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                scanf(" %c", &cfield[j][i]);\n                if (cfield[j][i] == \'*\') {\n                    x.push(j);\n                    y.push(i);\n                    longth.push(0);\n                    ifield[j][i] = 9;\n                } else if (ifield[j][i] == 0 && (i == 0 || i == n - 1 || j == 0 || j == n - 1)) {\n                    ifield[j][i] = 1;\n                    x.push(j);\n                    y.push(i);\n                    longth.push(1);\n                    memlongth = 1;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:18:53,105	[INFO]	0-10    TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 17:18:53,106	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <stdio.h>\n#include <vector>\n#include <queue>\nusing namespace std;\n\nint main() {\n    vector<vector<int>> ifield(1001, vector<int>(1001, 0));\n    queue<int> x, y, longth;\n    int n, memlongth, ans;\n    int dx1[9] = {-1,-1,-1,0,0,0,1,1,1}, dy1[9] = {-1,0,1,-1,0,1,-1,0,1}, dx2[3] = {1,0,1}, dy2[3] = {0,1,1};\n\n    while (1) {\n        memlongth = 0;\n        char N;\n        scanf("%d", &n);\n        if (n == 0) return 0;\n        scanf(" %c", &N);\n\n        // Reset ifield based on n\n        ifield.assign(1001, vector<int>(1001, 0));\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n + 1; j++) {\n                char c;\n                scanf(" %c", &c);\n                if (c == \'*\') {\n                    x.push(j);\n                    y.push(i);\n                    longth.push(0);\n                    ifield[j][i] = 9;\n                }\n            }\n        }\n\n        // Rest of the code remains unchanged...\n    }\n}')"
+2025-02-24 17:18:54,106	[INFO]	Step: 10
+2025-02-24 17:18:54,106	[INFO]	Stop Steps: 50
+2025-02-24 17:18:55,667	[DEBUG]	EXEC>  SUCCESS 3519189.0
+2025-02-24 17:18:55,667	[INFO]	REF     SUCCESS               3519189.00 (--) [0 edit(s)]  
+2025-02-24 17:18:55,667	[INFO]	Best patch step: None
+2025-02-24 17:22:35,139	[INFO]	~~~~ END ~~~~
+2025-02-24 17:22:35,139	[INFO]	Best patch step: None

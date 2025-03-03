@@ -1,0 +1,23 @@
+#include<stdio.h>
+
+
+
+int main()
+
+{
+
+    int n,a,b;
+
+    scanf("%d%d%d", &n,&a,&b);
+
+
+
+    if(n==1)
+
+        printf("Hello World\n");
+
+    if(n==2)
+
+        printf("%d\n", a+b);
+
+}

@@ -1,0 +1,246 @@
+2025-02-24 22:00:52,396	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7630270401513427
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0066
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 22:00:52,396	[DEBUG]	
+2025-02-24 22:00:52,396	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 22:00:52,397	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 22:00:53,436	[DEBUG]	EXEC>  SUCCESS 3140371.0
+2025-02-24 22:00:53,437	[INFO]	WARM    SUCCESS               3140371.00 (--) [0 edit(s)]  
+2025-02-24 22:00:54,038	[DEBUG]	EXEC>  SUCCESS 3140378.5
+2025-02-24 22:00:54,038	[INFO]	WARM    SUCCESS               3140378.50 (--) [0 edit(s)]  
+2025-02-24 22:00:54,655	[DEBUG]	EXEC>  SUCCESS 3140372.0
+2025-02-24 22:00:54,655	[INFO]	WARM    SUCCESS               3140372.00 (--) [0 edit(s)]  
+2025-02-24 22:00:55,268	[DEBUG]	EXEC>  SUCCESS 3140371.0
+2025-02-24 22:00:55,268	[INFO]	WARM    SUCCESS               3140371.00 (--) [0 edit(s)]  
+2025-02-24 22:00:55,880	[DEBUG]	EXEC>  SUCCESS 3140371.0
+2025-02-24 22:00:55,881	[INFO]	WARM    SUCCESS               3140371.00 (--) [0 edit(s)]  
+2025-02-24 22:00:55,881	[INFO]	REF     SUCCESS               3140371.00 (--) [0 edit(s)]  
+2025-02-24 22:00:55,881	[INFO]	
+2025-02-24 22:00:55,881	[INFO]	~~~~ START ~~~~
+2025-02-24 22:01:54,407	[DEBUG]	EXEC>  SUCCESS 3058775.0
+2025-02-24 22:01:54,407	[INFO]	0-1     SUCCESS              *3058775.00 (97.40%) [1 edit(s)]  
+2025-02-24 22:01:54,407	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n;\n\nvector<P> v;\n\nint main() {\n    int p, d1, d2;\n    while (scanf("%d", &n) && n != 0) {\n        v.clear();\n        for (int i = 0; i < n; i++) {\n            scanf("%d%d%d", &p, &d1, &d2);\n            v.push_back({p, d1 + d2});\n        }\n\n        P m = v[0];\n        for (int i = 1; i < v.size(); i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 22:01:56,021	[DEBUG]	EXEC>  SUCCESS 3138628.0
+2025-02-24 22:01:56,021	[INFO]	0-2     SUCCESS               3138628.00 (99.94%) [1 edit(s)]  
+2025-02-24 22:01:56,021	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n;\n\nvector<P> v;\n\nint main() {\n    int p, d1, d2;\n    while (cin >> n && n != 0) {\n        v.reserve(n); // Preallocate memory\n        for (int i = 0; i < n; i++) {\n            cin >> p >> d1 >> d2;\n            v.push_back({p, d1 + d2});\n        }\n\n        P m = v[0];\n        for (int i = 1; i < v.size(); i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n\n        cout << m.p << " " << m.d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:01:57,414	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-02-24 22:01:57,414	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n;\n\nvector<P> v;\n\nint main() {\n    int p, d1, d2;\n    while (cin >> n && n != 0) {\n        v.clear();\n        for (int i = 0; i < n; i++) {\n            cin >> p >> d1 >> d2;\n            v.push_back({p, d1 + d2});\n        }\n\n        auto max_elem = max_element(v.begin(), v.end());\n        cout << max_elem->p << " " << max_elem->d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:01:59,167	[DEBUG]	EXEC>  SUCCESS 3140185.0
+2025-02-24 22:01:59,167	[INFO]	0-4     SUCCESS               3140185.00 (99.99%) [1 edit(s)]  
+2025-02-24 22:01:59,167	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint n;\n\nint main() {\n    int p, d1, d2;\n    while (cin >> n && n != 0) {\n        vector<pair<int, int>> v;\n        v.reserve(n); // Preallocate memory\n        for (int i = 0; i < n; i++) {\n            cin >> p >> d1 >> d2;\n            v.emplace_back(p, d1 + d2); // Use emplace_back for efficiency\n        }\n\n        auto max_elem = max_element(v.begin(), v.end(), [](const pair<int, int>& a, const pair<int, int>& b) {\n            return a.second < b.second;\n        });\n\n        cout << max_elem->first << " " << max_elem->second << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:01,014	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 22:02:01,014	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nconst int MAXN = 10000;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        P arr[MAXN];\n        for (int i = 0; i < n; i++) {\n            cin >> arr[i].p >> arr[i].d;\n            arr[i].d += arr[i].d; // Combine d1 and d2 in a single read\n        }\n\n        P m = arr[0];\n        for (int i = 1; i < n; i++) {\n            if (m < arr[i]) {\n                m = arr[i];\n            }\n        }\n\n        cout << m.p << " " << m.d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:02,753	[DEBUG]	EXEC>  SUCCESS 3140474.5
+2025-02-24 22:02:02,753	[INFO]	0-6     SUCCESS               3140474.50 (100.00%) [1 edit(s)]  
+2025-02-24 22:02:02,753	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct P {\n    int p, d;\n};\n\nbool compare(const P &a, const P &b) {\n    return a.d < b.d;\n}\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        vector<P> v(n);\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            cin >> v[i].p >> d1 >> d2;\n            v[i].d = d1 + d2;\n        }\n\n        auto max_elem = max_element(v.begin(), v.end(), compare);\n        cout << max_elem->p << " " << max_elem->d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:04,313	[DEBUG]	EXEC>  SUCCESS 3134593.0
+2025-02-24 22:02:04,313	[INFO]	0-7     SUCCESS               3134593.00 (99.82%) [1 edit(s)]  
+2025-02-24 22:02:04,314	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        P m;\n        m.d = -1; // Initialize to a low value\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            cin >> p >> d1 >> d2;\n            int total_d = d1 + d2;\n            if (total_d > m.d) {\n                m = {p, total_d};\n            }\n        }\n        cout << m.p << " " << m.d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:06,025	[DEBUG]	EXEC>  SUCCESS 3134661.5
+2025-02-24 22:02:06,026	[INFO]	0-8     SUCCESS               3134661.50 (99.82%) [1 edit(s)]  
+2025-02-24 22:02:06,026	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 10000;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        array<int, MAXN> p, d;\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            cin >> p[i] >> d1 >> d2;\n            d[i] = d1 + d2;\n        }\n\n        int max_index = 0;\n        for (int i = 1; i < n; i++) {\n            if (d[i] > d[max_index]) {\n                max_index = i;\n            }\n        }\n\n        cout << p[max_index] << " " << d[max_index] << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:07,529	[DEBUG]	EXEC>  SUCCESS 3053875.5
+2025-02-24 22:02:07,529	[INFO]	0-9     SUCCESS              *3053875.50 (97.25%) [1 edit(s)]  
+2025-02-24 22:02:07,529	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        P m;\n        m.d = -1; // Initialize to a low value\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            scanf("%d%d%d", &p, &d1, &d2);\n            int total_d = d1 + d2;\n            if (total_d > m.d) {\n                m = {p, total_d};\n            }\n        }\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 22:02:09,261	[DEBUG]	EXEC>  SUCCESS 3138663.5
+2025-02-24 22:02:09,261	[INFO]	0-10    SUCCESS               3138663.50 (99.95%) [1 edit(s)]  
+2025-02-24 22:02:09,261	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nstruct P {\n    int p, d;\n};\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        vector<P> v(n);\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            cin >> v[i].p >> d1 >> d2;\n            v[i].d = d1 + d2; // Store sum directly\n        }\n\n        auto max_elem = max_element(v.begin(), v.end(), [](const P &a, const P &b) {\n            return a.d < b.d;\n        });\n\n        cout << max_elem->p << " " << max_elem->d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:10,262	[INFO]	Step: 10
+2025-02-24 22:02:10,262	[INFO]	Stop Steps: 50
+2025-02-24 22:02:11,888	[DEBUG]	EXEC>  SUCCESS 3140470.0
+2025-02-24 22:02:11,888	[INFO]	REF     SUCCESS               3140470.00 (--) [0 edit(s)]  
+2025-02-24 22:02:11,888	[INFO]	Best patch: 8
+2025-02-24 22:02:12,390	[DEBUG]	EXEC>  SUCCESS 3053877.0
+2025-02-24 22:02:12,391	[INFO]	BEST    SUCCESS              *3053877.00 (97.24%) [0 edit(s)]  
+2025-02-24 22:02:12,391	[INFO]	Best patch step: 8
+2025-02-24 22:02:51,041	[INFO]	Step: 10
+2025-02-24 22:02:51,041	[INFO]	Stop Steps: 50
+2025-02-24 22:02:51,542	[DEBUG]	EXEC>  SUCCESS 3053876.0
+2025-02-24 22:02:51,543	[INFO]	1-1     SUCCESS              *3053876.00 (97.24%) [1 edit(s)]  
+2025-02-24 22:02:51,543	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        P m;\n        m.d = -1; // Initialize to a low value\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            scanf("%d%d%d", &p, &d1, &d2);\n            int total_d = d1 + d2;\n            if (total_d > m.d) {\n                m = {p, total_d};\n            }\n        }\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 22:02:51,543	[INFO]	Step: 11
+2025-02-24 22:02:51,543	[INFO]	Stop Steps: 50
+2025-02-24 22:02:51,907	[DEBUG]	EXEC>  SUCCESS 3058903.0
+2025-02-24 22:02:51,907	[INFO]	1-2     SUCCESS               3058903.00 (97.40%) [1 edit(s)]  
+2025-02-24 22:02:51,907	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n;\n\nvector<P> v;\n\nint main() {\n    int p, d1, d2;\n    while (scanf("%d", &n) && n != 0) {\n        v.clear();\n        for (int i = 0; i < n; i++) {\n            scanf("%d%d%d", &p, &d1, &d2);\n            v.push_back({p, d1 + d2});\n        }\n\n        P m = v[0];\n        for (int i = 1; i < v.size(); i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:51,908	[INFO]	Step: 12
+2025-02-24 22:02:51,908	[INFO]	Stop Steps: 50
+2025-02-24 22:02:52,300	[DEBUG]	EXEC>  SUCCESS 3066915.5
+2025-02-24 22:02:52,300	[INFO]	1-3     SUCCESS               3066915.50 (97.66%) [1 edit(s)]  
+2025-02-24 22:02:52,300	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n;\n\nint main() {\n    while (scanf("%d", &n) && n != 0) {\n        vector<P> v;\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            scanf("%d%d%d", &p, &d1, &d2);\n            v.push_back({p, d1 + d2});\n        }\n\n        P m = v[0];\n        for (int i = 1; i < v.size(); i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:52,300	[INFO]	Step: 13
+2025-02-24 22:02:52,300	[INFO]	Stop Steps: 50
+2025-02-24 22:02:52,850	[DEBUG]	EXEC>  SUCCESS 3134747.0
+2025-02-24 22:02:52,850	[INFO]	1-4     SUCCESS               3134747.00 (99.82%) [1 edit(s)]  
+2025-02-24 22:02:52,850	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <array>\nusing namespace std;\n\nconst int MAXN = 10000;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        array<P, MAXN> entries;\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            cin >> entries[i].p >> d1 >> d2;\n            entries[i].d = d1 + d2;\n        }\n\n        int max_index = 0;\n        for (int i = 1; i < n; i++) {\n            if (entries[i].d > entries[max_index].d) {\n                max_index = i;\n            }\n        }\n\n        cout << entries[max_index].p << " " << entries[max_index].d << endl;\n    }\n    return 0;\n}')"
+2025-02-24 22:02:52,850	[INFO]	Step: 14
+2025-02-24 22:02:52,850	[INFO]	Stop Steps: 50
+2025-02-24 22:02:53,337	[DEBUG]	EXEC>  SUCCESS 3053931.0
+2025-02-24 22:02:53,338	[INFO]	1-5     SUCCESS               3053931.00 (97.24%) [1 edit(s)]  
+2025-02-24 22:02:53,338	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nconst int MAXN = 10000;\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        P entries[MAXN];\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            scanf("%d%d%d", &entries[i].p, &d1, &d2);\n            entries[i].d = d1 + d2;\n        }\n\n        P m = entries[0];\n        for (int i = 1; i < n; i++) {\n            if (entries[i].d > m.d) {\n                m = entries[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:53,338	[INFO]	Step: 15
+2025-02-24 22:02:53,338	[INFO]	Stop Steps: 50
+2025-02-24 22:02:53,698	[DEBUG]	EXEC>  SUCCESS 3060388.5
+2025-02-24 22:02:53,698	[INFO]	1-6     SUCCESS               3060388.50 (97.45%) [1 edit(s)]  
+2025-02-24 22:02:53,698	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) const {\n        return d < r.d;\n    }\n} P;\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        vector<P> v(n);\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            scanf("%d%d%d", &v[i].p, &d1, &d2);\n            v[i].d = d1 + d2;\n        }\n\n        P m = v[0];\n        for (int i = 1; i < n; i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:53,698	[INFO]	Step: 16
+2025-02-24 22:02:53,699	[INFO]	Stop Steps: 50
+2025-02-24 22:02:54,196	[DEBUG]	EXEC>  SUCCESS 3053877.5
+2025-02-24 22:02:54,196	[INFO]	1-7     SUCCESS               3053877.50 (97.24%) [2 edit(s)]  
+2025-02-24 22:02:54,196	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        P m;\n        m.d = -1; // Initialize to a low value\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            scanf("%d%d%d", &p, &d1, &d2);\n            int total_d = d1 + d2;\n            if (total_d > m.d) {\n                m = {p, total_d};\n            }\n        }\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        P m = {0, -1}; // Initialize struct with default values\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            // Read all three values in a single scanf call for optimization\n            scanf("%d%d%d", &p, &d1, &d2);\n            int total_d = d1 + d2;\n            if (total_d > m.d) {\n                m = {p, total_d};\n            }\n        }\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:54,197	[INFO]	Step: 17
+2025-02-24 22:02:54,197	[INFO]	Stop Steps: 50
+2025-02-24 22:02:54,686	[DEBUG]	EXEC>  SUCCESS 3056155.5
+2025-02-24 22:02:54,687	[INFO]	1-8     SUCCESS               3056155.50 (97.32%) [2 edit(s)]  
+2025-02-24 22:02:54,687	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n;\n\nvector<P> v;\n\nint main() {\n    int p, d1, d2;\n    while (scanf("%d", &n) && n != 0) {\n        v.clear();\n        for (int i = 0; i < n; i++) {\n            scanf("%d%d%d", &p, &d1, &d2);\n            v.push_back({p, d1 + d2});\n        }\n\n        P m = v[0];\n        for (int i = 1; i < v.size(); i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <algorithm>\n#include <array>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) const { // Added const to the operator for better const-correctness\n        return d < r.d;\n    }\n} P;\n\nconst int MAXN = 100000; // Define a maximum size for the array\nP v[MAXN]; // Use a fixed-size array instead of a vector for better performance\n\nint main() {\n    int n;\n    while (scanf("%d", &n) && n != 0) {\n        int p, d1, d2;\n        P m = {0, 0}; // Initialize the maximum struct\n        for (int i = 0; i < n; i++) {\n            scanf("%d%d%d", &p, &d1, &d2);\n            int sum = d1 + d2; // Calculate sum once\n            v[i] = {p, sum}; // Directly assign to the array\n            if (m < v[i]) { // Update maximum in the same loop\n                m = v[i];\n            }\n        }\n\n        printf("%d %d\\n", m.p, m.d);\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:54,687	[INFO]	Step: 18
+2025-02-24 22:02:54,687	[INFO]	Stop Steps: 50
+2025-02-24 22:02:55,266	[DEBUG]	EXEC>  SUCCESS 3134686.0
+2025-02-24 22:02:55,266	[INFO]	1-9     SUCCESS               3134686.00 (99.82%) [2 edit(s)]  
+2025-02-24 22:02:55,266	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n} P;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        P m;\n        m.d = -1; // Initialize to a low value\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            cin >> p >> d1 >> d2;\n            int total_d = d1 + d2;\n            if (total_d > m.d) {\n                m = {p, total_d};\n            }\n        }\n        cout << m.p << " " << m.d << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <utility> // For std::pair\nusing namespace std;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        int max_d = -1; // Initialize to a low value\n        int max_p = -1; // To store the corresponding p value\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            cin >> p >> d1 >> d2;\n            int total_d = d1 + d2;\n            if (total_d > max_d) {\n                max_d = total_d;\n                max_p = p; // Update the p value when a new max_d is found\n            }\n        }\n        cout << max_p << " " << max_d << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:55,267	[INFO]	Step: 19
+2025-02-24 22:02:55,267	[INFO]	Stop Steps: 50
+2025-02-24 22:02:55,966	[DEBUG]	EXEC>  SUCCESS 3134686.5
+2025-02-24 22:02:55,966	[INFO]	1-10    SUCCESS               3134686.50 (99.82%) [2 edit(s)]  
+2025-02-24 22:02:55,967	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <array>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 10000;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        array<int, MAXN> p, d;\n        for (int i = 0; i < n; i++) {\n            int d1, d2;\n            cin >> p[i] >> d1 >> d2;\n            d[i] = d1 + d2;\n        }\n\n        int max_index = 0;\n        for (int i = 1; i < n; i++) {\n            if (d[i] > d[max_index]) {\n                max_index = i;\n            }\n        }\n\n        cout << p[max_index] << " " << d[max_index] << endl;\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nconst int MAXN = 10000;\n\nint main() {\n    int n;\n    while (cin >> n && n != 0) {\n        int max_index = 0;\n        int max_value = 0;\n        for (int i = 0; i < n; i++) {\n            int p, d1, d2;\n            cin >> p >> d1 >> d2;\n            int sum = d1 + d2;\n\n            if (sum > max_value) {\n                max_value = sum;\n                max_index = p;\n            }\n        }\n\n        cout << max_index << " " << max_value << endl;\n    }\n\n    return 0;\n}')"
+2025-02-24 22:02:55,967	[INFO]	Step: 20
+2025-02-24 22:02:55,967	[INFO]	Stop Steps: 50
+2025-02-24 22:02:56,643	[DEBUG]	EXEC>  SUCCESS 3140552.0
+2025-02-24 22:02:56,644	[INFO]	1-1     SUCCESS               3140552.00 (100.00%) [1 edit(s)]  
+2025-02-24 22:02:56,644	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n#include <vector>\n\nusing namespace std;\n\ntypedef struct P {\n    int p, d;\n    bool operator<(const P &r) {\n        return d < r.d;\n    }\n} P;\n\nint n, d[10001];\nvector<P> v;\n\nint main() {\n    int p, d1, d2;\n    while (cin >> n && n != 0) {\n        v = vector<P>();\n        for (int i = 0; i < n; i++) {\n            cin >> p >> d1 >> d2;\n            v.push_back({ p, d1 + d2 });\n        }\n        P m = v[0];\n        for (int i = 1; i < v.size(); i++) {\n            if (m < v[i]) {\n                m = v[i];\n            }\n        }\n        cout << m.p << " " << m.d << endl;\n    }\n    return 0;\n}')"
+2025-02-24 22:02:56,644	[INFO]	Step: 21
+2025-02-24 22:02:56,644	[INFO]	Stop Steps: 50
+2025-02-24 22:02:58,251	[DEBUG]	EXEC>  SUCCESS 3140462.0
+2025-02-24 22:02:58,251	[INFO]	REF     SUCCESS               3140462.00 (--) [0 edit(s)]  
+2025-02-24 22:02:58,251	[INFO]	Best patch: 8
+2025-02-24 22:02:58,737	[DEBUG]	EXEC>  SUCCESS 3053786.5
+2025-02-24 22:02:58,738	[INFO]	BEST    SUCCESS              *3053786.50 (97.24%) [0 edit(s)]  
+2025-02-24 22:02:58,738	[INFO]	Best patch step: 10
+2025-02-24 22:03:44,286	[INFO]	~~~~ END ~~~~
+2025-02-24 22:03:44,286	[INFO]	Best patch step: 10

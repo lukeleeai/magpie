@@ -1,0 +1,182 @@
+2025-02-25 14:05:33,075	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6227733538430859
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0002
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-25 14:05:33,075	[DEBUG]	
+2025-02-25 14:05:33,075	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-25 14:05:33,076	[INFO]	~~~~ WARMUP ~~~~
+2025-02-25 14:05:34,194	[DEBUG]	EXEC>  SUCCESS 3095436.5
+2025-02-25 14:05:34,194	[INFO]	WARM    SUCCESS               3095436.50 (--) [0 edit(s)]  
+2025-02-25 14:05:34,883	[DEBUG]	EXEC>  SUCCESS 3095347.5
+2025-02-25 14:05:34,884	[INFO]	WARM    SUCCESS               3095347.50 (--) [0 edit(s)]  
+2025-02-25 14:05:35,748	[DEBUG]	EXEC>  SUCCESS 3095436.5
+2025-02-25 14:05:35,749	[INFO]	WARM    SUCCESS               3095436.50 (--) [0 edit(s)]  
+2025-02-25 14:05:36,411	[DEBUG]	EXEC>  SUCCESS 3095346.5
+2025-02-25 14:05:36,411	[INFO]	WARM    SUCCESS               3095346.50 (--) [0 edit(s)]  
+2025-02-25 14:05:37,141	[DEBUG]	EXEC>  SUCCESS 3095436.0
+2025-02-25 14:05:37,141	[INFO]	WARM    SUCCESS               3095436.00 (--) [0 edit(s)]  
+2025-02-25 14:05:37,141	[INFO]	REF     SUCCESS               3095436.00 (--) [0 edit(s)]  
+2025-02-25 14:05:37,142	[INFO]	
+2025-02-25 14:05:37,142	[INFO]	~~~~ START ~~~~
+2025-02-25 14:05:53,142	[DEBUG]	EXEC>  SUCCESS 3040614.5
+2025-02-25 14:05:53,142	[INFO]	0-1     SUCCESS              *3040614.50 (98.23%) [1 edit(s)]  
+2025-02-25 14:05:53,142	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2, gcd, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 = num1 - num2;\n            else\n                num2 = num2 - num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+
+2025-02-25 14:05:54,838	[DEBUG]	EXEC>  SUCCESS 3095436.0
+2025-02-25 14:05:54,838	[INFO]	0-2     SUCCESS               3095436.00 (100.00%) [1 edit(s)]  
+2025-02-25 14:05:54,838	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2, gcd, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 -= num2;\n            else\n                num2 -= num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:05:56,528	[DEBUG]	EXEC>  SUCCESS 3099220.5
+2025-02-25 14:05:56,528	[INFO]	0-3     SUCCESS               3099220.50 (100.12%) [1 edit(s)]  
+2025-02-25 14:05:56,529	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nlong long int gcd(long long int a, long long int b) {\n    while (b != 0) {\n        long long int temp = b;\n        b = a % b;\n        a = temp;\n    }\n    return a;\n}\n\nint main() {\n    long long int num1, num2, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        long long int gcd_val = gcd(num1, num2);\n        lcm = res / gcd_val;\n        printf("%lld %lld\\n", gcd_val, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:05:58,046	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-02-25 14:05:58,047	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        long long int num1, num2, gcd, res, lcm;\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 -= num2;\n            else\n                num2 -= num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:05:59,745	[DEBUG]	EXEC>  SUCCESS 3095436.5
+2025-02-25 14:05:59,745	[INFO]	0-5     SUCCESS               3095436.50 (100.00%) [1 edit(s)]  
+2025-02-25 14:05:59,745	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2, gcd, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 -= num2;\n            else\n                num2 -= num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:06:01,518	[DEBUG]	EXEC>  SUCCESS 3095384.0
+2025-02-25 14:06:01,518	[INFO]	0-6     SUCCESS               3095384.00 (100.00%) [1 edit(s)]  
+2025-02-25 14:06:01,518	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2, gcd, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 = num1 - num2;\n            else\n                num2 = num2 - num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:06:03,209	[DEBUG]	EXEC>  SUCCESS 3099296.0
+2025-02-25 14:06:03,209	[INFO]	0-7     SUCCESS               3099296.00 (100.12%) [1 edit(s)]  
+2025-02-25 14:06:03,210	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nlong long int gcd(long long int a, long long int b) {\n    return b == 0 ? a : gcd(b, a % b);\n}\n\nint main() {\n    long long int num1, num2, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        long long int gcd_val = gcd(num1, num2);\n        lcm = res / gcd_val;\n        printf("%lld %lld\\n", gcd_val, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:06:04,889	[DEBUG]	EXEC>  SUCCESS 3095346.5
+2025-02-25 14:06:04,890	[INFO]	0-8     SUCCESS               3095346.50 (100.00%) [1 edit(s)]  
+2025-02-25 14:06:04,890	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        long long int res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 -= num2;\n            else\n                num2 -= num1;\n        }\n        long long int gcd = num1;\n        long long int lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:06:06,554	[DEBUG]	EXEC>  SUCCESS 3095436.5
+2025-02-25 14:06:06,554	[INFO]	0-9     SUCCESS               3095436.50 (100.00%) [1 edit(s)]  
+2025-02-25 14:06:06,554	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2, gcd, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 = num1 - num2;\n            else\n                num2 = num2 - num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:06:08,247	[DEBUG]	EXEC>  SUCCESS 3095526.5
+2025-02-25 14:06:08,248	[INFO]	0-10    SUCCESS               3095526.50 (100.00%) [1 edit(s)]  
+2025-02-25 14:06:08,248	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint main() {\n    long long int num1, num2, gcd, res, lcm;\n    while (scanf("%lld%lld", &num1, &num2) != EOF) {\n        res = num1 * num2;\n        while (num1 != num2) {\n            if (num1 > num2)\n                num1 = num1 - num2;\n            else\n                num2 = num2 - num1;\n        }\n        gcd = num1;\n        lcm = res / gcd;\n        printf("%lld %lld\\n", gcd, lcm);\n    }\n    return 0;\n}')"
+2025-02-25 14:06:09,248	[INFO]	Step: 10
+2025-02-25 14:06:09,248	[INFO]	Stop Steps: 50
+2025-02-25 14:06:10,948	[DEBUG]	EXEC>  SUCCESS 3095345.5
+2025-02-25 14:06:10,948	[INFO]	REF     SUCCESS               3095345.50 (--) [0 edit(s)]  
+2025-02-25 14:06:10,949	[INFO]	Best patch: 0
+2025-02-25 14:06:11,502	[DEBUG]	EXEC>  SUCCESS 3040705.5
+2025-02-25 14:06:11,502	[INFO]	BEST    SUCCESS              *3040705.50 (98.23%) [0 edit(s)]  
+2025-02-25 14:06:11,502	[INFO]	Best patch step: 0
+2025-02-25 14:06:19,622	[INFO]	~~~~ END ~~~~
+2025-02-25 14:06:19,622	[INFO]	Best patch step: 0

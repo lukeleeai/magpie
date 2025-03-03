@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TEST_CASE_DIR="/home/ubuntu/eoc/magpie2/dataset/public_test_cases/p00283"
+TEST_CASE_DIR="/home/luke/magpie/dataset/public_test_cases/p00283"
 
 # Create directory for test outputs
 mkdir -p test_outputs

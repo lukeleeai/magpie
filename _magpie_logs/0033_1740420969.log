@@ -1,0 +1,432 @@
+2025-02-24 18:16:09,999	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 4770919613660120
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0033
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 18:16:09,999	[DEBUG]	
+2025-02-24 18:16:09,999	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 18:16:09,999	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 18:16:11,315	[DEBUG]	EXEC>  SUCCESS 3054575.0
+2025-02-24 18:16:11,315	[INFO]	WARM    SUCCESS               3054575.00 (--) [0 edit(s)]  
+2025-02-24 18:16:12,248	[DEBUG]	EXEC>  SUCCESS 3054574.5
+2025-02-24 18:16:12,248	[INFO]	WARM    SUCCESS               3054574.50 (--) [0 edit(s)]  
+2025-02-24 18:16:13,074	[DEBUG]	EXEC>  SUCCESS 3054393.5
+2025-02-24 18:16:13,074	[INFO]	WARM    SUCCESS               3054393.50 (--) [0 edit(s)]  
+2025-02-24 18:16:13,849	[DEBUG]	EXEC>  SUCCESS 3054395.0
+2025-02-24 18:16:13,849	[INFO]	WARM    SUCCESS               3054395.00 (--) [0 edit(s)]  
+2025-02-24 18:16:14,674	[DEBUG]	EXEC>  SUCCESS 3054408.5
+2025-02-24 18:16:14,674	[INFO]	WARM    SUCCESS               3054408.50 (--) [0 edit(s)]  
+2025-02-24 18:16:14,674	[INFO]	REF     SUCCESS               3054408.50 (--) [0 edit(s)]  
+2025-02-24 18:16:14,675	[INFO]	
+2025-02-24 18:16:14,675	[INFO]	~~~~ START ~~~~
+2025-02-24 18:16:48,645	[DEBUG]	EXEC>  SUCCESS 3047133.5
+2025-02-24 18:16:48,645	[INFO]	0-1     SUCCESS              *3047133.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:16:48,645	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n]; // Use a plain array instead of vector\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:16:50,254	[DEBUG]	EXEC>  SUCCESS 3106648.5
+2025-02-24 18:16:50,254	[INFO]	0-2     SUCCESS               3106648.50 (101.71%) [1 edit(s)]  
+2025-02-24 18:16:50,254	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (cin >> n, n) {\n        vector<int> nums(n, 0);\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            cout << sum * 2 << endl; // Use cout for output\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:16:51,540	[DEBUG]	EXEC>  SUCCESS 3047223.0
+2025-02-24 18:16:51,540	[INFO]	0-3     SUCCESS               3047223.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:16:51,540	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:16:53,013	[DEBUG]	EXEC>  SUCCESS 3052119.5
+2025-02-24 18:16:53,014	[INFO]	0-4     SUCCESS               3052119.50 (99.93%) [1 edit(s)]  
+2025-02-24 18:16:53,014	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <bitset>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf("%d", &n), n) {\n        bitset<100000> nums; // Using bitset for boolean operations\n\n        reep(i, 1, n)\n            nums[(i*i)%n] = 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:16:54,294	[DEBUG]	EXEC>  SUCCESS 3047133.5
+2025-02-24 18:16:54,294	[INFO]	0-5     SUCCESS               3047133.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:16:54,295	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:16:55,686	[DEBUG]	EXEC>  SUCCESS 3058309.5
+2025-02-24 18:16:55,686	[INFO]	0-6     SUCCESS               3058309.50 (100.13%) [1 edit(s)]  
+2025-02-24 18:16:55,686	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n        vector<int> results; // Vector to store results\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            results.push_back(sum * 2); // Store result\n        }\n\n        for (int res : results)\n            printf("%d\\n", res); // Print all results at once\n    }\n    return 0;\n}')"
+2025-02-24 18:16:57,089	[DEBUG]	EXEC>  SUCCESS 3057144.5
+2025-02-24 18:16:57,089	[INFO]	0-7     SUCCESS               3057144.50 (100.09%) [1 edit(s)]  
+2025-02-24 18:16:57,089	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\n#include <numeric> // Include for std::accumulate\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            vector<int> temp(n); // Temporary vector for accumulation\n            rep(j, n)\n                temp[j] = nums[j] & nums[(j+i)%n];\n\n            int sum = accumulate(temp.begin(), temp.end(), 0); // Use accumulate for summation\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:16:58,387	[DEBUG]	EXEC>  SUCCESS 3047133.5
+2025-02-24 18:16:58,387	[INFO]	0-8     SUCCESS               3047133.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:16:58,387	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:16:59,673	[DEBUG]	EXEC>  SUCCESS 3047383.0
+2025-02-24 18:16:59,673	[INFO]	0-9     SUCCESS               3047383.00 (99.77%) [1 edit(s)]  
+2025-02-24 18:16:59,673	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            int sum = 0;\n            reep(j, 0, n) {\n                int index = (j + i) % n;\n                if (nums[j] & nums[index])\n                    sum++;\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:17:01,252	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:17:01,252	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <vector>\n#include <algorithm> // For std::sort\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while (scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n        vector<int> results;\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            int sum = 0;\n            reep(j, 0, n)\n                sum += nums[j] & nums[(j + i) % n];\n            results.push_back(sum * 2);\n        }\n\n        sort(results.begin(), results.end()); // Sort results before printing\n        for (int res : results)\n            printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 18:17:02,252	[INFO]	Step: 10
+2025-02-24 18:17:02,253	[INFO]	Stop Steps: 50
+2025-02-24 18:17:04,071	[DEBUG]	EXEC>  SUCCESS 3054394.0
+2025-02-24 18:17:04,071	[INFO]	REF     SUCCESS               3054394.00 (--) [0 edit(s)]  
+2025-02-24 18:17:04,071	[INFO]	Best patch: 0
+2025-02-24 18:17:04,365	[DEBUG]	EXEC>  SUCCESS 3047222.5
+2025-02-24 18:17:04,365	[INFO]	BEST    SUCCESS              *3047222.50 (99.77%) [0 edit(s)]  
+2025-02-24 18:17:04,365	[INFO]	Best patch step: 0
+2025-02-24 18:19:34,142	[INFO]	Step: 10
+2025-02-24 18:19:34,142	[INFO]	Stop Steps: 50
+2025-02-24 18:19:34,427	[DEBUG]	EXEC>  SUCCESS 3047222.5
+2025-02-24 18:19:34,427	[INFO]	1-1     SUCCESS              +3047222.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:19:34,427	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:34,427	[INFO]	Step: 11
+2025-02-24 18:19:34,427	[INFO]	Stop Steps: 50
+2025-02-24 18:19:34,701	[DEBUG]	EXEC>  SUCCESS 3047133.5
+2025-02-24 18:19:34,702	[INFO]	1-2     SUCCESS              *3047133.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:19:34,702	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:19:34,702	[INFO]	Step: 12
+2025-02-24 18:19:34,702	[INFO]	Stop Steps: 50
+2025-02-24 18:19:34,972	[DEBUG]	EXEC>  SUCCESS 3047135.0
+2025-02-24 18:19:34,973	[INFO]	1-3     SUCCESS               3047135.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:19:34,973	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = 0; // Reset totalSum for each i\n            rep(j, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:34,973	[INFO]	Step: 13
+2025-02-24 18:19:34,973	[INFO]	Stop Steps: 50
+2025-02-24 18:19:35,252	[DEBUG]	EXEC>  SUCCESS 3047133.0
+2025-02-24 18:19:35,253	[INFO]	1-4     SUCCESS              *3047133.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:19:35,253	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:19:35,253	[INFO]	Step: 14
+2025-02-24 18:19:35,253	[INFO]	Stop Steps: 50
+2025-02-24 18:19:35,545	[DEBUG]	EXEC>  SUCCESS 3047223.5
+2025-02-24 18:19:35,545	[INFO]	1-5     SUCCESS               3047223.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:19:35,545	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:35,545	[INFO]	Step: 15
+2025-02-24 18:19:35,545	[INFO]	Stop Steps: 50
+2025-02-24 18:19:35,815	[DEBUG]	EXEC>  SUCCESS 3047133.5
+2025-02-24 18:19:35,816	[INFO]	1-6     SUCCESS               3047133.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:19:35,816	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:35,816	[INFO]	Step: 16
+2025-02-24 18:19:35,816	[INFO]	Stop Steps: 50
+2025-02-24 18:19:36,093	[DEBUG]	EXEC>  SUCCESS 3047134.0
+2025-02-24 18:19:36,093	[INFO]	1-7     SUCCESS               3047134.00 (99.76%) [2 edit(s)]  
+2025-02-24 18:19:36,093	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:36,093	[INFO]	Step: 17
+2025-02-24 18:19:36,093	[INFO]	Stop Steps: 50
+2025-02-24 18:19:36,338	[INFO]	1-8     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 18:19:36,338	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            if (i > 1) {\n                // Update totalSum based on the previous totalSum and the change in indices\n                totalSum = ((totalSum * 2) - (nums[(i-1)] & nums[(0+i-1)%n]));\n            } else {\n                totalSum = 0; // Reset totalSum for the first iteration\n                reep(j, 0, n) {\n                    totalSum += nums[j] & nums[(j+i)%n];\n                }\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:36,338	[INFO]	Step: 18
+2025-02-24 18:19:36,338	[INFO]	Stop Steps: 50
+2025-02-24 18:19:36,619	[DEBUG]	EXEC>  SUCCESS 3134952.0
+2025-02-24 18:19:36,619	[INFO]	1-9     SUCCESS               3134952.00 (102.64%) [2 edit(s)]  
+2025-02-24 18:19:36,620	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n]; // Use a plain array instead of vector\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nconst int MAX_N = 100000; // Define a maximum size for the array to avoid stack overflow\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        static int nums[MAX_N]; // Use a static array instead of dynamic allocation\n        memset(nums, 0, sizeof(nums)); // Initialize the array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                sum += (nums[j] & nums[(j+i)%n]) ? 1 : 0; // Count only when there\'s an overlap\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:36,620	[INFO]	Step: 19
+2025-02-24 18:19:36,620	[INFO]	Stop Steps: 50
+2025-02-24 18:19:36,886	[DEBUG]	EXEC>  SUCCESS 3134709.0
+2025-02-24 18:19:36,887	[INFO]	1-10    SUCCESS               3134709.00 (102.63%) [2 edit(s)]  
+2025-02-24 18:19:36,887	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while (scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nconst int max_n = 100000; // Define a maximum size for the static array\n\nint main() {\n    int n;\n    while (scanf("%d", &n), n) {\n        int nums[max_n]; // Use a static array to avoid dynamic allocation\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i * i) % n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j + i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:36,887	[INFO]	Step: 20
+2025-02-24 18:19:36,887	[INFO]	Stop Steps: 50
+2025-02-24 18:19:37,707	[DEBUG]	EXEC>  SUCCESS 3054395.0
+2025-02-24 18:19:37,707	[INFO]	1-1     SUCCESS               3054395.00 (100.00%) [1 edit(s)]  
+2025-02-24 18:19:37,707	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <vector>\n#include <algorithm>\n#include <string>\n#include <map>\n#include <set>\n#include <queue>\n#include <cstring>\n#include <deque>\n#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\nint main()\n{\n    int n;\n    while(scanf("%d", &n), n){\n        vi nums(n, 0);\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n        reep(i, 1, (n+1)/2){\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:19:37,707	[INFO]	Step: 21
+2025-02-24 18:19:37,708	[INFO]	Stop Steps: 50
+2025-02-24 18:19:39,530	[DEBUG]	EXEC>  SUCCESS 3054485.5
+2025-02-24 18:19:39,530	[INFO]	REF     SUCCESS               3054485.50 (--) [0 edit(s)]  
+2025-02-24 18:19:39,530	[INFO]	Best patch: 1
+2025-02-24 18:19:39,807	[DEBUG]	EXEC>  SUCCESS 3047224.0
+2025-02-24 18:19:39,807	[INFO]	BEST    SUCCESS              *3047224.00 (99.76%) [0 edit(s)]  
+2025-02-24 18:19:39,808	[INFO]	Best patch step: 13
+2025-02-24 18:20:28,597	[INFO]	Step: 21
+2025-02-24 18:20:28,598	[INFO]	Stop Steps: 50
+2025-02-24 18:20:28,880	[DEBUG]	EXEC>  SUCCESS 3047222.5
+2025-02-24 18:20:28,880	[INFO]	2-2     SUCCESS              *3047222.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:20:28,880	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:20:28,880	[INFO]	Step: 22
+2025-02-24 18:20:28,880	[INFO]	Stop Steps: 50
+2025-02-24 18:20:29,152	[DEBUG]	EXEC>  SUCCESS 3047133.5
+2025-02-24 18:20:29,152	[INFO]	2-3     SUCCESS              *3047133.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:20:29,152	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:20:29,152	[INFO]	Step: 23
+2025-02-24 18:20:29,152	[INFO]	Stop Steps: 50
+2025-02-24 18:20:29,426	[DEBUG]	EXEC>  SUCCESS 3047224.0
+2025-02-24 18:20:29,426	[INFO]	2-4     SUCCESS               3047224.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:20:29,426	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = 0; // Reset totalSum for each i\n            rep(j, n) {\n                totalSum += nums[j] & nums[(j+i)%n]; // Use index calculation from Parent 1\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:29,426	[INFO]	Step: 24
+2025-02-24 18:20:29,426	[INFO]	Stop Steps: 50
+2025-02-24 18:20:29,702	[DEBUG]	EXEC>  SUCCESS 3047133.0
+2025-02-24 18:20:29,702	[INFO]	2-5     SUCCESS              *3047133.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:20:29,702	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:20:29,702	[INFO]	Step: 25
+2025-02-24 18:20:29,702	[INFO]	Stop Steps: 50
+2025-02-24 18:20:29,980	[DEBUG]	EXEC>  SUCCESS 3047171.0
+2025-02-24 18:20:29,980	[INFO]	2-6     SUCCESS               3047171.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:20:29,980	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:29,980	[INFO]	Step: 26
+2025-02-24 18:20:29,980	[INFO]	Stop Steps: 50
+2025-02-24 18:20:30,263	[DEBUG]	EXEC>  SUCCESS 3047222.5
+2025-02-24 18:20:30,263	[INFO]	2-7     SUCCESS               3047222.50 (99.76%) [1 edit(s)]  
+2025-02-24 18:20:30,263	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums)); // Use memset from Parent 2\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:30,263	[INFO]	Step: 27
+2025-02-24 18:20:30,263	[INFO]	Stop Steps: 50
+2025-02-24 18:20:30,641	[DEBUG]	EXEC>  SUCCESS 3054395.0
+2025-02-24 18:20:30,642	[INFO]	2-8     SUCCESS               3054395.00 (100.00%) [2 edit(s)]  
+2025-02-24 18:20:30,642	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\n#include <vector>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        vector<int> nums(n, 0); // Use vector instead of a raw array\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:30,642	[INFO]	Step: 28
+2025-02-24 18:20:30,642	[INFO]	Stop Steps: 50
+2025-02-24 18:20:30,914	[DEBUG]	EXEC>  SUCCESS 3047137.0
+2025-02-24 18:20:30,915	[INFO]	2-9     SUCCESS               3047137.00 (99.76%) [2 edit(s)]  
+2025-02-24 18:20:30,915	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array\n        for(int i = 0; i < n; ++i) {\n            nums[i] = 0;\n        }\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:30,915	[INFO]	Step: 29
+2025-02-24 18:20:30,915	[INFO]	Stop Steps: 50
+2025-02-24 18:20:31,205	[DEBUG]	EXEC>  SUCCESS 3134708.0
+2025-02-24 18:20:31,205	[INFO]	2-10    SUCCESS               3134708.00 (102.63%) [2 edit(s)]  
+2025-02-24 18:20:31,205	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\nconst int MAX_N = 100000; // Define a maximum size for the array\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[MAX_N]; // Use static array\n        memset(nums, 0, sizeof(nums)); // You can also keep this for safety\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n) {\n                int index = (j+i) % n; // Store the index calculation\n                sum += nums[j] & nums[index];\n            }\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:31,205	[INFO]	Step: 30
+2025-02-24 18:20:31,205	[INFO]	Stop Steps: 50
+2025-02-24 18:20:31,473	[DEBUG]	EXEC>  SUCCESS 3047223.0
+2025-02-24 18:20:31,473	[INFO]	2-1     SUCCESS               3047223.00 (99.76%) [3 edit(s)]  
+2025-02-24 18:20:31,474	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n)\n        sum += nums[j] & nums[(j+i)%n];\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 18), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    int idx; // Declare idx outside the loop\n    rep(j, n) {\n        idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:31,474	[INFO]	Step: 31
+2025-02-24 18:20:31,474	[INFO]	Stop Steps: 50
+2025-02-24 18:20:32,311	[DEBUG]	EXEC>  SUCCESS 3054394.5
+2025-02-24 18:20:32,311	[INFO]	2-2     SUCCESS               3054394.50 (100.00%) [1 edit(s)]  
+2025-02-24 18:20:32,311	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <vector>\n#include <algorithm>\n#include <string>\n#include <map>\n#include <set>\n#include <queue>\n#include <cstring>\n#include <deque>\n#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\nint main()\n{\n    int n;\n    while(scanf("%d", &n), n){\n        vi nums(n, 0);\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n        reep(i, 1, (n+1)/2){\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:20:32,311	[INFO]	Step: 32
+2025-02-24 18:20:32,311	[INFO]	Stop Steps: 50
+2025-02-24 18:20:34,101	[DEBUG]	EXEC>  SUCCESS 3054393.5
+2025-02-24 18:20:34,101	[INFO]	REF     SUCCESS               3054393.50 (--) [0 edit(s)]  
+2025-02-24 18:20:34,101	[INFO]	Best patch: 5
+2025-02-24 18:20:34,384	[DEBUG]	EXEC>  SUCCESS 3047314.5
+2025-02-24 18:20:34,384	[INFO]	BEST    SUCCESS              *3047314.50 (99.77%) [0 edit(s)]  
+2025-02-24 18:20:34,384	[INFO]	Best patch step: 24
+2025-02-24 18:21:25,570	[INFO]	Step: 32
+2025-02-24 18:21:25,570	[INFO]	Stop Steps: 50
+2025-02-24 18:21:25,856	[DEBUG]	EXEC>  SUCCESS 3047224.0
+2025-02-24 18:21:25,856	[INFO]	3-3     SUCCESS              *3047224.00 (99.77%) [1 edit(s)]  
+2025-02-24 18:21:25,856	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:21:25,856	[INFO]	Step: 33
+2025-02-24 18:21:25,857	[INFO]	Stop Steps: 50
+2025-02-24 18:21:26,124	[DEBUG]	EXEC>  SUCCESS 3047223.5
+2025-02-24 18:21:26,125	[INFO]	3-4     SUCCESS              *3047223.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:21:26,125	[DEBUG]	patch(3-4)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:21:26,125	[INFO]	Step: 34
+2025-02-24 18:21:26,125	[INFO]	Stop Steps: 50
+2025-02-24 18:21:26,395	[DEBUG]	EXEC>  SUCCESS 3047222.5
+2025-02-24 18:21:26,396	[INFO]	3-5     SUCCESS              *3047222.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:21:26,396	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:21:26,396	[INFO]	Step: 35
+2025-02-24 18:21:26,396	[INFO]	Stop Steps: 50
+2025-02-24 18:21:26,669	[DEBUG]	EXEC>  SUCCESS 3047224.5
+2025-02-24 18:21:26,670	[INFO]	3-6     SUCCESS               3047224.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:21:26,670	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:26,670	[INFO]	Step: 36
+2025-02-24 18:21:26,670	[INFO]	Stop Steps: 50
+2025-02-24 18:21:26,953	[DEBUG]	EXEC>  SUCCESS 3047134.0
+2025-02-24 18:21:26,954	[INFO]	3-7     SUCCESS              *3047134.00 (99.76%) [1 edit(s)]  
+2025-02-24 18:21:26,954	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:21:26,954	[INFO]	Step: 37
+2025-02-24 18:21:26,954	[INFO]	Stop Steps: 50
+2025-02-24 18:21:27,236	[DEBUG]	EXEC>  SUCCESS 3047223.0
+2025-02-24 18:21:27,236	[INFO]	3-8     SUCCESS               3047223.00 (99.77%) [1 edit(s)]  
+2025-02-24 18:21:27,236	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = computeSum(nums, n, i) * 2; // Directly using computeSum\n            printf("%d\\n", totalSum);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:27,237	[INFO]	Step: 38
+2025-02-24 18:21:27,237	[INFO]	Stop Steps: 50
+2025-02-24 18:21:27,485	[INFO]	3-9     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 18:21:27,485	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Use computeSum from Parent 4\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) & (n - 1); // Replace modulo with bitwise AND for power of two\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:27,485	[INFO]	Step: 39
+2025-02-24 18:21:27,485	[INFO]	Stop Steps: 50
+2025-02-24 18:21:27,860	[DEBUG]	EXEC>  SUCCESS 3054485.0
+2025-02-24 18:21:27,860	[INFO]	3-10    SUCCESS               3054485.00 (100.00%) [2 edit(s)]  
+2025-02-24 18:21:27,860	[DEBUG]	patch(3-10)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <cstring>\n#include <vector>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        vector<int> nums(n, 0); // Use vector for dynamic sizing\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:27,860	[INFO]	Step: 40
+2025-02-24 18:21:27,860	[INFO]	Stop Steps: 50
+2025-02-24 18:21:28,391	[DEBUG]	EXEC>  SUCCESS 3047227.0
+2025-02-24 18:21:28,391	[INFO]	3-1     SUCCESS               3047227.00 (99.77%) [3 edit(s)]  
+2025-02-24 18:21:28,391	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array\n        for(int i = 0; i < n; ++i) {\n            nums[i] = 0;\n        }\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        // Optimized initialization of nums array using std::fill\n        std::fill(nums, nums + n, 0);\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int totalSum = 0;\n        reep(i, 1, (n+1)/2) {\n            totalSum = 0; // Reset totalSum for each i\n            reep(j, 0, n) {\n                totalSum += nums[j] & nums[(j+i)%n];\n            }\n            printf("%d\\n", totalSum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:28,392	[INFO]	Step: 41
+2025-02-24 18:21:28,392	[INFO]	Stop Steps: 50
+2025-02-24 18:21:28,669	[DEBUG]	EXEC>  SUCCESS 3047393.5
+2025-02-24 18:21:28,670	[INFO]	3-2     SUCCESS               3047393.50 (99.77%) [2 edit(s)]  
+2025-02-24 18:21:28,670	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 23), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        int doubledNums[n]; // Precompute doubled indices\n        reep(i, 0, n) {\n            doubledNums[i] = nums[(i * 2) % n]; // Store precomputed values\n        }\n\n        reep(i, 1, (n + 1) / 2) {\n            printf("%d\\n", computeSum(doubledNums, n, i) * 2); // Use precomputed values\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:28,670	[INFO]	Step: 42
+2025-02-24 18:21:28,670	[INFO]	Stop Steps: 50
+2025-02-24 18:21:29,493	[DEBUG]	EXEC>  SUCCESS 3054574.0
+2025-02-24 18:21:29,493	[INFO]	3-3     SUCCESS               3054574.00 (100.01%) [1 edit(s)]  
+2025-02-24 18:21:29,493	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <vector>\n#include <algorithm>\n#include <string>\n#include <map>\n#include <set>\n#include <queue>\n#include <cstring>\n#include <deque>\n#include <cstdio>\n#include <cmath>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ntypedef vector<int> vi;\ntypedef vector<vi> vvi;\ntypedef pair<int,int> pii;\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        vi nums(n, 0);\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n        reep(i, 1, (n+1)/2) {\n            int sum = 0;\n            rep(j, n)\n                sum += nums[j] & nums[(j+i)%n];\n            printf("%d\\n", sum * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:21:29,493	[INFO]	Step: 43
+2025-02-24 18:21:29,494	[INFO]	Stop Steps: 50
+2025-02-24 18:21:31,321	[DEBUG]	EXEC>  SUCCESS 3054394.0
+2025-02-24 18:21:31,321	[INFO]	REF     SUCCESS               3054394.00 (--) [0 edit(s)]  
+2025-02-24 18:21:31,321	[INFO]	Best patch: 10
+2025-02-24 18:21:31,592	[DEBUG]	EXEC>  SUCCESS 3047134.0
+2025-02-24 18:21:31,592	[INFO]	BEST    SUCCESS              *3047134.00 (99.76%) [0 edit(s)]  
+2025-02-24 18:21:31,592	[INFO]	Best patch step: 36
+2025-02-24 18:22:19,725	[INFO]	Step: 43
+2025-02-24 18:22:19,725	[INFO]	Stop Steps: 50
+2025-02-24 18:22:20,083	[DEBUG]	EXEC>  SUCCESS 3047223.5
+2025-02-24 18:22:20,083	[INFO]	4-4     SUCCESS              +3047223.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:22:20,083	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:22:20,083	[INFO]	Step: 44
+2025-02-24 18:22:20,084	[INFO]	Stop Steps: 50
+2025-02-24 18:22:20,440	[DEBUG]	EXEC>  SUCCESS 3047312.5
+2025-02-24 18:22:20,440	[INFO]	4-5     SUCCESS               3047312.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:22:20,440	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:22:20,440	[INFO]	Step: 45
+2025-02-24 18:22:20,441	[INFO]	Stop Steps: 50
+2025-02-24 18:22:20,718	[DEBUG]	EXEC>  SUCCESS 3047222.5
+2025-02-24 18:22:20,718	[INFO]	4-6     SUCCESS              +3047222.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:22:20,718	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using optimized computeSum\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:22:20,718	[INFO]	Step: 46
+2025-02-24 18:22:20,718	[INFO]	Stop Steps: 50
+2025-02-24 18:22:20,991	[DEBUG]	EXEC>  SUCCESS 3047224.5
+2025-02-24 18:22:20,992	[INFO]	4-7     SUCCESS               3047224.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:22:20,992	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Directly using computeSum\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:22:20,992	[INFO]	Step: 47
+2025-02-24 18:22:20,992	[INFO]	Stop Steps: 50
+2025-02-24 18:22:21,289	[DEBUG]	EXEC>  SUCCESS 3047223.0
+2025-02-24 18:22:21,290	[INFO]	4-8     SUCCESS               3047223.00 (99.77%) [1 edit(s)]  
+2025-02-24 18:22:21,290	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            int totalSum = computeSum(nums, n, i) * 2; // Directly using computeSum\n            printf("%d\\n", totalSum);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:22:21,290	[INFO]	Step: 48
+2025-02-24 18:22:21,290	[INFO]	Stop Steps: 50
+2025-02-24 18:22:21,560	[DEBUG]	EXEC>  SUCCESS 3047224.5
+2025-02-24 18:22:21,560	[INFO]	4-9     SUCCESS               3047224.50 (99.77%) [1 edit(s)]  
+2025-02-24 18:22:21,561	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    reep(j, 0, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:22:21,561	[INFO]	Step: 49
+2025-02-24 18:22:21,561	[INFO]	Stop Steps: 50
+2025-02-24 18:22:21,842	[DEBUG]	EXEC>  SUCCESS 3048610.5
+2025-02-24 18:22:21,843	[INFO]	4-10    SUCCESS               3048610.50 (99.81%) [2 edit(s)]  
+2025-02-24 18:22:21,843	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <cstring>\n#include <cstdlib> // Include for dynamic memory allocation\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int* nums = (int*)malloc(n * sizeof(int)); // Dynamic allocation\n        memset(nums, 0, n * sizeof(int)); // Updated to match dynamic allocation size\n\n        reep(i, 1, n)\n            nums[(i * i) % n] |= 1;\n\n        reep(i, 1, (n + 1) / 2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n        \n        free(nums); // Free allocated memory\n    }\n    return 0;\n}')"
+2025-02-24 18:22:21,843	[INFO]	Step: 50
+2025-02-24 18:22:21,843	[INFO]	Stop Steps: 50
+2025-02-24 18:22:21,843	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 18:22:21,843	[INFO]	Step: 50
+2025-02-24 18:22:21,843	[INFO]	Stop Steps: 50
+2025-02-24 18:22:27,911	[INFO]	~~~~ END ~~~~
+2025-02-24 18:22:27,911	[INFO]	Best patch step: 36
+2025-02-24 18:22:27,911	[INFO]	
+2025-02-24 18:22:27,911	[INFO]	==== REPORT ====
+2025-02-24 18:22:27,911	[INFO]	Termination: step budget
+2025-02-24 18:22:27,911	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0033_1740420969.log
+2025-02-24 18:22:27,911	[INFO]	Patch file: _magpie_logs/0033_1740420969.patch
+2025-02-24 18:22:27,911	[INFO]	Diff file: _magpie_logs/0033_1740420969.diff
+2025-02-24 18:22:27,911	[INFO]	Reference fitness: 3054394.00
+2025-02-24 18:22:27,911	[INFO]	Best fitness: 3047134.00
+2025-02-24 18:22:27,911	[INFO]	
+2025-02-24 18:22:27,912	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <cstring>\n\nusing namespace std;\n\n#define reep(i,f,t) for(int i=f ; i<int(t) ; ++i)\n#define rep(i,n) reep(i, 0, n)\n\ninline int computeSum(int* nums, int n, int i) {\n    int sum = 0;\n    rep(j, n) {\n        int idx = (j + i) % n; // Precompute index\n        sum += nums[j] & nums[idx];\n    }\n    return sum;\n}\n\nint main() {\n    int n;\n    while(scanf("%d", &n), n) {\n        int nums[n];\n        memset(nums, 0, sizeof(nums));\n\n        reep(i, 1, n)\n            nums[(i*i)%n] |= 1;\n\n        reep(i, 1, (n+1)/2) {\n            printf("%d\\n", computeSum(nums, n, i) * 2); // Using computeSum for efficiency\n        }\n    }\n    return 0;\n}')
+2025-02-24 18:22:27,912	[INFO]	
+2025-02-24 18:22:27,912	[INFO]	==== DIFF ====
+

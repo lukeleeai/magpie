@@ -42,7 +42,7 @@ def process_directories():
         return
 
     # Number of repeats to test
-    num_repeats_list = [1, 3, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    num_repeats_list = [10, 20, 40, 60, 100, 500, 1000]
     mean_cv_cpu_cycles = []
     mean_cv_wall_clock = []
 
@@ -50,8 +50,9 @@ def process_directories():
         cv_cpu_cycles_list = []  # List to store CVs for each directory
         cv_wall_clock_time_list = []  # List to store CVs for each directory
 
-        # Loop through all numbered directories
-        for dir_path in sorted(train_dir.glob("[0][0][0][1-6]")):
+        # Loop through all numbered directories from 0001 to 0020
+        dir_patterns = [f"{i:04d}" for i in range(1, 10)]
+        for dir_path in sorted(train_dir.glob(dir_patterns[0])) + sum([sorted(train_dir.glob(pattern)) for pattern in dir_patterns[1:]], []):
             if dir_path.is_dir():
                 print(
                     f"\nProcessing directory: {dir_path} with {num_repeats} repeats"
@@ -87,7 +88,11 @@ def process_directories():
                         output = run_script(run_script_path)
                         if output:
                             stats = output.strip().split("\n")
-                            cpu_cycles = [int(x.split()[0]) for x in stats]
+                            print("stats: ", stats)
+                            cpu_cycles = [
+                                int(x.split()[0].replace(",", ""))
+                                for x in stats
+                            ]
                             wall_clock_time = [
                                 float(x.split()[1]) for x in stats
                             ]
@@ -134,7 +139,7 @@ def process_directories():
     plt.title("Mean CV vs Number of Repeats")
     plt.legend()
     plt.grid(True)
-    plt.savefig("cv_vs_repeats.png")
+    plt.savefig("cv_vs_repeats_1_to_9.png")
     plt.show()
 
 

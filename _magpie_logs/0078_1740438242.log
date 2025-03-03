@@ -1,0 +1,224 @@
+2025-02-24 23:04:02,429	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 1277931455649387
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0078
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 23:04:02,430	[DEBUG]	
+2025-02-24 23:04:02,430	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 23:04:02,430	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 23:04:04,094	[DEBUG]	EXEC>  SUCCESS 3699877.5
+2025-02-24 23:04:04,095	[INFO]	WARM    SUCCESS               3699877.50 (--) [0 edit(s)]  
+2025-02-24 23:04:05,093	[DEBUG]	EXEC>  SUCCESS 3699787.5
+2025-02-24 23:04:05,093	[INFO]	WARM    SUCCESS               3699787.50 (--) [0 edit(s)]  
+2025-02-24 23:04:06,139	[DEBUG]	EXEC>  SUCCESS 3699878.5
+2025-02-24 23:04:06,140	[INFO]	WARM    SUCCESS               3699878.50 (--) [0 edit(s)]  
+2025-02-24 23:04:07,187	[DEBUG]	EXEC>  SUCCESS 3699880.0
+2025-02-24 23:04:07,187	[INFO]	WARM    SUCCESS               3699880.00 (--) [0 edit(s)]  
+2025-02-24 23:04:08,216	[DEBUG]	EXEC>  SUCCESS 3699878.5
+2025-02-24 23:04:08,216	[INFO]	WARM    SUCCESS               3699878.50 (--) [0 edit(s)]  
+2025-02-24 23:04:08,216	[INFO]	REF     SUCCESS               3699878.50 (--) [0 edit(s)]  
+2025-02-24 23:04:08,218	[INFO]	
+2025-02-24 23:04:08,218	[INFO]	~~~~ START ~~~~
+2025-02-24 23:04:41,805	[INFO]	0-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:41,805	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <stdio.h>\n#include <limits.h>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for(int i = 0; i < 300; i++) {\n            for(int j = 0; j < 300; j++)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for(int i = 0; i < M; i++) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:43,273	[INFO]	0-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:43,273	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <stdio.h>\n#include <limits.h>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300 * 300];\n\nint getCost(int i, int j) {\n    return cost[i * 300 + j];\n}\n\nvoid setCost(int i, int j, int value) {\n    cost[i * 300 + j] = value;\n}\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for(int i = 0; i < N; i++) {\n            for(int j = 0; j < N; j++)\n                setCost(i, j, (i == j ? 0 : INF));\n        }\n\n        for(int i = 0; i < M; i++) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            setCost(a, b, c);\n            setCost(b, a, c);\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:44,734	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:44,735	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <stdio.h>\n#include <limits.h>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:46,058	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-02-24 23:04:46,058	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <stdio.h>\n#include <limits.h>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\nP can_free[90000]; // Pre-allocated array of pairs\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:47,547	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:47,547	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <stdio.h>\n#include <limits.h>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        for (int k = 0; k < N; ++k) {\n            for (int i = 0; i < N; ++i) {\n                for (int j = 0; j < N; ++j) {\n                    cost[i][j] = min(cost[i][j], cost[i][k] + cost[k][j]);\n                }\n            }\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:49,194	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:49,194	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <array>\n#include <limits.h>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\narray<array<int, 300>, 300> cost;\n\nint main() {\n    int N, M;\n    while (cin >> N >> M, N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            cin >> a >> b >> c;\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:50,654	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:50,654	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <stdio.h>\n#include <limits.h>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\n\nvoid readInput(int &N, int &M) {\n    scanf("%d %d", &N, &M);\n}\n\nint main() {\n    int N, M;\n    while (readInput(N, M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:51,983	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-02-24 23:04:51,983	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <stdio.h>\n#include <limits.h>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        int ans = cost[0][N - 1];\n        for (int i = 0; i < can_free.size(); i++) {\n            ans = min(cost[0][can_free[i].x] + cost[can_free[i].y][N - 1], ans);\n        }\n\n        printf("%d\\n", ans);\n    }\n}')"
+2025-02-24 23:04:53,312	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-02-24 23:04:53,312	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <stdio.h>\n#include <limits.h>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\nvector<P> can_free;\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        can_free.reserve(90000); // Reserve space beforehand\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:54,751	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:04:54,751	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <stdio.h>\n#include <limits.h>\n#include <algorithm>\nusing namespace std;\n\nconst int INF = 1000000000;\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        for (int i = 0; i < 300; ++i) {\n            for (int j = 0; j < 300; ++j)\n                cost[i][j] = (i == j ? 0 : INF);\n        }\n\n        for (int i = 0; i < M; ++i) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        // Rest of the code...\n    }\n}')"
+2025-02-24 23:04:55,752	[INFO]	Step: 10
+2025-02-24 23:04:55,752	[INFO]	Stop Steps: 50
+2025-02-24 23:04:57,809	[DEBUG]	EXEC>  SUCCESS 3699789.0
+2025-02-24 23:04:57,810	[INFO]	REF     SUCCESS               3699789.00 (--) [0 edit(s)]  
+2025-02-24 23:04:57,810	[INFO]	Best patch step: None
+2025-02-24 23:05:54,204	[INFO]	Step: 10
+2025-02-24 23:05:54,205	[INFO]	Stop Steps: 50
+2025-02-24 23:05:54,664	[INFO]	1-1     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:05:54,664	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nchar str[200005];\nint main() {\n    scanf("%s", str);\n    int ans = 0, a = -1;\n    for (int i = 0; str[i]; i++) {\n        if (str[i] == \'Z\') {\n            if (a != -1)\n                ans = max(ans, i - a);\n        } else if (str[i] == \'A\' && a == -1)\n            a = i;\n    }\n    printf("%d\\n", ans + 1);\n    return 0;\n}')"
+2025-02-24 23:05:54,664	[INFO]	Step: 11
+2025-02-24 23:05:54,664	[INFO]	Stop Steps: 50
+2025-02-24 23:05:55,128	[INFO]	1-2     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:05:55,128	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long ll;\nconst int maxn = 200000; // Increased to accommodate larger input\nint n, a[maxn], b[maxn];\n\nint main(void) {\n    scanf("%d", &n);\n    for (int i = 0; i < n; ++i) {\n        scanf("%d%d", &a[i], &b[i]);\n    }\n    ll ans = 0;\n    for (int i = n - 1; i >= 0; --i) {\n        ll cur = a[i] + ans;\n        ll tar = (cur + b[i] - 1) / b[i] * b[i];\n        ans += tar - cur;\n    }\n    printf("%lld\\n", ans);\n    return 0;\n}')"
+2025-02-24 23:05:55,128	[INFO]	Step: 12
+2025-02-24 23:05:55,128	[INFO]	Stop Steps: 50
+2025-02-24 23:05:55,587	[INFO]	1-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:05:55,587	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\nchar str[200005];\nint main() {\n    scanf("%s", str);\n    int ans = 0, a = -1; // Initializing variables\n    for (int i = 0; str[i]; i++) {\n        if (str[i] == \'Z\') {\n            if (a != -1)\n                ans = max(ans, i - a); // Calculate max distance\n        } else if (str[i] == \'A\' && a == -1)\n            a = i; // Set position of \'A\'\n    }\n    printf("%d\\n", ans + 1); // Output result\n    return 0;\n}')"
+2025-02-24 23:05:55,588	[INFO]	Step: 13
+2025-02-24 23:05:55,588	[INFO]	Stop Steps: 50
+2025-02-24 23:05:56,046	[INFO]	1-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:05:56,046	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <algorithm>\nusing namespace std;\n\ntypedef long long li;\nconst int maxn = 1e5; // Defined maximum size\nint n, a[maxn], b[maxn];\n\nint main(void) {\n    scanf("%d", &n); // Reading number of elements\n    for (int i = 0; i < n; ++i) {\n        scanf("%d%d", &a[i], &b[i]); // Efficient input handling\n    }\n    li ans = 0;\n    for (int i = n - 1; i >= 0; --i) {\n        li cur = a[i] + ans; // Calculate current value\n        li tar = (cur + b[i] - 1) / b[i] * b[i]; // Target calculation\n        ans += tar - cur; // Update answer\n    }\n    printf("%lld\\n", ans); // Print final result\n    return 0;\n}')"
+2025-02-24 23:05:56,047	[INFO]	Step: 14
+2025-02-24 23:05:56,047	[INFO]	Stop Steps: 50
+2025-02-24 23:05:57,079	[DEBUG]	EXEC>  SUCCESS 3488378.0
+2025-02-24 23:05:57,079	[INFO]	1-5     SUCCESS              *3488378.00 (94.29%) [1 edit(s)]  
+2025-02-24 23:05:57,079	[DEBUG]	patch(1-5)="LineLLMMutation(('source.cpp', 10), '#include <stdio.h>\n#include <cctype>\n#include <limits.h>\n#include <math.h>\n#include <complex>\n#include <bitset>\n#include <vector>\n#include <map>\n#include <set>\n#include <stack>\n#include <queue>\n#include <cstring>\n#include <string>\n#include <sstream>\n#include <algorithm>\n#include <iomanip>\n#include <iostream>\n\n#define VARIABLE(x) cerr << #x << "=" << x << endl\n#define BINARY(x) static_cast<bitset<16>>(x);\n#define rep(i,n) for(int i=0;i<(int)(n);i++)\n#define REP(i,m,n) for (int i=m;i<(int)(n);i++)\n#define if_range(x, y, w, h) if (0<=(int)(x) && (int)(x)<(int)(w) && 0<=(int)(y) && (int)(y)<(int)(h))\n\nconst int INF = 1000000000;\nconst double EPS = 1e-8;\nconst double PI = 3.14159;\nint dx[4]={0, 1, 0, -1}, dy[4]={-1, 0, 1, 0};\n\nusing namespace std;\n\nstruct P {\n    int x, y;\n    P(int x, int y):x(x), y(y){}\n    P(){}\n};\n\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (cin >> N >> M, N || M) {\n        std::fill(&cost[0][0], &cost[0][0] + sizeof(cost) / sizeof(cost[0][0]), INF);\n        rep(i, N) cost[i][i] = 0; // Set diagonal to zero\n\n        rep(i, M) {\n            int a, b, c; cin >> a >> b >> c;\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        vector<P> can_free;\n        rep(i, N) {\n            rep(j, N) {\n                if (cost[i][j] != INF && i != j) {\n                    rep(k, N) {\n                        if (cost[j][k] != INF && i != k && j != k)\n                            can_free.push_back(P(i, k));\n                    }\n                }\n            }\n        }\n\n        rep(k, N) {\n            rep(i, N) {\n                rep(j, N) {\n                    cost[i][j] = min(cost[i][j], cost[i][k] + cost[k][j]);\n                }\n            }\n        }\n\n        int ans = cost[0][N-1];\n        rep(i, can_free.size()) {\n            ans = min(cost[0][can_free[i].x] + cost[can_free[i].y][N-1], ans);\n        }\n\n        cout << ans << endl;\n    }\n}')"
+
+2025-02-24 23:05:57,079	[INFO]	Step: 15
+2025-02-24 23:05:57,079	[INFO]	Stop Steps: 50
+2025-02-24 23:05:58,110	[DEBUG]	EXEC>  SUCCESS 3672691.5
+2025-02-24 23:05:58,111	[INFO]	1-6     SUCCESS               3672691.50 (99.27%) [1 edit(s)]  
+2025-02-24 23:05:58,111	[DEBUG]	patch(1-6)="LineLLMMutation(('source.cpp', 11), '#include <stdio.h>\n#include <cctype>\n#include <limits.h>\n#include <math.h>\n#include <complex>\n#include <bitset>\n#include <vector>\n#include <map>\n#include <set>\n#include <stack>\n#include <queue>\n#include <cstring>\n#include <string>\n#include <sstream>\n#include <algorithm>\n#include <iomanip>\n#include <iostream>\n\n#define VARIABLE(x) cerr << #x << "=" << x << endl\n#define BINARY(x) static_cast<bitset<16>>(x);\n#define rep(i,n) for(int i=0;i<(int)(n);i++)\n#define REP(i,m,n) for (int i=m;i<(int)(n);i++)\n#define if_range(x, y, w, h) if (0<=(int)(x) && (int)(x)<(int)(w) && 0<=(int)(y) && (int)(y)<(int)(h))\n\nconst int INF = 1000000000;\nconst double EPS = 1e-8;\nconst double PI = 3.14159;\nint dx[4]={0, 1, 0, -1}, dy[4]={-1, 0, 1, 0};\n\nusing namespace std;\n\nstruct P {\n    int x, y;\n    P(int x, int y):x(x), y(y){}\n    P(){}\n};\n\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (scanf("%d %d", &N, &M), N || M) {\n        rep(i, 300) rep(j, 300)\n            cost[i][j] = (i == j ? 0 : INF);\n\n        rep(i, M) {\n            int a, b, c; \n            scanf("%d %d %d", &a, &b, &c);\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        vector<P> can_free;\n        rep(i, N) {\n            rep(j, N) {\n                if (cost[i][j] != INF && i != j) {\n                    rep(k, N) {\n                        if (cost[j][k] != INF && i != k && j != k)\n                            can_free.push_back(P(i, k));\n                    }\n                }\n            }\n        }\n\n        rep(k, N) {\n            rep(i, N) {\n                rep(j, N) {\n                    cost[i][j] = min(cost[i][j], cost[i][k] + cost[k][j]);\n                }\n            }\n        }\n\n        int ans = cost[0][N-1];\n        rep(i, can_free.size()) {\n            ans = min(cost[0][can_free[i].x] + cost[can_free[i].y][N-1], ans);\n        }\n\n        printf("%d\\n", ans);\n    }\n}')"
+2025-02-24 23:05:58,111	[INFO]	Step: 16
+2025-02-24 23:05:58,111	[INFO]	Stop Steps: 50
+2025-02-24 23:05:59,147	[DEBUG]	EXEC>  SUCCESS 3151344.0
+2025-02-24 23:05:59,147	[INFO]	1-7     SUCCESS              *3151344.00 (85.18%) [1 edit(s)]  
+2025-02-24 23:05:59,147	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 12), '#include <stdio.h>\n#include <cctype>\n#include <limits.h>\n#include <math.h>\n#include <complex>\n#include <bitset>\n#include <vector>\n#include <map>\n#include <set>\n#include <stack>\n#include <queue>\n#include <cstring>\n#include <string>\n#include <sstream>\n#include <algorithm>\n#include <iomanip>\n#include <iostream>\n\n#define VARIABLE(x) cerr << #x << "=" << x << endl\n#define BINARY(x) static_cast<bitset<16>>(x);\n#define rep(i,n) for(int i=0;i<(int)(n);i++)\n#define REP(i,m,n) for (int i=m;i<(int)(n);i++)\n#define if_range(x, y, w, h) if (0<=(int)(x) && (int)(x)<(int)(w) && 0<=(int)(y) && (int)(y)<(int)(h))\n\nconst int INF = 1000000000;\nconst double EPS = 1e-8;\nconst double PI = 3.14159;\nint dx[4]={0, 1, 0, -1}, dy[4]={-1, 0, 1, 0};\n\nusing namespace std;\n\nstruct P {\n    int x, y;\n    P(int x, int y):x(x), y(y){}\n    P(){}\n};\n\nint cost[300 * 300];\n\nint main() {\n    int N, M;\n    while (cin >> N >> M, N || M) {\n        rep(i, N) rep(j, N)\n            cost[i * N + j] = (i == j ? 0 : INF);\n\n        rep(i, M) {\n            int a, b, c; cin >> a >> b >> c;\n            a--, b--;\n            cost[a * N + b] = cost[b * N + a] = c;\n        }\n\n        vector<P> can_free;\n        rep(i, N) {\n            rep(j, N) {\n                if (cost[i * N + j] != INF && i != j) {\n                    rep(k, N) {\n                        if (cost[j * N + k] != INF && i != k && j != k)\n                            can_free.push_back(P(i, k));\n                    }\n                }\n            }\n        }\n\n        rep(k, N) {\n            rep(i, N) {\n                rep(j, N) {\n                    cost[i * N + j] = min(cost[i * N + j], cost[i * N + k] + cost[k * N + j]);\n                }\n            }\n        }\n\n        int ans = cost[0 * N + N - 1];\n        rep(i, can_free.size()) {\n            ans = min(cost[0 * N + can_free[i].x] + cost[can_free[i].y * N + N - 1], ans);\n        }\n\n        cout << ans << endl;\n    }\n}')"
+
+2025-02-24 23:05:59,147	[INFO]	Step: 17
+2025-02-24 23:05:59,147	[INFO]	Stop Steps: 50
+2025-02-24 23:06:00,189	[DEBUG]	EXEC>  SUCCESS 3697930.5
+2025-02-24 23:06:00,190	[INFO]	1-8     SUCCESS               3697930.50 (99.95%) [1 edit(s)]  
+2025-02-24 23:06:00,190	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 13), '#include <stdio.h>\n#include <cctype>\n#include <limits.h>\n#include <math.h>\n#include <complex>\n#include <bitset>\n#include <vector>\n#include <map>\n#include <set>\n#include <stack>\n#include <queue>\n#include <cstring>\n#include <string>\n#include <sstream>\n#include <algorithm>\n#include <iomanip>\n#include <iostream>\n\n#define VARIABLE(x) cerr << #x << "=" << x << endl\n#define BINARY(x) static_cast<bitset<16>>(x);\n#define rep(i,n) for(int i=0;i<(int)(n);i++)\n#define REP(i,m,n) for (int i=m;i<(int)(n);i++)\n#define if_range(x, y, w, h) if (0<=(int)(x) && (int)(x)<(int)(w) && 0<=(int)(y) && (int)(y)<(int)(h))\n\nconst int INF = 1000000000;\nconst double EPS = 1e-8;\nconst double PI = 3.14159;\nint dx[4]={0, 1, 0, -1}, dy[4]={-1, 0, 1, 0};\n\nusing namespace std;\n\nstruct P {\n    int x, y;\n    P(int x, int y):x(x), y(y){}\n    P(){}\n};\n\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (cin >> N >> M, N || M) {\n        rep(i, 300) rep(j, 300)\n            cost[i][j] = (i == j ? 0 : INF);\n\n        rep(i, M) {\n            int a, b, c; cin >> a >> b >> c;\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        vector<P> can_free;\n        rep(i, N) {\n            rep(j, N) {\n                if (cost[i][j] != INF && i != j) {\n                    rep(k, N) {\n                        if (cost[j][k] != INF && i != k && j != k)\n                            can_free.push_back(P(i, k));\n                    }\n                }\n            }\n        }\n\n        rep(k, N) {\n            rep(i, N) {\n                int costik = cost[i][k]; // Store cost[i][k] in a variable\n                rep(j, N) {\n                    cost[i][j] = min(cost[i][j], costik + cost[k][j]);\n                }\n            }\n        }\n\n        int ans = cost[0][N-1];\n        rep(i, can_free.size()) {\n            ans = min(cost[0][can_free[i].x] + cost[can_free[i].y][N-1], ans);\n        }\n\n        cout << ans << endl;\n    }\n}')"
+2025-02-24 23:06:00,190	[INFO]	Step: 18
+2025-02-24 23:06:00,190	[INFO]	Stop Steps: 50
+2025-02-24 23:06:01,178	[DEBUG]	EXEC>  SUCCESS 3691870.0
+2025-02-24 23:06:01,179	[INFO]	1-9     SUCCESS               3691870.00 (99.79%) [1 edit(s)]  
+2025-02-24 23:06:01,179	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 14), '#include <stdio.h>\n#include <cctype>\n#include <limits.h>\n#include <math.h>\n#include <complex>\n#include <bitset>\n#include <vector>\n#include <map>\n#include <set>\n#include <stack>\n#include <queue>\n#include <cstring>\n#include <string>\n#include <sstream>\n#include <algorithm>\n#include <iomanip>\n#include <iostream>\n\n#define VARIABLE(x) cerr << #x << "=" << x << endl\n#define BINARY(x) static_cast<bitset<16>>(x);\n#define rep(i,n) for(int i=0;i<(int)(n);i++)\n#define REP(i,m,n) for (int i=m;i<(int)(n);i++)\n#define if_range(x, y, w, h) if (0<=(int)(x) && (int)(x)<(int)(w) && 0<=(int)(y) && (int)(y)<(int)(h))\n\nconst int INF = 1000000000;\nconst double EPS = 1e-8;\nconst double PI = 3.14159;\nint dx[4]={0, 1, 0, -1}, dy[4]={-1, 0, 1, 0};\n\nusing namespace std;\n\nstruct P {\n    int x, y;\n    P(int x, int y):x(x), y(y){}\n    P(){}\n};\n\nP can_free[300 * 300]; // Preallocate for the maximum possible size\nint can_free_size = 0;\n\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (cin >> N >> M, N || M) {\n        rep(i, 300) rep(j, 300)\n            cost[i][j] = (i == j ? 0 : INF);\n\n        rep(i, M) {\n            int a, b, c; cin >> a >> b >> c;\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        can_free_size = 0; // Reset the size before use\n        rep(i, N) {\n            rep(j, N) {\n                if (cost[i][j] != INF && i != j) {\n                    rep(k, N) {\n                        if (cost[j][k] != INF && i != k && j != k) {\n                            can_free[can_free_size++] = P(i, k); // Use preallocated array\n                        }\n                    }\n                }\n            }\n        }\n\n        rep(k, N) {\n            rep(i, N) {\n                rep(j, N) {\n                    cost[i][j] = min(cost[i][j], cost[i][k] + cost[k][j]);\n                }\n            }\n        }\n\n        int ans = cost[0][N-1];\n        rep(i, can_free_size) {\n            ans = min(cost[0][can_free[i].x] + cost[can_free[i].y][N-1], ans);\n        }\n\n        cout << ans << endl;\n    }\n}')"
+2025-02-24 23:06:01,179	[INFO]	Step: 19
+2025-02-24 23:06:01,179	[INFO]	Stop Steps: 50
+2025-02-24 23:06:02,152	[INFO]	1-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 23:06:02,152	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 15), '#include <stdio.h>\n#include <cctype>\n#include <limits.h>\n#include <math.h>\n#include <complex>\n#include <bitset>\n#include <vector>\n#include <map>\n#include <set>\n#include <stack>\n#include <queue>\n#include <cstring>\n#include <string>\n#include <sstream>\n#include <algorithm>\n#include <iomanip>\n#include <iostream>\n\n#define VARIABLE(x) cerr << #x << "=" << x << endl\n#define BINARY(x) static_cast<bitset<16>>(x);\n#define rep(i,n) for(int i=0;i<(int)(n);i++)\n#define REP(i,m,n) for (int i=m;i<(int)(n);i++)\n#define if_range(x, y, w, h) if (0<=(int)(x) && (int)(x)<(int)(w) && 0<=(int)(y) && (int)(y)<(int)(h))\n\nconst int INF = 1000000000;\nconst double EPS = 1e-8;\nconst double PI = 3.14159;\nint dx[4]={0, 1, 0, -1}, dy[4]={-1, 0, 1, 0};\n\nusing namespace std;\n\nstruct P {\n    int x, y;\n    P(int x, int y):x(x), y(y){}\n    P(){}\n};\n\nint cost[300][300];\n\nint main() {\n    int N, M;\n    while (cin >> N >> M, N || M) {\n        rep(i, 300) rep(j, 300)\n            cost[i][j] = (i == j ? 0 : INF);\n\n        rep(i, M) {\n            int a, b, c; cin >> a >> b >> c;\n            a--, b--;\n            cost[a][b] = cost[b][a] = c;\n        }\n\n        vector<P> can_free;\n        rep(i, N) {\n            rep(j, N) {\n                if (cost[i][j] != INF && i != j) {\n                    rep(k, N) {\n                        if (cost[j][k] != INF && i != k) {\n                            can_free.push_back(P(i, k));\n                        }\n                    }\n                }\n            }\n        }\n\n        rep(k, N) {\n            rep(i, N) {\n                rep(j, N) {\n                    int costik = cost[i][k];\n                    if (costik != INF) {\n                        cost[i][j] = min(cost[i][j], costik + cost[k][j]);\n                    }\n                }\n            }\n        }\n\n        int ans = cost[0][N-1];\n        rep(i, can_free.size()) {\n            ans = min(cost[0][can_free[i].x] + cost[can_free[i].y][N-1], ans);\n        }\n\n        cout << ans << endl;\n    }\n}')"
+2025-02-24 23:06:02,152	[INFO]	Step: 20
+2025-02-24 23:06:02,152	[INFO]	Stop Steps: 50
+2025-02-24 23:06:04,376	[DEBUG]	EXEC>  SUCCESS 3699969.0
+2025-02-24 23:06:04,376	[INFO]	REF     SUCCESS               3699969.00 (--) [0 edit(s)]  
+2025-02-24 23:06:04,376	[INFO]	Best patch: 12
+2025-02-24 23:06:05,438	[DEBUG]	EXEC>  SUCCESS 3151255.0
+2025-02-24 23:06:05,439	[INFO]	BEST    SUCCESS              *3151255.00 (85.17%) [0 edit(s)]  
+2025-02-24 23:06:05,439	[INFO]	Best patch step: 16
+2025-02-24 23:07:36,031	[INFO]	~~~~ END ~~~~
+2025-02-24 23:07:36,031	[INFO]	Best patch step: 16

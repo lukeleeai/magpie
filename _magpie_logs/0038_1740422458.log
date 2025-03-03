@@ -1,0 +1,414 @@
+2025-02-24 18:40:58,649	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5866571328284908
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0038
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 18:40:58,649	[DEBUG]	
+2025-02-24 18:40:58,649	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 18:40:58,649	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 18:40:59,383	[DEBUG]	EXEC>  SUCCESS 3125988.0
+2025-02-24 18:40:59,383	[INFO]	WARM    SUCCESS               3125988.00 (--) [0 edit(s)]  
+2025-02-24 18:40:59,650	[DEBUG]	EXEC>  SUCCESS 3125988.5
+2025-02-24 18:40:59,650	[INFO]	WARM    SUCCESS               3125988.50 (--) [0 edit(s)]  
+2025-02-24 18:40:59,921	[DEBUG]	EXEC>  SUCCESS 3125989.0
+2025-02-24 18:40:59,921	[INFO]	WARM    SUCCESS               3125989.00 (--) [0 edit(s)]  
+2025-02-24 18:41:00,196	[DEBUG]	EXEC>  SUCCESS 3126001.0
+2025-02-24 18:41:00,196	[INFO]	WARM    SUCCESS               3126001.00 (--) [0 edit(s)]  
+2025-02-24 18:41:00,476	[DEBUG]	EXEC>  SUCCESS 3126078.5
+2025-02-24 18:41:00,477	[INFO]	WARM    SUCCESS               3126078.50 (--) [0 edit(s)]  
+2025-02-24 18:41:00,477	[INFO]	REF     SUCCESS               3126078.50 (--) [0 edit(s)]  
+2025-02-24 18:41:00,477	[INFO]	
+2025-02-24 18:41:00,477	[INFO]	~~~~ START ~~~~
+2025-02-24 18:41:33,406	[DEBUG]	EXEC>  SUCCESS 3128696.5
+2025-02-24 18:41:33,406	[INFO]	0-1     SUCCESS              +3128696.50 (100.08%) [1 edit(s)]  
+2025-02-24 18:41:33,406	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:34,909	[DEBUG]	EXEC>  SUCCESS 3231509.5
+2025-02-24 18:41:34,909	[INFO]	0-2     SUCCESS               3231509.50 (103.37%) [1 edit(s)]  
+2025-02-24 18:41:34,909	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:36,245	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:36,245	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:37,575	[INFO]	0-4     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:37,575	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i]) {\n                if(prime[i - 2]) {\n                    p = i;\n                    q = p - 2;\n                    printf("%d %d\\n", q, p);\n                    break;\n                }\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:38,895	[INFO]	0-5     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:38,895	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:40,236	[INFO]	0-6     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:40,236	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n    prime[0] = prime[1] = 0;\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && i > 2 && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:41,567	[INFO]	0-7     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:41,568	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n    prime[0] = prime[1] = 0;\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && prime[i - 2]) {\n                printf("%d %d\\n", i - 2, i);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:42,891	[INFO]	0-8     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:42,891	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n;\n    vector<int> prime(MAX_V + 1, 1);\n    prime[0] = prime[1] = 0;\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && prime[i - 2]) {\n                printf("%d %d\\n", i - 2, i);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:44,231	[INFO]	0-9     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:44,231	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n;\n    vector<int> prime(MAX_V + 1, 1);\n    prime[0] = prime[1] = 0;\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && prime[i - 2]) {\n                printf("%d %d\\n", i - 2, i);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:45,557	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 18:41:45,557	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n;\n    vector<int> prime(MAX_V + 1, 1);\n    prime[0] = prime[1] = 0;\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i -= 2) {\n            if(prime[i] && prime[i - 2]) {\n                printf("%d %d\\n", i - 2, i);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:41:46,558	[INFO]	Step: 10
+2025-02-24 18:41:46,558	[INFO]	Stop Steps: 50
+2025-02-24 18:41:47,839	[DEBUG]	EXEC>  SUCCESS 3126086.0
+2025-02-24 18:41:47,839	[INFO]	REF     SUCCESS               3126086.00 (--) [0 edit(s)]  
+2025-02-24 18:41:47,839	[INFO]	Best patch step: None
+2025-02-24 18:42:36,257	[INFO]	Step: 10
+2025-02-24 18:42:36,258	[INFO]	Stop Steps: 50
+2025-02-24 18:42:36,631	[DEBUG]	EXEC>  SUCCESS 3128695.0
+2025-02-24 18:42:36,632	[INFO]	1-1     SUCCESS              +3128695.00 (100.08%) [1 edit(s)]  
+2025-02-24 18:42:36,632	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:36,632	[INFO]	Step: 11
+2025-02-24 18:42:36,632	[INFO]	Stop Steps: 50
+2025-02-24 18:42:37,102	[DEBUG]	EXEC>  SUCCESS 3231502.5
+2025-02-24 18:42:37,102	[INFO]	1-2     SUCCESS               3231502.50 (103.37%) [1 edit(s)]  
+2025-02-24 18:42:37,103	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:37,103	[INFO]	Step: 12
+2025-02-24 18:42:37,103	[INFO]	Stop Steps: 50
+2025-02-24 18:42:37,577	[DEBUG]	EXEC>  SUCCESS 3231592.5
+2025-02-24 18:42:37,577	[INFO]	1-3     SUCCESS               3231592.50 (103.38%) [1 edit(s)]  
+2025-02-24 18:42:37,577	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:37,577	[INFO]	Step: 13
+2025-02-24 18:42:37,577	[INFO]	Stop Steps: 50
+2025-02-24 18:42:38,086	[DEBUG]	EXEC>  SUCCESS 3231592.0
+2025-02-24 18:42:38,086	[INFO]	1-4     SUCCESS               3231592.00 (103.38%) [1 edit(s)]  
+2025-02-24 18:42:38,086	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:38,086	[INFO]	Step: 14
+2025-02-24 18:42:38,086	[INFO]	Stop Steps: 50
+2025-02-24 18:42:38,598	[DEBUG]	EXEC>  SUCCESS 3241202.5
+2025-02-24 18:42:38,599	[INFO]	1-5     SUCCESS               3241202.50 (103.68%) [1 edit(s)]  
+2025-02-24 18:42:38,599	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <cstdio>\n#include <vector>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    vector<bool> prime(MAX_V + 1, true);\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false;\n            }\n        }\n    }\n\n    int n, p, q;\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:38,599	[INFO]	Step: 15
+2025-02-24 18:42:38,599	[INFO]	Stop Steps: 50
+2025-02-24 18:42:39,070	[DEBUG]	EXEC>  SUCCESS 3231594.5
+2025-02-24 18:42:39,070	[INFO]	1-6     SUCCESS               3231594.50 (103.38%) [1 edit(s)]  
+2025-02-24 18:42:39,070	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:39,070	[INFO]	Step: 16
+2025-02-24 18:42:39,070	[INFO]	Stop Steps: 50
+2025-02-24 18:42:39,465	[DEBUG]	EXEC>  SUCCESS 3241204.0
+2025-02-24 18:42:39,465	[INFO]	1-7     SUCCESS               3241204.00 (103.68%) [2 edit(s)]  
+2025-02-24 18:42:39,465	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 10), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true);\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false; // Marking non-prime\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:39,465	[INFO]	Step: 17
+2025-02-24 18:42:39,465	[INFO]	Stop Steps: 50
+2025-02-24 18:42:39,848	[DEBUG]	EXEC>  SUCCESS 3241204.0
+2025-02-24 18:42:39,848	[INFO]	1-8     SUCCESS               3241204.00 (103.68%) [2 edit(s)]  
+2025-02-24 18:42:39,848	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true);\n\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false;\n            }\n        }\n    }\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:39,848	[INFO]	Step: 18
+2025-02-24 18:42:39,848	[INFO]	Stop Steps: 50
+2025-02-24 18:42:40,231	[DEBUG]	EXEC>  SUCCESS 3241196.5
+2025-02-24 18:42:40,231	[INFO]	1-9     SUCCESS               3241196.50 (103.68%) [1 edit(s)]  
+2025-02-24 18:42:40,231	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 12), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true); // Use vector for dynamic memory and automatic cleanup\n\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false; // Start from i*i to reduce iterations\n            }\n        }\n    }\n\n    while (true) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) { // Check for twin primes\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:40,232	[INFO]	Step: 19
+2025-02-24 18:42:40,232	[INFO]	Stop Steps: 50
+2025-02-24 18:42:40,610	[DEBUG]	EXEC>  SUCCESS 3241224.0
+2025-02-24 18:42:40,611	[INFO]	1-10    SUCCESS               3241224.00 (103.68%) [1 edit(s)]  
+2025-02-24 18:42:40,611	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 13), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true);\n\n    prime[0] = prime[1] = false;\n\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false;\n            }\n        }\n    }\n\n    while (scanf("%d", &n) && n != 0) {\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n        if (p && q) { // Only print if p and q have valid values\n            printf("%d %d\\n", q, p);\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:42:40,611	[INFO]	Step: 20
+2025-02-24 18:42:40,611	[INFO]	Stop Steps: 50
+2025-02-24 18:42:41,884	[DEBUG]	EXEC>  SUCCESS 3126169.5
+2025-02-24 18:42:41,885	[INFO]	REF     SUCCESS               3126169.50 (--) [0 edit(s)]  
+2025-02-24 18:42:41,885	[INFO]	Best patch step: None
+2025-02-24 18:43:26,859	[INFO]	Step: 20
+2025-02-24 18:43:26,859	[INFO]	Stop Steps: 50
+2025-02-24 18:43:27,263	[DEBUG]	EXEC>  SUCCESS 3128605.5
+2025-02-24 18:43:27,264	[INFO]	2-1     SUCCESS              +3128605.50 (100.08%) [1 edit(s)]  
+2025-02-24 18:43:27,264	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:27,264	[INFO]	Step: 21
+2025-02-24 18:43:27,264	[INFO]	Stop Steps: 50
+2025-02-24 18:43:27,741	[DEBUG]	EXEC>  SUCCESS 3231593.5
+2025-02-24 18:43:27,742	[INFO]	2-2     SUCCESS               3231593.50 (103.37%) [1 edit(s)]  
+2025-02-24 18:43:27,742	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:27,742	[INFO]	Step: 22
+2025-02-24 18:43:27,742	[INFO]	Stop Steps: 50
+2025-02-24 18:43:28,217	[DEBUG]	EXEC>  SUCCESS 3231682.5
+2025-02-24 18:43:28,217	[INFO]	2-3     SUCCESS               3231682.50 (103.38%) [1 edit(s)]  
+2025-02-24 18:43:28,217	[DEBUG]	patch(2-3)="LineLLMCrossover(('source.cpp', 4), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:28,217	[INFO]	Step: 23
+2025-02-24 18:43:28,217	[INFO]	Stop Steps: 50
+2025-02-24 18:43:28,770	[DEBUG]	EXEC>  SUCCESS 3241918.5
+2025-02-24 18:43:28,770	[INFO]	2-4     SUCCESS               3241918.50 (103.70%) [1 edit(s)]  
+2025-02-24 18:43:28,770	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 5), '#include <cstdio>\n#include <vector>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n    \n    vector<pair<int, int>> results; // Store results in a vector\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                results.push_back({q, p}); // Store the pair in results\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:28,770	[INFO]	Step: 24
+2025-02-24 18:43:28,770	[INFO]	Stop Steps: 50
+2025-02-24 18:43:29,251	[DEBUG]	EXEC>  SUCCESS 3231502.5
+2025-02-24 18:43:29,251	[INFO]	2-5     SUCCESS               3231502.50 (103.37%) [1 edit(s)]  
+2025-02-24 18:43:29,251	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 6), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:29,251	[INFO]	Step: 25
+2025-02-24 18:43:29,252	[INFO]	Stop Steps: 50
+2025-02-24 18:43:29,731	[DEBUG]	EXEC>  SUCCESS 3231503.0
+2025-02-24 18:43:29,732	[INFO]	2-6     SUCCESS               3231503.00 (103.37%) [1 edit(s)]  
+2025-02-24 18:43:29,732	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 7), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:29,732	[INFO]	Step: 26
+2025-02-24 18:43:29,732	[INFO]	Stop Steps: 50
+2025-02-24 18:43:30,216	[DEBUG]	EXEC>  SUCCESS 3231502.5
+2025-02-24 18:43:30,216	[INFO]	2-7     SUCCESS               3231502.50 (103.37%) [2 edit(s)]  
+2025-02-24 18:43:30,217	[DEBUG]	patch(2-7)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all bits to true\n    prime[0] = prime[1] = 0; // 0 and 1 are not primes\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:30,217	[INFO]	Step: 27
+2025-02-24 18:43:30,217	[INFO]	Stop Steps: 50
+2025-02-24 18:43:30,591	[DEBUG]	EXEC>  SUCCESS 3241293.5
+2025-02-24 18:43:30,591	[INFO]	2-8     SUCCESS               3241293.50 (103.68%) [2 edit(s)]  
+2025-02-24 18:43:30,591	[DEBUG]	patch(2-8)="LineLLMMutation(('source.cpp', 1), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 15), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true);\n\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:30,591	[INFO]	Step: 28
+2025-02-24 18:43:30,591	[INFO]	Stop Steps: 50
+2025-02-24 18:43:31,078	[DEBUG]	EXEC>  SUCCESS 3200085.5
+2025-02-24 18:43:31,078	[INFO]	2-9     SUCCESS               3200085.50 (102.36%) [2 edit(s)]  
+2025-02-24 18:43:31,078	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nvector<bool> sieve(MAX_V + 1, true);\n\nvoid generatePrimes() {\n    sieve[0] = sieve[1] = false; // 0 and 1 are not prime\n    for (int i = 2; i <= sqrt(MAX_V); i++) {\n        if (sieve[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                sieve[k] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (sieve[i] && sieve[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:31,078	[INFO]	Step: 29
+2025-02-24 18:43:31,078	[INFO]	Stop Steps: 50
+2025-02-24 18:43:31,483	[DEBUG]	EXEC>  SUCCESS 3241216.0
+2025-02-24 18:43:31,483	[INFO]	2-10    SUCCESS               3241216.00 (103.68%) [2 edit(s)]  
+2025-02-24 18:43:31,484	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 0), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 17), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true);\n\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:43:31,484	[INFO]	Step: 30
+2025-02-24 18:43:31,484	[INFO]	Stop Steps: 50
+2025-02-24 18:43:31,764	[DEBUG]	EXEC>  SUCCESS 3126078.5
+2025-02-24 18:43:31,765	[INFO]	2-1     SUCCESS              *3126078.50 (100.00%) [1 edit(s)]  
+2025-02-24 18:43:31,765	[DEBUG]	patch(2-1)="LineLLMMutation(('source.cpp', 18), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V+1]; // Array to mark prime numbers\n\n    for(i = 2; i <= MAX_V; i++) {\n        prime[i] = 1; // Initialize all numbers as prime\n    }\n\n    for(i = 2; i*i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(k = 2 * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while(1) {\n        scanf("%d",&n);\n        if(n == 0) break;\n\n        for(i = n; i >= 3; i--) { // Check for twin primes\n            if(prime[i] == 1 && prime[i-2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 18:43:31,765	[INFO]	Step: 31
+2025-02-24 18:43:31,765	[INFO]	Stop Steps: 50
+2025-02-24 18:43:33,154	[DEBUG]	EXEC>  SUCCESS 3125988.5
+2025-02-24 18:43:33,154	[INFO]	REF     SUCCESS               3125988.50 (--) [0 edit(s)]  
+2025-02-24 18:43:33,154	[INFO]	Best patch: 18
+2025-02-24 18:43:33,418	[DEBUG]	EXEC>  SUCCESS 3126091.5
+2025-02-24 18:43:33,418	[INFO]	BEST    SUCCESS               3126091.50 (100.00%) [0 edit(s)]  
+2025-02-24 18:43:33,418	[INFO]	Best patch step: 30
+2025-02-24 18:44:35,405	[INFO]	Step: 31
+2025-02-24 18:44:35,405	[INFO]	Stop Steps: 50
+2025-02-24 18:44:35,679	[DEBUG]	EXEC>  SUCCESS 3125988.5
+2025-02-24 18:44:35,680	[INFO]	3-2     SUCCESS              +3125988.50 (100.00%) [1 edit(s)]  
+2025-02-24 18:44:35,680	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 18), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V+1]; // Array to mark prime numbers\n\n    for(i = 2; i <= MAX_V; i++) {\n        prime[i] = 1; // Initialize all numbers as prime\n    }\n\n    for(i = 2; i*i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(k = 2 * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while(1) {\n        scanf("%d",&n);\n        if(n == 0) break;\n\n        for(i = n; i >= 3; i--) { // Check for twin primes\n            if(prime[i] == 1 && prime[i-2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')"
+2025-02-24 18:44:35,680	[INFO]	Step: 32
+2025-02-24 18:44:35,680	[INFO]	Stop Steps: 50
+2025-02-24 18:44:36,243	[DEBUG]	EXEC>  SUCCESS 3128696.5
+2025-02-24 18:44:36,243	[INFO]	3-3     SUCCESS               3128696.50 (100.09%) [1 edit(s)]  
+2025-02-24 18:44:36,243	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:36,243	[INFO]	Step: 33
+2025-02-24 18:44:36,243	[INFO]	Stop Steps: 50
+2025-02-24 18:44:36,756	[DEBUG]	EXEC>  SUCCESS 3200085.5
+2025-02-24 18:44:36,756	[INFO]	3-4     SUCCESS               3200085.50 (102.37%) [1 edit(s)]  
+2025-02-24 18:44:36,756	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 8), '#include <cstdio>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int MAX_V = 10000;\nvector<bool> sieve(MAX_V + 1, true);\n\nvoid generatePrimes() {\n    sieve[0] = sieve[1] = false; // 0 and 1 are not prime\n    for (int i = 2; i <= sqrt(MAX_V); i++) {\n        if (sieve[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                sieve[k] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n    \n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (sieve[i] && sieve[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:36,757	[INFO]	Step: 34
+2025-02-24 18:44:36,757	[INFO]	Stop Steps: 50
+2025-02-24 18:44:37,234	[DEBUG]	EXEC>  SUCCESS 3236123.5
+2025-02-24 18:44:37,234	[INFO]	3-5     SUCCESS               3236123.50 (103.52%) [1 edit(s)]  
+2025-02-24 18:44:37,234	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 9), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\nbitset<MAX_V + 1> prime;\n\nvoid generatePrimes() {\n    prime.set(); // Set all bits to true\n    prime[0] = prime[1] = 0; // 0 and 1 are not primes\n    \n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:37,234	[INFO]	Step: 35
+2025-02-24 18:44:37,235	[INFO]	Stop Steps: 50
+2025-02-24 18:44:37,746	[DEBUG]	EXEC>  SUCCESS 3199236.0
+2025-02-24 18:44:37,746	[INFO]	3-6     SUCCESS               3199236.00 (102.34%) [1 edit(s)]  
+2025-02-24 18:44:37,746	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 10), '#include <cstdio>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int MAX_V = 10000;\nvector<bool> prime(MAX_V + 1, true);\n\nvoid generatePrimes() {\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n    for (int i = 2; i <= sqrt(MAX_V); i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:37,746	[INFO]	Step: 36
+2025-02-24 18:44:37,746	[INFO]	Stop Steps: 50
+2025-02-24 18:44:38,126	[DEBUG]	EXEC>  SUCCESS 3121861.5
+2025-02-24 18:44:38,127	[INFO]	3-7     SUCCESS              *3121861.50 (99.87%) [1 edit(s)]  
+2025-02-24 18:44:38,127	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\nvector<int> prime(MAX_V + 1, 1);\n\nvoid generatePrimes() {\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+
+2025-02-24 18:44:38,127	[INFO]	Step: 37
+2025-02-24 18:44:38,127	[INFO]	Stop Steps: 50
+2025-02-24 18:44:38,393	[DEBUG]	EXEC>  SUCCESS 3092528.5
+2025-02-24 18:44:38,393	[INFO]	3-8     SUCCESS              *3092528.50 (98.93%) [2 edit(s)]  
+2025-02-24 18:44:38,394	[DEBUG]	patch(3-8)="LineLLMMutation(('source.cpp', 18), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V+1]; // Array to mark prime numbers\n\n    for(i = 2; i <= MAX_V; i++) {\n        prime[i] = 1; // Initialize all numbers as prime\n    }\n\n    for(i = 2; i*i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(k = 2 * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while(1) {\n        scanf("%d",&n);\n        if(n == 0) break;\n\n        for(i = n; i >= 3; i--) { // Check for twin primes\n            if(prime[i] == 1 && prime[i-2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V + 1] = {0}; // Initialize array to mark prime numbers\n\n    prime[2] = 1; // 2 is prime\n    \n    // Mark all odd numbers as prime\n    for (i = 3; i <= MAX_V; i += 2) {\n        prime[i] = 1; // Initialize all odd numbers as prime\n    }\n\n    for (i = 3; i * i <= MAX_V; i += 2) {\n        if (prime[i]) {\n            for (k = i * i; k <= MAX_V; k += i * 2) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (i = n; i >= 3; i--) { // Check for twin primes\n            if (prime[i] == 1 && prime[i - 2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')"
+
+2025-02-24 18:44:38,394	[INFO]	Step: 38
+2025-02-24 18:44:38,394	[INFO]	Stop Steps: 50
+2025-02-24 18:44:38,893	[DEBUG]	EXEC>  SUCCESS 3207068.0
+2025-02-24 18:44:38,893	[INFO]	3-9     SUCCESS               3207068.00 (102.59%) [2 edit(s)]  
+2025-02-24 18:44:38,893	[DEBUG]	patch(3-9)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 20), '#include <cstdio>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<bool> prime(MAX_V + 1, true);\n    prime[0] = prime[1] = false; // 0 and 1 are not prime numbers\n\n    for (int i = 2; i <= sqrt(MAX_V); i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false; // Marking non-prime numbers\n            }\n        }\n    }\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:38,894	[INFO]	Step: 39
+2025-02-24 18:44:38,894	[INFO]	Stop Steps: 50
+2025-02-24 18:44:39,418	[DEBUG]	EXEC>  SUCCESS 3235751.5
+2025-02-24 18:44:39,418	[INFO]	3-10    SUCCESS               3235751.50 (103.51%) [3 edit(s)]  
+2025-02-24 18:44:39,418	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 1), '#include <cstdio>\n#include <vector>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all to true (prime)\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 16), '#include <cstdio>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nvector<bool> sieve(MAX_V + 1, true);\n\nvoid generatePrimes() {\n    sieve[0] = sieve[1] = false; // 0 and 1 are not prime\n    for (int i = 2; i <= sqrt(MAX_V); i++) {\n        if (sieve[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                sieve[k] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (sieve[i] && sieve[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 21), '#include <cstdio>\n#include <vector>\n#include <cmath>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nvector<bool> sieve(MAX_V + 1);\n\nvoid generatePrimes() {\n    fill(sieve.begin(), sieve.end(), true); // Initialize the sieve\n    sieve[0] = sieve[1] = false; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (sieve[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                sieve[k] = false;\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (sieve[i] && sieve[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:39,419	[INFO]	Step: 40
+2025-02-24 18:44:39,419	[INFO]	Stop Steps: 50
+2025-02-24 18:44:39,802	[DEBUG]	EXEC>  SUCCESS 3234127.0
+2025-02-24 18:44:39,802	[INFO]	3-1     SUCCESS               3234127.00 (103.46%) [3 edit(s)]  
+2025-02-24 18:44:39,802	[DEBUG]	patch(3-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    vector<int> prime(MAX_V + 1, 1);\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 14), '#include <cstdio>\n#include <bitset>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    bitset<MAX_V + 1> prime;\n\n    prime.set(); // Set all bits to true\n    prime[0] = prime[1] = 0; // 0 and 1 are not primes\n\n    for(int i = 2; i * i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 22), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\n\nvector<bool> sieve(MAX_V + 1, true);\n\nint main() {\n    int n, p, q;\n\n    sieve[0] = sieve[1] = false; // 0 and 1 are not primes\n\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (sieve[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                sieve[k] = false; // Mark non-primes as false\n            }\n        }\n    }\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (sieve[i] && sieve[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:44:39,802	[INFO]	Step: 41
+2025-02-24 18:44:39,802	[INFO]	Stop Steps: 50
+2025-02-24 18:44:40,174	[DEBUG]	EXEC>  SUCCESS 3128648.0
+2025-02-24 18:44:40,174	[INFO]	3-2     SUCCESS               3128648.00 (100.09%) [1 edit(s)]  
+2025-02-24 18:44:40,174	[DEBUG]	patch(3-2)="LineLLMMutation(('source.cpp', 23), '#include <stdio.h>\n#include <vector>\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n\n    // Use a vector for dynamic sizing and automatic initialization\n    std::vector<int> prime(MAX_V + 1, 1);\n\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0;\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n        \n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')"
+2025-02-24 18:44:40,174	[INFO]	Step: 42
+2025-02-24 18:44:40,174	[INFO]	Stop Steps: 50
+2025-02-24 18:44:41,454	[DEBUG]	EXEC>  SUCCESS 3125989.0
+2025-02-24 18:44:41,454	[INFO]	REF     SUCCESS               3125989.00 (--) [0 edit(s)]  
+2025-02-24 18:44:41,454	[INFO]	Best patch: 18_19
+2025-02-24 18:44:41,725	[DEBUG]	EXEC>  SUCCESS 3092527.5
+2025-02-24 18:44:41,725	[INFO]	BEST    SUCCESS              *3092527.50 (98.93%) [0 edit(s)]  
+2025-02-24 18:44:41,725	[INFO]	Best patch step: 37
+2025-02-24 18:45:57,417	[INFO]	Step: 42
+2025-02-24 18:45:57,417	[INFO]	Stop Steps: 50
+2025-02-24 18:45:57,695	[DEBUG]	EXEC>  SUCCESS 3092618.0
+2025-02-24 18:45:57,695	[INFO]	4-3     SUCCESS              +3092618.00 (98.93%) [2 edit(s)]  
+2025-02-24 18:45:57,695	[DEBUG]	patch(4-3)="LineLLMMutation(('source.cpp', 18), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V+1]; // Array to mark prime numbers\n\n    for(i = 2; i <= MAX_V; i++) {\n        prime[i] = 1; // Initialize all numbers as prime\n    }\n\n    for(i = 2; i*i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(k = 2 * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while(1) {\n        scanf("%d",&n);\n        if(n == 0) break;\n\n        for(i = n; i >= 3; i--) { // Check for twin primes\n            if(prime[i] == 1 && prime[i-2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V + 1] = {0}; // Initialize array to mark prime numbers\n\n    prime[2] = 1; // 2 is prime\n    \n    // Mark all odd numbers as prime\n    for (i = 3; i <= MAX_V; i += 2) {\n        prime[i] = 1; // Initialize all odd numbers as prime\n    }\n\n    for (i = 3; i * i <= MAX_V; i += 2) {\n        if (prime[i]) {\n            for (k = i * i; k <= MAX_V; k += i * 2) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (i = n; i >= 3; i--) { // Check for twin primes\n            if (prime[i] == 1 && prime[i - 2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')"
+2025-02-24 18:45:57,695	[INFO]	Step: 43
+2025-02-24 18:45:57,695	[INFO]	Stop Steps: 50
+2025-02-24 18:45:58,070	[DEBUG]	EXEC>  SUCCESS 3122042.0
+2025-02-24 18:45:58,070	[INFO]	4-4     SUCCESS               3122042.00 (99.87%) [1 edit(s)]  
+2025-02-24 18:45:58,070	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\nvector<int> prime(MAX_V + 1, 1);\n\nvoid generatePrimes() {\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:45:58,070	[INFO]	Step: 44
+2025-02-24 18:45:58,070	[INFO]	Stop Steps: 50
+2025-02-24 18:45:58,447	[DEBUG]	EXEC>  SUCCESS 3131292.5
+2025-02-24 18:45:58,447	[INFO]	4-5     SUCCESS               3131292.50 (100.17%) [1 edit(s)]  
+2025-02-24 18:45:58,447	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 12), '#include <cstdio>\n#include <vector>\n\nconst int MAX_V = 10000;\n\nvoid generatePrimes(std::vector<int>& prime) {\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    std::vector<int> prime(MAX_V + 1, 1); // Use vector for automatic initialization\n\n    generatePrimes(prime);\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:45:58,448	[INFO]	Step: 45
+2025-02-24 18:45:58,448	[INFO]	Stop Steps: 50
+2025-02-24 18:45:58,824	[DEBUG]	EXEC>  SUCCESS 3128682.0
+2025-02-24 18:45:58,824	[INFO]	4-6     SUCCESS               3128682.00 (100.09%) [1 edit(s)]  
+2025-02-24 18:45:58,824	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 13), '#include <cstdio>\n#include <vector>\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    std::vector<int> prime(MAX_V + 1, 1); // Dynamic sizing\n\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:45:58,824	[INFO]	Step: 46
+2025-02-24 18:45:58,824	[INFO]	Stop Steps: 50
+2025-02-24 18:45:59,190	[DEBUG]	EXEC>  SUCCESS 3128697.5
+2025-02-24 18:45:59,191	[INFO]	4-7     SUCCESS               3128697.50 (100.09%) [1 edit(s)]  
+2025-02-24 18:45:59,191	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 14), '#include <cstdio>\n#include <vector>\n\nconst int MAX_V = 10000;\n\nint main() {\n    int n, p, q;\n    std::vector<int> prime(MAX_V + 1, 1); // Dynamic vector for prime checking\n\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while (scanf("%d", &n) && n) {\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:45:59,191	[INFO]	Step: 47
+2025-02-24 18:45:59,191	[INFO]	Stop Steps: 50
+2025-02-24 18:45:59,568	[DEBUG]	EXEC>  SUCCESS 3131368.0
+2025-02-24 18:45:59,569	[INFO]	4-8     SUCCESS               3131368.00 (100.17%) [1 edit(s)]  
+2025-02-24 18:45:59,569	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 15), '#include <cstdio>\n#include <vector>\n\nconst int MAX_V = 10000;\n\nvoid generatePrimes(std::vector<int>& prime) {\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    std::vector<int> prime(MAX_V + 1, 1); // Use vector for automatic initialization\n\n    generatePrimes(prime);\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (int i = n; i >= 3; i--) {\n            if (prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:45:59,569	[INFO]	Step: 48
+2025-02-24 18:45:59,569	[INFO]	Stop Steps: 50
+2025-02-24 18:46:00,087	[DEBUG]	EXEC>  SUCCESS 3125468.5
+2025-02-24 18:46:00,087	[INFO]	4-9     SUCCESS               3125468.50 (99.98%) [3 edit(s)]  
+2025-02-24 18:46:00,087	[DEBUG]	patch(4-9)="LineLLMMutation(('source.cpp', 18), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V+1]; // Array to mark prime numbers\n\n    for(i = 2; i <= MAX_V; i++) {\n        prime[i] = 1; // Initialize all numbers as prime\n    }\n\n    for(i = 2; i*i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(k = 2 * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while(1) {\n        scanf("%d",&n);\n        if(n == 0) break;\n\n        for(i = n; i >= 3; i--) { // Check for twin primes\n            if(prime[i] == 1 && prime[i-2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 19), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V + 1] = {0}; // Initialize array to mark prime numbers\n\n    prime[2] = 1; // 2 is prime\n    \n    // Mark all odd numbers as prime\n    for (i = 3; i <= MAX_V; i += 2) {\n        prime[i] = 1; // Initialize all odd numbers as prime\n    }\n\n    for (i = 3; i * i <= MAX_V; i += 2) {\n        if (prime[i]) {\n            for (k = i * i; k <= MAX_V; k += i * 2) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (i = n; i >= 3; i--) { // Check for twin primes\n            if (prime[i] == 1 && prime[i - 2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}') | LineLLMMutation(('source.cpp', 24), '#include <cstdio>\n#include <vector>\n#include <cmath>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int n, p, q;\n    std::vector<bool> prime((MAX_V + 1) / 2, true); // Only store odd primes\n\n    prime[0] = false; // 1 is not prime\n    for (int i = 3; i <= std::sqrt(MAX_V); i += 2) {\n        if (prime[i / 2]) {\n            for (int k = i * i; k <= MAX_V; k += i * 2) {\n                prime[k / 2] = false; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (int i = n; i >= 3; i--) { // Check for twin primes\n            if (i % 2 == 1 && prime[i / 2] && prime[(i - 2) / 2]) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')"
+2025-02-24 18:46:00,088	[INFO]	Step: 49
+2025-02-24 18:46:00,088	[INFO]	Stop Steps: 50
+2025-02-24 18:46:00,442	[DEBUG]	EXEC>  SUCCESS 3118502.0
+2025-02-24 18:46:00,442	[INFO]	4-10    SUCCESS               3118502.00 (99.76%) [2 edit(s)]  
+2025-02-24 18:46:00,442	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 11), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\nvector<int> prime(MAX_V + 1, 1);\n\nvoid generatePrimes() {\n    prime[0] = prime[1] = 0; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; i++) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}') | LineLLMMutation(('source.cpp', 25), '#include <cstdio>\n#include <vector>\nusing namespace std;\n\nconst int MAX_V = 10000;\nbool prime[MAX_V + 1]; // Change vector to boolean array for clarity and reduced memory usage\n\nvoid generatePrimes() {\n    fill(prime, prime + MAX_V + 1, true); // Initialize all entries as true\n    prime[0] = prime[1] = false; // 0 and 1 are not prime\n    for (int i = 2; i * i <= MAX_V; ++i) {\n        if (prime[i]) {\n            for (int k = i * i; k <= MAX_V; k += i) {\n                prime[k] = false; // Mark non-primes as false\n            }\n        }\n    }\n}\n\nint main() {\n    int n, p, q;\n    generatePrimes();\n\n    while(scanf("%d", &n) && n) {\n        for(int i = n; i >= 3; i--) {\n            if(prime[i] && prime[i - 2]) {\n                p = i;\n                q = p - 2;\n                printf("%d %d\\n", q, p);\n                break;\n            }\n        }\n    }\n    return 0;\n}')"
+2025-02-24 18:46:00,442	[INFO]	Step: 50
+2025-02-24 18:46:00,442	[INFO]	Stop Steps: 50
+2025-02-24 18:46:00,442	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 18:46:00,442	[INFO]	Step: 50
+2025-02-24 18:46:00,442	[INFO]	Stop Steps: 50
+2025-02-24 18:46:05,839	[INFO]	~~~~ END ~~~~
+2025-02-24 18:46:05,839	[INFO]	Best patch step: 37
+2025-02-24 18:46:05,839	[INFO]	
+2025-02-24 18:46:05,839	[INFO]	==== REPORT ====
+2025-02-24 18:46:05,839	[INFO]	Termination: step budget
+2025-02-24 18:46:05,840	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0038_1740422458.log
+2025-02-24 18:46:05,840	[INFO]	Patch file: _magpie_logs/0038_1740422458.patch
+2025-02-24 18:46:05,840	[INFO]	Diff file: _magpie_logs/0038_1740422458.diff
+2025-02-24 18:46:05,840	[INFO]	Reference fitness: 3125989.00
+2025-02-24 18:46:05,840	[INFO]	Best fitness: 3092527.50
+2025-02-24 18:46:05,840	[INFO]	
+2025-02-24 18:46:05,841	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('source.cpp', 18), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V+1]; // Array to mark prime numbers\n\n    for(i = 2; i <= MAX_V; i++) {\n        prime[i] = 1; // Initialize all numbers as prime\n    }\n\n    for(i = 2; i*i <= MAX_V; i++) {\n        if(prime[i]) {\n            for(k = 2 * i; k <= MAX_V; k += i) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while(1) {\n        scanf("%d",&n);\n        if(n == 0) break;\n\n        for(i = n; i >= 3; i--) { // Check for twin primes\n            if(prime[i] == 1 && prime[i-2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}') + LineLLMMutation(('source.cpp', 19), '#include <stdio.h>\n\nconst int MAX_V = 10000; // Maximum value for prime checking\n\nint main() {\n    int i, k, n, p, q;\n    int prime[MAX_V + 1] = {0}; // Initialize array to mark prime numbers\n\n    prime[2] = 1; // 2 is prime\n    \n    // Mark all odd numbers as prime\n    for (i = 3; i <= MAX_V; i += 2) {\n        prime[i] = 1; // Initialize all odd numbers as prime\n    }\n\n    for (i = 3; i * i <= MAX_V; i += 2) {\n        if (prime[i]) {\n            for (k = i * i; k <= MAX_V; k += i * 2) {\n                prime[k] = 0; // Mark multiples of prime as non-prime\n            }\n        }\n    }\n\n    while (1) {\n        scanf("%d", &n);\n        if (n == 0) break;\n\n        for (i = n; i >= 3; i--) { // Check for twin primes\n            if (prime[i] == 1 && prime[i - 2] == 1) {\n                p = i;\n                q = p - 2;\n                break;\n            }\n        }\n\n        printf("%d %d\\n", q, p);\n    }\n\n    return 0;\n}')
+2025-02-24 18:46:05,841	[INFO]	
+2025-02-24 18:46:05,841	[INFO]	==== DIFF ====
+

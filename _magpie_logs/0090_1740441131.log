@@ -1,0 +1,183 @@
+2025-02-24 23:52:11,018	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 2922034459291027
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0090
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 23:52:11,018	[DEBUG]	
+2025-02-24 23:52:11,018	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 23:52:11,019	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 23:52:12,382	[DEBUG]	EXEC>  SUCCESS 3563907.0
+2025-02-24 23:52:12,382	[INFO]	WARM    SUCCESS               3563907.00 (--) [0 edit(s)]  
+2025-02-24 23:52:13,274	[DEBUG]	EXEC>  SUCCESS 3563906.0
+2025-02-24 23:52:13,274	[INFO]	WARM    SUCCESS               3563906.00 (--) [0 edit(s)]  
+2025-02-24 23:52:14,169	[DEBUG]	EXEC>  SUCCESS 3564034.5
+2025-02-24 23:52:14,170	[INFO]	WARM    SUCCESS               3564034.50 (--) [0 edit(s)]  
+2025-02-24 23:52:15,018	[DEBUG]	EXEC>  SUCCESS 3563907.5
+2025-02-24 23:52:15,018	[INFO]	WARM    SUCCESS               3563907.50 (--) [0 edit(s)]  
+2025-02-24 23:52:15,944	[DEBUG]	EXEC>  SUCCESS 3564086.5
+2025-02-24 23:52:15,944	[INFO]	WARM    SUCCESS               3564086.50 (--) [0 edit(s)]  
+2025-02-24 23:52:15,944	[INFO]	REF     SUCCESS               3564086.50 (--) [0 edit(s)]  
+2025-02-24 23:52:15,945	[INFO]	
+2025-02-24 23:52:15,945	[INFO]	~~~~ START ~~~~
+2025-02-24 23:53:07,754	[DEBUG]	EXEC>  SUCCESS 3512873.0
+2025-02-24 23:53:07,755	[INFO]	0-1     SUCCESS              *3512873.00 (98.56%) [1 edit(s)]  
+2025-02-24 23:53:07,755	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <cstdio>\n#include <cstring>\n#include <algorithm>\nusing namespace std;\n\n#define rep(i,j) REP((i), 0, (j))\n#define REP(i,j,k) for(int i=(j);(i)<(k);++i)\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\nint dfs(int c, int a, int n) {\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, dfs(c - 1, a - 1, n - 1) + 1);\n    if (c > 1 && a > 0) res = max(res, dfs(c - 2, a - 1, n) + 1);\n    if (c > 2) res = max(res, dfs(c - 3, a, n) + 1);\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    rep(i, Q) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+
+2025-02-24 23:53:09,451	[DEBUG]	EXEC>  SUCCESS 5228220.0
+2025-02-24 23:53:09,451	[INFO]	0-2     SUCCESS               5228220.00 (146.69%) [1 edit(s)]  
+2025-02-24 23:53:09,451	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <cstdio>\n#include <cstring>\n#include <vector>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nvector<vector<vector<int>>> dp(64, vector<vector<int>>(64, vector<int>(64, -1)));\n\nint dfs(int c, int a, int n) {\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, dfs(c - 1, a - 1, n - 1) + 1);\n    if (c > 1 && a > 0) res = max(res, dfs(c - 2, a - 1, n) + 1);\n    if (c > 2) res = max(res, dfs(c - 3, a, n) + 1);\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    for (int i = 0; i < Q; i++) {\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:11,044	[DEBUG]	EXEC>  SUCCESS 3555259.5
+2025-02-24 23:53:11,044	[INFO]	0-3     SUCCESS               3555259.50 (99.75%) [1 edit(s)]  
+2025-02-24 23:53:11,044	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <cstdio>\n#include <cstring>\n#include <vector>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\nint dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0; // Handle out of bounds\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    res = max(res, dfs(c - 1, a - 1, n - 1) + (c > 0 && a > 0 && n > 0));\n    res = max(res, dfs(c - 2, a - 1, n) + (c > 1 && a > 0));\n    res = max(res, dfs(c - 3, a, n) + (c > 2));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:12,702	[DEBUG]	EXEC>  SUCCESS 3555205.5
+2025-02-24 23:53:12,703	[INFO]	0-4     SUCCESS               3555205.50 (99.75%) [1 edit(s)]  
+2025-02-24 23:53:12,703	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\ninline int dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0; // Handle out of bounds\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    res = max(res, dfs(c - 1, a - 1, n - 1) + (c > 0 && a > 0 && n > 0));\n    res = max(res, dfs(c - 2, a - 1, n) + (c > 1 && a > 0));\n    res = max(res, dfs(c - 3, a, n) + (c > 2));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:14,463	[DEBUG]	EXEC>  SUCCESS 3554366.0
+2025-02-24 23:53:14,464	[INFO]	0-5     SUCCESS               3554366.00 (99.73%) [1 edit(s)]  
+2025-02-24 23:53:14,464	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\ninline int dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0; // Handle out of bounds\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, 1 + dfs(c - 1, a - 1, n - 1));\n    if (c > 1 && a > 0) res = max(res, 1 + dfs(c - 2, a - 1, n));\n    if (c > 2) res = max(res, 1 + dfs(c - 3, a, n));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:16,226	[DEBUG]	EXEC>  SUCCESS 3555190.0
+2025-02-24 23:53:16,227	[INFO]	0-6     SUCCESS               3555190.00 (99.75%) [1 edit(s)]  
+2025-02-24 23:53:16,227	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\nbool canProceed(int c, int a, int n) {\n    return c > 0 && a > 0 && n > 0;\n}\n\ninline int dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0; // Handle out of bounds\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (canProceed(c, a, n)) res = max(res, 1 + dfs(c - 1, a - 1, n - 1));\n    if (c > 1 && a > 0) res = max(res, 1 + dfs(c - 2, a - 1, n));\n    if (c > 2) res = max(res, 1 + dfs(c - 3, a, n));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:17,986	[DEBUG]	EXEC>  SUCCESS 3554453.5
+2025-02-24 23:53:17,986	[INFO]	0-7     SUCCESS               3554453.50 (99.73%) [1 edit(s)]  
+2025-02-24 23:53:17,986	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nunsigned int Q;\nint dp[64][64][64];\n\ninline int dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0; // Handle out of bounds\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, 1 + dfs(c - 1, a - 1, n - 1));\n    if (c > 1 && a > 0) res = max(res, 1 + dfs(c - 2, a - 1, n));\n    if (c > 2) res = max(res, 1 + dfs(c - 3, a, n));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%u", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:19,745	[DEBUG]	EXEC>  SUCCESS 3554365.0
+2025-02-24 23:53:19,745	[INFO]	0-8     SUCCESS               3554365.00 (99.73%) [1 edit(s)]  
+2025-02-24 23:53:19,745	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\ninline int dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0;\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, 1 + dfs(c - 1, a - 1, n - 1));\n    if (c > 1 && a > 0) res = max(res, 1 + dfs(c - 2, a - 1, n));\n    if (c > 2) res = max(res, 1 + dfs(c - 3, a, n));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:21,502	[DEBUG]	EXEC>  SUCCESS 3554456.0
+2025-02-24 23:53:21,502	[INFO]	0-9     SUCCESS               3554456.00 (99.73%) [1 edit(s)]  
+2025-02-24 23:53:21,502	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\ninline int dfs(int c, int a, int n) {\n    if (c < 0 || a < 0 || n < 0) return 0;\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, 1 + dfs(c - 1, a - 1, n - 1));\n    if (c > 1 && a > 0) res = max(res, 1 + dfs(c - 2, a - 1, n));\n    if (c > 2) res = max(res, 1 + dfs(c - 3, a, n));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:23,156	[DEBUG]	EXEC>  SUCCESS 3554564.5
+2025-02-24 23:53:23,156	[INFO]	0-10    SUCCESS               3554564.50 (99.73%) [1 edit(s)]  
+2025-02-24 23:53:23,156	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <cstdio>\n#include <cstring>\nusing namespace std;\n\ntypedef long long ll;\n\nint Q;\nint dp[64][64][64];\n\ninline int dfs(int c, int a, int n) {\n    c = max(c, 0);\n    a = max(a, 0);\n    n = max(n, 0);\n    if (dp[c][a][n] >= 0) return dp[c][a][n];\n    int res = 0;\n    if (c > 0 && a > 0 && n > 0) res = max(res, 1 + dfs(c - 1, a - 1, n - 1));\n    if (c > 1 && a > 0) res = max(res, 1 + dfs(c - 2, a - 1, n));\n    if (c > 2) res = max(res, 1 + dfs(c - 3, a, n));\n    return dp[c][a][n] = res;\n}\n\nint main() {\n    scanf("%d", &Q);\n    while (Q--) {\n        memset(dp, -1, sizeof(dp));\n        int c, a, n;\n        scanf("%d %d %d", &c, &a, &n);\n        int res = 0;\n        while (c > 8 && a > 4 && n > 0) {\n            res++;\n            c--;\n            a--;\n            n--;\n        }\n        while (c > 8 && a > 4) {\n            res++;\n            c -= 2;\n            a--;\n        }\n        while (c > 8) {\n            res++;\n            c -= 3;\n        }\n        res += dfs(c, a, n);\n        printf("%d\\n", res);\n    }\n    return 0;\n}')"
+2025-02-24 23:53:24,157	[INFO]	Step: 10
+2025-02-24 23:53:24,157	[INFO]	Stop Steps: 50
+2025-02-24 23:53:26,047	[DEBUG]	EXEC>  SUCCESS 3563914.5
+2025-02-24 23:53:26,047	[INFO]	REF     SUCCESS               3563914.50 (--) [0 edit(s)]  
+2025-02-24 23:53:26,047	[INFO]	Best patch: 0
+2025-02-24 23:53:26,572	[DEBUG]	EXEC>  SUCCESS 3512779.5
+2025-02-24 23:53:26,573	[INFO]	BEST    SUCCESS              *3512779.50 (98.57%) [0 edit(s)]  
+2025-02-24 23:53:26,573	[INFO]	Best patch step: 0
+2025-02-24 23:54:29,878	[INFO]	~~~~ END ~~~~
+2025-02-24 23:54:29,878	[INFO]	Best patch step: 0

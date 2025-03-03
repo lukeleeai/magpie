@@ -1,0 +1,424 @@
+2025-02-24 21:12:19,135	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 9231829500309930
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/train/0059
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 50
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-02-24 21:12:19,135	[DEBUG]	
+2025-02-24 21:12:19,135	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-02-24 21:12:19,135	[INFO]	~~~~ WARMUP ~~~~
+2025-02-24 21:12:20,316	[DEBUG]	EXEC>  SUCCESS 3105204.5
+2025-02-24 21:12:20,316	[INFO]	WARM    SUCCESS               3105204.50 (--) [0 edit(s)]  
+2025-02-24 21:12:21,019	[DEBUG]	EXEC>  SUCCESS 3105205.5
+2025-02-24 21:12:21,020	[INFO]	WARM    SUCCESS               3105205.50 (--) [0 edit(s)]  
+2025-02-24 21:12:21,736	[DEBUG]	EXEC>  SUCCESS 3105386.5
+2025-02-24 21:12:21,736	[INFO]	WARM    SUCCESS               3105386.50 (--) [0 edit(s)]  
+2025-02-24 21:12:22,445	[DEBUG]	EXEC>  SUCCESS 3105208.0
+2025-02-24 21:12:22,445	[INFO]	WARM    SUCCESS               3105208.00 (--) [0 edit(s)]  
+2025-02-24 21:12:23,183	[DEBUG]	EXEC>  SUCCESS 3105206.0
+2025-02-24 21:12:23,183	[INFO]	WARM    SUCCESS               3105206.00 (--) [0 edit(s)]  
+2025-02-24 21:12:23,183	[INFO]	REF     SUCCESS               3105206.00 (--) [0 edit(s)]  
+2025-02-24 21:12:23,183	[INFO]	
+2025-02-24 21:12:23,183	[INFO]	~~~~ START ~~~~
+2025-02-24 21:12:47,708	[DEBUG]	EXEC>  SUCCESS 3113968.5
+2025-02-24 21:12:47,708	[INFO]	0-1     SUCCESS              +3113968.50 (100.28%) [1 edit(s)]  
+2025-02-24 21:12:47,709	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back(n % 8);\n        n /= 8;\n    }\n    for (auto it = octalDigits.rbegin(); it != octalDigits.rend(); ++it) {\n        std::cout << ( (*it) < 4 ? *it : (*it) == 4 ? 5 : *it + 2);\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:12:49,413	[DEBUG]	EXEC>  SUCCESS 3112756.0
+2025-02-24 21:12:49,414	[INFO]	0-2     SUCCESS              +3112756.00 (100.24%) [1 edit(s)]  
+2025-02-24 21:12:49,414	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    printf("%d", ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2));\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+2025-02-24 21:12:51,093	[INFO]	0-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 21:12:51,093	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    char octal[12]; // Enough for 32-bit integers\n    int index = 0;\n    while (n > 0) {\n        octal[index++] = (n & 7) < 4 ? (n & 7) : ((n & 7) == 4 ? 5 : (n & 7) + 2);\n        n >>= 3;\n    }\n    for (int i = index - 1; i >= 0; i--) {\n        std::cout << octal[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:13:22,804	[INFO]	0-4     TEST_TIMEOUT          None (--) [1 edit(s)]  
+2025-02-24 21:13:22,804	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <sstream>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    std::string input;\n    std::getline(std::cin, input);\n    std::istringstream ss(input);\n    int n;\n    while (ss >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:13:24,556	[DEBUG]	EXEC>  SUCCESS 3105296.5
+2025-02-24 21:13:24,556	[INFO]	0-5     SUCCESS              +3105296.50 (100.00%) [1 edit(s)]  
+2025-02-24 21:13:24,556	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:13:26,266	[DEBUG]	EXEC>  SUCCESS 3104195.0
+2025-02-24 21:13:26,266	[INFO]	0-6     SUCCESS              *3104195.00 (99.97%) [1 edit(s)]  
+2025-02-24 21:13:26,266	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+
+2025-02-24 21:13:27,996	[DEBUG]	EXEC>  SUCCESS 3113979.0
+2025-02-24 21:13:27,997	[INFO]	0-7     SUCCESS               3113979.00 (100.28%) [1 edit(s)]  
+2025-02-24 21:13:27,997	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back((n & 7) < 4 ? (n & 7) : ((n & 7) == 4 ? 5 : (n & 7) + 2));\n        n >>= 3;\n    }\n    for (auto it = octalDigits.rbegin(); it != octalDigits.rend(); ++it) {\n        std::cout << *it;\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:13:29,735	[DEBUG]	EXEC>  SUCCESS 3113874.0
+2025-02-24 21:13:29,735	[INFO]	0-8     SUCCESS               3113874.00 (100.28%) [1 edit(s)]  
+2025-02-24 21:13:29,735	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back((n & 7) < 4 ? (n & 7) : ((n & 7) == 4 ? 5 : (n & 7) + 2));\n        n >>= 3;\n    }\n    for (int i = octalDigits.size() - 1; i >= 0; --i) {\n        std::cout << octalDigits[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:13:31,460	[DEBUG]	EXEC>  SUCCESS 3100822.0
+2025-02-24 21:13:31,460	[INFO]	0-9     SUCCESS              *3100822.00 (99.86%) [1 edit(s)]  
+2025-02-24 21:13:31,460	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+
+2025-02-24 21:13:33,118	[INFO]	0-10    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-02-24 21:13:33,118	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    for (int shift = 0; n > 0; n >>= 3, ++shift) {\n        int octDigit = (n & 7);\n        std::cout << (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2));\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:13:34,118	[INFO]	Step: 10
+2025-02-24 21:13:34,119	[INFO]	Stop Steps: 50
+2025-02-24 21:13:35,826	[DEBUG]	EXEC>  SUCCESS 3105207.0
+2025-02-24 21:13:35,827	[INFO]	REF     SUCCESS               3105207.00 (--) [0 edit(s)]  
+2025-02-24 21:13:35,827	[INFO]	Best patch: 8
+2025-02-24 21:13:36,530	[DEBUG]	EXEC>  SUCCESS 3100809.5
+2025-02-24 21:13:36,530	[INFO]	BEST    SUCCESS              *3100809.50 (99.86%) [0 edit(s)]  
+2025-02-24 21:13:36,530	[INFO]	Best patch step: 8
+2025-02-24 21:14:25,113	[INFO]	Step: 10
+2025-02-24 21:14:25,113	[INFO]	Stop Steps: 50
+2025-02-24 21:14:25,831	[DEBUG]	EXEC>  SUCCESS 3100897.5
+2025-02-24 21:14:25,831	[INFO]	1-1     SUCCESS              +3100897.50 (99.86%) [1 edit(s)]  
+2025-02-24 21:14:25,831	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:25,831	[INFO]	Step: 11
+2025-02-24 21:14:25,831	[INFO]	Stop Steps: 50
+2025-02-24 21:14:26,527	[DEBUG]	EXEC>  SUCCESS 3104284.5
+2025-02-24 21:14:26,527	[INFO]	1-2     SUCCESS               3104284.50 (99.97%) [1 edit(s)]  
+2025-02-24 21:14:26,527	[DEBUG]	patch(1-2)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:26,527	[INFO]	Step: 12
+2025-02-24 21:14:26,527	[INFO]	Stop Steps: 50
+2025-02-24 21:14:27,235	[DEBUG]	EXEC>  SUCCESS 3104193.0
+2025-02-24 21:14:27,235	[INFO]	1-3     SUCCESS               3104193.00 (99.97%) [1 edit(s)]  
+2025-02-24 21:14:27,235	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:27,236	[INFO]	Step: 13
+2025-02-24 21:14:27,236	[INFO]	Stop Steps: 50
+2025-02-24 21:14:27,950	[DEBUG]	EXEC>  SUCCESS 3098754.0
+2025-02-24 21:14:27,951	[INFO]	1-4     SUCCESS              *3098754.00 (99.79%) [1 edit(s)]  
+2025-02-24 21:14:27,951	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+
+2025-02-24 21:14:27,951	[INFO]	Step: 14
+2025-02-24 21:14:27,951	[INFO]	Stop Steps: 50
+2025-02-24 21:14:28,661	[DEBUG]	EXEC>  SUCCESS 3104194.0
+2025-02-24 21:14:28,661	[INFO]	1-5     SUCCESS               3104194.00 (99.97%) [1 edit(s)]  
+2025-02-24 21:14:28,661	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 2), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:28,661	[INFO]	Step: 15
+2025-02-24 21:14:28,661	[INFO]	Stop Steps: 50
+2025-02-24 21:14:29,357	[DEBUG]	EXEC>  SUCCESS 3112757.5
+2025-02-24 21:14:29,357	[INFO]	1-6     SUCCESS               3112757.50 (100.24%) [1 edit(s)]  
+2025-02-24 21:14:29,357	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 3), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    printf("%d", ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2));\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+2025-02-24 21:14:29,357	[INFO]	Step: 16
+2025-02-24 21:14:29,357	[INFO]	Stop Steps: 50
+2025-02-24 21:14:30,078	[DEBUG]	EXEC>  SUCCESS 3100741.0
+2025-02-24 21:14:30,078	[INFO]	1-7     SUCCESS               3100741.00 (99.86%) [2 edit(s)]  
+2025-02-24 21:14:30,079	[DEBUG]	patch(1-7)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    // Use an array to store octal digits\n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    // Print the octal digits in reverse order\n    for(int i = index - 1; i >= 0; i--) {\n        std::cout << result[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:30,079	[INFO]	Step: 17
+2025-02-24 21:14:30,079	[INFO]	Stop Steps: 50
+2025-02-24 21:14:30,805	[DEBUG]	EXEC>  SUCCESS 3112870.5
+2025-02-24 21:14:30,805	[INFO]	1-8     SUCCESS               3112870.50 (100.25%) [2 edit(s)]  
+2025-02-24 21:14:30,806	[DEBUG]	patch(1-8)="LineLLMMutation(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 11), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) return;\n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2);\n        n >>= 3;\n    }\n    std::reverse(octalDigits.begin(), octalDigits.end());\n    for (int digit : octalDigits) {\n        std::cout << digit;\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:30,806	[INFO]	Step: 18
+2025-02-24 21:14:30,806	[INFO]	Stop Steps: 50
+2025-02-24 21:14:31,517	[DEBUG]	EXEC>  SUCCESS 3113902.0
+2025-02-24 21:14:31,517	[INFO]	1-9     SUCCESS               3113902.00 (100.28%) [2 edit(s)]  
+2025-02-24 21:14:31,517	[DEBUG]	patch(1-9)="LineLLMMutation(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 12), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) return;\n    std::vector<int> octDigits;\n    while (n > 0) {\n        int octDigit = n & 7;\n        octDigits.push_back(octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n        n >>= 3;\n    }\n    // Output the digits in reverse order since we collected them backwards\n    for (auto it = octDigits.rbegin(); it != octDigits.rend(); ++it) {\n        std::cout << *it;\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:31,517	[INFO]	Step: 19
+2025-02-24 21:14:31,517	[INFO]	Stop Steps: 50
+2025-02-24 21:14:32,226	[DEBUG]	EXEC>  SUCCESS 3112473.0
+2025-02-24 21:14:32,226	[INFO]	1-10    SUCCESS               3112473.00 (100.23%) [2 edit(s)]  
+2025-02-24 21:14:32,226	[DEBUG]	patch(1-10)="LineLLMMutation(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    printf("%d", ((n & 7) < 4 ? (n & 7) : (n & 7) == 4 ? 5 : (n & 7) + 2));\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    \n    std::vector<int> octalDigits;\n    while (n > 0) {\n        octalDigits.push_back(n & 7); // Get the last 3 bits\n        n >>= 3; // Shift right by 3 bits\n    }\n    \n    // Print digits in reverse order\n    for (int i = octalDigits.size() - 1; i >= 0; --i) {\n        printf("%d", (octalDigits[i] < 4 ? octalDigits[i] : (octalDigits[i] == 4 ? 5 : octalDigits[i] + 2)));\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+2025-02-24 21:14:32,226	[INFO]	Step: 20
+2025-02-24 21:14:32,226	[INFO]	Stop Steps: 50
+2025-02-24 21:14:32,952	[DEBUG]	EXEC>  SUCCESS 3105206.5
+2025-02-24 21:14:32,952	[INFO]	1-1     SUCCESS               3105206.50 (100.00%) [1 edit(s)]  
+2025-02-24 21:14:32,952	[DEBUG]	patch(1-1)="LineLLMMutation(('source.cpp', 14), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? n & 7 : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:14:32,953	[INFO]	Step: 21
+2025-02-24 21:14:32,953	[INFO]	Stop Steps: 50
+2025-02-24 21:14:34,660	[DEBUG]	EXEC>  SUCCESS 3105206.5
+2025-02-24 21:14:34,660	[INFO]	REF     SUCCESS               3105206.50 (--) [0 edit(s)]  
+2025-02-24 21:14:34,661	[INFO]	Best patch: 1
+2025-02-24 21:14:35,440	[DEBUG]	EXEC>  SUCCESS 3098844.0
+2025-02-24 21:14:35,441	[INFO]	BEST    SUCCESS              *3098844.00 (99.80%) [0 edit(s)]  
+2025-02-24 21:14:35,441	[INFO]	Best patch step: 13
+2025-02-24 21:15:24,458	[INFO]	Step: 21
+2025-02-24 21:15:24,458	[INFO]	Stop Steps: 50
+2025-02-24 21:15:25,183	[DEBUG]	EXEC>  SUCCESS 3098933.5
+2025-02-24 21:15:25,184	[INFO]	2-2     SUCCESS              +3098933.50 (99.80%) [1 edit(s)]  
+2025-02-24 21:15:25,184	[DEBUG]	patch(2-2)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+2025-02-24 21:15:25,184	[INFO]	Step: 22
+2025-02-24 21:15:25,184	[INFO]	Stop Steps: 50
+2025-02-24 21:15:25,899	[DEBUG]	EXEC>  SUCCESS 3100741.0
+2025-02-24 21:15:25,900	[INFO]	2-3     SUCCESS               3100741.00 (99.86%) [2 edit(s)]  
+2025-02-24 21:15:25,900	[DEBUG]	patch(2-3)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    // Use an array to store octal digits\n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    // Print the octal digits in reverse order\n    for(int i = index - 1; i >= 0; i--) {\n        std::cout << result[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:25,900	[INFO]	Step: 23
+2025-02-24 21:15:25,900	[INFO]	Stop Steps: 50
+2025-02-24 21:15:26,606	[DEBUG]	EXEC>  SUCCESS 3104382.5
+2025-02-24 21:15:26,606	[INFO]	2-4     SUCCESS               3104382.50 (99.97%) [1 edit(s)]  
+2025-02-24 21:15:26,606	[DEBUG]	patch(2-4)="LineLLMCrossover(('source.cpp', 4), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    if (n < 8) {\n        std::cout << (n < 4 ? n : (n == 4 ? 5 : n + 2));\n        return;\n    }\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2));\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:26,606	[INFO]	Step: 24
+2025-02-24 21:15:26,606	[INFO]	Stop Steps: 50
+2025-02-24 21:15:27,322	[DEBUG]	EXEC>  SUCCESS 3097673.0
+2025-02-24 21:15:27,323	[INFO]	2-5     SUCCESS              *3097673.00 (99.76%) [1 edit(s)]  
+2025-02-24 21:15:27,323	[DEBUG]	patch(2-5)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+
+2025-02-24 21:15:27,323	[INFO]	Step: 25
+2025-02-24 21:15:27,323	[INFO]	Stop Steps: 50
+2025-02-24 21:15:28,055	[DEBUG]	EXEC>  SUCCESS 3099939.5
+2025-02-24 21:15:28,055	[INFO]	2-6     SUCCESS               3099939.50 (99.83%) [1 edit(s)]  
+2025-02-24 21:15:28,056	[DEBUG]	patch(2-6)="LineLLMCrossover(('source.cpp', 6), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:28,056	[INFO]	Step: 26
+2025-02-24 21:15:28,056	[INFO]	Stop Steps: 50
+2025-02-24 21:15:28,734	[DEBUG]	EXEC>  SUCCESS 3104201.0
+2025-02-24 21:15:28,734	[INFO]	2-7     SUCCESS               3104201.00 (99.97%) [1 edit(s)]  
+2025-02-24 21:15:28,734	[DEBUG]	patch(2-7)="LineLLMCrossover(('source.cpp', 7), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    if (n < 8) {\n        std::cout << (n < 4 ? n : (n == 4 ? 5 : n + 2));\n        return;\n    }\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2));\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:28,734	[INFO]	Step: 27
+2025-02-24 21:15:28,734	[INFO]	Stop Steps: 50
+2025-02-24 21:15:29,435	[DEBUG]	EXEC>  SUCCESS 3095461.0
+2025-02-24 21:15:29,435	[INFO]	2-8     SUCCESS              *3095461.00 (99.69%) [2 edit(s)]  
+2025-02-24 21:15:29,436	[DEBUG]	patch(2-8)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 15), "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+
+2025-02-24 21:15:29,436	[INFO]	Step: 28
+2025-02-24 21:15:29,436	[INFO]	Stop Steps: 50
+2025-02-24 21:15:30,121	[INFO]	2-9     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-02-24 21:15:30,121	[DEBUG]	patch(2-9)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 10), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    // Use an array to store octal digits\n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    // Print the octal digits in reverse order\n    for(int i = index - 1; i >= 0; i--) {\n        std::cout << result[i];\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 16), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    // Use a string to store octal digits\n    std::string result;\n    \n    while (n > 0) {\n        result += (n % 8) + \'0\'; // Directly append the octal digit\n        n /= 8; // Divide by 8 instead of shifting\n    }\n    \n    // Print the octal digits in reverse order\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:30,121	[INFO]	Step: 29
+2025-02-24 21:15:30,121	[INFO]	Stop Steps: 50
+2025-02-24 21:15:30,812	[INFO]	2-10    TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 21:15:30,812	[DEBUG]	patch(2-10)="LineLLMMutation(('source.cpp', 8), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 17), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::vector<char> result; // Use a vector to build the octal number\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result.push_back(octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2) + \'0\');\n        n >>= 3;\n    }\n    // Output the result in reverse order\n    for (auto it = result.rbegin(); it != result.rend(); ++it) {\n        std::cout << static_cast<char>(*it + \'0\');\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:30,812	[INFO]	Step: 30
+2025-02-24 21:15:30,812	[INFO]	Stop Steps: 50
+2025-02-24 21:15:31,535	[DEBUG]	EXEC>  SUCCESS 3099848.5
+2025-02-24 21:15:31,535	[INFO]	2-1     SUCCESS               3099848.50 (99.83%) [2 edit(s)]  
+2025-02-24 21:15:31,535	[DEBUG]	patch(2-1)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:31,535	[INFO]	Step: 31
+2025-02-24 21:15:31,535	[INFO]	Stop Steps: 50
+2025-02-24 21:15:32,235	[DEBUG]	EXEC>  SUCCESS 3105296.5
+2025-02-24 21:15:32,235	[INFO]	2-2     SUCCESS               3105296.50 (100.00%) [1 edit(s)]  
+2025-02-24 21:15:32,236	[DEBUG]	patch(2-2)="LineLLMMutation(('source.cpp', 19), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n){\n    if(!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? n & 7 : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main(){\n    int n;\n    while(std::cin >> n, n){\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:15:32,236	[INFO]	Step: 32
+2025-02-24 21:15:32,236	[INFO]	Stop Steps: 50
+2025-02-24 21:15:33,949	[DEBUG]	EXEC>  SUCCESS 3105297.0
+2025-02-24 21:15:33,949	[INFO]	REF     SUCCESS               3105297.00 (--) [0 edit(s)]  
+2025-02-24 21:15:33,949	[INFO]	Best patch: 1_15
+2025-02-24 21:15:34,635	[DEBUG]	EXEC>  SUCCESS 3095369.5
+2025-02-24 21:15:34,635	[INFO]	BEST    SUCCESS              *3095369.50 (99.68%) [0 edit(s)]  
+2025-02-24 21:15:34,635	[INFO]	Best patch step: 27
+2025-02-24 21:16:17,761	[INFO]	Step: 32
+2025-02-24 21:16:17,761	[INFO]	Stop Steps: 50
+2025-02-24 21:16:18,458	[DEBUG]	EXEC>  SUCCESS 3095467.0
+2025-02-24 21:16:18,459	[INFO]	3-3     SUCCESS              +3095467.00 (99.68%) [2 edit(s)]  
+2025-02-24 21:16:18,459	[DEBUG]	patch(3-3)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 15), "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+2025-02-24 21:16:18,459	[INFO]	Step: 33
+2025-02-24 21:16:18,459	[INFO]	Stop Steps: 50
+2025-02-24 21:16:19,176	[DEBUG]	EXEC>  SUCCESS 3097582.5
+2025-02-24 21:16:19,177	[INFO]	3-4     SUCCESS               3097582.50 (99.75%) [1 edit(s)]  
+2025-02-24 21:16:19,177	[DEBUG]	patch(3-4)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:16:19,177	[INFO]	Step: 34
+2025-02-24 21:16:19,177	[INFO]	Stop Steps: 50
+2025-02-24 21:16:19,888	[DEBUG]	EXEC>  SUCCESS 3094948.0
+2025-02-24 21:16:19,888	[INFO]	3-5     SUCCESS              *3094948.00 (99.67%) [1 edit(s)]  
+2025-02-24 21:16:19,888	[DEBUG]	patch(3-5)="LineLLMCrossover(('source.cpp', 8), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+
+2025-02-24 21:16:19,888	[INFO]	Step: 35
+2025-02-24 21:16:19,888	[INFO]	Stop Steps: 50
+2025-02-24 21:16:20,638	[DEBUG]	EXEC>  SUCCESS 3098505.0
+2025-02-24 21:16:20,639	[INFO]	3-6     SUCCESS               3098505.00 (99.78%) [1 edit(s)]  
+2025-02-24 21:16:20,639	[DEBUG]	patch(3-6)="LineLLMCrossover(('source.cpp', 9), '#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    \n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+2025-02-24 21:16:20,639	[INFO]	Step: 36
+2025-02-24 21:16:20,639	[INFO]	Stop Steps: 50
+2025-02-24 21:16:21,376	[DEBUG]	EXEC>  SUCCESS 3102007.0
+2025-02-24 21:16:21,376	[INFO]	3-7     SUCCESS               3102007.00 (99.89%) [1 edit(s)]  
+2025-02-24 21:16:21,376	[DEBUG]	patch(3-7)="LineLLMCrossover(('source.cpp', 10), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;  // Using cout for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+2025-02-24 21:16:21,376	[INFO]	Step: 37
+2025-02-24 21:16:21,377	[INFO]	Stop Steps: 50
+2025-02-24 21:16:22,081	[DEBUG]	EXEC>  SUCCESS 3097589.5
+2025-02-24 21:16:22,081	[INFO]	3-8     SUCCESS               3097589.50 (99.75%) [1 edit(s)]  
+2025-02-24 21:16:22,081	[DEBUG]	patch(3-8)="LineLLMCrossover(('source.cpp', 11), '#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char buffer[12];  // Enough for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    std::reverse(buffer, buffer + index);\n    std::cout.write(buffer, index);  // Using cout for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:16:22,081	[INFO]	Step: 38
+2025-02-24 21:16:22,081	[INFO]	Stop Steps: 50
+2025-02-24 21:16:22,765	[INFO]	3-9     TEST_CODE_ERROR       None (--) [3 edit(s)]  
+2025-02-24 21:16:22,765	[DEBUG]	patch(3-9)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 15), "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}") | LineLLMMutation(('source.cpp', 20), "#include <iostream>\n#include <vector>\n#include <algorithm>\n#include <string>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << '0';  // Using std::cout for more straightforward output\n        return;\n    }\n    \n    std::string result;  // Using string to build the octal representation\n    while (n > 0) {\n        result += '0' + (n % 8);  // Directly append the octal digit\n        n /= 8;  // Divide by 8 instead of bitwise shifts for clarity\n    }\n    \n    std::reverse(result.begin(), result.end());  // Reverse the string at once\n    std::cout << result;  // Output the final string\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << '\\n';  // Using std::cout for more straightforward output\n    }\n}")"
+2025-02-24 21:16:22,765	[INFO]	Step: 39
+2025-02-24 21:16:22,765	[INFO]	Stop Steps: 50
+2025-02-24 21:16:23,491	[DEBUG]	EXEC>  SUCCESS 3099848.5
+2025-02-24 21:16:23,491	[INFO]	3-10    SUCCESS               3099848.50 (99.82%) [2 edit(s)]  
+2025-02-24 21:16:23,491	[DEBUG]	patch(3-10)="LineLLMCrossover(('source.cpp', 5), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char result[11]; // Maximum size for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    std::reverse(result, result + index);\n    std::cout.write(result, index);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 21), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n\n    std::string result;  // Use string for dynamic size management\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        result.push_back((octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\');\n        n >>= 3;\n    }\n    \n    std::reverse(result.begin(), result.end());  // Still need to reverse the string, but it\'s more efficient\n    std::cout << result;  // Use std::cout directly\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:16:23,491	[INFO]	Step: 40
+2025-02-24 21:16:23,491	[INFO]	Stop Steps: 50
+2025-02-24 21:16:24,277	[INFO]	3-1     TEST_CODE_ERROR       None (--) [2 edit(s)]  
+2025-02-24 21:16:24,277	[DEBUG]	patch(3-1)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 22), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        // Simplifying the digit conversion process\n        result += (n & 7) + \'0\';  // Directly append the octal digit\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}')"
+2025-02-24 21:16:24,277	[INFO]	Step: 41
+2025-02-24 21:16:24,277	[INFO]	Stop Steps: 50
+2025-02-24 21:16:25,020	[DEBUG]	EXEC>  SUCCESS 3104264.0
+2025-02-24 21:16:25,020	[INFO]	3-2     SUCCESS               3104264.00 (99.97%) [3 edit(s)]  
+2025-02-24 21:16:25,020	[DEBUG]	patch(3-2)="LineLLMCrossover(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (!n) return;\n    ToOctalNumber(n >> 3);\n    int octDigit = n & 7;\n    std::cout << (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2);\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 18), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = n & 7;\n        result += (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    std::cout << result;\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}') | LineLLMMutation(('source.cpp', 23), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    int octDigits[11]; // Enough space for octal digits (max 11 digits for 32-bit int)\n    int index = 0;\n\n    while (n > 0) {\n        int octDigit = n & 7;\n        octDigits[index++] = (octDigit < 4 ? octDigit : octDigit == 4 ? 5 : octDigit + 2); // Adjusting for octal representation\n        n >>= 3;\n    }\n\n    // Print digits in reverse order\n    for (int i = index - 1; i >= 0; --i) {\n        std::cout << octDigits[i];\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:16:25,020	[INFO]	Step: 42
+2025-02-24 21:16:25,020	[INFO]	Stop Steps: 50
+2025-02-24 21:16:25,728	[DEBUG]	EXEC>  SUCCESS 3105207.5
+2025-02-24 21:16:25,728	[INFO]	3-3     SUCCESS               3105207.50 (100.00%) [1 edit(s)]  
+2025-02-24 21:16:25,728	[DEBUG]	patch(3-3)="LineLLMMutation(('source.cpp', 24), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n){\n    if(!n) return;\n    ToOctalNumber(n >> 3);\n    std::cout << ((n & 7) < 4 ? n & 7 : (n & 7) == 4 ? 5 : (n & 7) + 2);\n}\n\nint main(){\n    int n;\n    while(std::cin >> n, n){\n        ToOctalNumber(n);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:16:25,728	[INFO]	Step: 43
+2025-02-24 21:16:25,728	[INFO]	Stop Steps: 50
+2025-02-24 21:16:27,440	[DEBUG]	EXEC>  SUCCESS 3105207.0
+2025-02-24 21:16:27,440	[INFO]	REF     SUCCESS               3105207.00 (--) [0 edit(s)]  
+2025-02-24 21:16:27,440	[INFO]	Best patch: 8
+2025-02-24 21:16:28,128	[DEBUG]	EXEC>  SUCCESS 3095037.5
+2025-02-24 21:16:28,128	[INFO]	BEST    SUCCESS              *3095037.50 (99.67%) [0 edit(s)]  
+2025-02-24 21:16:28,129	[INFO]	Best patch step: 34
+2025-02-24 21:17:15,986	[INFO]	Step: 43
+2025-02-24 21:17:15,987	[INFO]	Stop Steps: 50
+2025-02-24 21:17:16,685	[DEBUG]	EXEC>  SUCCESS 3094947.0
+2025-02-24 21:17:16,686	[INFO]	4-4     SUCCESS              *3094947.00 (99.67%) [1 edit(s)]  
+2025-02-24 21:17:16,686	[DEBUG]	patch(4-4)="LineLLMCrossover(('source.cpp', 8), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+
+2025-02-24 21:17:16,686	[INFO]	Step: 44
+2025-02-24 21:17:16,686	[INFO]	Stop Steps: 50
+2025-02-24 21:17:17,372	[DEBUG]	EXEC>  SUCCESS 3095369.5
+2025-02-24 21:17:17,372	[INFO]	4-5     SUCCESS               3095369.50 (99.68%) [2 edit(s)]  
+2025-02-24 21:17:17,372	[DEBUG]	patch(4-5)="LineLLMCrossover(('source.cpp', 1), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        printf("0");\n        return;\n    }\n    std::string result;\n    while (n > 0) {\n        int octDigit = (n & 7);\n        result += (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    std::reverse(result.begin(), result.end());\n    printf("%s", result.c_str());  // Using printf for output\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        printf("\\n");\n    }\n}') | LineLLMMutation(('source.cpp', 15), "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+2025-02-24 21:17:17,372	[INFO]	Step: 45
+2025-02-24 21:17:17,372	[INFO]	Stop Steps: 50
+2025-02-24 21:17:18,075	[DEBUG]	EXEC>  SUCCESS 3094948.0
+2025-02-24 21:17:18,075	[INFO]	4-6     SUCCESS               3094948.00 (99.67%) [1 edit(s)]  
+2025-02-24 21:17:18,075	[DEBUG]	patch(4-6)="LineLLMCrossover(('source.cpp', 12), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+2025-02-24 21:17:18,075	[INFO]	Step: 46
+2025-02-24 21:17:18,075	[INFO]	Stop Steps: 50
+2025-02-24 21:17:18,818	[DEBUG]	EXEC>  SUCCESS 3103997.0
+2025-02-24 21:17:18,818	[INFO]	4-7     SUCCESS               3103997.00 (99.96%) [1 edit(s)]  
+2025-02-24 21:17:18,818	[DEBUG]	patch(4-7)="LineLLMCrossover(('source.cpp', 13), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    std::reverse(buffer, buffer + index);\n    std::cout.write(buffer, index);  // Using cout for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    std::vector<int> numbers;\n    int n;\n    while (std::cin >> n, n) {\n        numbers.push_back(n);\n    }\n    for (int number : numbers) {\n        ToOctalNumber(number);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:17:18,818	[INFO]	Step: 47
+2025-02-24 21:17:18,818	[INFO]	Stop Steps: 50
+2025-02-24 21:17:19,528	[DEBUG]	EXEC>  SUCCESS 3094949.0
+2025-02-24 21:17:19,529	[INFO]	4-8     SUCCESS               3094949.00 (99.67%) [1 edit(s)]  
+2025-02-24 21:17:19,529	[DEBUG]	patch(4-8)="LineLLMCrossover(('source.cpp', 14), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough for octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+2025-02-24 21:17:19,529	[INFO]	Step: 48
+2025-02-24 21:17:19,529	[INFO]	Stop Steps: 50
+2025-02-24 21:17:20,267	[DEBUG]	EXEC>  SUCCESS 3103906.5
+2025-02-24 21:17:20,268	[INFO]	4-9     SUCCESS               3103906.50 (99.96%) [1 edit(s)]  
+2025-02-24 21:17:20,268	[DEBUG]	patch(4-9)="LineLLMCrossover(('source.cpp', 15), '#include <iostream>\n#include <vector>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        std::cout << 0;\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + \'0\';\n        n >>= 3;\n    }\n    \n    std::reverse(buffer, buffer + index);\n    std::cout.write(buffer, index);  // Using cout for output\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    std::vector<int> numbers;\n    int n;\n    while (std::cin >> n, n) {\n        numbers.push_back(n);\n    }\n    for (int number : numbers) {\n        ToOctalNumber(number);\n        std::cout << "\\n";\n    }\n}')"
+2025-02-24 21:17:20,268	[INFO]	Step: 49
+2025-02-24 21:17:20,268	[INFO]	Stop Steps: 50
+2025-02-24 21:17:20,785	[INFO]	4-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-02-24 21:17:20,785	[DEBUG]	patch(4-10)="LineLLMCrossover(('source.cpp', 8), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}") | LineLLMMutation(('source.cpp', 25), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    // Precompute the lookup for octal digits to reduce conditional checks\n    static const char octalLookup[8] = {'0', '1', '2', '3', '5', '6', '7', '10'};\n    \n    while (n > 0) {\n        int octDigit = n & 7;\n        buffer[index++] = octalLookup[octDigit];  // Use precomputed lookup\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")"
+2025-02-24 21:17:20,785	[INFO]	Step: 50
+2025-02-24 21:17:20,785	[INFO]	Stop Steps: 50
+2025-02-24 21:17:20,785	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-02-24 21:17:20,785	[INFO]	Step: 50
+2025-02-24 21:17:20,785	[INFO]	Stop Steps: 50
+2025-02-24 21:17:25,823	[INFO]	~~~~ END ~~~~
+2025-02-24 21:17:25,823	[INFO]	Best patch step: 43
+2025-02-24 21:17:25,823	[INFO]	
+2025-02-24 21:17:25,823	[INFO]	==== REPORT ====
+2025-02-24 21:17:25,823	[INFO]	Termination: step budget
+2025-02-24 21:17:25,823	[INFO]	Log file: /home/luke/magpie/_magpie_logs/0059_1740431539.log
+2025-02-24 21:17:25,823	[INFO]	Patch file: _magpie_logs/0059_1740431539.patch
+2025-02-24 21:17:25,823	[INFO]	Diff file: _magpie_logs/0059_1740431539.diff
+2025-02-24 21:17:25,823	[INFO]	Reference fitness: 3105207.00
+2025-02-24 21:17:25,823	[INFO]	Best fitness: 3094947.00
+2025-02-24 21:17:25,824	[INFO]	
+2025-02-24 21:17:25,824	[INFO]	==== BEST PATCH ====
+LineLLMCrossover(('source.cpp', 8), "#include <iostream>\n#include <algorithm>\n\nvoid ToOctalNumber(int n) {\n    if (n == 0) {\n        putchar('0');  // Using putchar for faster output\n        return;\n    }\n    \n    char buffer[12];  // Enough to hold octal representation of a 32-bit integer\n    int index = 0;\n    \n    while (n > 0) {\n        int octDigit = (n & 7);\n        buffer[index++] = (octDigit < 4 ? octDigit : (octDigit == 4 ? 5 : octDigit + 2)) + '0';\n        n >>= 3;\n    }\n    \n    // Output in reverse order\n    while (index > 0) {\n        putchar(buffer[--index]);  // Using putchar for faster output\n    }\n}\n\nint main() {\n    std::ios::sync_with_stdio(false);  // Improved I/O performance\n    int n;\n    while (std::cin >> n, n) {\n        ToOctalNumber(n);\n        putchar('\\n');  // Using putchar for faster output\n    }\n}")
+2025-02-24 21:17:25,824	[INFO]	
+2025-02-24 21:17:25,824	[INFO]	==== DIFF ====
+

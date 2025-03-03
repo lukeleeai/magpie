@@ -1,0 +1,265 @@
+{
+    "(10)": {
+        "children": [
+            {
+                "fitness": 3121411.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), 999999999); // Simplified fill\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 999999999) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Focus on the nested loop structure where the `dp` array is updated. The inner loop can be optimized by reducing unnecessary comparisons and initializing the `dp` array with a more suitable value to avoid redundant calculations."
+            },
+            {
+                "fitness": 3182917.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <cstring>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111];\nint dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        memset(dp, 0x3f, sizeof(dp)); // Replace fill with memset for faster initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\"); // Use constant defined for infinity\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array which uses a large constant for filling. This can be optimized by using a more meaningful maximum value and avoiding unnecessary use of `999999999` as it may lead to performance issues. Additionally, we can reduce the size of the `dp` array to only what is necessary, which can save memory and potentially improve cache performance."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3172239.0
+        ]
+    },
+    "(10_16)": {
+        "children": [
+            {
+                "fitness": 3091846.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <cstring> // Include for memset\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        memset(dp, 0x3f, sizeof(dp)); // Use memset for faster initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 0x3f3f3f3f) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array. Instead of using a complex fill operation, we can optimize it by using a simpler and more efficient way to initialize the array with a known value, reducing unnecessary overhead."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), 999999999); // Simplified fill\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 999999999) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3121438.0
+        ]
+    },
+    "(10_16_21)": {
+        "children": [
+            {
+                "fitness": 3080736.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <cstring> // Include for memset\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        \n        // Initialize dp array to a large value\n        for (int i = 0; i <= D; ++i)\n            fill(dp[i], dp[i] + maxr + 1, 0x3f3f3f3f); // Use fill for faster initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 0x3f3f3f3f) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Focus on the initialization of the `dp` array, which can be optimized by using a more efficient approach to initialize the values to infinity with a single loop instead of using `memset`. This avoids potential issues with performance due to large memory operations."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "10_16_21"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <cstring> // Include for memset\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        memset(dp, 0x3f, sizeof(dp)); // Use memset for faster initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 0x3f3f3f3f) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3091768.0
+        ]
+    },
+    "(10_16x10x6x12_18)": {
+        "children": [
+            {
+                "fitness": 3121410.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), numeric_limits<int>::max()); // Using numeric_limits\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Combine the use of `numeric_limits<int>::max()` for initialization from Parent 4 with the simplified fill method from Parent 1."
+            },
+            {
+                "fitness": 3233058.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (cin >> D >> N, D | N) {\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r, r + N);\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, numeric_limits<int>::max()));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == numeric_limits<int>::max()) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "Merge the optimized array size and initialization from Parent 3 with the vector usage from Parent 4 to improve memory management."
+            },
+            {
+                "fitness": 3121412.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), numeric_limits<int>::max());\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Use the array initialization method of Parent 1 while incorporating the improved iteration logic from Parent 4 for cleaner state management."
+            },
+            {
+                "fitness": 3081089.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, numeric_limits<int>::max());\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Combine the efficient input/output methods from Parent 2 with the clear state management from Parent 3 for better performance and readability."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10_16",
+            "10",
+            "6",
+            "12_18"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), 999999999); // Simplified fill\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 999999999) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <iostream>\n#include <algorithm>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, numeric_limits<int>::max()));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == numeric_limits<int>::max()) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3121438.0,
+            3172239.0,
+            3174870.0,
+            3236388.0
+        ]
+    },
+    "(10x13x12x11)": {
+        "children": [
+            {
+                "fitness": 3250326.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (cin >> D >> N, D | N) {\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "Combine the input handling from Parent 2 (using `cin` and `vector`) with the dynamic programming logic from Parent 1. This allows for a more modern C++ style while maintaining the efficiency of the original logic."
+            },
+            {
+                "fitness": 3344892.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "Merge the structured input handling and error checking from Parent 1 with the vector-based dynamic programming array from Parent 3. This results in cleaner code with improved readability."
+            },
+            {
+                "fitness": 3174870.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Combine the efficient input handling of Parent 4 with the dynamic programming logic from Parent 1, using arrays instead of vectors for better performance in terms of memory allocation."
+            },
+            {
+                "fitness": 3250327.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (cin >> D >> N, D | N) {\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "Utilize the clean input/output from Parent 2 and integrate the error handling and initialization logic from Parent 3, optimizing the dynamic programming approach."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "10",
+            "13",
+            "12",
+            "11"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+            "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+            "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3172238.0,
+            3344890.0,
+            3344890.0,
+            3344892.0
+        ]
+    },
+    "(11)": {
+        "children": [
+            {
+                "fitness": 3153109.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <limits>\n#include <vector>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn];\nvector<vector<int>> dp;\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        dp.assign(D + 1, vector<int>(maxr + 1, numeric_limits<int>::max()));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Focus on the double nested for loops that could be optimized by reducing the number of iterations and using a more efficient data structure to keep track of the states."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "11"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, numeric_limits<int>::max());\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3081089.0
+        ]
+    },
+    "(11x10_16_21x8x10_16)": {
+        "children": [
+            {
+                "fitness": 3091769.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <limits>\n#include <cstring>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        memset(dp, 0x3f, sizeof(dp)); // Efficient initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 0x3f3f3f3f) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Combine the efficient initialization of the `dp` array using `memset` from Parent 2 with the handling of unreachable states using `numeric_limits<int>::max()` from Parent 1."
+            },
+            {
+                "fitness": 3121412.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), numeric_limits<int>::max());\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Integrate the effective error handling from Parent 4 with the concise structure of Parent 3, while maintaining the use of `numeric_limits<int>::max()` for clarity in unreachable states."
+            },
+            {
+                "fitness": 3091786.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n#include <cstring>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        memset(dp, 0x3f, sizeof(dp)); // Fast initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 0x3f3f3f3f) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Combine the optimized input handling from Parent 1 with the array filling technique using `memset` from Parent 2 to enhance performance."
+            }
+        ],
+        "operation_type": "crossover",
+        "parent_names": [
+            "11",
+            "10_16_21",
+            "8",
+            "10_16"
+        ],
+        "parent_codes": [
+            "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nconst int maxn = 111;\nint D, N, a[maxn], e[maxn], r[maxn], dp[maxn][maxn];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, numeric_limits<int>::max());\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <cstring> // Include for memset\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        memset(dp, 0x3f, sizeof(dp)); // Use memset for faster initialization\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 0x3f3f3f3f) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 0x3f3f3f3f) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n#include <limits>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), numeric_limits<int>::max()); // Using numeric_limits\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == numeric_limits<int>::max()) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+            "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        fill(&dp[0][0], &dp[0][0] + sizeof(dp) / sizeof(dp[0][0]), 999999999); // Simplified fill\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == 999999999) continue; // Skip irrelevant states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) { // Check if we can use the current item\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3081089.0,
+            3091768.0,
+            3121410.0,
+            3121411.0
+        ]
+    },
+    "(12)": {
+        "children": [
+            {
+                "fitness": 3236388.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n#include <limits>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, numeric_limits<int>::max()));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                if (dp[i][j] == numeric_limits<int>::max()) continue; // Skip unreachable states\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == numeric_limits<int>::max()) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "The nested loop structure in the dynamic programming (DP) solution can be optimized by reducing the number of iterations. Specifically, we can avoid using a potentially large constant for initialization and check conditions more efficiently by using an array to track visited states."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "12"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n"
+        ],
+        "parent_fitnesses": [
+            3344890.0
+        ]
+    },
+    "(source)": {
+        "children": [
+            {
+                "fitness": 3172239.0,
+                "new_code": "#include <cstdio>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (scanf(\"%d %d\", &D, &N), D | N) {\n        for (int i = 0; i < N; i++) scanf(\"%d %d %d\", &a[i], &e[i], &r[i]);\n\n        int maxr = *max_element(r, r + N);\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n        if (ret == 999999999) printf(\"NA\\n\");\n        else printf(\"%d\\n\", ret);\n    }\n}\n",
+                "strategy": "Replace `cin` with `scanf` for faster input processing, especially in competitive programming scenarios."
+            },
+            {
+                "fitness": 3344892.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "Change the fixed-size arrays to `std::vector` for dynamic sizing, which prevents potential overflow issues and allows better memory management."
+            },
+            {
+                "fitness": 3344892.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n#include <vector>\n\nusing namespace std;\n\nint main() {\n    int D, N;\n    while (cin >> D >> N, D | N) {\n        vector<int> a(N), e(N), r(N);\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r.begin(), r.end());\n        vector<vector<int>> dp(D + 1, vector<int>(maxr + 1, 999999999));\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j >= r[k]) {\n                        int p = min(j + e[k], maxr), q = min(i + a[k], D);\n                        dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                    }\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D].begin(), dp[D].end());\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "Combine the initialization of the `dp` array into a single line with a more concise syntax using `std::fill` and a lambda for clarity."
+            },
+            {
+                "fitness": 3247877.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n    while (cin >> D >> N, D | N) {\n        for (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n        int maxr = *max_element(r, r + N);\n\n        for (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n        dp[0][0] = 0;\n\n        for (int i = 0; i < D; i++) {\n            for (int j = 0; j <= maxr; j++) {\n                for (int k = 0; k < N; k++) {\n                    if (j < r[k]) continue;\n\n                    int p = min(j + e[k], maxr), q = min(i + a[k], D);\n\n                    dp[q][p] = min(dp[q][p], dp[i][j] + 1);\n                }\n            }\n        }\n\n        int ret = *min_element(dp[D], dp[D] + maxr + 1);\n\n        if (ret == 999999999) cout << \"NA\" << endl;\n        else cout << ret << endl;\n    }\n}\n",
+                "strategy": "No mutations were made to the original code as it is already optimized for performance based on the provided fitness score."
+            },
+            {
+                "fitness": 3247695.0,
+                "new_code": "#include <iostream>\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n\n\twhile (cin >> D >> N, D | N) {\n\n\t\tfor (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n\t\tint maxr = *max_element(r, r + N);\n\n\t\tfor (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n\t\tdp[0][0] = 0;\n\n\t\tfor (int i = 0; i < D; i++) {\n\n\t\t\tfor (int j = 0; j <= maxr; j++) {\n\n\t\t\t\tfor (int k = 0; k < N; k++) {\n\n\t\t\t\t\tif (j < r[k]) continue;\n\n\t\t\t\t\tint p = min(j + e[k], maxr), q = min(i + a[k], D);\n\n\t\t\t\t\tdp[q][p] = min(dp[q][p], dp[i][j] + 1);\n\n\t\t\t\t}\n\n\t\t\t}\n\n\t\t}\n\n\t\tint ret = *min_element(dp[D], dp[D] + maxr + 1);\n\n\t\tif (ret == 999999999) cout << \"NA\" << endl;\n\n\t\telse cout << ret << endl;\n\n\t}\n\n}\n",
+                "strategy": "No mutations are performed as the current implementation is optimal."
+            }
+        ],
+        "operation_type": "mutation",
+        "parent_names": [
+            "source"
+        ],
+        "parent_codes": [
+            "#include <iostream>\n\n#include <algorithm>\n\nusing namespace std;\n\nint D, N, a[111], e[111], r[111], dp[111][111];\n\nint main() {\n\n\twhile (cin >> D >> N, D | N) {\n\n\t\tfor (int i = 0; i < N; i++) cin >> a[i] >> e[i] >> r[i];\n\n\t\tint maxr = *max_element(r, r + N);\n\n\t\tfor (int i = 0; i <= D; i++) fill(dp[i], dp[i] + maxr + 1, 999999999);\n\n\t\tdp[0][0] = 0;\n\n\t\tfor (int i = 0; i < D; i++) {\n\n\t\t\tfor (int j = 0; j <= maxr; j++) {\n\n\t\t\t\tfor (int k = 0; k < N; k++) {\n\n\t\t\t\t\tif (j < r[k]) continue;\n\n\t\t\t\t\tint p = min(j + e[k], maxr), q = min(i + a[k], D);\n\n\t\t\t\t\tdp[q][p] = min(dp[q][p], dp[i][j] + 1);\n\n\t\t\t\t}\n\n\t\t\t}\n\n\t\t}\n\n\t\tint ret = *min_element(dp[D], dp[D] + maxr + 1);\n\n\t\tif (ret == 999999999) cout << \"NA\" << endl;\n\n\t\telse cout << ret << endl;\n\n\t}\n\n}\n"
+        ],
+        "parent_fitnesses": [
+            3247694.0
+        ]
+    }
+}

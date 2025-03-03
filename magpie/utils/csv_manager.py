@@ -75,7 +75,7 @@ class ResultsManager(CSVManager):
     def __init__(
         self,
         logs_dir: str = "logs/train",
-        filename: str = "llm_eoc_pie_finetuned",
+        filename: str = "llm_eoc_ic_codestral",
     ):
         file_path = os.path.join(logs_dir, filename + ".csv")
         columns = [
