@@ -9,7 +9,7 @@ import time
 
 import magpie.core
 import magpie.utils
-from magpie.core.llm import LLMMutation, LLMCrossover
+from magpie.core.llm import LLMMutation, LLMCrossover, LLMReflection
 from magpie.utils.constants import (
     LLM_MUTATION,
     LLM_CROSSOVER,
@@ -37,6 +37,8 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
 
         self.node_history = defaultdict(lambda: {"children": []})
         self.prompts_dataset = PromptsDataset()
+        self.llm_reflection = LLMReflection()
+        self.reflections = []
 
     def reset(self):
         super().reset()
@@ -167,6 +169,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                                 "steps"
                             ]
                             best = True
+
+                reflection = self.llm_reflection.reflect(variant, run.status)
+                self.reflections.append(reflection)
+
                 self.hook_evaluation(variant, run, accept, best)
                 pop[variant] = run
                 self.stats["steps"] += 1
@@ -257,6 +263,12 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                                     "steps"
                                 ]
                                 best = True
+
+                    reflection = self.llm_reflection.reflect(
+                        variant, run.status
+                    )
+                    self.reflections.append(reflection)
+
                     self.hook_evaluation(variant, run, accept, best)
                     pop[variant] = run
                     self.stats["steps"] += 1
@@ -338,6 +350,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
             target_code=parent_code,
             target_fitness=parent_fitness,
             num_offsprings=num_mutations,
+            reflections=self.reflections,
         )
 
         for strategy, code in zip(strategies, codes):

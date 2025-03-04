@@ -1,0 +1,220 @@
+2025-01-21 01:18:13,741	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7886139967384664
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 30
+default_lengthout = 10000.0
+diff_method = unified
+trust_local_filesystem = True
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/magpie_dataset/test/0018
+target_files = 
+	source.cpp
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = 
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash setup.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run.sh
+run_timeout = 3
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+	LineDeletion
+	LineInsertion
+	LineReplacement
+llm_prob = 1.0
+warmup = 5
+warmup_strategy = last
+max_steps = 200
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 20
+delete_prob = 0.0
+offspring_elitism = 0.2
+offspring_crossover = 0.4
+offspring_mutation = 0.4
+uniform_rate = 0.5
+batch_reset = True
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-01-21 01:18:13,742	[DEBUG]	
+2025-01-21 01:18:13,742	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-01-21 01:18:13,742	[INFO]	~~~~ WARMUP ~~~~
+2025-01-21 01:18:14,896	[DEBUG]	EXEC>  SUCCESS 11654490.375
+2025-01-21 01:18:14,896	[INFO]	WARM    SUCCESS               11654490.38 (--) [0 edit(s)]  
+2025-01-21 01:18:15,698	[DEBUG]	EXEC>  SUCCESS 12570178.8125
+2025-01-21 01:18:15,698	[INFO]	WARM    SUCCESS               12570178.81 (--) [0 edit(s)]  
+2025-01-21 01:18:16,566	[DEBUG]	EXEC>  SUCCESS 12536076.9375
+2025-01-21 01:18:16,567	[INFO]	WARM    SUCCESS               12536076.94 (--) [0 edit(s)]  
+2025-01-21 01:18:17,479	[DEBUG]	EXEC>  SUCCESS 12470907.1875
+2025-01-21 01:18:17,480	[INFO]	WARM    SUCCESS               12470907.19 (--) [0 edit(s)]  
+2025-01-21 01:18:18,380	[DEBUG]	EXEC>  SUCCESS 12464826.875
+2025-01-21 01:18:18,380	[INFO]	WARM    SUCCESS               12464826.88 (--) [0 edit(s)]  
+2025-01-21 01:18:18,380	[INFO]	REF     SUCCESS               12464826.88 (--) [0 edit(s)]  
+2025-01-21 01:18:18,381	[INFO]	
+2025-01-21 01:18:18,381	[INFO]	~~~~ START ~~~~
+2025-01-21 01:18:32,464	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:32,464	[DEBUG]	patch(0-1)="LineLLMMutation(('source.cpp', 0), '#include <iostream>\n#include <vector>\n#include <algorithm>')"
+2025-01-21 01:18:33,554	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:33,555	[DEBUG]	patch(0-2)="LineLLMMutation(('source.cpp', 1), 'using ll = long long int;')"
+2025-01-21 01:18:34,645	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:34,645	[DEBUG]	patch(0-3)="LineLLMMutation(('source.cpp', 2), '#define inf 1000000000000000001')"
+2025-01-21 01:18:35,703	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:35,703	[DEBUG]	patch(0-4)="LineLLMMutation(('source.cpp', 3), 'const int MAX_SIZE = 1000000;\nll arr[MAX_SIZE];\nll arr2[MAX_SIZE];')"
+2025-01-21 01:18:36,764	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:36,764	[DEBUG]	patch(0-5)="LineLLMMutation(('source.cpp', 4), 'll func(const ll n, const ll cur) {')"
+2025-01-21 01:18:37,823	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:37,823	[DEBUG]	patch(0-6)="LineLLMMutation(('source.cpp', 5), 'for (ll i = 1; i <= k2 && cur + i < n; ++i) {')"
+2025-01-21 01:18:38,880	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:38,880	[DEBUG]	patch(0-7)="LineLLMMutation(('source.cpp', 6), 'std::vector<ll> arr(n), arr2(n, -1);')"
+2025-01-21 01:18:39,939	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:39,939	[DEBUG]	patch(0-8)="LineLLMMutation(('source.cpp', 7), 'std::fill(arr2.begin(), arr2.end(), -1);')"
+2025-01-21 01:18:40,997	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:40,997	[DEBUG]	patch(0-9)="LineLLMMutation(('source.cpp', 8), 'll func(ll n, ll cur, vector<ll>& arr, vector<ll>& arr2) {')"
+2025-01-21 01:18:42,054	[INFO]	0-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:42,054	[DEBUG]	patch(0-10)="LineLLMMutation(('source.cpp', 9), 'std::vector<ll> arr(n);\nstd::copy_n(std::istream_iterator<ll>(std::cin), n, arr.begin());')"
+2025-01-21 01:18:43,212	[INFO]	0-11    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:43,212	[DEBUG]	patch(0-11)="LineLLMMutation(('source.cpp', 10), '#include <chrono>\nauto start = std::chrono::high_resolution_clock::now();\n// code to measure\nauto end = std::chrono::high_resolution_clock::now();')"
+2025-01-21 01:18:44,302	[INFO]	0-12    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:44,302	[DEBUG]	patch(0-12)="LineLLMMutation(('source.cpp', 11), 'namespace std { /* ... */ }')"
+2025-01-21 01:18:45,360	[INFO]	0-13    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:45,360	[DEBUG]	patch(0-13)="LineLLMMutation(('source.cpp', 12), 'std::ios_base::sync_with_stdio(false); \nstd::cin.tie(nullptr);')"
+2025-01-21 01:18:46,418	[INFO]	0-14    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:46,418	[DEBUG]	patch(0-14)="LineLLMMutation(('source.cpp', 13), 'll memoized_func(ll n, ll cur);')"
+2025-01-21 01:18:47,476	[INFO]	0-15    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:47,476	[DEBUG]	patch(0-15)="LineLLMMutation(('source.cpp', 14), 'll n = 0, k2 = 0;')"
+2025-01-21 01:18:48,534	[INFO]	0-16    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:48,534	[DEBUG]	patch(0-16)="LineLLMMutation(('source.cpp', 15), 'sum=min(sum,func(n,cur+i)+(arr[cur] - arr[cur+i]));')"
+2025-01-21 01:18:49,593	[INFO]	0-17    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:49,593	[DEBUG]	patch(0-17)="LineLLMMutation(('source.cpp', 16), 'for (const auto& value : arr) {\n    // process value\n}')"
+2025-01-21 01:18:50,651	[INFO]	0-18    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:50,651	[DEBUG]	patch(0-18)="LineLLMMutation(('source.cpp', 17), 'sum=min(sum,func(n,cur+i)+(arr[cur] - arr[cur+i]));')"
+2025-01-21 01:18:51,711	[INFO]	0-19    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:51,711	[DEBUG]	patch(0-19)="LineLLMMutation(('source.cpp', 18), 'if (n <= 0 || k2 <= 0) {\n    cerr << "Invalid input!" << endl;\n    return -1;\n}')"
+2025-01-21 01:18:52,768	[INFO]	0-20    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:18:52,768	[DEBUG]	patch(0-20)="LineLLMMutation(('source.cpp', 19), 'std::fill_n(arr2, n, -1);')"
+2025-01-21 01:18:55,747	[DEBUG]	EXEC>  SUCCESS 12051177.1875
+2025-01-21 01:18:55,747	[INFO]	REF     SUCCESS               12051177.19 (--) [0 edit(s)]  
+2025-01-21 01:19:09,633	[INFO]	1-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,633	[DEBUG]	patch(1-1)="LineLLMCrossover(('source.cpp', 0), 'void optimizedFunction1() {\n    functionA(); // Inherit logic from A\n    functionF(); // Add optimization from F\n    ...\n}')"
+2025-01-21 01:19:09,685	[INFO]	1-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,685	[DEBUG]	patch(1-2)="LineLLMCrossover(('source.cpp', 1), "void optimizedFunction2() {\n    functionB(); // Use B's implementation\n    functionD(); // Integrate D's logic for improved performance\n    ...\n}")"
+2025-01-21 01:19:09,738	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,738	[DEBUG]	patch(1-3)="LineLLMCrossover(('source.cpp', 2), "void optimizedFunction3() {\n    functionC(); // Retain C's functionality\n    // Utilize G's logic for better efficiency\n    functionG();\n    ...\n}")"
+2025-01-21 01:19:09,790	[INFO]	1-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,790	[DEBUG]	patch(1-4)="LineLLMCrossover(('source.cpp', 3), "void optimizedFunction4() {\n    functionE(); // Keep E's features\n    // Apply H's optimizations to enhance E\n    functionH();\n    ...\n}")"
+2025-01-21 01:19:09,840	[INFO]	1-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,840	[DEBUG]	patch(1-5)="LineLLMCrossover(('source.cpp', 4), "void optimizedFunction5() {\n    functionA(); // Start with A's base\n    functionC(); // Enrich with C's capabilities\n    ...\n}")"
+2025-01-21 01:19:09,893	[INFO]	1-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,893	[DEBUG]	patch(1-6)="LineLLMCrossover(('source.cpp', 5), "void optimizedFunction6() {\n    functionF(); // Take F's approach\n    functionH(); // Inject H's enhancements\n    ...\n}")"
+2025-01-21 01:19:09,944	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,945	[DEBUG]	patch(1-7)="LineLLMCrossover(('source.cpp', 6), "void optimizedFunction7() {\n    functionD(); // Implement D's structure\n    functionB(); // Add B's efficiency methods\n    ...\n}")"
+2025-01-21 01:19:09,994	[INFO]	1-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:09,995	[DEBUG]	patch(1-8)="LineLLMCrossover(('source.cpp', 7), "void optimizedFunction8() {\n    functionE(); // Start with E's design\n    functionA(); // Infuse A's logic to boost performance\n    ...\n}")"
+2025-01-21 01:19:11,980	[DEBUG]	EXEC>  SUCCESS 11964565.6875
+2025-01-21 01:19:11,980	[INFO]	REF     SUCCESS               11964565.69 (--) [0 edit(s)]  
+2025-01-21 01:19:26,628	[INFO]	2-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,628	[DEBUG]	patch(2-9)="LineLLMCrossover(('source.cpp', 8), 'void optimizedSortAndSearch() {\n    functionA(); // Efficient sorting from Parent 1\n    functionB(); // Binary search from Parent 2\n}')"
+2025-01-21 01:19:26,681	[INFO]	2-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,681	[DEBUG]	patch(2-10)="LineLLMCrossover(('source.cpp', 9), 'void quickSortAndLinearSearch() {\n    functionC(); // Quicksort from Parent 3\n    functionD(); // Linear search from Parent 4\n}')"
+2025-01-21 01:19:26,733	[INFO]	2-11    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,733	[DEBUG]	patch(2-11)="LineLLMCrossover(('source.cpp', 10), 'void mergeSortAndHeapSort() {\n    functionE(); // Merge sort from Parent 5\n    functionF(); // Heap sort from Parent 6\n}')"
+2025-01-21 01:19:26,785	[INFO]	2-12    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,786	[DEBUG]	patch(2-12)="LineLLMCrossover(('source.cpp', 11), 'void enhancedSelectionSort() {\n    functionG(); // Selection sort from Parent 7\n    functionA(); // Efficient sorting from Parent 1\n}')"
+2025-01-21 01:19:26,842	[INFO]	2-13    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,842	[DEBUG]	patch(2-13)="LineLLMCrossover(('source.cpp', 12), 'void sortAndOptimizedSearch() {\n    functionE(); // Merge sort from Parent 5\n    functionB(); // Binary search from Parent 2\n}')"
+2025-01-21 01:19:26,894	[INFO]	2-14    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,894	[DEBUG]	patch(2-14)="LineLLMCrossover(('source.cpp', 13), 'void bubbleSortAndHeap() {\n    functionH(); // Bubble sort from Parent 8\n    functionF(); // Heap sort from Parent 6\n}')"
+2025-01-21 01:19:26,946	[INFO]	2-15    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,947	[DEBUG]	patch(2-15)="LineLLMCrossover(('source.cpp', 14), 'void quickSortAndSelection() {\n    functionC(); // Quicksort from Parent 3\n    functionG(); // Selection sort from Parent 7\n}')"
+2025-01-21 01:19:26,998	[INFO]	2-16    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-01-21 01:19:26,999	[DEBUG]	patch(2-16)="LineLLMCrossover(('source.cpp', 15), 'void linearAndBubbleSort() {\n    functionD(); // Linear search from Parent 4\n    functionH(); // Bubble sort from Parent 8\n}')"
+2025-01-21 01:19:28,984	[DEBUG]	EXEC>  SUCCESS 12061768.1875
+2025-01-21 01:19:28,985	[INFO]	REF     SUCCESS               12061768.19 (--) [0 edit(s)]  
+2025-01-21 01:19:29,540	[INFO]	~~~~ END ~~~~

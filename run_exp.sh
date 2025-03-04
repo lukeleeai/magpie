@@ -2,7 +2,9 @@
 do_llm_eoc=true
 do_llm_one_shot=false
 num_exp=1
-num_data=10
+num_data=1
+
+# python magpie genetic_programming --scenario "dataset/minisat/scenario.txt"
 
 # Run train dataset
 dataset_name="train"

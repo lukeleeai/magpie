@@ -6,6 +6,7 @@ import re
 import textwrap
 import time
 
+
 class LLMBase:
     def __init__(self):
         self.id = 0
@@ -16,21 +17,26 @@ class LLMBase:
         # Lazy load the LLM to avoid deepcopy/pickle errors with thread locks
         if self._llm is None:
             # Ues Mistral
-            self._llm = ChatMistralAI(
-                model="codestral-latest",
-                temperature=0.7,
-                mistralai_api_key=os.getenv("MISTRAL_API_KEY"),
-            )
-
-            # self._llm = ChatOpenAI(
-            #     # model="gpt-4o-mini",
-            #     model="gpt-4o",
-            #     # model="ft:gpt-4o-mini-2024-07-18:prompt-infection::Au7BGrZS",  # PIE-finetuned
+            # self._llm = ChatMistralAI(
+            #     model="codestral-latest",
             #     temperature=0.7,
-            #     openai_api_key=os.getenv("OPENAI_API_KEY"),
-            #     openai_organization=os.getenv("OPENAI_ORG"),
+            #     mistralai_api_key=os.getenv("MISTRAL_API_KEY"),
             # )
+
+            self._llm = ChatOpenAI(
+                # model="gpt-4o-mini",
+                model="gpt-4o",
+                # model="ft:gpt-4o-mini-2024-07-18:prompt-infection::Au7BGrZS",  # PIE-finetuned
+                temperature=0.7,
+                openai_api_key=os.getenv("OPENAI_API_KEY"),
+                openai_organization=os.getenv("OPENAI_ORG"),
+            )
         return self._llm
+
+    def extract_reflection(self, text: str) -> str:
+        pattern = r"<reflection>(.*?)</reflection>"
+        matches = re.findall(pattern, text, re.DOTALL)
+        return matches[0].strip() if matches else ""
 
     def extract_strategies(self, text: str) -> list:
         pattern = r"strategy:\s*(.*?)\n"
@@ -41,11 +47,6 @@ class LLMBase:
         pattern = r"code:\s*```cpp\n(.*?)\n```"
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
-
-    def extract_test_input(self, text: str) -> str:
-        pattern = r"```\n(.*?)\n```"  # extract the text between ``` and ```
-        matches = re.findall(pattern, text, re.DOTALL)
-        return matches[0].strip() if matches else ""
 
 
 class LLMCrossover(LLMBase):
@@ -198,6 +199,63 @@ class LLMCrossover(LLMBase):
         )
 
 
+class LLMReflection(LLMBase):
+    prompt = ChatPromptTemplate.from_template(
+        textwrap.dedent(
+            """
+            You are an expert developer. Previously, you were given a code and you wrote a new code
+            to make the code faster by improving the fitness score.
+
+            This was the parent code you were given:
+            {parent_codes}
+
+            This was the fitness score of the parent code:
+            {parent_fitnesses}
+
+            This was the new code you wrote:
+            {child_code}
+
+            Here is the run result:
+            {run_result}
+
+            Now, you need to reflect on this. The purpose is to learn what strategy worked, what didn't,
+            so that you can later use this compressed knowledge to write better codes.
+            For example, if the new code is faster, you should reflect on what strategies made it faster.
+            If the new code is slower, you should reflect on what strategies made it slower.
+            If the test or compile failed, you should reflect on what went wrong.
+            The reflection should be concise and to the point, no more than 100 words. You may include a bit of code.
+
+            After some thoughts, start your reflection with <reflection> tag and end with </reflection> tag.
+            Now, please reflect on the new code and the run result:
+            """
+        )
+    )
+
+    def reflect(self, child, run_result):
+        print("Run result: ", run_result)
+        parent_codes = child.parent_codes
+        parent_fitnesses = child.parent_fitnesses
+        child_code = child.get_patched_code()
+
+        messages = self.prompt.format_messages(
+            parent_codes=parent_codes,
+            parent_fitnesses=parent_fitnesses,
+            child_code=child_code,
+            run_result=run_result,
+        )
+
+        max_attempts = 2
+        attempt = 0
+        while attempt < max_attempts:
+            attempt += 1
+            response = self.llm.invoke(messages)
+            reflection = self.extract_reflection(response.content)
+            if reflection:
+                return reflection
+
+        return ""
+
+
 class LLMMutation(LLMBase):
     prompt = ChatPromptTemplate.from_template(
         textwrap.dedent(
@@ -306,6 +364,11 @@ class LLMMutation(LLMBase):
             // your mutated code
             ```
 
+            Also, here are some reflections that you may use to generate the mutation:
+            {reflections}
+            You wrote these reflections yourself in the past so that you can learn from them and write a better, faster code without making the same mistakes again.
+            However, note that you should not strictly follow the reflections because we want you to explore and discover new strategies.
+
             Now, here's the code to mutate:
             {code}
             Fitness score: {fitness}
@@ -322,6 +385,7 @@ class LLMMutation(LLMBase):
         target_code: str,
         target_fitness: int,
         num_offsprings: int,
+        reflections: list,
     ) -> str:
         max_attempts = 3
         attempt = 0
@@ -392,60 +456,6 @@ class LLMOneShotOptimization(LLMMutation):
             """
         )
     )
-
-
-class LLMTestAugmentation(LLMBase):
-    prompt = ChatPromptTemplate.from_template(
-        textwrap.dedent(
-            """
-            You are an expert C++ performance engineer. Your task is to analyze the given source code and modify its test input to create a more demanding performance test case. 
-
-            Key requirements:
-            - Analyze the computational complexity of the source code
-            - Modify the numeric values or strings in the test input to increase execution time
-            - Keep the same number of input lines and maintain input format validity
-            - Ensure the modified input remains valid for the source code
-
-            Context:
-            The test will be run using:
-            `perf stat -e cycles,task-clock ./build/src_code < test_input.txt 2>&1`
-
-            Source code:
-            {source_code}
-
-            Current test input (test_input.txt):
-            {test_input}
-
-            Generate 3 lines of test input that will slow down the code so that it at least takes 1 second to run (but less than 3 seconds).
-            Please provide the modified test input wrapped in triple backticks (```).
-            For example,
-            ```
-            harder test cases here
-            ```
-            """
-        )
-    )
-
-    def augment_test(self, source_code: str, test_input: str) -> str:
-        for _ in range(3):
-            messages = self.prompt.format_messages(
-                source_code=source_code,
-                test_input=test_input,
-            )
-            response = self.llm.invoke(messages)
-
-            # print("Response: ", response.content)
-
-            augmented_test_input = self.extract_test_input(response.content)
-
-            # print("Augmented test input: ", augmented_test_input)
-            if augmented_test_input:
-                return augmented_test_input
-
-            print("Failed to generate a parsable test input")
-            print("Model response: ", response.content)
-
-        raise ValueError("Failed to augment the test input after 3 attempts.")
 
 
 # Usage example:
