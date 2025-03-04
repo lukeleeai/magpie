@@ -42,12 +42,17 @@ class LLMBase:
         pattern = r"strategy:\s*(.*?)\n"
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
-
+    
     def extract_codes(self, text: str) -> list:
-        pattern = r"code:\s*```cpp\n(.*?)\n```"
+        # Match both ```cpp and ``` code blocks
+        pattern = r"code:\s*```(?:cpp)?\n(.*?)\n```"
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
-
+    
+    def extract_line_numbers(self, text: str) -> list:
+        pattern = r"lines:\s*(.*?)\n"
+        matches = re.findall(pattern, text, re.DOTALL)
+        return [match.strip() for match in matches] if matches else []
 
 class LLMCrossover(LLMBase):
     prompt = ChatPromptTemplate.from_template(
@@ -374,7 +379,43 @@ class LLMMutation(LLMBase):
             Fitness score: {fitness}
 
             Return the best {num_offsprings} mutations. We highly want diverse mutations.
-            Strictly follow the output format (e.g. strategy: ..., code: ...) (dont use ** to wrap the strategy or code):
+
+            [ON OUTPUT FORMAT]
+            First, analyze the code and do some thinking.
+
+            Note that the code is quite long. So I prepended a code line number to each line of the code.
+            You should not rewrite every single code.
+            Instead, you should write a new code line / block along with its line numbers.
+            For example, if you want to replace the code in line A to B, you should write the new code like:
+            So you should write what line numbers to remove from the original code.
+            Your new code could be shorter or longer than the codes to be replaced.
+
+            <Mutation 1>
+            strategy: Focus on the lines A:B that do X, which could be optimized by Y.
+            lines: A:B
+            code:
+            ```
+            // new code
+            ```
+            Here, "lines" is the line numbers of the code to be replaced.
+            Of course, B is inclusive. So A:B will remove the code from line A to B.
+            The new code could be shorter or longer than the codes to be replaced.
+
+            First, analyze the code and do some thinking.
+            And then write the mutations.
+            Strictly follow the output format (e.g. strategy: ..., lines: ..., code: ...)
+            - Don't use a markdown! Don't decorate the texts!
+            - dont use ** to wrap the strategy or code. No asteriks for wrapping!
+            - dont use ```cpp. Only do ```
+            - Otherwise, your output will be rejected.
+
+            When I replace the target code lines with your new code,
+            the new patched code should be a valid .cc code that can be compiled and run.
+            So you cannot simply remove any code without caution.
+            Please write a fast, valid C++ code.
+
+            In summary, first analyze the code and do some thinking.
+            Then write the mutations.
             """
         )
     )
@@ -391,27 +432,53 @@ class LLMMutation(LLMBase):
         attempt = 0
         num_offsprings = max(1, num_offsprings)
 
+        # Prepend the code line number to each code line
+        target_code = "\n".join(
+            [f"{i}: {line}" for i, line in enumerate(target_code.split("\n"))]
+        )
+
         while attempt < max_attempts:
             attempt += 1
             messages = self.prompt.format_messages(
                 code=target_code,
                 fitness=target_fitness,
                 num_offsprings=num_offsprings,
+                reflections=reflections,
             )
             try:
-                response = self.llm.invoke(messages)
+                # response = self.llm.invoke(messages)
+                response = ""
+                for chunk in self.llm.stream(messages):
+                    print(chunk.content, end="", flush=True)
+                    response += chunk.content
+
             except Exception as e:
                 print("Error: ", e)
                 time.sleep(1)
                 continue
 
-            print(f"Attempt {attempt}: Response: ", response.content)
+            strategies = self.extract_strategies(response)
+            codes = self.extract_codes(response)
+            line_numbers = self.extract_line_numbers(response)
 
-            strategies = self.extract_strategies(response.content)
-            codes = self.extract_codes(response.content)
+            if not strategies:
+                print("No strategies found, retrying...")
+                continue
 
-            if strategies and codes and len(strategies) == len(codes):
-                return strategies, codes
+            if not codes:
+                print("No codes found, retrying...")
+                continue  
+            
+            if not line_numbers:
+                print("No line numbers found, retrying...")
+                continue
+            
+            if len(strategies) != len(codes) or len(strategies) != len(line_numbers):
+                print("Mismatch or empty strategies/codes, retrying...")
+                continue
+
+            if strategies and codes and line_numbers and len(strategies) == len(codes) == len(line_numbers):
+                return strategies, codes, line_numbers
 
             print("Num offsprings: ", num_offsprings)
             print("Mismatch or empty strategies/codes, retrying...")

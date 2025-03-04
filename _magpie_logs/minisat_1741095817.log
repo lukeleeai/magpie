@@ -1,0 +1,171 @@
+2025-03-04 13:43:37,155	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5951476314639135
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 10
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 3
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.0
+offspring_mutation = 1.0
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-04 13:43:37,155	[DEBUG]	
+2025-03-04 13:43:37,155	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-04 13:43:37,155	[INFO]	~~~~ WARMUP ~~~~
+2025-03-04 13:43:52,749	[DEBUG]	EXEC>  SUCCESS 0.7481559499999999
+2025-03-04 13:43:52,749	[INFO]	WARM    SUCCESS               0.75 (--) [0 edit(s)]  
+2025-03-04 13:44:07,448	[DEBUG]	EXEC>  SUCCESS 0.7198288500000001
+2025-03-04 13:44:07,448	[INFO]	WARM    SUCCESS               0.72 (--) [0 edit(s)]  
+2025-03-04 13:44:21,996	[DEBUG]	EXEC>  SUCCESS 0.7108957
+2025-03-04 13:44:21,996	[INFO]	WARM    SUCCESS               0.71 (--) [0 edit(s)]  
+2025-03-04 13:44:21,996	[INFO]	REF     SUCCESS               0.71 (--) [0 edit(s)]  
+2025-03-04 13:44:21,998	[INFO]	
+2025-03-04 13:44:21,998	[INFO]	~~~~ START ~~~~
+2025-03-04 13:45:10,304	[DEBUG]	EXEC>  SUCCESS 0.7485059000000001
+2025-03-04 13:45:10,304	[INFO]	0-1     SUCCESS              +0.75 (105.29%) [1 edit(s)]  
+2025-03-04 13:45:10,304	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), 'CRef Solver::propagate()\n{\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()) {\n        Lit p = trail[qhead++];\n        vec<Watcher>& ws = watches[p];\n        Watcher* i, *j, *end;\n        num_props++;\n\n        for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True) {\n                *j++ = *i++;\n                continue;\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit)\n                c[0] = c[1], c[1] = false_lit;\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True) {\n                *j++ = w;\n                continue;\n            }\n\n            for (int k = 2; k < c.size(); k++) {\n                if (value(c[k]) != l_False) {\n                    c[1] = c[k];\n                    c[k] = false_lit;\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False) {\n                confl = cr;\n                qhead = trail.size();\n                while (i < end)\n                    *j++ = *i++;\n            } else {\n                uncheckedEnqueue(first, cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}', '448:507')"
+2025-03-04 13:45:27,882	[DEBUG]	EXEC>  SUCCESS 0.7253999999999999
+2025-03-04 13:45:27,882	[INFO]	0-2     SUCCESS              +0.73 (102.04%) [1 edit(s)]  
+2025-03-04 13:45:27,882	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), 'lbool Solver::search(int nof_conflicts)\n{\n    assert(ok);\n    int backtrack_level;\n    int conflictC = 0;\n    vec<Lit> learnt_clause;\n    starts++;\n\n    for (;;) {\n        CRef confl = propagate();\n        if (confl != CRef_Undef) {\n            conflicts++; conflictC++;\n            if (decisionLevel() == 0) return l_False;\n\n            learnt_clause.clear();\n            analyze(confl, learnt_clause, backtrack_level);\n            cancelUntil(backtrack_level);\n\n            if (learnt_clause.size() == 1) {\n                uncheckedEnqueue(learnt_clause[0]);\n            } else {\n                CRef cr = ca.alloc(learnt_clause, true);\n                learnts.push(cr);\n                attachClause(cr);\n                claBumpActivity(ca[cr]);\n                uncheckedEnqueue(learnt_clause[0], cr);\n            }\n\n            varDecayActivity();\n            claDecayActivity();\n\n            if (--learntsize_adjust_cnt == 0) {\n                learntsize_adjust_confl *= learntsize_adjust_inc;\n                learntsize_adjust_cnt = (int)learntsize_adjust_confl;\n                max_learnts *= learntsize_inc;\n\n                if (verbosity >= 1) {\n                    printf("| %9d | %7d %8d %8d | %8d %8d %6.0f | %6.3f %% |\\n",\n                        (int)conflicts,\n                        (int)dec_vars - (trail_lim.size() == 0 ? trail.size() : trail_lim[0]), nClauses(), (int)clauses_literals,\n                        (int)max_learnts, nLearnts(), (double)learnts_literals / nLearnts(), progressEstimate() * 100);\n                }\n            }\n\n        } else {\n            if (nof_conflicts >= 0 && conflictC >= nof_conflicts || !withinBudget()) {\n                progress_estimate = progressEstimate();\n                cancelUntil(0);\n                return l_Undef;\n            }\n\n            if (decisionLevel() == 0 && !simplify())\n                return l_False;\n\n            if (learnts.size() - nAssigns() >= max_learnts)\n                reduceDB();\n\n            Lit next = lit_Undef;\n            while (decisionLevel() < assumptions.size()) {\n                Lit p = assumptions[decisionLevel()];\n                if (value(p) == l_True) {\n                    newDecisionLevel();\n                } else if (value(p) == l_False) {\n                    analyzeFinal(~p, conflict);\n                    return l_False;\n                } else {\n                    next = p;\n                    break;\n                }\n            }\n\n            if (next == lit_Undef) {\n                decisions++;\n                next = pickBranchLit();\n\n                if (next == lit_Undef)\n                    return l_True;\n            }\n\n            newDecisionLevel();\n            uncheckedEnqueue(next);\n        }\n    }\n}', '613:705')"
+2025-03-04 13:45:30,670	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 13:45:30,670	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), 'bool Solver::simplify()\n{\n    assert(decisionLevel() == 0);\n\n    if (!ok || propagate() != CRef_Undef)\n        return ok = false;\n\n    if (nAssigns() == simpDB_assigns || simpDB_props > 0)\n        return true;\n\n    removeSatisfied(learnts);\n    if (remove_satisfied)\n        removeSatisfied(clauses);\n    checkGarbage();\n    rebuildOrderHeap();\n\n    simpDB_assigns = nAssigns();\n    simpDB_props = clauses_literals + learnts_literals;\n\n    return true;\n}', '572:597')"
+2025-03-04 13:45:31,671	[INFO]	Step: 3
+2025-03-04 13:45:31,671	[INFO]	Stop Steps: 10
+2025-03-04 13:45:32,749	[INFO]	REF     TEST_CODE_ERROR       None (--) [0 edit(s)]  
+2025-03-04 13:45:32,749	[INFO]	!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+2025-03-04 13:45:32,749	[INFO]	Unable to run and evaluate the target software.
+2025-03-04 13:45:32,749	[INFO]	Self-diagnostic:
+2025-03-04 13:45:32,749	[INFO]	The "test_cmd" command failed with a nonzero exit code
+2025-03-04 13:45:32,749	[INFO]	--> try to run it manually
+2025-03-04 13:45:32,749	[INFO]	!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+2025-03-04 13:45:32,749	[INFO]	CWD: /home/luke/magpie/_magpie_work/minisat_1741095817/minisat
+2025-03-04 13:45:32,750	[INFO]	CMD: ['bash', 'test.sh']
+2025-03-04 13:45:32,750	[INFO]	STATUS: SUCCESS
+2025-03-04 13:45:32,750	[INFO]	RETURN_CODE: 255
+2025-03-04 13:45:32,750	[INFO]	RUNTIME: 0.009154796600341797
+2025-03-04 13:45:32,750	[INFO]	STDOUT: (see log file)
+2025-03-04 13:45:32,750	[DEBUG]	STDOUT:
+FAILED ON FILE: data/uf50-01.cnf
+GOT: 126
+EXPECTED: 10
+
+2025-03-04 13:45:32,750	[INFO]	STDERR: (see log file)
+2025-03-04 13:45:32,750	[DEBUG]	STDERR:
+test.sh: line 8: ./simp/minisat: Permission denied
+
+2025-03-04 13:45:32,750	[INFO]	!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+2025-03-04 13:45:32,750	[INFO]	~~~~ END ~~~~
+2025-03-04 13:45:32,750	[INFO]	Best patch step: None

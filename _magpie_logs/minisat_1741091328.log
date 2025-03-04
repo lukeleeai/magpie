@@ -1,0 +1,156 @@
+2025-03-04 12:28:48,672	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 304074313489097
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 10
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 3
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.5
+offspring_mutation = 1.0
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-04 12:28:48,673	[DEBUG]	
+2025-03-04 12:28:48,673	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-04 12:28:48,673	[INFO]	~~~~ WARMUP ~~~~
+2025-03-04 12:28:49,184	[DEBUG]	EXEC>  SUCCESS 0.01739757142857143
+2025-03-04 12:28:49,184	[INFO]	WARM    SUCCESS               0.02 (--) [0 edit(s)]  
+2025-03-04 12:28:49,594	[DEBUG]	EXEC>  SUCCESS 0.01788157142857143
+2025-03-04 12:28:49,594	[INFO]	WARM    SUCCESS               0.02 (--) [0 edit(s)]  
+2025-03-04 12:28:50,029	[DEBUG]	EXEC>  SUCCESS 0.019567
+2025-03-04 12:28:50,029	[INFO]	WARM    SUCCESS               0.02 (--) [0 edit(s)]  
+2025-03-04 12:28:50,029	[INFO]	REF     SUCCESS               0.02 (--) [0 edit(s)]  
+2025-03-04 12:28:50,032	[INFO]	
+2025-03-04 12:28:50,032	[INFO]	~~~~ START ~~~~
+2025-03-04 12:29:20,202	[DEBUG]	EXEC>  SUCCESS 0.018084857142857146
+2025-03-04 12:29:20,202	[INFO]	0-1     SUCCESS              *0.02 (92.43%) [1 edit(s)]  
+2025-03-04 12:29:20,203	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), 'void Solver::garbageCollect()\n{\n    ClauseAllocator to(ca.size() - ca.wasted());\n    relocAll(to);\n    if (verbosity >= 2)\n        printf("|  Garbage collection:   %12d bytes => %12d bytes             |\\n",\n               ca.size()*ClauseAllocator::Unit_Size, to.size()*ClauseAllocator::Unit_Size);\n    to.moveTo(ca);\n}', '911:923')"
+
+2025-03-04 12:29:21,546	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 12:29:21,546	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), 'lbool Solver::search(int nof_conflicts)\n{\n    assert(ok);\n    int backtrack_level, conflictC = 0;\n    vec<Lit> learnt_clause;\n    starts++;\n\n    while (true) {\n        CRef confl = propagate();\n        if (confl != CRef_Undef) {\n            // Conflict resolution\n            conflicts++; conflictC++;\n            if (decisionLevel() == 0) return l_False;\n\n            learnt_clause.clear();\n            analyze(confl, learnt_clause, backtrack_level);\n            cancelUntil(backtrack_level);\n\n            if (learnt_clause.size() == 1) {\n                uncheckedEnqueue(learnt_clause[0]);\n            } else {\n                CRef cr = ca.alloc(learnt_clause, true);\n                learnts.push(cr);\n                attachClause(cr);\n                claBumpActivity(ca[cr]);\n                uncheckedEnqueue(learnt_clause[0], cr);\n            }\n\n            varDecayActivity();\n            claDecayActivity();\n            if (--learntsize_adjust_cnt == 0) {\n                learntsize_adjust_confl *= learntsize_adjust_inc;\n                learntsize_adjust_cnt = (int)learntsize_adjust_confl;\n                max_learnts *= learntsize_inc;\n            }\n\n        } else {\n            // No conflict\n            if ((nof_conflicts >= 0 && conflictC >= nof_conflicts) || !withinBudget()) {\n                progress_estimate = progressEstimate();\n                cancelUntil(0);\n                return l_Undef;\n            }\n\n            if (decisionLevel() == 0 && !simplify())\n                return l_False;\n\n            if (learnts.size() - nAssigns() >= max_learnts)\n                reduceDB();\n\n            Lit next = lit_Undef;\n            while (decisionLevel() < assumptions.size()) {\n                Lit p = assumptions[decisionLevel()];\n                if (value(p) == l_True) {\n                    newDecisionLevel();\n                } else if (value(p) == l_False) {\n                    analyzeFinal(~p, conflict);\n                    return l_False;\n                } else {\n                    next = p;\n                    break;\n                }\n            }\n\n            if (next == lit_Undef) {\n                decisions++;\n                next = pickBranchLit();\n\n                if (next == lit_Undef)\n                    return l_True;\n            }\n\n            newDecisionLevel();\n            uncheckedEnqueue(next);\n        }\n    }\n}', '613:703')"
+2025-03-04 12:29:24,504	[DEBUG]	EXEC>  SUCCESS 0.01687685714285714
+2025-03-04 12:29:24,505	[INFO]	0-3     SUCCESS              *0.02 (86.25%) [1 edit(s)]  
+2025-03-04 12:29:24,505	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), 'void Solver::toDimacs(const char *file, const vec<Lit>& assumps)\n{\n    FILE* f = fopen(file, "w");\n    if (f == NULL) {\n        fprintf(stderr, "could not open file %s\\n", file);\n        exit(1);\n    }\n    \n    vec<Var> map; Var max = 0;\n    int cnt = 0;\n\n    for (int i = 0; i < clauses.size(); i++) {\n        if (!satisfied(ca[clauses[i]])) {\n            Clause& c = ca[clauses[i]];\n            cnt++;\n            for (int j = 0; j < c.size(); j++) {\n                if (value(c[j]) != l_False) {\n                    mapVar(var(c[j]), map, max);\n                }\n            }\n        }\n    }\n\n    cnt += assumptions.size();\n    fprintf(f, "p cnf %d %d\\n", max, cnt);\n\n    for (int i = 0; i < assumptions.size(); i++) {\n        assert(value(assumptions[i]) != l_False);\n        fprintf(f, "%s%d 0\\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max) + 1);\n    }\n\n    for (int i = 0; i < clauses.size(); i++) {\n        toDimacs(f, ca[clauses[i]], map, max);\n    }\n\n    fclose(f);\n\n    if (verbosity > 0)\n        printf("Wrote %d clauses with %d variables.\\n", cnt, max);\n}', '820:869')"
+
+2025-03-04 12:29:25,505	[INFO]	Step: 3
+2025-03-04 12:29:25,505	[INFO]	Stop Steps: 10
+2025-03-04 12:29:26,889	[DEBUG]	EXEC>  SUCCESS 0.01804
+2025-03-04 12:29:26,890	[INFO]	REF     SUCCESS               0.02 (--) [0 edit(s)]  
+2025-03-04 12:29:26,890	[INFO]	Best patch: 2
+2025-03-04 12:29:28,889	[DEBUG]	EXEC>  SUCCESS 0.017639571428571428
+2025-03-04 12:29:28,889	[INFO]	BEST    SUCCESS              *0.02 (97.78%) [0 edit(s)]  
+2025-03-04 12:29:28,889	[INFO]	Best patch step: 2
+2025-03-04 12:29:44,190	[INFO]	~~~~ END ~~~~
+2025-03-04 12:29:44,191	[INFO]	Best patch step: 2

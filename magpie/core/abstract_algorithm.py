@@ -53,6 +53,7 @@ class AbstractAlgorithm(abc.ABC):
         variant=None,
         operation_type=None,
         new_code=None,  # only for llm-based edits
+        line_numbers=None,
     ):
         """
         Create an edit for the given variant or the software's noop variant.
@@ -67,6 +68,8 @@ class AbstractAlgorithm(abc.ABC):
             operation_type: The type of operation to create an edit for.
             new_code: The new code created by the llm. Only for llm-based edits.
                       LLM generates multiple codes at once.
+            line_numbers: The line numbers of the new code. Only for llm-based edits.
+                          LLM generates multiple codes at once.
 
         Returns:
             The created edit.
@@ -81,7 +84,7 @@ class AbstractAlgorithm(abc.ABC):
         tries = magpie.settings.edit_retries
         while (
             edit := (
-                klass.auto_create(ref, new_code)
+                klass.auto_create(ref, new_code, line_numbers)
                 if use_llm
                 else klass.auto_create(ref)
             )

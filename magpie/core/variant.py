@@ -69,6 +69,8 @@ class Variant:
 
     def random_model(self, klass):
         # Select a random model of the specified class
+        print("Random model of class: ", klass.__name__)
+        print("Models: ", self.models)
         tmp = [
             model for model in self.models.values() if isinstance(model, klass)
         ]

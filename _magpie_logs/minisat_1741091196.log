@@ -1,0 +1,149 @@
+2025-03-04 12:26:36,428	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 639344930178265
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 10
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 3
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.5
+offspring_mutation = 1.0
+uniform_rate = 0.5
+batch_reset = True
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-04 12:26:36,428	[DEBUG]	
+2025-03-04 12:26:36,428	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-04 12:26:36,428	[INFO]	~~~~ WARMUP ~~~~
+2025-03-04 12:26:36,806	[DEBUG]	EXEC>  SUCCESS 0.0005635
+2025-03-04 12:26:36,807	[INFO]	WARM    SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-04 12:26:37,062	[DEBUG]	EXEC>  SUCCESS 0.001495
+2025-03-04 12:26:37,063	[INFO]	WARM    SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-04 12:26:37,351	[DEBUG]	EXEC>  SUCCESS 0.001751
+2025-03-04 12:26:37,351	[INFO]	WARM    SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-04 12:26:37,351	[INFO]	REF     SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-04 12:26:37,355	[INFO]	
+2025-03-04 12:26:37,355	[INFO]	~~~~ START ~~~~
+2025-03-04 12:26:47,871	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 12:26:47,872	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), '// Optimize watches cleaning by iterating only where necessary\n    if (qhead < trail.size()) {\n        watches.clean(qhead);\n    }', '453:453')"
+2025-03-04 12:26:49,205	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 12:26:49,206	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), 'static double precomputedLuby[] = {1, 1, 2, 1, 1, 2, 4}; // Precomputed for small x\n    if (x < 7) return precomputedLuby[x];\n    int size, seq;\n    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);\n    while (size-1 != x){\n        size = (size-1)>>1;\n        seq--;\n        x = x % size;\n    }\n    return pow(y, seq);', '734:747')"
+2025-03-04 12:26:50,553	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 12:26:50,553	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), 'if (decisionLevel() > 0 && qhead < trail.size()) {\n        trail_lim.push(trail.size());\n    } else {\n        trail_lim.push(0);\n    }', '737:737')"
+2025-03-04 12:26:51,553	[INFO]	Step: 3
+2025-03-04 12:26:51,554	[INFO]	Stop Steps: 10
+2025-03-04 12:26:52,791	[DEBUG]	EXEC>  SUCCESS 0.000729
+2025-03-04 12:26:52,792	[INFO]	REF     SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-04 12:26:52,792	[INFO]	Best patch step: None
+2025-03-04 12:26:57,435	[INFO]	~~~~ END ~~~~
+2025-03-04 12:26:57,435	[INFO]	Best patch step: None

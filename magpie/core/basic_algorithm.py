@@ -134,6 +134,9 @@ class BasicAlgorithm(AbstractAlgorithm):
         self.report["best_fitness"] = run.fitness
         self.hook_warmup_evaluation("REF", patch, run)
         if run.status != "SUCCESS":
+            print("Hook reset batch failed")
+            print("run.status: ", run.status)
+            print(variant.get_patched_code())
             msg = "Reference software evaluation failed"
             raise RuntimeError(msg)
         # update best patch

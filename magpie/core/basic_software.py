@@ -2,7 +2,7 @@ import contextlib
 import pathlib
 import re
 import shlex
-
+import os
 import magpie.settings
 import magpie.utils.known
 
@@ -524,18 +524,21 @@ class BasicSoftware(AbstractSoftware):
 
         if True:
             stdout = exec_result.stdout.decode(magpie.settings.output_encoding)
-            # average the numbers
             try:
-                # cpu_cycles = [int(line) for line in stdout.splitlines()][
-                #     4:
-                # ]  # skip the first warmups
-                # run_result.fitness = sum(cpu_cycles) / len(cpu_cycles)
-                instruction_counts = [int(line.split()[-1].replace(",", "")) for line in stdout.splitlines()]
-                run_result.fitness = sum(instruction_counts) / len(instruction_counts)
-
+                # Extract CPU times from the output
+                cpu_times = []
+                for line in stdout.splitlines():
+                    if "CPU time" in line:
+                        time_str = line.split(":")[-1].strip().split()[0]
+                        cpu_times.append(float(time_str))
+                
+                if cpu_times:
+                    run_result.fitness = sum(cpu_times) / len(cpu_times)
+                else:
+                    run_result.status = "PARSE_ERROR"
+                    
             except ValueError:
-                instruction_counts = ([int(line.split()[-1].replace(",", "")) for line in stdout.splitlines()])
-                print(sum(instruction_counts) / len(instruction_counts))
+                print("Failed to parse stdout:", stdout)
                 run_result.status = "PARSE_ERROR"
 
         # if "[software] fitness" is "output", we check STDOUT for the string "MAGPIE_FITNESS:"

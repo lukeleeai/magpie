@@ -170,8 +170,8 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                             ]
                             best = True
 
-                reflection = self.llm_reflection.reflect(variant, run.status)
-                self.reflections.append(reflection)
+                # reflection = self.llm_reflection.reflect(variant, run.status)
+                # self.reflections.append(reflection)
 
                 self.hook_evaluation(variant, run, accept, best)
                 pop[variant] = run
@@ -209,8 +209,9 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     self.config["pop_size"]
                     * self.config["offspring_crossover"]
                 )
-                crossover_offsprings = self.crossover(copy_parents[:k], k)
-                offsprings.extend(crossover_offsprings)
+                if k > 0:
+                    crossover_offsprings = self.crossover(copy_parents[:k], k)
+                    offsprings.extend(crossover_offsprings)
 
                 # mutation
                 copy_parents = copy.deepcopy(parents)
@@ -264,10 +265,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                                 ]
                                 best = True
 
-                    reflection = self.llm_reflection.reflect(
-                        variant, run.status
-                    )
-                    self.reflections.append(reflection)
+                    # reflection = self.llm_reflection.reflect(
+                    #     variant, run.status
+                    # )
+                    # self.reflections.append(reflection)
 
                     self.hook_evaluation(variant, run, accept, best)
                     pop[variant] = run
@@ -345,7 +346,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
         parent_code = variant.get_patched_code()
         parent_fitness = variant.fitness or self.report["reference_fitness"]
 
-        strategies, codes = self.llm_mutator.mutate(
+        strategies, codes, line_numbers = self.llm_mutator.mutate(
             source_code=parent_code,
             target_code=parent_code,
             target_fitness=parent_fitness,
@@ -353,7 +354,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
             reflections=self.reflections,
         )
 
-        for strategy, code in zip(strategies, codes):
+        for strategy, code, line_number_range in zip(strategies, codes, line_numbers):
             print("Mutating")
             # print("\n===Mutating variant: ", parent_name, "===")
             # print("Mutation: ", mutation)
@@ -361,6 +362,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
                 self.software.noop_variant,
                 operation_type=LLM_MUTATION,
                 new_code=code,
+                line_numbers=line_number_range,
             )
             new_variant = copy.deepcopy(variant)
             new_variant.strategy = strategy

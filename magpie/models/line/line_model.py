@@ -1,6 +1,6 @@
 import pathlib
 import subprocess
-
+import re
 import magpie.utils
 from .abstract_model import AbstractLineModel
 from magpie.core.llm import LLMMutation, LLMCrossover
@@ -52,43 +52,34 @@ class LineModel(AbstractLineModel):
             return f"{tag_start}{target_loc}=after:{tag_end}{self.contents[self.locations[target_type][target_loc-1]]}"
         raise ValueError
 
-    def do_llm_mutation(self, llm_id, new_code):
+    def do_llm_mutation(self, llm_id, new_code, line_numbers):
         print("\033[35mApplying LLM Mutation to ", llm_id, "\033[0m")
+        print("line_numbers: ", line_numbers)
 
-        # @LUKE: remove it
-        original_model_code = self.dump()
-        # print(
-        #     ">>>>>Input model code>>>>> \n",
-        #     original_model_code[-20:],
-        #     "\n>>>>>>>>>>\n",
-        # )
-        # print(
-        #     "<<<Mutated model code\n",
-        #     new_code[-20:],
-        #     "\n<<<\n",
-        # )
+        # extract the start and end number where there can be any string between them
+        pattern = r'^(\d+).*?(\d+)$'
+        match = re.match(pattern, line_numbers)
+        start_line = int(match.group(1))
+        end_line = int(match.group(2))
+        print("\033[32mstart_line: ", start_line, "\033[0m")
+        print("\033[32mend_line: ", end_line, "\033[0m")
 
-        # LineModel.mutation_cache[llm_id] = new_code
+        original_code = self.dump()
+        original_code_lines = original_code.split("\n")
+        new_code_lines = new_code.split("\n")
+        patched_code_lines = original_code_lines[:start_line]
+        patched_code_lines.extend(new_code_lines)
+        patched_code_lines.extend(original_code_lines[end_line+1:])
+        new_code = "\n".join(patched_code_lines)
 
-        # # Check if the mutation is already cached
-        # if llm_id in LineModel.mutation_cache:
-        #     print("Using cached mutation for LLM ID: ", llm_id)
-        #     mutated_model_code = LineModel.mutation_cache[llm_id]
-        # else:
-        #     # Generate new mutation and cache it
-        #     original_model_code = self.dump()
-        #     print("Input model code: ", original_model_code)
-        #     try:
-        #         mutated_model_code = self.llm_mutator.mutate(
-        #             original_model_code
-        #         )
-        #         LineModel.mutation_cache[llm_id] = mutated_model_code
-        #     except Exception as e:
-        #         print("Error during LLM mutation: ", e)
-        #         return False
+        print("\033[33m" + "\n".join(original_code_lines[start_line-5:start_line]) + "\033[0m")
+        print("\033[32m--------------------------------\033[0m")
+        print("\033[32m" + "\n".join(new_code_lines) + "\033[0m") 
+        print("\033[32m--------------------------------\033[0m")
+        print("\033[33m" + "\n".join(original_code_lines[end_line+1:end_line+5]) + "\033[0m")
 
-        # print("cache size: ", len(LineModel.mutation_cache))
-
+        print("\033[31m" + new_code + "\033[0m")
+        
         self.init_contents(new_code)
         return True
 

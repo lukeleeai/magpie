@@ -97,6 +97,7 @@ def convert_to_prompt_data(log):
             "code": log["parent_codes"][0],
             "fitness": log["parent_fitnesses"][0],
             "num_offsprings": num_offsprings,
+            "reflections": "",
         }
 
     # Generate the initial prompt
