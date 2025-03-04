@@ -1,5 +1,5 @@
 import pandas as pd
-from dataset.automate import generate_data
+from dataset.build_pie_dataset import generate_data
 import numpy as np
 
 train_df = pd.read_json("dataset/train_hq_only.jsonl", lines=True)
@@ -8,9 +8,14 @@ train_df = pd.read_json("dataset/train_hq_only.jsonl", lines=True)
 problem_id_counts = train_df["problem_id"].value_counts()  # max 4
 
 # get the problem_ids with more than 1 code
-problem_ids_with_multiple_codes = problem_id_counts[problem_id_counts > 3].index.tolist()[:100]
+problem_ids_with_multiple_codes = problem_id_counts[
+    problem_id_counts > 3
+].index.tolist()[:100]
 
-print("number of problem_ids with multiple codes: ", len(problem_ids_with_multiple_codes))
+print(
+    "number of problem_ids with multiple codes: ",
+    len(problem_ids_with_multiple_codes),
+)
 
 df = pd.DataFrame()
 
@@ -35,6 +40,10 @@ df.to_csv("dataset/instruction_count_analysis/df.csv", index=False)
 
 # Build the dataset using automate.py
 for index, row in df.iterrows():
-    generate_data(row, index, data_dir=f"dataset/instruction_count_analysis/codes/{row['id']}")
+    generate_data(
+        row,
+        index,
+        data_dir=f"dataset/instruction_count_analysis/codes/{row['id']}",
+    )
 
 print("Total number of rows in df: ", len(df))

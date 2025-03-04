@@ -52,8 +52,7 @@ class AbstractAlgorithm(abc.ABC):
         self,
         variant=None,
         operation_type=None,
-        new_code=None,  # only for llm-based edits
-        line_numbers=None,
+        code_changes=None,  # only for llm-based edits
     ):
         """
         Create an edit for the given variant or the software's noop variant.
@@ -66,10 +65,8 @@ class AbstractAlgorithm(abc.ABC):
             variant: The variant to create an edit for. If None, the software's
                      noop variant is used.
             operation_type: The type of operation to create an edit for.
-            new_code: The new code created by the llm. Only for llm-based edits.
-                      LLM generates multiple codes at once.
-            line_numbers: The line numbers of the new code. Only for llm-based edits.
-                          LLM generates multiple codes at once.
+            code_changes: The code changes created by the llm. Only for llm-based edits.
+                          LLM generates multiple code changes at once.
 
         Returns:
             The created edit.
@@ -84,7 +81,7 @@ class AbstractAlgorithm(abc.ABC):
         tries = magpie.settings.edit_retries
         while (
             edit := (
-                klass.auto_create(ref, new_code, line_numbers)
+                klass.auto_create(ref, code_changes)
                 if use_llm
                 else klass.auto_create(ref)
             )
@@ -124,24 +121,32 @@ class AbstractAlgorithm(abc.ABC):
             return True
         if self.stop["budget"] is not None:
             if self.stats["budget"] >= self.stop["budget"]:
-                self.software.logger.info("(Abstract Algorithm) Stopping Condition: budget")
+                self.software.logger.info(
+                    "(Abstract Algorithm) Stopping Condition: budget"
+                )
                 self.report["stop"] = "budget"
                 return True
         if self.stop["wall"] is not None:
             now = time.time()
             if now >= self.stats["wallclock_start"] + self.stop["wall"]:
-                self.software.logger.info("(Abstract Algorithm) Stopping Condition: time budget")
+                self.software.logger.info(
+                    "(Abstract Algorithm) Stopping Condition: time budget"
+                )
                 self.report["stop"] = "time budget"
                 return True
         if self.stop["steps"] is not None:
             if self.stats["steps"] >= self.stop["steps"]:
-                self.software.logger.info("(Abstract Algorithm) Stopping Condition: step budget")
+                self.software.logger.info(
+                    "(Abstract Algorithm) Stopping Condition: step budget"
+                )
                 self.report["stop"] = "step budget"
                 return True
         if self.stop["fitness"] is not None:  # todo: list
             if self.report["best_fitness"] is not None:
                 if self.report["best_fitness"] <= self.stop["fitness"]:
-                    self.software.logger.info("(Abstract Algorithm) Stopping Condition: target fitness reached")
+                    self.software.logger.info(
+                        "(Abstract Algorithm) Stopping Condition: target fitness reached"
+                    )
                     self.report["stop"] = "target fitness reached"
                     return True
         print("Not stopping")

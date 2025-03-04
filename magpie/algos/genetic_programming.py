@@ -346,7 +346,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
         parent_code = variant.get_patched_code()
         parent_fitness = variant.fitness or self.report["reference_fitness"]
 
-        strategies, codes, line_numbers = self.llm_mutator.mutate(
+        strategies, code_changes = self.llm_mutator.mutate(
             source_code=parent_code,
             target_code=parent_code,
             target_fitness=parent_fitness,
@@ -354,15 +354,14 @@ class GeneticProgrammingLLM(GeneticProgramming):
             reflections=self.reflections,
         )
 
-        for strategy, code, line_number_range in zip(strategies, codes, line_numbers):
+        for strategy, mutation_code_changes in zip(strategies, code_changes):
             print("Mutating")
             # print("\n===Mutating variant: ", parent_name, "===")
             # print("Mutation: ", mutation)
             new_mutation = self.create_edit(
                 self.software.noop_variant,
                 operation_type=LLM_MUTATION,
-                new_code=code,
-                line_numbers=line_number_range,
+                code_changes=mutation_code_changes,
             )
             new_variant = copy.deepcopy(variant)
             new_variant.strategy = strategy
@@ -403,7 +402,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
             new_crossover = self.create_edit(
                 self.software.noop_variant,
                 operation_type=LLM_CROSSOVER,
-                new_code=crossover["crossover_code"],
+                code_changes=crossover["crossover_code"],
             )
             new_variant = self.create_empty_variant()
             new_variant.strategy = crossover["strategy"]

@@ -5,6 +5,8 @@ import os
 import re
 import textwrap
 import time
+import re
+from typing import List, Dict
 
 
 class LLMBase:
@@ -42,17 +44,23 @@ class LLMBase:
         pattern = r"strategy:\s*(.*?)\n"
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
-    
+
     def extract_codes(self, text: str) -> list:
         # Match both ```cpp and ``` code blocks
         pattern = r"code:\s*```(?:cpp)?\n(.*?)\n```"
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
-    
-    def extract_line_numbers(self, text: str) -> list:
-        pattern = r"lines:\s*(.*?)\n"
+
+    def extract_start_line(self, text: str) -> list:
+        pattern = r"start_line:\s*(.*?)\n"
         matches = re.findall(pattern, text, re.DOTALL)
         return [match.strip() for match in matches] if matches else []
+
+    def extract_end_line(self, text: str) -> list:
+        pattern = r"end_line:\s*(.*?)\n"
+        matches = re.findall(pattern, text, re.DOTALL)
+        return [match.strip() for match in matches] if matches else []
+
 
 class LLMCrossover(LLMBase):
     prompt = ChatPromptTemplate.from_template(
@@ -265,109 +273,17 @@ class LLMMutation(LLMBase):
     prompt = ChatPromptTemplate.from_template(
         textwrap.dedent(
             """
-            We are implementing a genetic algorithm to optimize code by performing mutation operations, aiming to improve its fitness score (runtime).
+            We are implementing a genetic algorithm to optimize code by performing mutation operations, 
+            aiming to improve its fitness score (runtime).
             As an expert C++ developer, your task is to generate {num_offsprings} mutations of the given code.
             A lower fitness score means better performance.
 
-            Here are some examples of successful code optimizations:
-
-            ```cpp
-            #include <bits/stdc++.h>
-            using namespace std;
-
-            int main() {{
-                string s;
-                cin >> s;
-                int a = 0, z = 0;
-                for(int i = 0; i < s.size(); i++) {{
-                    if (s[i] == 'A') {{
-                        a = i;
-                        break;
-                    }}
-                }}
-            ```
-
-            can be optimized to:
-            ```cpp
-            #include<cstdio>
-            #include<algorithm>
-            using namespace std;
-            char str[200005];
-            int main(){{
-                scanf("%s",str);
-                int ans = 0;
-                int a=-1;
-                for(int i=0;str[i];i++){{
-                    if(str[i]=='Z'){{
-                        if(a!=-1)
-                            ans = max(ans,i-a);
-                    }}else if(str[i]=='A' && a==-1)
-                        a = i;
-                }}
-                printf("%d\n",ans+1);
-                return 0;
-            }}
-            ```
-
-            For another example,
-            ```cpp
-            #include <cstdio>
-            #include <cstring>
-            #include <algorithm>
-            #include <iostream>
-            using namespace std;
-
-            typedef long long ll;
-            const int maxn = 100000;
-            int n;
-            long long a[maxn], b[maxn];
-            int main(void) {{
-                cin >> n;
-                for(int i = 0; i < n; ++i) {{
-                    cin >> a[i] >> b[i];
-                }}
-            }}
-            ```
-
-            can be optimized to:
-            ```cpp
-            #include <cstdio>
-            #include <cstring>
-            #include <algorithm>
-            using namespace std;
-            typedef long long li;
-            const int maxn = 1e5;
-            int n, a[maxn], b[maxn];
-            int main(void) {{
-                scanf("%d", &n);
-                for (int i = 0; i < n; ++i) {{
-                    scanf("%d%d", a + i, b + i);
-                }}
-                li ans = 0;
-                for (int i = n - 1; i >= 0; --i) {{
-                    li cur = a[i] + ans;
-                    li tar = (cur + b[i] - 1) / b[i] * b[i];
-                    ans += tar - cur;
-                }}
-                printf("%lld\n", ans);
-            }}
-            ```
-
-            The above are only examples.
-            Each mutation operation should involve selecting specific parts of the code, such as import packages, lines, or blocks, and applying diverse strategies to optimize them.
+            Each mutation operation should involve selecting specific parts of the code, 
+            such as import packages, lines, or blocks, and applying diverse strategies to optimize them.
             The strategy should clearly describe the focus area and the intended optimization.
             Balancing exploration and exploitation is key to success.
             Your code should be a valid C++ code that can be compiled and run.
             Your goal is to return the best {num_offsprings} optimization mutations.
-
-            Here's an example an an output format. For the third mutation, the example output is:
-            
-            <Mutation 3>
-            strategy: Focus on the line X that does Y, which could be optimized by Z.
-            code:
-            ```cpp
-            // your mutated code
-            ```
 
             Also, here are some reflections that you may use to generate the mutation:
             {reflections}
@@ -384,26 +300,37 @@ class LLMMutation(LLMBase):
             First, analyze the code and do some thinking.
 
             Note that the code is quite long. So I prepended a code line number to each line of the code.
-            You should not rewrite every single code.
-            Instead, you should write a new code line / block along with its line numbers.
-            For example, if you want to replace the code in line A to B, you should write the new code like:
-            So you should write what line numbers to remove from the original code.
             Your new code could be shorter or longer than the codes to be replaced.
+            For example, if you want to replace the code in line A to B, you should write the new code like:
 
             <Mutation 1>
             strategy: Focus on the lines A:B that do X, which could be optimized by Y.
-            lines: A:B
+            start line number: A
+            start line code: Line A code
+            end line number: B
+            end line code: Line B code
             code:
             ```
             // new code
             ```
-            Here, "lines" is the line numbers of the code to be replaced.
-            Of course, B is inclusive. So A:B will remove the code from line A to B.
-            The new code could be shorter or longer than the codes to be replaced.
 
-            First, analyze the code and do some thinking.
+            (and optionally more lines to replace if necessary to make the code valid)
+            start line number: C
+            start line code: Line C code
+            end line number: D
+            end line code: Line D code
+            code:
+            ```
+            // new code
+            ```
+            Here, "start line number" and "end line number" are the line numbers of the code to be replaced.
+            "start line code" and "end line code" are the codes of the start and end lines.
+            The new code could be shorter or longer than the codes to be replaced.
+            As you can see, you can replace multiple sections of the code if necessary (like when including a new library, etc.)
+
+            First, analyze the given code and generate any possible sources of inefficiency.
             And then write the mutations.
-            Strictly follow the output format (e.g. strategy: ..., lines: ..., code: ...)
+            Strictly follow the output format.
             - Don't use a markdown! Don't decorate the texts!
             - dont use ** to wrap the strategy or code. No asteriks for wrapping!
             - dont use ```cpp. Only do ```
@@ -414,8 +341,17 @@ class LLMMutation(LLMBase):
             So you cannot simply remove any code without caution.
             Please write a fast, valid C++ code.
 
-            In summary, first analyze the code and do some thinking.
+            In summary, first analyze the code and generate any possible sources of inefficiency.
             Then write the mutations.
+
+            For a mutation block, the output format should always start with <Mutation N>.
+            And then obey the output format like below.
+            start line number: A
+            start line code: Line A code
+            end line number: B
+            end line code: Line B code
+            code:
+
             """
         )
     )
@@ -457,28 +393,28 @@ class LLMMutation(LLMBase):
                 time.sleep(1)
                 continue
 
-            strategies = self.extract_strategies(response)
-            codes = self.extract_codes(response)
-            line_numbers = self.extract_line_numbers(response)
+            mutations = self.parse(response)
+            strategies = [mutation["strategy"] for mutation in mutations]
+            code_changes = [mutation["code_changes"] for mutation in mutations]
 
             if not strategies:
                 print("No strategies found, retrying...")
                 continue
 
-            if not codes:
+            if not code_changes:
                 print("No codes found, retrying...")
-                continue  
-            
-            if not line_numbers:
-                print("No line numbers found, retrying...")
                 continue
-            
-            if len(strategies) != len(codes) or len(strategies) != len(line_numbers):
+
+            if len(strategies) != len(code_changes):
                 print("Mismatch or empty strategies/codes, retrying...")
                 continue
 
-            if strategies and codes and line_numbers and len(strategies) == len(codes) == len(line_numbers):
-                return strategies, codes, line_numbers
+            if (
+                strategies
+                and code_changes
+                and len(strategies) == len(code_changes)
+            ):
+                return strategies, code_changes
 
             print("Num offsprings: ", num_offsprings)
             print("Mismatch or empty strategies/codes, retrying...")
@@ -487,24 +423,53 @@ class LLMMutation(LLMBase):
             "Failed to generate valid mutations after 3 attempts."
         )
 
-    def mutate_debugging(
-        self,
-        source_code: str,
-        target_code: str,
-        target_fitness: int,
-        num_offsprings: int,
-    ) -> str:
+    def parse(self, output: str) -> List[Dict]:
         mutations = []
-        for _ in range(num_offsprings):
-            mutation_strategy = f"Strategy {{self.id}}"
-            mutated_code = f"{{target_code}} // {{self.id}}"
-            mutations.append(
-                {
-                    "strategy": mutation_strategy,
-                    "mutated_code": mutated_code,
-                }
+        # Split text into individual mutations, ignoring the empty first split
+        mutation_blocks = re.split(r"<Mutation \d+>", output)[1:]
+
+        for block in mutation_blocks:
+            mutation = {"strategy": "", "code_changes": []}
+
+            # Extract strategy
+            strategy_match = re.search(r"strategy: (.+)", block)
+            if strategy_match:
+                mutation["strategy"] = strategy_match.group(1).strip()
+
+            # Extract code changes with a pattern that matches all fields
+            change_pattern = re.compile(
+                r"start line number: (\S+)\s+"  # \S+ allows non-numeric like "sl1"
+                r"start line code: (.*?)\s+"
+                r"end line number: (\S+)\s+"  # \S+ for "el1"
+                r"end line code: (.*?)\s+"
+                r"code:\s*(.*?)(?=\s*start line number:|\Z)",  # Until next section or end
+                re.DOTALL,
             )
-            self.id += 1
+            change_sections = change_pattern.findall(block)
+
+            for change in change_sections:
+                # Attempt to convert line numbers to int, keep as string if it fails
+                try:
+                    start_line = int(change[0])
+                except ValueError:
+                    start_line = change[0]
+                try:
+                    end_line = int(change[2])
+                except ValueError:
+                    end_line = change[2]
+
+                mutation["code_changes"].append(
+                    {
+                        "start_line_number": start_line,
+                        "start_line_code": change[1].strip(),
+                        "end_line_number": end_line,
+                        "end_line_code": change[3].strip(),
+                        "new_code": change[4].strip(),
+                    }
+                )
+
+            mutations.append(mutation)
+
         return mutations
 
 

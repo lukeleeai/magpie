@@ -52,35 +52,95 @@ class LineModel(AbstractLineModel):
             return f"{tag_start}{target_loc}=after:{tag_end}{self.contents[self.locations[target_type][target_loc-1]]}"
         raise ValueError
 
-    def do_llm_mutation(self, llm_id, new_code, line_numbers):
+    def do_llm_mutation(self, llm_id, code_changes):
         print("\033[35mApplying LLM Mutation to ", llm_id, "\033[0m")
-        print("line_numbers: ", line_numbers)
-
-        # extract the start and end number where there can be any string between them
-        pattern = r'^(\d+).*?(\d+)$'
-        match = re.match(pattern, line_numbers)
-        start_line = int(match.group(1))
-        end_line = int(match.group(2))
-        print("\033[32mstart_line: ", start_line, "\033[0m")
-        print("\033[32mend_line: ", end_line, "\033[0m")
 
         original_code = self.dump()
         original_code_lines = original_code.split("\n")
-        new_code_lines = new_code.split("\n")
-        patched_code_lines = original_code_lines[:start_line]
-        patched_code_lines.extend(new_code_lines)
-        patched_code_lines.extend(original_code_lines[end_line+1:])
-        new_code = "\n".join(patched_code_lines)
+        patched_code = ""
 
-        print("\033[33m" + "\n".join(original_code_lines[start_line-5:start_line]) + "\033[0m")
-        print("\033[32m--------------------------------\033[0m")
-        print("\033[32m" + "\n".join(new_code_lines) + "\033[0m") 
-        print("\033[32m--------------------------------\033[0m")
-        print("\033[33m" + "\n".join(original_code_lines[end_line+1:end_line+5]) + "\033[0m")
+        for code_change in code_changes:
+            print("\033[32mcode_change: ", code_change, "\033[0m")
+            start_line_code = code_change["start_line_code"].strip()
+            end_line_code = code_change["end_line_code"].strip()
+            start_line_code_matching_indices = [
+                i
+                for i, line in enumerate(original_code_lines)
+                if line.strip() == start_line_code
+            ]
 
-        print("\033[31m" + new_code + "\033[0m")
-        
-        self.init_contents(new_code)
+            if len(start_line_code_matching_indices) > 1:
+                # find the index closest to code_change["start_line_number"]
+                start_line_code_matching_index = min(
+                    start_line_code_matching_indices,
+                    key=lambda x: abs(
+                        x - int(code_change["start_line_number"])
+                    ),
+                )
+            else:
+                start_line_code_matching_index = (
+                    start_line_code_matching_indices[0]
+                )
+
+            end_line_code_matching_indices = [
+                i
+                for i, line in enumerate(original_code_lines)
+                if line.strip() == end_line_code
+            ]
+
+            if len(end_line_code_matching_indices) > 1:
+                # find the index closest to code_change["end_line_number"]
+                end_line_code_matching_index = min(
+                    end_line_code_matching_indices,
+                    key=lambda x: abs(x - int(code_change["end_line_number"])),
+                )
+            else:
+                end_line_code_matching_index = end_line_code_matching_indices[
+                    0
+                ]
+
+            if (
+                len(start_line_code_matching_indices) == 0
+                or len(end_line_code_matching_indices) == 0
+            ):
+                raise ValueError
+
+            patched_code = original_code_lines[:start_line_code_matching_index]
+            patched_code += code_change["new_code"]
+            patched_code += original_code_lines[
+                end_line_code_matching_index + 1 :
+            ]
+
+            print(
+                "\033[33m"
+                + "\n".join(
+                    original_code_lines[
+                        start_line_code_matching_index
+                        - 5 : start_line_code_matching_index
+                    ]
+                )
+                + "\033[0m"
+            )
+            print("\033[32m--------------------------------\033[0m")
+            print("\033[32m" + "\n".join(code_change["new_code"]) + "\033[0m")
+            print("\033[32m--------------------------------\033[0m")
+            print(
+                "\033[33m"
+                + "\n".join(
+                    original_code_lines[
+                        end_line_code_matching_index
+                        + 1 : end_line_code_matching_index
+                        + 5
+                    ]
+                )
+                + "\033[0m"
+            )
+
+            print("\033[31m" + "\n".join(patched_code) + "\033[0m")
+
+            original_code_lines = patched_code.split("\n")
+
+        self.init_contents(patched_code)
         return True
 
     def do_llm_crossover(self, llm_id, new_code):
