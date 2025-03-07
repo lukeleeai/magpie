@@ -68,11 +68,11 @@ def algo_from_string(s):
     raise RuntimeError(msg)
 
 
-def format_crossover_parents(codes, fitnesses):
-    return "\n\n".join(
-        f"<Parent {i + 1}>\nCode: \n```\n{code}\n```\nFitness score: {fitness}"
-        for i, (code, fitness) in enumerate(zip(codes, fitnesses))
-    )
+# def format_crossover_parents(codes, fitnesses):
+#     return "\n\n".join(
+#         f"<Parent {i + 1}>\nCode: \n```\n{code}\n```\nFitness score: {fitness}"
+#         for i, (code, fitness) in enumerate(zip(codes, fitnesses))
+#     )
 
 
 def convert_to_prompt_data(log):

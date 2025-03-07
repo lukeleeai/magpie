@@ -1,0 +1,373 @@
+2025-03-05 13:05:58,284	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8349682237310248
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 200
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 20
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.0
+offspring_mutation = 1.0
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-05 13:05:58,284	[DEBUG]	
+2025-03-05 13:05:58,284	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-05 13:05:58,285	[INFO]	~~~~ WARMUP ~~~~
+2025-03-05 13:06:04,009	[DEBUG]	EXEC>  SUCCESS 0.5322856
+2025-03-05 13:06:04,009	[INFO]	WARM    SUCCESS               0.53 (--) [0 edit(s)]  
+2025-03-05 13:06:10,094	[DEBUG]	EXEC>  SUCCESS 0.5805629000000001
+2025-03-05 13:06:10,094	[INFO]	WARM    SUCCESS               0.58 (--) [0 edit(s)]  
+2025-03-05 13:06:15,846	[DEBUG]	EXEC>  SUCCESS 0.5457086
+2025-03-05 13:06:15,847	[INFO]	WARM    SUCCESS               0.55 (--) [0 edit(s)]  
+2025-03-05 13:06:15,847	[INFO]	REF     SUCCESS               0.55 (--) [0 edit(s)]  
+2025-03-05 13:06:15,849	[INFO]	
+2025-03-05 13:06:15,849	[INFO]	~~~~ START ~~~~
+2025-03-05 13:07:17,780	[DEBUG]	EXEC>  SUCCESS 0.5186737
+2025-03-05 13:07:17,781	[INFO]	0-1     SUCCESS              *0.52 (95.05%) [1 edit(s)]  
+2025-03-05 13:07:17,781	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '#include <random>'}])"
+
+2025-03-05 13:07:19,117	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:19,117	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), [{'start_line_number': 121, 'start_line_code': 'activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);', 'end_line_number': 121, 'end_line_code': 'activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);', 'new_code': 'std::uniform_real_distribution<double> distribution(0.0, 0.00001);\nactivity.push(rnd_init_act ? distribution(generator) : 0);'}])"
+2025-03-05 13:07:20,449	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:20,449	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), [{'start_line_number': 36, 'start_line_code': 'static DoubleOption  opt_random_seed       (_cat, "rnd-seed",    "Used by the random variable selection",         91648253, DoubleRange(0, false, HUGE_VAL, false));', 'end_line_number': 36, 'end_line_code': 'static DoubleOption  opt_random_seed       (_cat, "rnd-seed",    "Used by the random variable selection",         91648253, DoubleRange(0, false, HUGE_VAL, false));', 'new_code': 'std::random_device rd;\nstd::mt19937 generator(rd());'}])"
+2025-03-05 13:07:21,774	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:21,775	[DEBUG]	patch(0-4)="LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 213, 'start_line_code': 'insertVarOrder(x); }', 'end_line_number': 213, 'end_line_code': 'insertVarOrder(x); }', 'new_code': 'insertVarOrder(x);'}, {'start_line_number': 206, 'start_line_code': 'void Solver::cancelUntil(int level) {', 'end_line_number': 206, 'end_line_code': 'void Solver::cancelUntil(int level) {', 'new_code': 'inline void Solver::cancelUntil(int level) {'}])"
+2025-03-05 13:07:24,470	[INFO]	0-5     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:24,470	[DEBUG]	patch(0-5)="LineLLMMutation(('core/Solver.cc', 4), [{'start_line_number': 428, 'start_line_code': 'void Solver::uncheckedEnqueue(Lit p, CRef from)', 'end_line_number': 428, 'end_line_code': 'void Solver::uncheckedEnqueue(Lit p, CRef from)', 'new_code': 'inline void Solver::uncheckedEnqueue(Lit p, CRef from)'}])"
+2025-03-05 13:07:25,805	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:25,805	[DEBUG]	patch(0-6)="LineLLMMutation(('core/Solver.cc', 5), [{'start_line_number': 454, 'start_line_code': 'while (qhead < trail.size()){', 'end_line_number': 454, 'end_line_code': 'while (qhead < trail.size()){', 'new_code': 'while (qhead < trail.size()) {\n    const Lit p = trail[qhead++];'}])"
+2025-03-05 13:07:33,820	[DEBUG]	EXEC>  SUCCESS 0.5182371
+2025-03-05 13:07:33,821	[INFO]	0-7     SUCCESS              *0.52 (94.97%) [1 edit(s)]  
+2025-03-05 13:07:33,821	[DEBUG]	patch(0-7)="LineLLMMutation(('core/Solver.cc', 6), [{'start_line_number': 31, 'start_line_code': 'static const char* _cat = "CORE";', 'end_line_number': 31, 'end_line_code': 'static const char* _cat = "CORE";', 'new_code': 'constexpr const char* _cat = "CORE";'}])"
+
+2025-03-05 13:07:35,149	[INFO]	0-8     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:35,149	[DEBUG]	patch(0-8)="LineLLMMutation(('core/Solver.cc', 7), [{'start_line_number': 125, 'start_line_code': 'trail    .capacity(v+1);', 'end_line_number': 125, 'end_line_code': 'trail    .capacity(v+1);', 'new_code': 'trail.reserve(v + 1);'}])"
+2025-03-05 13:07:36,474	[INFO]	0-9     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:36,474	[DEBUG]	patch(0-9)="LineLLMMutation(('core/Solver.cc', 8), [{'start_line_number': 230, 'start_line_code': 'if (drand(random_seed) < random_var_freq && !order_heap.empty()){', 'end_line_number': 230, 'end_line_code': 'if (drand(random_seed) < random_var_freq && !order_heap.empty()){', 'new_code': 'if (!order_heap.empty() && drand(random_seed) < random_var_freq){'}])"
+2025-03-05 13:07:37,800	[INFO]	0-10    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:37,800	[DEBUG]	patch(0-10)="LineLLMMutation(('core/Solver.cc', 9), [{'start_line_number': 916, 'start_line_code': 'ClauseAllocator to(ca.size() - ca.wasted());', 'end_line_number': 916, 'end_line_code': 'ClauseAllocator to(ca.size() - ca.wasted());', 'new_code': 'ClauseAllocator to(static_cast<int>(ca.size() * 0.75));'}])"
+2025-03-05 13:07:45,730	[DEBUG]	EXEC>  SUCCESS 0.5090806999999999
+2025-03-05 13:07:45,730	[INFO]	0-11    SUCCESS              *0.51 (93.29%) [1 edit(s)]  
+2025-03-05 13:07:45,730	[DEBUG]	patch(0-11)="LineLLMMutation(('core/Solver.cc', 10), [{'start_line_number': 800, 'start_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'end_line_number': 800, 'end_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'new_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max) noexcept'}])"
+
+2025-03-05 13:07:47,074	[INFO]	0-12    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:47,074	[DEBUG]	patch(0-12)="LineLLMMutation(('core/Solver.cc', 11), [{'start_line_number': 137, 'start_line_code': 'sort(ps);', 'end_line_number': 137, 'end_line_code': 'sort(ps);', 'new_code': 'std::sort(ps.begin(), ps.end());'}])"
+2025-03-05 13:07:48,400	[INFO]	0-13    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:48,400	[DEBUG]	patch(0-13)="LineLLMMutation(('core/Solver.cc', 12), [{'start_line_number': 733, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 733, 'end_line_code': 'static double luby(double y, int x){', 'new_code': 'constexpr double luby(double y, int x) noexcept {'}])"
+2025-03-05 13:07:56,560	[DEBUG]	EXEC>  SUCCESS 0.5331465
+2025-03-05 13:07:56,561	[INFO]	0-14    SUCCESS               0.53 (97.70%) [1 edit(s)]  
+2025-03-05 13:07:56,561	[DEBUG]	patch(0-14)="LineLLMMutation(('core/Solver.cc', 13), [{'start_line_number': 562, 'start_line_code': 'for (Var v = 0; v < nVars(); v++)', 'end_line_number': 562, 'end_line_code': 'for (Var v = 0; v < nVars(); v++)', 'new_code': 'for (Var v = 0, n = nVars(); v < n; ++v)'}])"
+2025-03-05 13:07:57,888	[INFO]	0-15    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:07:57,888	[DEBUG]	patch(0-15)="LineLLMMutation(('core/Solver.cc', 14), [{'start_line_number': 911, 'start_line_code': 'void Solver::garbageCollect()', 'end_line_number': 911, 'end_line_code': 'void Solver::garbageCollect()', 'new_code': 'void Solver::garbageCollect() noexcept'}])"
+2025-03-05 13:08:05,902	[DEBUG]	EXEC>  SUCCESS 0.51888
+2025-03-05 13:08:05,902	[INFO]	0-16    SUCCESS               0.52 (95.08%) [1 edit(s)]  
+2025-03-05 13:08:05,902	[DEBUG]	patch(0-16)="LineLLMMutation(('core/Solver.cc', 15), [{'start_line_number': 518, 'start_line_code': 'struct reduceDB_lt {', 'end_line_number': 518, 'end_line_code': 'struct reduceDB_lt {', 'new_code': 'struct reduceDB_lt final {'}])"
+2025-03-05 13:08:07,228	[INFO]	0-17    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:08:07,229	[DEBUG]	patch(0-17)="LineLLMMutation(('core/Solver.cc', 16), [{'start_line_number': 548, 'start_line_code': 'for (i = j = 0; i < cs.size(); i++){', 'end_line_number': 548, 'end_line_code': 'for (i = j = 0; i < cs.size(); i++){', 'new_code': 'for (auto i = cs.begin(); i != cs.end(); ++i) {'}])"
+2025-03-05 13:08:08,556	[INFO]	0-18    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:08:08,556	[DEBUG]	patch(0-18)="LineLLMMutation(('core/Solver.cc', 17), [{'start_line_number': 264, 'start_line_code': 'void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel)', 'end_line_number': 264, 'end_line_code': 'void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel)', 'new_code': 'void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel) noexcept'}])"
+2025-03-05 13:08:16,695	[DEBUG]	EXEC>  SUCCESS 0.5293997
+2025-03-05 13:08:16,696	[INFO]	0-19    SUCCESS               0.53 (97.01%) [1 edit(s)]  
+2025-03-05 13:08:16,696	[DEBUG]	patch(0-19)="LineLLMMutation(('core/Solver.cc', 18), [{'start_line_number': 818, 'start_line_code': 'for (int i = 0; i < c.size(); i++)', 'end_line_number': 818, 'end_line_code': 'for (int i = 0; i < c.size(); i++)', 'new_code': 'for (std::size_t i = 0, n = c.size(); i < n; ++i)'}])"
+2025-03-05 13:08:24,665	[DEBUG]	EXEC>  SUCCESS 0.5134421
+2025-03-05 13:08:24,666	[INFO]	0-20    SUCCESS               0.51 (94.09%) [1 edit(s)]  
+2025-03-05 13:08:24,666	[DEBUG]	patch(0-20)="LineLLMMutation(('core/Solver.cc', 19), [{'start_line_number': 853, 'start_line_code': 'cnt += assumptions.size();', 'end_line_number': 853, 'end_line_code': 'cnt += assumptions.size();', 'new_code': 'cnt += assumptions.size();'}])"
+2025-03-05 13:08:25,666	[INFO]	Step: 20
+2025-03-05 13:08:25,666	[INFO]	Stop Steps: 200
+2025-03-05 13:10:23,156	[INFO]	Step: 20
+2025-03-05 13:10:23,156	[INFO]	Stop Steps: 200
+2025-03-05 13:10:30,068	[DEBUG]	EXEC>  SUCCESS 0.5074753000000001
+2025-03-05 13:10:30,069	[INFO]	1-1     SUCCESS              *0.51 (92.99%) [1 edit(s)]  
+2025-03-05 13:10:30,069	[DEBUG]	patch(1-1)="LineLLMMutation(('core/Solver.cc', 10), [{'start_line_number': 800, 'start_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'end_line_number': 800, 'end_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'new_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max) noexcept'}])"
+
+2025-03-05 13:10:30,069	[INFO]	Step: 21
+2025-03-05 13:10:30,069	[INFO]	Stop Steps: 200
+2025-03-05 13:10:37,045	[DEBUG]	EXEC>  SUCCESS 0.5135623
+2025-03-05 13:10:37,045	[INFO]	1-2     SUCCESS               0.51 (94.11%) [1 edit(s)]  
+2025-03-05 13:10:37,045	[DEBUG]	patch(1-2)="LineLLMMutation(('core/Solver.cc', 19), [{'start_line_number': 853, 'start_line_code': 'cnt += assumptions.size();', 'end_line_number': 853, 'end_line_code': 'cnt += assumptions.size();', 'new_code': 'cnt += assumptions.size();'}])"
+2025-03-05 13:10:37,045	[INFO]	Step: 22
+2025-03-05 13:10:37,045	[INFO]	Stop Steps: 200
+2025-03-05 13:10:37,377	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:10:37,377	[DEBUG]	patch(1-3)="LineLLMMutation(('core/Solver.cc', 10), [{'start_line_number': 800, 'start_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'end_line_number': 800, 'end_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'new_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max) noexcept'}]) | LineLLMMutation(('core/Solver.cc', 20), [{'start_line_number': 914, 'start_line_code': 'ClauseAllocator to(ca.size() - ca.wasted());', 'end_line_number': 914, 'end_line_code': 'ClauseAllocator to(ca.size() - ca.wasted());', 'new_code': 'size_t estimated_size = ca.size() - ca.wasted();\nsize_t pool_size = estimated_size + estimated_size / 2; // Allocate more than needed to reduce future reallocations\nClauseAllocator to(pool_size);'}, {'start_line_number': 915, 'start_line_code': 'relocAll(to);', 'end_line_number': 915, 'end_line_code': 'relocAll(to);', 'new_code': 'relocAll(to);\nif (verbosity >= 2)\n    printf("|  Garbage collection:   %12zu bytes => %12zu bytes             |\\n",\n           ca.size() * ClauseAllocator::Unit_Size, to.size() * ClauseAllocator::Unit_Size);'}])"
+2025-03-05 13:10:37,377	[INFO]	Step: 23
+2025-03-05 13:10:37,378	[INFO]	Stop Steps: 200
+2025-03-05 13:10:44,324	[DEBUG]	EXEC>  SUCCESS 0.5122222
+2025-03-05 13:10:44,324	[INFO]	1-4     SUCCESS               0.51 (93.86%) [2 edit(s)]  
+2025-03-05 13:10:44,324	[DEBUG]	patch(1-4)="LineLLMMutation(('core/Solver.cc', 19), [{'start_line_number': 853, 'start_line_code': 'cnt += assumptions.size();', 'end_line_number': 853, 'end_line_code': 'cnt += assumptions.size();', 'new_code': 'cnt += assumptions.size();'}]) | LineLLMMutation(('core/Solver.cc', 21), [{'start_line_number': 712, 'start_line_code': 'for (int i = 0; i <= decisionLevel(); i++){', 'end_line_number': 717, 'end_line_code': 'progress += pow(F, i) * (end - beg);', 'new_code': 'double Fi = 1.0;\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += Fi * (end - beg);\n    Fi *= F;  // Incrementally calculate the power of F\n}'}])"
+2025-03-05 13:10:44,324	[INFO]	Step: 24
+2025-03-05 13:10:44,324	[INFO]	Stop Steps: 200
+2025-03-05 13:10:51,380	[DEBUG]	EXEC>  SUCCESS 0.5223251
+2025-03-05 13:10:51,381	[INFO]	1-5     SUCCESS               0.52 (95.72%) [2 edit(s)]  
+2025-03-05 13:10:51,381	[DEBUG]	patch(1-5)="LineLLMMutation(('core/Solver.cc', 6), [{'start_line_number': 31, 'start_line_code': 'static const char* _cat = "CORE";', 'end_line_number': 31, 'end_line_code': 'static const char* _cat = "CORE";', 'new_code': 'constexpr const char* _cat = "CORE";'}]) | LineLLMMutation(('core/Solver.cc', 22), [{'start_line_number': 710, 'start_line_code': 'progress += pow(F, i) * (end - beg);', 'end_line_number': 710, 'end_line_code': 'progress += pow(F, i) * (end - beg);', 'new_code': 'double power = 1.0;\nfor (int j = 0; j < i; j++)\n    power *= F;\nprogress += power * (end - beg);'}])"
+2025-03-05 13:10:51,381	[INFO]	Step: 25
+2025-03-05 13:10:51,381	[INFO]	Stop Steps: 200
+2025-03-05 13:10:51,965	[INFO]	1-6     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:10:51,965	[DEBUG]	patch(1-6)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '#include <random>'}]) | LineLLMMutation(('core/Solver.cc', 23), [{'start_line_number': 452, 'start_line_code': 'while (qhead < trail.size()){', 'end_line_number': 505, 'end_line_code': 'return confl;', 'new_code': "while (qhead < trail.size()){\n    Lit p = trail[qhead++]; // 'p' is enqueued fact to propagate.\n    vec<Watcher>& ws = watches[p];\n    Watcher* i = (Watcher*)ws;\n    Watcher* end = i + ws.size();\n    num_props++;\n\n    if (value(p) == l_True) continue; // Skip if 'p' is already true.\n\n    for (Watcher *j = i; i != end;){\n        Lit blocker = i->blocker;\n        if (value(blocker) == l_True){\n            *j++ = *i++; continue;\n        }\n\n        CRef cr = i->cref;\n        Clause& c = ca[cr];\n        Lit false_lit = ~p;\n        if (c[0] == false_lit)\n            c[0] = c[1], c[1] = false_lit;\n        assert(c[1] == false_lit);\n        i++;\n\n        Lit first = c[0];\n        if (first != blocker && value(first) == l_True){\n            *j++ = Watcher(cr, first); continue;\n        }\n\n        for (int k = 2; k < c.size(); k++){\n            if (value(c[k]) != l_False){\n                c[1] = c[k]; c[k] = false_lit;\n                watches[~c[1]].push(Watcher(cr, c[1]));\n                goto NextClause;\n            }\n        }\n\n        *j++ = Watcher(cr, first);\n        if (value(first) == l_False){\n            confl = cr;\n            qhead = trail.size();\n            while (i < end) *j++ = *i++;\n        }else{\n            uncheckedEnqueue(first, cr);\n        }\n\n    NextClause:;\n    }\n    ws.shrink(i - j);\n}"}])"
+2025-03-05 13:10:51,965	[INFO]	Step: 26
+2025-03-05 13:10:51,965	[INFO]	Stop Steps: 200
+2025-03-05 13:10:52,279	[INFO]	1-7     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:10:52,279	[DEBUG]	patch(1-7)="LineLLMMutation(('core/Solver.cc', 15), [{'start_line_number': 518, 'start_line_code': 'struct reduceDB_lt {', 'end_line_number': 518, 'end_line_code': 'struct reduceDB_lt {', 'new_code': 'struct reduceDB_lt final {'}]) | LineLLMMutation(('core/Solver.cc', 24), [{'start_line_number': 455, 'start_line_code': "Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.", 'end_line_number': 507, 'end_line_code': 'return confl;', 'new_code': 'Lit p = trail[qhead++];\nvec<Watcher>& ws = watches[p];\nsize_t i = 0, j = 0, end = ws.size();\nnum_props++;\n\nwhile (i < end) {\n    Watcher w = ws[i++];\n    Lit blocker = w.blocker;\n\n    if (value(blocker) == l_True) {\n        ws[j++] = w;\n        continue;\n    }\n\n    CRef cr = w.cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n    \n    if (c[0] == false_lit) {\n        c[0] = c[1];\n        c[1] = false_lit;\n    }\n\n    Lit first = c[0];\n    if (first != blocker && value(first) == l_True) {\n        ws[j++] = w;\n        continue;\n    }\n\n    for (int k = 2; k < c.size(); ++k) {\n        if (value(c[k]) != l_False) {\n            c[1] = c[k];\n            c[k] = false_lit;\n            watches[~c[1]].push(w);\n            goto NextClause;\n        }\n    }\n\n    ws[j++] = w;\n    if (value(first) == l_False) {\n        confl = cr;\n        qhead = trail.size();\n        while (i < end) {\n            ws[j++] = ws[i++];\n        }\n    } else {\n        uncheckedEnqueue(first, cr);\n    }\nNextClause:;\n}\nws.shrink(end - j);'}])"
+2025-03-05 13:10:52,279	[INFO]	Step: 27
+2025-03-05 13:10:52,279	[INFO]	Stop Steps: 200
+2025-03-05 13:10:59,427	[DEBUG]	EXEC>  SUCCESS 0.5310901
+2025-03-05 13:10:59,427	[INFO]	1-8     SUCCESS               0.53 (97.32%) [2 edit(s)]  
+2025-03-05 13:10:59,427	[DEBUG]	patch(1-8)="LineLLMMutation(('core/Solver.cc', 18), [{'start_line_number': 818, 'start_line_code': 'for (int i = 0; i < c.size(); i++)', 'end_line_number': 818, 'end_line_code': 'for (int i = 0; i < c.size(); i++)', 'new_code': 'for (std::size_t i = 0, n = c.size(); i < n; ++i)'}]) | LineLLMMutation(('core/Solver.cc', 25), [{'start_line_number': 733, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 748, 'end_line_code': 'return pow(y, seq);', 'new_code': "static double luby(double y, int x){\n\n    // Find the finite subsequence that contains index 'x', and the\n    // size of that subsequence:\n    int size, seq;\n    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);\n\n    while (size-1 != x){\n        size = (size-1)>>1;\n        seq--;\n        x = x % size;\n    }\n\n    // Optimize pow(y, seq) for small integer seq\n    double result = 1.0;\n    while (seq > 0) {\n        if (seq % 2 == 1) result *= y;\n        y *= y;\n        seq /= 2;\n    }\n    return result;\n}"}])"
+2025-03-05 13:10:59,427	[INFO]	Step: 28
+2025-03-05 13:10:59,427	[INFO]	Stop Steps: 200
+2025-03-05 13:10:59,758	[INFO]	1-9     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:10:59,758	[DEBUG]	patch(1-9)="LineLLMMutation(('core/Solver.cc', 13), [{'start_line_number': 562, 'start_line_code': 'for (Var v = 0; v < nVars(); v++)', 'end_line_number': 562, 'end_line_code': 'for (Var v = 0; v < nVars(); v++)', 'new_code': 'for (Var v = 0, n = nVars(); v < n; ++v)'}]) | LineLLMMutation(('core/Solver.cc', 26), [{'start_line_number': 139, 'start_line_code': 'Lit p; int i, j;', 'end_line_number': 144, 'end_line_code': 'ps[j++] = p = ps[i];', 'new_code': 'Lit p = lit_Undef; int j = 0;\nfor (int i = 0; i < ps.size(); i++) {\n    if (value(ps[i]) == l_True || (i > 0 && ps[i] == ~ps[i-1])) {\n        return true;\n    }\n    if (value(ps[i]) != l_False && (j == 0 || ps[i] != ps[j-1])) {\n        ps[j++] = ps[i];\n    }\n}'}])"
+2025-03-05 13:10:59,758	[INFO]	Step: 29
+2025-03-05 13:10:59,758	[INFO]	Stop Steps: 200
+2025-03-05 13:11:06,773	[DEBUG]	EXEC>  SUCCESS 0.5183019
+2025-03-05 13:11:06,773	[INFO]	1-10    SUCCESS               0.52 (94.98%) [1 edit(s)]  
+2025-03-05 13:11:06,773	[DEBUG]	patch(1-10)="LineLLMMutation(('core/Solver.cc', 27), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '#include <cmath>'}])"
+2025-03-05 13:11:06,773	[INFO]	Step: 30
+2025-03-05 13:11:06,773	[INFO]	Stop Steps: 200
+2025-03-05 13:11:07,173	[INFO]	1-11    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:07,173	[DEBUG]	patch(1-11)="LineLLMMutation(('core/Solver.cc', 28), [{'start_line_number': 24, 'start_line_code': '#include "core/Solver.h"', 'end_line_number': 24, 'end_line_code': '#include "core/Solver.h"', 'new_code': '#include <random>'}, {'start_line_number': 225, 'start_line_code': 'Lit Solver::pickBranchLit()', 'end_line_number': 239, 'end_line_code': 'next = order_heap.removeMin();', 'new_code': 'std::random_device rd;\nstd::mt19937 gen(rd());\nstd::uniform_real_distribution<> dis(0, 1);\nLit Solver::pickBranchLit()\n{\n    Var next = var_Undef;\n\n    if (dis(gen) < random_var_freq && !order_heap.empty()) {\n        std::uniform_int_distribution<> dis_int(0, order_heap.size() - 1);\n        next = order_heap[dis_int(gen)];\n        if (value(next) == l_Undef && decision[next])\n            rnd_decisions++;\n    }\n\n    while (next == var_Undef || value(next) != l_Undef || !decision[next]) {\n        if (order_heap.empty()) {\n            next = var_Undef;\n            break;\n        } else\n            next = order_heap.removeMin();\n    }\n\n    return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? dis(gen) < 0.5 : polarity[next]);\n}'}])"
+2025-03-05 13:11:07,173	[INFO]	Step: 31
+2025-03-05 13:11:07,173	[INFO]	Stop Steps: 200
+2025-03-05 13:11:07,516	[INFO]	1-12    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:07,516	[DEBUG]	patch(1-12)="LineLLMMutation(('core/Solver.cc', 29), [{'start_line_number': 482, 'start_line_code': 'for (int k = 2; k < c.size(); k++)', 'end_line_number': 486, 'end_line_code': 'goto NextClause; }', 'new_code': 'for (int k = 2; k < c.size(); k += 2) {\n    if (value(c[k]) != l_False) {\n        c[1] = c[k];\n        c[k] = false_lit;\n        watches[~c[1]].push(w);\n        goto NextClause;\n    }\n    if (k + 1 < c.size() && value(c[k + 1]) != l_False) {\n        c[1] = c[k + 1];\n        c[k + 1] = false_lit;\n        watches[~c[1]].push(w);\n        goto NextClause;\n    }\n}'}])"
+2025-03-05 13:11:07,516	[INFO]	Step: 32
+2025-03-05 13:11:07,516	[INFO]	Stop Steps: 200
+2025-03-05 13:11:14,683	[DEBUG]	EXEC>  SUCCESS 0.5311758
+2025-03-05 13:11:14,683	[INFO]	1-13    SUCCESS               0.53 (97.34%) [1 edit(s)]  
+2025-03-05 13:11:14,684	[DEBUG]	patch(1-13)="LineLLMMutation(('core/Solver.cc', 30), [{'start_line_number': 50, 'start_line_code': 'Solver::Solver() :', 'end_line_number': 98, 'end_line_code': '{}', 'new_code': 'Solver::Solver() :\n    verbosity(0),\n    var_decay(opt_var_decay),\n    clause_decay(opt_clause_decay),\n    random_var_freq(opt_random_var_freq),\n    random_seed(opt_random_seed),\n    luby_restart(opt_luby_restart),\n    ccmin_mode(opt_ccmin_mode),\n    phase_saving(opt_phase_saving),\n    rnd_pol(false),\n    rnd_init_act(opt_rnd_init_act),\n    garbage_frac(opt_garbage_frac),\n    restart_first(opt_restart_first),\n    restart_inc(opt_restart_inc),\n    learntsize_factor((double)1 / (double)3), learntsize_inc(1.1),\n    learntsize_adjust_start_confl(100), learntsize_adjust_inc(1.5),\n    solves(0), starts(0), decisions(0), rnd_decisions(0), propagations(0), conflicts(0),\n    dec_vars(0), clauses_literals(0), learnts_literals(0), max_literals(0), tot_literals(0),\n    ok(true), cla_inc(1), var_inc(1), watches(WatcherDeleted(ca)),\n    qhead(0), simpDB_assigns(-1), simpDB_props(0), order_heap(VarOrderLt(activity)),\n    progress_estimate(0), remove_satisfied(true),\n    conflict_budget(-1), propagation_budget(-1), asynch_interrupt(false)\n\n{\n    // Reserve space in vectors to reduce reallocations\n    assigns.capacity(1000);\n    vardata.capacity(1000);\n    activity.capacity(1000);\n    seen.capacity(1000);\n    polarity.capacity(1000);\n    decision.capacity(1000);\n    trail.capacity(1000);\n}'}])"
+2025-03-05 13:11:14,684	[INFO]	Step: 33
+2025-03-05 13:11:14,684	[INFO]	Stop Steps: 200
+2025-03-05 13:11:21,754	[DEBUG]	EXEC>  SUCCESS 0.5238949
+2025-03-05 13:11:21,754	[INFO]	1-14    SUCCESS               0.52 (96.00%) [1 edit(s)]  
+2025-03-05 13:11:21,754	[DEBUG]	patch(1-14)="LineLLMMutation(('core/Solver.cc', 31), [{'start_line_number': 138, 'start_line_code': 'for (i = j = 0, p = lit_Undef; i < ps.size(); i++)', 'end_line_number': 144, 'end_line_code': 'ps[j++] = p = ps[i];', 'new_code': 'for (i = j = 0, p = lit_Undef; i < ps.size(); i++) {\n    if (value(ps[i]) == l_True || ps[i] == ~p) {\n        return true;\n    }\n    if (value(ps[i]) != l_False && ps[i] != p) {\n        ps[j++] = p = ps[i];\n    }\n}'}])"
+2025-03-05 13:11:21,755	[INFO]	Step: 34
+2025-03-05 13:11:21,755	[INFO]	Stop Steps: 200
+2025-03-05 13:11:22,080	[INFO]	1-15    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:22,080	[DEBUG]	patch(1-15)="LineLLMMutation(('core/Solver.cc', 32), [{'start_line_number': 883, 'start_line_code': 'Lit p = mkLit(v, s);', 'end_line_number': 883, 'end_line_code': 'Lit p = mkLit(v, s);', 'new_code': 'Lit p = Lit(v + v + s);'}])"
+2025-03-05 13:11:22,080	[INFO]	Step: 35
+2025-03-05 13:11:22,080	[INFO]	Stop Steps: 200
+2025-03-05 13:11:22,410	[INFO]	1-16    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:22,410	[DEBUG]	patch(1-16)="LineLLMMutation(('core/Solver.cc', 33), [{'start_line_number': 913, 'start_line_code': 'ClauseAllocator to(ca.size() - ca.wasted());', 'end_line_number': 913, 'end_line_code': 'ClauseAllocator to(ca.size() - ca.wasted());', 'new_code': 'size_t estimated_size = ca.size() - ca.wasted();\nClauseAllocator to(estimated_size > 1000 ? estimated_size : 1000);'}])"
+2025-03-05 13:11:22,411	[INFO]	Step: 36
+2025-03-05 13:11:22,411	[INFO]	Stop Steps: 200
+2025-03-05 13:11:22,735	[INFO]	1-17    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:22,735	[DEBUG]	patch(1-17)="LineLLMMutation(('core/Solver.cc', 34), [{'start_line_number': 480, 'start_line_code': 'if (first != blocker && value(first) == l_True){', 'end_line_number': 480, 'end_line_code': 'if (first != blocker && value(first) == l_True){', 'new_code': 'if (likely(first != blocker && value(first) == l_True)) {'}])"
+2025-03-05 13:11:22,735	[INFO]	Step: 37
+2025-03-05 13:11:22,735	[INFO]	Stop Steps: 200
+2025-03-05 13:11:23,071	[INFO]	1-18    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:23,071	[DEBUG]	patch(1-18)="LineLLMMutation(('core/Solver.cc', 35), [{'start_line_number': 545, 'start_line_code': 'for (i = j = 0; i < cs.size(); i++){', 'end_line_number': 551, 'end_line_code': 'cs[j++] = cs[i];', 'new_code': 'for (auto& cref : cs) {\n    Clause& c = ca[cref];\n    if (satisfied(c))\n        removeClause(cref);\n    else\n        cs[j++] = cref;\n}'}])"
+2025-03-05 13:11:23,071	[INFO]	Step: 38
+2025-03-05 13:11:23,071	[INFO]	Stop Steps: 200
+2025-03-05 13:11:23,374	[INFO]	1-19    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:23,374	[DEBUG]	patch(1-19)="LineLLMMutation(('core/Solver.cc', 36), [{'start_line_number': 185, 'start_line_code': 'if (c.learnt()) learnts_literals -= c.size();', 'end_line_number': 184, 'end_line_code': 'else            clauses_literals -= c.size(); }', 'new_code': 'if (c.learnt()) {\n    learnts_literals -= c.size();\n} else {\n    clauses_literals -= c.size();\n}\nwatches[~c[0]].remove(Watcher(cr, c[1]));\nwatches[~c[1]].remove(Watcher(cr, c[0]));'}])"
+2025-03-05 13:11:23,374	[INFO]	Step: 39
+2025-03-05 13:11:23,374	[INFO]	Stop Steps: 200
+2025-03-05 13:11:23,700	[INFO]	1-20    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:11:23,700	[DEBUG]	patch(1-20)="LineLLMMutation(('core/Solver.cc', 37), [{'start_line_number': 529, 'start_line_code': 'sort(learnts, reduceDB_lt(ca));', 'end_line_number': 529, 'end_line_code': 'sort(learnts, reduceDB_lt(ca));', 'new_code': 'std::stable_sort(learnts.begin(), learnts.end(), reduceDB_lt(ca));'}])"
+2025-03-05 13:11:23,700	[INFO]	Step: 40
+2025-03-05 13:11:23,700	[INFO]	Stop Steps: 200
+2025-03-05 13:14:43,457	[INFO]	Step: 40
+2025-03-05 13:14:43,457	[INFO]	Stop Steps: 200
+2025-03-05 13:14:50,379	[DEBUG]	EXEC>  SUCCESS 0.509004
+2025-03-05 13:14:50,379	[INFO]	2-1     SUCCESS              +0.51 (93.27%) [1 edit(s)]  
+2025-03-05 13:14:50,379	[DEBUG]	patch(2-1)="LineLLMMutation(('core/Solver.cc', 10), [{'start_line_number': 800, 'start_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'end_line_number': 800, 'end_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'new_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max) noexcept'}])"
+2025-03-05 13:14:50,379	[INFO]	Step: 41
+2025-03-05 13:14:50,380	[INFO]	Stop Steps: 200
+2025-03-05 13:14:57,346	[DEBUG]	EXEC>  SUCCESS 0.5130018
+2025-03-05 13:14:57,346	[INFO]	2-2     SUCCESS               0.51 (94.01%) [2 edit(s)]  
+2025-03-05 13:14:57,346	[DEBUG]	patch(2-2)="LineLLMMutation(('core/Solver.cc', 19), [{'start_line_number': 853, 'start_line_code': 'cnt += assumptions.size();', 'end_line_number': 853, 'end_line_code': 'cnt += assumptions.size();', 'new_code': 'cnt += assumptions.size();'}]) | LineLLMMutation(('core/Solver.cc', 21), [{'start_line_number': 712, 'start_line_code': 'for (int i = 0; i <= decisionLevel(); i++){', 'end_line_number': 717, 'end_line_code': 'progress += pow(F, i) * (end - beg);', 'new_code': 'double Fi = 1.0;\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += Fi * (end - beg);\n    Fi *= F;  // Incrementally calculate the power of F\n}'}])"
+2025-03-05 13:14:57,347	[INFO]	Step: 42
+2025-03-05 13:14:57,347	[INFO]	Stop Steps: 200
+2025-03-05 13:15:04,492	[DEBUG]	EXEC>  SUCCESS 0.529648
+2025-03-05 13:15:04,493	[INFO]	2-3     SUCCESS               0.53 (97.06%) [2 edit(s)]  
+2025-03-05 13:15:04,493	[DEBUG]	patch(2-3)="LineLLMMutation(('core/Solver.cc', 10), [{'start_line_number': 800, 'start_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'end_line_number': 800, 'end_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'new_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max) noexcept'}]) | LineLLMMutation(('core/Solver.cc', 38), [{'start_line_number': 448, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 508, 'end_line_code': 'return confl;', 'new_code': "CRef Solver::propagate()\n{\n    CRef    confl     = CRef_Undef;\n    int     num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()){\n        Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.\n        vec<Watcher>&  ws  = watches[p];\n        Watcher        *i, *j, *end;\n        num_props++;\n\n        for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n            // Try to avoid inspecting the clause:\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True){\n                *j++ = *i++; continue; \n            }\n\n            CRef     cr        = i->cref;\n            Clause&  c         = ca[cr];\n            Lit      false_lit = ~p;\n            if (c[0] == false_lit)\n                std::swap(c[0], c[1]);\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit     first = c[0];\n            Watcher w     = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True){\n                *j++ = w; continue; \n            }\n\n            for (int k = 2; k < c.size(); k++) {\n                if (value(c[k]) != l_False){\n                    std::swap(c[1], c[k]);\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False){\n                confl = cr;\n                qhead = trail.size();\n                while (i < end)\n                    *j++ = *i++;\n            }else\n                uncheckedEnqueue(first, cr);\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}"}])"
+2025-03-05 13:15:04,493	[INFO]	Step: 43
+2025-03-05 13:15:04,493	[INFO]	Stop Steps: 200
+2025-03-05 13:15:04,824	[INFO]	2-4     COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-03-05 13:15:04,824	[DEBUG]	patch(2-4)="LineLLMMutation(('core/Solver.cc', 19), [{'start_line_number': 853, 'start_line_code': 'cnt += assumptions.size();', 'end_line_number': 853, 'end_line_code': 'cnt += assumptions.size();', 'new_code': 'cnt += assumptions.size();'}]) | LineLLMMutation(('core/Solver.cc', 21), [{'start_line_number': 712, 'start_line_code': 'for (int i = 0; i <= decisionLevel(); i++){', 'end_line_number': 717, 'end_line_code': 'progress += pow(F, i) * (end - beg);', 'new_code': 'double Fi = 1.0;\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += Fi * (end - beg);\n    Fi *= F;  // Incrementally calculate the power of F\n}'}]) | LineLLMMutation(('core/Solver.cc', 39), [{'start_line_number': 454, 'start_line_code': 'while (qhead < trail.size()){', 'end_line_number': 502, 'end_line_code': 'ws.shrink(i - j);', 'new_code': "    const int trailSize = trail.size();\n    const int watchesSize = watches.size();\n    \n    while (qhead < trailSize){\n        Lit p = trail[qhead++];  // 'p' is enqueued fact to propagate.\n        vec<Watcher>& ws = watches[p];\n        Watcher* i = (Watcher*)ws;\n        Watcher* j = i;\n        Watcher* end = i + ws.size();\n        num_props++;\n\n        while (i != end){\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True){\n                *j++ = *i++; \n                continue; \n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit)\n                std::swap(c[0], c[1]);\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True){\n                *j++ = w; \n                continue; \n            }\n\n            for (int k = 2; k < c.size(); k++){\n                if (value(c[k]) != l_False){\n                    std::swap(c[1], c[k]);\n                    watches[~c[1]].push(w);\n                    goto NextClause; \n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False){\n                confl = cr;\n                qhead = trailSize;\n                while (i < end)\n                    *j++ = *i++;\n            } else {\n                uncheckedEnqueue(first, cr);\n            }\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }"}])"
+2025-03-05 13:15:04,824	[INFO]	Step: 44
+2025-03-05 13:15:04,824	[INFO]	Stop Steps: 200
+2025-03-05 13:15:05,151	[INFO]	2-5     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:15:05,151	[DEBUG]	patch(2-5)="LineLLMMutation(('core/Solver.cc', 19), [{'start_line_number': 853, 'start_line_code': 'cnt += assumptions.size();', 'end_line_number': 853, 'end_line_code': 'cnt += assumptions.size();', 'new_code': 'cnt += assumptions.size();'}]) | LineLLMMutation(('core/Solver.cc', 40), [{'start_line_number': 448, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 507, 'end_line_code': 'return confl;', 'new_code': "CRef Solver::propagate()\n{\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()) {\n        Lit p = trail[qhead++];  // 'p' is enqueued fact to propagate.\n        vec<Watcher>& ws = watches[p];\n        auto end = ws.end();\n        num_props++;\n\n        for (auto i = ws.begin(); i != end;) {\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True) {\n                ++i;\n                continue;\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit)\n                std::swap(c[0], c[1]);\n            assert(c[1] == false_lit);\n            ++i;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True) {\n                *i = w;\n                continue;\n            }\n\n            for (int k = 2; k < c.size(); k++) {\n                if (value(c[k]) != l_False) {\n                    std::swap(c[1], c[k]);\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *i = w;\n            if (value(first) == l_False) {\n                confl = cr;\n                qhead = trail.size();\n                while (i != end) ++i;\n            } else\n                uncheckedEnqueue(first, cr);\n\n        NextClause:;\n        }\n        ws.shrink(ws.end() - end);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}"}])"
+2025-03-05 13:15:05,151	[INFO]	Step: 45
+2025-03-05 13:15:05,151	[INFO]	Stop Steps: 200
+2025-03-05 13:15:12,294	[DEBUG]	EXEC>  SUCCESS 0.5224502
+2025-03-05 13:15:12,295	[INFO]	2-6     SUCCESS               0.52 (95.74%) [2 edit(s)]  
+2025-03-05 13:15:12,295	[DEBUG]	patch(2-6)="LineLLMMutation(('core/Solver.cc', 27), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '#include <cmath>'}]) | LineLLMMutation(('core/Solver.cc', 41), [{'start_line_number': 446, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 505, 'end_line_code': 'return confl;', 'new_code': "CRef Solver::propagate()\n{\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()) {\n        Lit p = trail[qhead++]; // 'p' is enqueued fact to propagate.\n        vec<Watcher>& ws = watches[p];\n        Watcher *i, *j, *end;\n        num_props++;\n\n        for (i = j = (Watcher*)ws, end = i + ws.size(); i != end; ) {\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True) {\n                *j++ = *i++; continue;\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit)\n                c[0] = c[1], c[1] = false_lit;\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True) {\n                *j++ = w; continue;\n            }\n\n            for (int k = 2; k < c.size(); k++) {\n                if (value(c[k]) != l_False) {\n                    c[1] = c[k]; c[k] = false_lit;\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False) {\n                confl = cr;\n                qhead = trail.size();\n                while (i < end)\n                    *j++ = *i++;\n            } else {\n                uncheckedEnqueue(first, cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}"}])"
+2025-03-05 13:15:12,295	[INFO]	Step: 46
+2025-03-05 13:15:12,295	[INFO]	Stop Steps: 200
+2025-03-05 13:15:12,881	[INFO]	2-7     COMPILE_CODE_ERROR    None (--) [3 edit(s)]  
+2025-03-05 13:15:12,881	[DEBUG]	patch(2-7)="LineLLMMutation(('core/Solver.cc', 6), [{'start_line_number': 31, 'start_line_code': 'static const char* _cat = "CORE";', 'end_line_number': 31, 'end_line_code': 'static const char* _cat = "CORE";', 'new_code': 'constexpr const char* _cat = "CORE";'}]) | LineLLMMutation(('core/Solver.cc', 22), [{'start_line_number': 710, 'start_line_code': 'progress += pow(F, i) * (end - beg);', 'end_line_number': 710, 'end_line_code': 'progress += pow(F, i) * (end - beg);', 'new_code': 'double power = 1.0;\nfor (int j = 0; j < i; j++)\n    power *= F;\nprogress += power * (end - beg);'}]) | LineLLMMutation(('core/Solver.cc', 42), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '#include <random>'}, {'start_line_number': 48, 'start_line_code': 'Solver::Solver() :', 'end_line_number': 48, 'end_line_code': 'Solver::Solver() :', 'new_code': '// Initialize the random number generator\nstd::mt19937 rng;\nstd::uniform_real_distribution<double> uniform_dist(0.0, 1.0);\nSolver::Solver() : rng(std::random_device{}()), uniform_dist(0.0, 1.0),'}, {'start_line_number': 119, 'start_line_code': 'activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);', 'end_line_number': 119, 'end_line_code': 'activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);', 'new_code': 'activity .push(rnd_init_act ? uniform_dist(rng) * 0.00001 : 0);'}, {'start_line_number': 227, 'start_line_code': 'if (drand(random_seed) < random_var_freq && !order_heap.empty()){', 'end_line_number': 227, 'end_line_code': 'if (drand(random_seed) < random_var_freq && !order_heap.empty()){', 'new_code': 'if (uniform_dist(rng) < random_var_freq && !order_heap.empty()){'}, {'start_line_number': 240, 'start_line_code': 'return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? drand(random_seed) < 0.5 : polarity[next]);', 'end_line_number': 240, 'end_line_code': 'return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? drand(random_seed) < 0.5 : polarity[next]);', 'new_code': 'return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? uniform_dist(rng) < 0.5 : polarity[next]);'}])"
+2025-03-05 13:15:12,881	[INFO]	Step: 47
+2025-03-05 13:15:12,881	[INFO]	Stop Steps: 200
+2025-03-05 13:15:13,213	[INFO]	2-8     COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:15:13,213	[DEBUG]	patch(2-8)="LineLLMMutation(('core/Solver.cc', 31), [{'start_line_number': 138, 'start_line_code': 'for (i = j = 0, p = lit_Undef; i < ps.size(); i++)', 'end_line_number': 144, 'end_line_code': 'ps[j++] = p = ps[i];', 'new_code': 'for (i = j = 0, p = lit_Undef; i < ps.size(); i++) {\n    if (value(ps[i]) == l_True || ps[i] == ~p) {\n        return true;\n    }\n    if (value(ps[i]) != l_False && ps[i] != p) {\n        ps[j++] = p = ps[i];\n    }\n}'}]) | LineLLMMutation(('core/Solver.cc', 43), [{'start_line_number': 457, 'start_line_code': "Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.", 'end_line_number': 502, 'end_line_code': 'ws.shrink(i - j);', 'new_code': "Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.\nvec<Watcher>&  ws  = watches[p];\nint            num_watchers = ws.size();\nwatches[p].cleanAll();\nfor (int k = 0; k < num_watchers; ++k) {\n    Watcher& w = ws[k];\n    Lit blocker = w.blocker;\n    if (value(blocker) == l_True) {\n        ws[j++] = w;\n        continue;\n    }\n\n    CRef     cr        = w.cref;\n    Clause&  c         = ca[cr];\n    Lit      false_lit = ~p;\n    if (c[0] == false_lit)\n        c[0] = c[1], c[1] = false_lit;\n    assert(c[1] == false_lit);\n\n    Lit first = c[0];\n    Watcher new_watcher = Watcher(cr, first);\n    if (first != blocker && value(first) == l_True) {\n        ws[j++] = new_watcher;\n        continue;\n    }\n\n    for (int m = 2; m < c.size(); m++) {\n        if (value(c[m]) != l_False) {\n            c[1] = c[m];\n            c[m] = false_lit;\n            watches[~c[1]].push(new_watcher);\n            goto NextClause;\n        }\n    }\n\n    ws[j++] = new_watcher;\n    if (value(first) == l_False) {\n        confl = cr;\n        qhead = trail.size();\n        while (k < num_watchers)\n            ws[j++] = ws[k++];\n    } else {\n        uncheckedEnqueue(first, cr);\n    }\n\nNextClause:;\n}\nws.shrink(num_watchers - j);"}])"
+2025-03-05 13:15:13,214	[INFO]	Step: 48
+2025-03-05 13:15:13,214	[INFO]	Stop Steps: 200
+2025-03-05 13:15:18,806	[DEBUG]	EXEC>  SUCCESS 0.3774095
+2025-03-05 13:15:18,807	[INFO]	2-9     SUCCESS              *0.38 (69.16%) [3 edit(s)]  
+2025-03-05 13:15:18,807	[DEBUG]	patch(2-9)="LineLLMMutation(('core/Solver.cc', 18), [{'start_line_number': 818, 'start_line_code': 'for (int i = 0; i < c.size(); i++)', 'end_line_number': 818, 'end_line_code': 'for (int i = 0; i < c.size(); i++)', 'new_code': 'for (std::size_t i = 0, n = c.size(); i < n; ++i)'}]) | LineLLMMutation(('core/Solver.cc', 25), [{'start_line_number': 733, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 748, 'end_line_code': 'return pow(y, seq);', 'new_code': "static double luby(double y, int x){\n\n    // Find the finite subsequence that contains index 'x', and the\n    // size of that subsequence:\n    int size, seq;\n    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);\n\n    while (size-1 != x){\n        size = (size-1)>>1;\n        seq--;\n        x = x % size;\n    }\n\n    // Optimize pow(y, seq) for small integer seq\n    double result = 1.0;\n    while (seq > 0) {\n        if (seq % 2 == 1) result *= y;\n        y *= y;\n        seq /= 2;\n    }\n    return result;\n}"}]) | LineLLMMutation(('core/Solver.cc', 44), [{'start_line_number': 448, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 507, 'end_line_code': 'return confl;', 'new_code': 'CRef Solver::propagate()\n{\n    CRef    confl     = CRef_Undef;\n    int     num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()){\n        Lit            p   = trail[qhead++];\n        vec<Watcher>&  ws  = watches[p];\n        Watcher        *i, *j, *end;\n        num_props++;\n\n        for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True){\n                *j++ = *i++; continue; \n            }\n\n            // Make sure the false literal is data[1]:\n            CRef     cr        = i->cref;\n            Clause&  c         = ca[cr];\n            Lit      false_lit = ~p;\n            if (c[0] == false_lit)\n                c[0] = c[1], c[1] = false_lit;\n            assert(c[1] == false_lit);\n            i++;\n\n            // If 0th watch is true, then clause is already satisfied.\n            if (value(c[0]) == l_True){\n                *j++ = Watcher(cr, c[0]); \n                continue; \n            }\n\n            // Look for new watch:\n            for (int k = 2; k < c.size(); k++){\n                if (value(c[k]) != l_False){\n                    c[1] = c[k]; c[k] = false_lit;\n                    watches[~c[1]].push(Watcher(cr, c[1]));\n                    goto NextClause;\n                }\n            }\n\n            // Did not find watch -- clause is unit under assignment:\n            *j++ = Watcher(cr, c[0]);\n            if (value(c[0]) == l_False){\n                confl = cr;\n                qhead = trail.size();\n                while (i < end)\n                    *j++ = *i++;\n            }else{\n                uncheckedEnqueue(c[0], cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}'}])"
+
+2025-03-05 13:15:18,807	[INFO]	Step: 49
+2025-03-05 13:15:18,807	[INFO]	Stop Steps: 200
+2025-03-05 13:15:19,134	[INFO]	2-10    COMPILE_CODE_ERROR    None (--) [2 edit(s)]  
+2025-03-05 13:15:19,134	[DEBUG]	patch(2-10)="LineLLMMutation(('core/Solver.cc', 30), [{'start_line_number': 50, 'start_line_code': 'Solver::Solver() :', 'end_line_number': 98, 'end_line_code': '{}', 'new_code': 'Solver::Solver() :\n    verbosity(0),\n    var_decay(opt_var_decay),\n    clause_decay(opt_clause_decay),\n    random_var_freq(opt_random_var_freq),\n    random_seed(opt_random_seed),\n    luby_restart(opt_luby_restart),\n    ccmin_mode(opt_ccmin_mode),\n    phase_saving(opt_phase_saving),\n    rnd_pol(false),\n    rnd_init_act(opt_rnd_init_act),\n    garbage_frac(opt_garbage_frac),\n    restart_first(opt_restart_first),\n    restart_inc(opt_restart_inc),\n    learntsize_factor((double)1 / (double)3), learntsize_inc(1.1),\n    learntsize_adjust_start_confl(100), learntsize_adjust_inc(1.5),\n    solves(0), starts(0), decisions(0), rnd_decisions(0), propagations(0), conflicts(0),\n    dec_vars(0), clauses_literals(0), learnts_literals(0), max_literals(0), tot_literals(0),\n    ok(true), cla_inc(1), var_inc(1), watches(WatcherDeleted(ca)),\n    qhead(0), simpDB_assigns(-1), simpDB_props(0), order_heap(VarOrderLt(activity)),\n    progress_estimate(0), remove_satisfied(true),\n    conflict_budget(-1), propagation_budget(-1), asynch_interrupt(false)\n\n{\n    // Reserve space in vectors to reduce reallocations\n    assigns.capacity(1000);\n    vardata.capacity(1000);\n    activity.capacity(1000);\n    seen.capacity(1000);\n    polarity.capacity(1000);\n    decision.capacity(1000);\n    trail.capacity(1000);\n}'}]) | LineLLMMutation(('core/Solver.cc', 45), [{'start_line_number': 432, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 489, 'end_line_code': 'return confl;', 'new_code': "CRef Solver::propagate()\n{\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()){\n        Lit p = trail[qhead++]; // 'p' is enqueued fact to propagate.\n        vec<Watcher>& ws = watches[p];\n        Watcher* i = (Watcher*)ws, *end = i + ws.size();\n        num_props++;\n\n        for (; i != end; i++){\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True){\n                continue; // Skip to next watcher if blocker is true\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit)\n                std::swap(c[0], c[1]); // Swap to make sure the false literal is at position 1\n            \n            Lit first = c[0];\n            if (value(first) == l_True){\n                *i = Watcher(cr, first); // Clause already satisfied\n                continue;\n            }\n\n            // Look for new watch:\n            for (int k = 2; k < c.size(); k++){\n                if (value(c[k]) != l_False){\n                    std::swap(c[1], c[k]);\n                    watches[~c[1]].push(Watcher(cr, c[0]));\n                    goto NextClause;\n                }\n            }\n\n            // Clause is unit under assignment:\n            *i = Watcher(cr, c[0]); // Update watcher\n            if (value(first) == l_False){\n                confl = cr;\n                qhead = trail.size();\n                while (++i != end) *i = Watcher(); // Clear remaining watchers\n            }else{\n                uncheckedEnqueue(first, cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - (Watcher*)ws);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}"}])"
+2025-03-05 13:15:19,134	[INFO]	Step: 50
+2025-03-05 13:15:19,134	[INFO]	Stop Steps: 200
+2025-03-05 13:15:19,463	[INFO]	2-11    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:15:19,463	[DEBUG]	patch(2-11)="LineLLMMutation(('core/Solver.cc', 46), [{'start_line_number': 449, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 507, 'end_line_code': 'return confl;', 'new_code': 'CRef Solver::propagate() {\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()) {\n        Lit p = trail[qhead++];\n        vec<Watcher>& ws = watches[p];\n        Watcher* i = ws.data(); \n        Watcher* j = i;\n        Watcher* end = i + ws.size();\n        num_props++;\n\n        while (i != end) {\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True) {\n                *j++ = *i++;\n                continue;\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit) {\n                c[0] = c[1];\n                c[1] = false_lit;\n            }\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True) {\n                *j++ = w;\n                continue;\n            }\n\n            for (int k = 2; k < c.size(); k++) {\n                if (value(c[k]) != l_False) {\n                    c[1] = c[k];\n                    c[k] = false_lit;\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False) {\n                confl = cr;\n                qhead = trail.size();\n                while (i < end) *j++ = *i++;\n            } else {\n                uncheckedEnqueue(first, cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}'}])"
+2025-03-05 13:15:19,463	[INFO]	Step: 51
+2025-03-05 13:15:19,463	[INFO]	Stop Steps: 200
+2025-03-05 13:15:19,798	[INFO]	2-12    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:15:19,798	[DEBUG]	patch(2-12)="LineLLMMutation(('core/Solver.cc', 47), [{'start_line_number': 114, 'start_line_code': 'Var Solver::newVar(bool sign, bool dvar)', 'end_line_number': 128, 'end_line_code': 'return v;', 'new_code': 'Var Solver::newVar(bool sign, bool dvar) {\n    int v = nVars();\n    watches.reserve(2 * (v + 1));\n    assigns.reserve(v + 1);\n    vardata.reserve(v + 1);\n    activity.reserve(v + 1);\n    seen.reserve(v + 1);\n    polarity.reserve(v + 1);\n    decision.reserve(v + 1);\n    trail.reserve(v + 1);\n\n    watches.init(mkLit(v, false));\n    watches.init(mkLit(v, true));\n    assigns.push(l_Undef);\n    vardata.push(mkVarData(CRef_Undef, 0));\n    activity.push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);\n    seen.push(0);\n    polarity.push(sign);\n    decision.push();\n    trail.capacity(v + 1);\n    setDecisionVar(v, dvar);\n    return v;\n}'}])"
+2025-03-05 13:15:19,798	[INFO]	Step: 52
+2025-03-05 13:15:19,798	[INFO]	Stop Steps: 200
+2025-03-05 13:15:26,861	[DEBUG]	EXEC>  SUCCESS 0.5232094
+2025-03-05 13:15:26,862	[INFO]	2-13    SUCCESS               0.52 (95.88%) [1 edit(s)]  
+2025-03-05 13:15:26,862	[DEBUG]	patch(2-13)="LineLLMMutation(('core/Solver.cc', 48), [{'start_line_number': 733, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 748, 'end_line_code': 'return pow(y, seq);', 'new_code': 'constexpr double luby(double y, int x) {\n    int size = 1, seq = 0;\n    while (size < x + 1) {\n        seq++;\n        size = 2 * size + 1;\n    }\n\n    while (size - 1 != x) {\n        size = (size - 1) >> 1;\n        seq--;\n        x = x % size;\n    }\n\n    return pow(y, seq);\n}'}])"
+2025-03-05 13:15:26,862	[INFO]	Step: 53
+2025-03-05 13:15:26,862	[INFO]	Stop Steps: 200
+2025-03-05 13:15:27,201	[INFO]	2-14    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:15:27,201	[DEBUG]	patch(2-14)="LineLLMMutation(('core/Solver.cc', 49), [{'start_line_number': 114, 'start_line_code': 'Var Solver::newVar(bool sign, bool dvar)', 'end_line_number': 128, 'end_line_code': 'return v;', 'new_code': 'inline Var Solver::newVar(bool sign, bool dvar) {\n    int v = nVars();\n    watches.init(mkLit(v, false));\n    watches.init(mkLit(v, true));\n    assigns.push(l_Undef);\n    vardata.push(mkVarData(CRef_Undef, 0));\n    activity.push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);\n    seen.push(0);\n    polarity.push(sign);\n    decision.push();\n    trail.capacity(v + 1);\n    setDecisionVar(v, dvar);\n    return v;\n}'}])"
+2025-03-05 13:15:27,201	[INFO]	Step: 54
+2025-03-05 13:15:27,201	[INFO]	Stop Steps: 200
+2025-03-05 13:15:27,537	[INFO]	2-15    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:15:27,537	[DEBUG]	patch(2-15)="LineLLMMutation(('core/Solver.cc', 50), [{'start_line_number': 137, 'start_line_code': 'sort(ps);', 'end_line_number': 137, 'end_line_code': 'sort(ps);', 'new_code': 'std::sort(ps.begin(), ps.end());'}])"
+2025-03-05 13:15:27,537	[INFO]	Step: 55
+2025-03-05 13:15:27,537	[INFO]	Stop Steps: 200
+2025-03-05 13:15:27,864	[INFO]	2-16    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:15:27,864	[DEBUG]	patch(2-16)="LineLLMMutation(('core/Solver.cc', 51), [{'start_line_number': 799, 'start_line_code': 'static Var mapVar(Var x, vec<Var>& map, Var& max)', 'end_line_number': 806, 'end_line_code': 'return map[x];', 'new_code': 'static Var mapVar(Var x, std::vector<Var>& map, Var& max) {\n    if (map.size() <= x || map[x] == -1) {\n        map.resize(x + 1, -1);\n        map[x] = max++;\n    }\n    return map[x];\n}'}])"
+2025-03-05 13:15:27,864	[INFO]	Step: 56
+2025-03-05 13:15:27,864	[INFO]	Stop Steps: 200
+2025-03-05 13:15:34,982	[DEBUG]	EXEC>  SUCCESS 0.5278823
+2025-03-05 13:15:34,983	[INFO]	2-17    SUCCESS               0.53 (96.73%) [1 edit(s)]  
+2025-03-05 13:15:34,983	[DEBUG]	patch(2-17)="LineLLMMutation(('core/Solver.cc', 52), [{'start_line_number': 169, 'start_line_code': 'void Solver::detachClause(CRef cr, bool strict) {', 'end_line_number': 184, 'end_line_code': 'else            clauses_literals -= c.size(); }', 'new_code': 'void Solver::detachClause(CRef cr, bool strict) {\n    const Clause& c = ca[cr];\n    assert(c.size() > 1);\n\n    if (strict) {\n        remove(watches[~c[0]], Watcher(cr, c[1]));\n        remove(watches[~c[1]], Watcher(cr, c[0]));\n    } else {\n        watches.smudge(~c[0]);\n        watches.smudge(~c[1]);\n    }\n\n    int size = c.size();\n    if (c.learnt()) {\n        learnts_literals -= size;\n    } else {\n        clauses_literals -= size;\n    }\n}'}])"
+2025-03-05 13:15:34,983	[INFO]	Step: 57
+2025-03-05 13:15:34,983	[INFO]	Stop Steps: 200
+2025-03-05 13:15:41,990	[DEBUG]	EXEC>  SUCCESS 0.5182881
+2025-03-05 13:15:41,991	[INFO]	2-18    SUCCESS               0.52 (94.98%) [1 edit(s)]  
+2025-03-05 13:15:41,991	[DEBUG]	patch(2-18)="LineLLMMutation(('core/Solver.cc', 53), [{'start_line_number': 398, 'start_line_code': 'void Solver::analyzeFinal(Lit p, vec<Lit>& out_conflict)', 'end_line_number': 425, 'end_line_code': 'seen[var(p)] = 0;', 'new_code': 'void Solver::analyzeFinal(Lit p, vec<Lit>& out_conflict) {\n    out_conflict.clear();\n    out_conflict.push(p);\n\n    if (decisionLevel() == 0)\n        return;\n\n    seen[var(p)] = 1;\n\n    for (int i = trail.size() - 1; i >= trail_lim[0]; i--) {\n        Var x = var(trail[i]);\n        if (seen[x]) {\n            Clause& c = ca[reason(x)];\n            if (reason(x) == CRef_Undef) {\n                out_conflict.push(~trail[i]);\n            } else {\n                for (int j = 1; j < c.size(); j++) {\n                    if (level(var(c[j])) > 0) seen[var(c[j])] = 1;\n                }\n            }\n            seen[x] = 0;\n        }\n    }\n\n    seen[var(p)] = 0;\n}'}])"
+2025-03-05 13:15:41,991	[INFO]	Step: 58
+2025-03-05 13:15:41,991	[INFO]	Stop Steps: 200
+2025-03-05 13:15:42,318	[INFO]	2-19    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 13:15:42,318	[DEBUG]	patch(2-19)="LineLLMMutation(('core/Solver.cc', 54), [{'start_line_number': 525, 'start_line_code': 'void Solver::reduceDB()', 'end_line_number': 541, 'end_line_code': 'checkGarbage();', 'new_code': 'void Solver::reduceDB() {\n    double extra_lim = cla_inc / learnts.size();\n\n    std::partition(learnts.begin(), learnts.end(),\n        [&](CRef cr) {\n            Clause& c = ca[cr];\n            return c.size() > 2 && !locked(c) &&\n                   (c.activity() < extra_lim || cr < learnts.size() / 2);\n        });\n\n    int j = 0;\n    for (int i = 0; i < learnts.size(); i++) {\n        Clause& c = ca[learnts[i]];\n        if (c.size() > 2 && !locked(c) &&\n            (i < learnts.size() / 2 || c.activity() < extra_lim)) {\n            removeClause(learnts[i]);\n        } else {\n            learnts[j++] = learnts[i];\n        }\n    }\n    learnts.shrink(learnts.size() - j);\n    checkGarbage();\n}'}])"
+2025-03-05 13:15:42,318	[INFO]	Step: 59
+2025-03-05 13:15:42,318	[INFO]	Stop Steps: 200
+2025-03-05 13:15:49,314	[DEBUG]	EXEC>  SUCCESS 0.5186084
+2025-03-05 13:15:49,314	[INFO]	2-20    SUCCESS               0.52 (95.03%) [1 edit(s)]  
+2025-03-05 13:15:49,315	[DEBUG]	patch(2-20)="LineLLMMutation(('core/Solver.cc', 55), [{'start_line_number': 576, 'start_line_code': 'bool Solver::simplify()', 'end_line_number': 596, 'end_line_code': 'return true;', 'new_code': 'bool Solver::simplify() {\n    assert(decisionLevel() == 0);\n\n    if (!ok || propagate() != CRef_Undef)\n        return ok = false;\n\n    if (nAssigns() == simpDB_assigns || simpDB_props > 0)\n        return true;\n\n    removeSatisfied(learnts);\n    if (remove_satisfied) removeSatisfied(clauses);\n    checkGarbage();\n    rebuildOrderHeap();\n\n    simpDB_assigns = nAssigns();\n    simpDB_props = clauses_literals + learnts_literals;\n\n    return true;\n}'}])"
+2025-03-05 13:15:49,315	[INFO]	Step: 60
+2025-03-05 13:15:49,315	[INFO]	Stop Steps: 200
+2025-03-05 13:16:02,294	[INFO]	~~~~ END ~~~~
+2025-03-05 13:16:02,294	[INFO]	Best patch step: 48

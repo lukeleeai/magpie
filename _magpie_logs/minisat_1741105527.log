@@ -1,0 +1,160 @@
+2025-03-04 16:25:27,403	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 5579047874707813
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+llm_prob = 1.0
+warmup = 1
+warmup_strategy = last
+max_steps = 10
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 3
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.0
+offspring_mutation = 1.0
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-04 16:25:27,403	[DEBUG]	
+2025-03-04 16:25:27,403	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-04 16:25:27,403	[INFO]	~~~~ WARMUP ~~~~
+2025-03-04 16:25:33,222	[DEBUG]	EXEC>  SUCCESS 0.5274642
+2025-03-04 16:25:33,222	[INFO]	WARM    SUCCESS               0.53 (--) [0 edit(s)]  
+2025-03-04 16:25:33,222	[INFO]	REF     SUCCESS               0.53 (--) [0 edit(s)]  
+2025-03-04 16:25:33,224	[INFO]	
+2025-03-04 16:25:33,224	[INFO]	~~~~ START ~~~~
+2025-03-04 16:26:02,937	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 16:26:02,937	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '```\n// Removed unused math.h header\n```'}, {'start_line_number': 25, 'start_line_code': 'using namespace Minisat;', 'end_line_number': 25, 'end_line_code': 'using namespace Minisat;', 'new_code': '```\n// Removed using directive; Use explicit namespace usage in the code\n```'}])"
+2025-03-04 16:26:04,260	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 16:26:04,260	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), [{'start_line_number': 448, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 508, 'end_line_code': 'return confl;', 'new_code': "```cpp\nCRef Solver::propagate()\n{\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n\n    watches.cleanAll();\n    while (qhead < trail.size()) {\n        Lit p = trail[qhead++];  // 'p' is enqueued fact to propagate.\n        vec<Watcher>& ws = watches[p];\n        Watcher* i, * j, * end;\n        num_props++;\n\n        for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True) {\n                *j++ = *i++;\n                continue;\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit)\n                std::swap(c[0], c[1]); // Swap instead of assignment\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True) {\n                *j++ = w;\n                continue;\n            }\n\n            for (int k = 2; k < c.size(); k++) {\n                if (value(c[k]) != l_False) {\n                    std::swap(c[1], c[k]);\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False) {\n                confl = cr;\n                qhead = trail.size();\n                while (i < end)\n                    *j++ = *i++;\n            } else {\n                uncheckedEnqueue(first, cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}\n```"}])"
+2025-03-04 16:26:05,586	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 16:26:05,586	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), [{'start_line_number': 398, 'start_line_code': 'void Solver::analyzeFinal(Lit p, vec<Lit>& out_conflict)', 'end_line_number': 425, 'end_line_code': 'seen[var(p)] = 0;', 'new_code': '```cpp\nvoid Solver::analyzeFinal(Lit p, vec<Lit>& out_conflict)\n{\n    out_conflict.clear();\n    out_conflict.push(p);\n\n    if (decisionLevel() == 0)\n        return;\n\n    seen[var(p)] = 1;\n\n    for (int i = trail.size() - 1; i >= trail_lim[0]; i--) {\n        Var x = var(trail[i]);\n        if (seen[x]) {\n            if (reason(x) == CRef_Undef) {\n                if (level(x) > 0) {\n                    out_conflict.push(~trail[i]);\n                }\n            } else {\n                Clause& c = ca[reason(x)];\n                for (int j = 1; j < c.size(); j++) {\n                    if (level(var(c[j])) > 0) {\n                        seen[var(c[j])] = 1;\n                    }\n                }\n            }\n            seen[x] = 0;\n        }\n    }\n\n    seen[var(p)] = 0;\n}\n```'}])"
+2025-03-04 16:26:06,586	[INFO]	Step: 3
+2025-03-04 16:26:06,586	[INFO]	Stop Steps: 10
+2025-03-04 16:26:39,630	[INFO]	Step: 3
+2025-03-04 16:26:39,630	[INFO]	Stop Steps: 10
+2025-03-04 16:26:40,325	[INFO]	1-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 16:26:40,326	[DEBUG]	patch(1-1)="LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 20, 'start_line_code': '#include <math.h>', 'end_line_number': 20, 'end_line_code': '#include <math.h>', 'new_code': '```\n#include <random>\n```'}, {'start_line_number': 224, 'start_line_code': 'Lit Solver::pickBranchLit()', 'end_line_number': 244, 'end_line_code': 'return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? drand(random_seed) < 0.5 : polarity[next]);', 'new_code': '```\nLit Solver::pickBranchLit()\n{\n    Var next = var_Undef;\n    static std::mt19937 gen(random_seed);\n    static std::uniform_real_distribution<> dis(0, 1);\n\n    // Random decision:\n    if (dis(gen) < random_var_freq && !order_heap.empty()){\n        std::uniform_int_distribution<> int_dis(0, order_heap.size() - 1);\n        next = order_heap[int_dis(gen)];\n        if (value(next) == l_Undef && decision[next])\n            rnd_decisions++;\n    }\n    // Activity based decision:\n    while (next == var_Undef || value(next) != l_Undef || !decision[next]) {\n        if (order_heap.empty()) {\n            next = var_Undef;\n            break;\n        } else {\n            next = order_heap.removeMin();\n        }\n    }\n    return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? dis(gen) < 0.5 : polarity[next]);\n}\n```'}])"
+2025-03-04 16:26:40,326	[INFO]	Step: 4
+2025-03-04 16:26:40,326	[INFO]	Stop Steps: 10
+2025-03-04 16:26:40,714	[INFO]	1-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 16:26:40,714	[DEBUG]	patch(1-2)="LineLLMMutation(('core/Solver.cc', 4), [{'start_line_number': 263, 'start_line_code': 'void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel)', 'end_line_number': 263, 'end_line_code': 'void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel)', 'new_code': '```\nvoid Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel)\n{\n    int pathC = 0;\n    Lit p = lit_Undef;\n    out_learnt.capacity(trail.size() / 2); // Preallocate capacity\n    out_learnt.push(); // (leave room for the asserting literal)\n    int index = trail.size() - 1;\n    // Remaining code unchanged...\n```'}])"
+2025-03-04 16:26:40,714	[INFO]	Step: 5
+2025-03-04 16:26:40,714	[INFO]	Stop Steps: 10
+2025-03-04 16:26:41,054	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-04 16:26:41,055	[DEBUG]	patch(1-3)="LineLLMMutation(('core/Solver.cc', 5), [{'start_line_number': 160, 'start_line_code': 'void Solver::attachClause(CRef cr) {', 'end_line_number': 167, 'end_line_code': 'else            clauses_literals += c.size(); }', 'new_code': '```\nvoid Solver::attachClause(CRef cr) {\n    const Clause& c = ca[cr];\n    assert(c.size() > 1);\n    for (int i = 0; i < 2; i++) {\n        watches[~c[i]].push(Watcher(cr, c[1 - i]));\n    }\n    if (c.learnt()) \n        learnts_literals += c.size();\n    else \n        clauses_literals += c.size(); \n}\n```'}, {'start_line_number': 170, 'start_line_code': 'void Solver::detachClause(CRef cr, bool strict) {', 'end_line_number': 184, 'end_line_code': 'else            clauses_literals -= c.size(); }', 'new_code': '```\nvoid Solver::detachClause(CRef cr, bool strict) {\n    const Clause& c = ca[cr];\n    assert(c.size() > 1);\n    for (int i = 0; i < 2; i++) {\n        if (strict) {\n            remove(watches[~c[i]], Watcher(cr, c[1 - i]));\n        } else {\n            watches.smudge(~c[i]);\n        }\n    }\n    if (c.learnt()) \n        learnts_literals -= c.size();\n    else \n        clauses_literals -= c.size(); \n}\n```'}])"
+2025-03-04 16:26:41,055	[INFO]	Step: 6
+2025-03-04 16:26:41,055	[INFO]	Stop Steps: 10
+2025-03-04 16:26:44,779	[INFO]	~~~~ END ~~~~
+2025-03-04 16:26:44,780	[INFO]	Best patch step: None
+2025-03-04 16:26:44,780	[INFO]	
+2025-03-04 16:26:44,780	[INFO]	==== REPORT ====
+2025-03-04 16:26:44,780	[INFO]	Termination: keyboard interrupt
+2025-03-04 16:26:44,780	[INFO]	Log file: /home/luke/magpie/_magpie_logs/minisat_1741105527.log

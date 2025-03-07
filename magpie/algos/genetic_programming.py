@@ -19,7 +19,6 @@ from magpie.utils.constants import (
 
 from magpie.utils.convert import (
     convert_to_prompt_data,
-    format_crossover_parents,
 )
 from magpie.utils.csv_manager import PromptsDataset
 
@@ -157,6 +156,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                 if run.status == "SUCCESS":
                     variant.fitness = run.fitness
                     self.add_node_history(variant)
+                    code = variant.get_patched_code()
+                    name = variant.name
+                    with open(f"/home/luke/magpie/logs/codes/with_crossover/{variant.fitness}_{name}.txt", "w") as f:
+                        f.write(code)
                     if self.dominates(run.fitness, local_best_fitness):
                         local_best_fitness = run.fitness
                         accept = True
@@ -169,6 +172,11 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                                 "steps"
                             ]
                             best = True
+                else:
+                    code = variant.get_patched_code()
+                    name = variant.name
+                    with open(f"/home/luke/magpie/logs/codes/with_crossover/failed_{name}.txt", "w") as f:
+                        f.write(code)
 
                 # reflection = self.llm_reflection.reflect(variant, run.status)
                 # self.reflections.append(reflection)
@@ -251,6 +259,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     accept = best = False
                     if run.status == "SUCCESS":
                         variant.fitness = run.fitness
+                        code = variant.get_patched_code()
+                        name = variant.name
+                        with open(f"/home/luke/magpie/logs/codes/with_crossover/{variant.fitness}_{name}.txt", "w") as f:
+                            f.write(code)
                         self.add_node_history(variant)
                         if self.dominates(run.fitness, local_best_fitness):
                             local_best_fitness = run.fitness
@@ -264,6 +276,11 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                                     "steps"
                                 ]
                                 best = True
+                    else:
+                        code = variant.get_patched_code()
+                        name = variant.name
+                        with open(f"/home/luke/magpie/logs/codes/with_crossover/failed_{name}.txt", "w") as f:
+                            f.write(code)
 
                     # reflection = self.llm_reflection.reflect(
                     #     variant, run.status
@@ -289,11 +306,11 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                 k: self.node_history[k] for k in sorted(self.node_history)
             }
 
-            for parent_name, log in self.node_history.items():
-                prompt_data = convert_to_prompt_data(log)
-                self.prompts_dataset.add_prompt(
-                    self.dataset + self.id, parent_name, prompt_data
-                )
+            # for parent_name, log in self.node_history.items():
+            #     prompt_data = convert_to_prompt_data(log)
+            #     self.prompts_dataset.add_prompt(
+            #         self.dataset + self.id, parent_name, prompt_data
+            #     )
             print("=====================")
 
             # Save node history to a file
@@ -385,27 +402,24 @@ class GeneticProgrammingLLM(GeneticProgramming):
             parent.fitness or self.report["reference_fitness"]
             for parent in parents
         ]
-        codes_and_fitnesses = format_crossover_parents(
-            parent_codes, parent_fitnesses
+        # codes_and_fitnesses = format_crossover_parents(
+        #     parent_codes, parent_fitnesses
+        # )
+        original_source_code = self.software.noop_variant.get_patched_code()
+        
+        strategies, code_changes = self.llm_crossover.crossover(
+            parent_codes, parent_fitnesses, num_crossovers, original_source_code
         )
 
-        crossovers = self.llm_crossover.crossover(
-            codes_and_fitnesses, num_crossovers
-        )
-
-        for crossover in crossovers:
+        for strategy, code_change in zip(strategies, code_changes):
             print("Crossovering")
-            # print(
-            #     "\n===Crossover from parents: ", ", ".join(parent_names), "==="
-            # )
-            # print("Crossover: ", crossover)
             new_crossover = self.create_edit(
                 self.software.noop_variant,
                 operation_type=LLM_CROSSOVER,
-                code_changes=crossover["crossover_code"],
+                code_changes=code_change,
             )
             new_variant = self.create_empty_variant()
-            new_variant.strategy = crossover["strategy"]
+            new_variant.strategy = strategy
             new_variant.apply_patch(new_crossover)
             new_variant.set_parents(
                 CROSSOVER,

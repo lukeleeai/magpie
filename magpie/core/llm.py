@@ -7,12 +7,15 @@ import textwrap
 import time
 import re
 from typing import List, Dict
+import difflib
+
 
 
 class LLMBase:
     def __init__(self):
         self.id = 0
         self._llm = None
+        self.is_debugging = False
 
     @property
     def llm(self):
@@ -62,6 +65,75 @@ class LLMBase:
         return [match.strip() for match in matches] if matches else []
 
 
+    def process_code(self, code: str) -> str:
+        """
+        Process the captured code string to remove triple backticks if present.
+        """
+        pattern = r"```(?:\w+)?\n(.*?)\n```"
+        match = re.search(pattern, code, re.DOTALL)
+        if match:
+            return match.group(1)
+        return code
+
+
+    def parse(self, output: str, operation_type: str="Mutation") -> List[Dict]:
+        operations = []
+        # Split text into individual mutations, ignoring the empty first split
+        if operation_type == "Mutation":
+            operation_blocks = re.split(r"<Mutation \d+>", output)[1:]
+        elif operation_type == "Crossover":
+            operation_blocks = re.split(r"<Crossover \d+>", output)[1:]
+
+        print("\033[31mOperation blocks:\033[0m")
+        print(f"\033[31m{len(operation_blocks)}\033[0m")
+
+        for block in operation_blocks:
+            operation = {"strategy": "", "code_changes": []}
+
+            # Extract strategy
+            strategy_match = re.search(r"strategy: (.+)", block)
+            if strategy_match:
+                operation["strategy"] = strategy_match.group(1).strip()
+
+            # Extract code changes with a pattern that matches all fields
+            change_pattern = re.compile(
+                r"start line number: (\S+)\s+"  # \S+ allows non-numeric like "sl1"
+                r"start line code: (.*?)\s+"
+                r"end line number: (\S+)\s+"  # \S+ for "el1"
+                r"end line code: (.*?)\s+"
+                r"code:\s*(.*?)(?=\s*start line number:|\Z)",  # Until next section or end
+                re.DOTALL,
+            )
+            change_sections = change_pattern.findall(block)
+
+            for change in change_sections:
+                # Attempt to convert line numbers to int, keep as string if it fails
+                try:
+                    start_line = int(change[0])
+                except ValueError:
+                    start_line = change[0]
+                try:
+                    end_line = int(change[2])
+                except ValueError:
+                    end_line = change[2]
+
+                operation["code_changes"].append(
+                    {
+                        "start_line_number": start_line,
+                        "start_line_code": change[1].strip(),
+                        "end_line_number": end_line,
+                        "end_line_code": change[3].strip(),
+                        "new_code": self.process_code(change[4].strip()),
+                    }
+                )
+
+            operations.append(operation)
+
+        return operations
+
+
+
+
 class LLMCrossover(LLMBase):
     prompt = ChatPromptTemplate.from_template(
         textwrap.dedent(
@@ -70,140 +142,154 @@ class LLMCrossover(LLMBase):
             As an expert C++ developer, your task is to generate {num_offsprings} crossover codes from given parent codes.
             A lower fitness score means better performance.
 
-            Here are some examples of successful code optimizations:
-
-            ```cpp
-            #include <bits/stdc++.h>
-            using namespace std;
-
-            int main() {{
-                string s;
-                cin >> s;
-                int a = 0, z = 0;
-                for(int i = 0; i < s.size(); i++) {{
-                    if (s[i] == 'A') {{
-                        a = i;
-                        break;
-                    }}
-                }}
-            ```
-
-            can be optimized to:
-            ```cpp
-            #include<cstdio>
-            #include<algorithm>
-            using namespace std;
-            char str[200005];
-            int main(){{
-                scanf("%s",str);
-                int ans = 0;
-                int a=-1;
-                for(int i=0;str[i];i++){{
-                    if(str[i]=='Z'){{
-                        if(a!=-1)
-                            ans = max(ans,i-a);
-                    }}else if(str[i]=='A' && a==-1)
-                        a = i;
-                }}
-                printf("%d\n",ans+1);
-                return 0;
-            }}
-            ```
-
-            For another example,
-            ```cpp
-            #include <cstdio>
-            #include <cstring>
-            #include <algorithm>
-            #include <iostream>
-            using namespace std;
-
-            typedef long long ll;
-            const int maxn = 100000;
-            int n;
-            long long a[maxn], b[maxn];
-            int main(void) {{
-                cin >> n;
-                for(int i = 0; i < n; ++i) {{
-                    cin >> a[i] >> b[i];
-                }}
-            }}
-            ```
-            can be optimized to:
-            ```cpp
-            #include <cstdio>
-            #include <cstring>
-            #include <algorithm>
-            using namespace std;
-            typedef long long li;
-            const int maxn = 1e5;
-            int n, a[maxn], b[maxn];
-            int main(void) {{
-                scanf("%d", &n);
-                for (int i = 0; i < n; ++i) {{
-                    scanf("%d%d", a + i, b + i);
-                }}
-                li ans = 0;
-                for (int i = n - 1; i >= 0; --i) {{
-                    li cur = a[i] + ans;
-                    li tar = (cur + b[i] - 1) / b[i] * b[i];
-                    ans += tar - cur;
-                }}
-                printf("%lld\n", ans);
-            }}
-            ```
-            The above are only examples.
-
             Each crossover operation should involve selecting parent codes, combining them strategically to produce optimized offspring.
             The strategy should clearly describe how the parent codes are combined to form the crossover.
             Balancing exploration and exploitation is key to success.
 
+            Here is the original source code to be optimized:
+            {original_source_code}
+
+            Note that the code is quite long. So I prepended a code line number to each line of the code.
+            Your new code could be shorter or longer than the codes to be replaced.
+            For example, if you want to replace the code in line A to B, you should write the new code like:
+
+            <Crossover N>
+            strategy: Given that ~, combine A from Parent X with B from Parent Y
+            start line number: A
+            start line code: Line A code (every single letter, number, and symbol should be included)
+            end line number: B
+            end line code: Line B code (every single letter, number, and symbol should be included)
+            code:
+            ```
+            // new code
+            ```
+
+            (and optionally more lines to replace if necessary to make the code valid)
+            start line number: C
+            start line code: Line C code (every single letter, number, and symbol should be included)
+            end line number: D
+            end line code: Line D code (every single letter, number, and symbol should be included)
+            code:
+            ```
+            // new code
+            ```
+            Here, "start line number" and "end line number" are the line numbers of the original code to be replaced.
+            "start line code" and "end line code" are the codes of the start and end lines.
+            The new code could be shorter or longer than the codes to be replaced.
+            As you can see, you can replace multiple sections of the code if necessary (like when including a new library, etc.)
+            Important note for the end line. If the target end line is just a bracket, you should write it so.
+            If you fail to include the bracket and just write the new code, you might end up with two closing brackets and the code will not compile.
+            
             Your goal is to return the best {num_offsprings} crossover codes.
             Your code should be a valid C++ code that can be compiled and run.
             Here's an example an an output format. For the third crossover, the example output is:
 
-            <Crossover 3>
-            strategy: Combine function A from Parent 1 (fitness: X) with function B from Parent 2 (fitness: Y).
+            Now, here are the parent codes with their fitness scores.
+            Each parent code is provided as a code diff.
+            So, for each parent, some of the lines are removed and some of the lines are added.
+            {codes_and_fitnesses}
+            
+            We highly want diverse crossovers.
+            For each crossover block, the output format should always start with <Crossover N>.
+            And then obey the output format like below.
+            start line number: A
+            start line code: Line A code
+            end line number: B
+            end line code: Line B code
             code:
-            ```cpp
-            // your crossover code
+            ```
+            // new code
             ```
 
-            Now, here are the parent codes with their fitness scores:
-            {codes_and_fitnesses}
+            Strictly follow the output format.
+            - Don't use a markdown! D n't decorate the texts!
+            - dont use ** to wrap the strategy or code. No asteriks for wrapping!
+            - dont use ```cpp. Only do ```
+            - Otherwise, your output will be rejected.
 
-            Return the best {num_offsprings} crossovers. We highly want diverse crossovers.
-            Strictly follow the output format (e.g. strategy: ..., code: ...)  (dont use ** to wrap the strategy or code):
+            Return the best {num_offsprings} crossovers:
             """
         )
     )
 
-    def crossover(self, codes_and_fitnesses, num_offsprings):
+
+    def get_code_diff(self, code1, code2):
+        # Split the code into lines
+        s1 = code1.splitlines(keepends=False)
+        s2 = code2.splitlines(keepends=False)
+        
+        # Use Differ to compare lines
+        differ = difflib.Differ()
+        diff = list(differ.compare(s1, s2))
+        
+        # Collect only changes
+        output = []
+        line_num1 = 0  # Original file line number
+        line_num2 = 0  # New file line number
+        
+        for line in diff:
+            if line.startswith('- '):
+                line_num1 += 1
+                output.append(f"Line {line_num1} (removed): {line[2:]}")
+            elif line.startswith('+ '):
+                line_num2 += 1
+                output.append(f"Line {line_num2} (added): {line[2:]}")
+            elif line.startswith('  '):
+                line_num1 += 1
+                line_num2 += 1
+                # Explicitly skip unchanged lines
+            # Ignore '? ' lines for simplicity unless you want character-level hints
+        
+        return "\n".join(output) if output else "No changes detected."
+            
+    def format_crossover_parents(self, code_diffs, fitnesses):
+        return "\n\n".join(
+            f"<Parent {i + 1}>\nCode diff: \n```\n{code_diff}\n```\nFitness score: {fitness}"
+            for i, (code_diff, fitness) in enumerate(zip(code_diffs, fitnesses))
+        )
+
+    def crossover(self, parent_codes, parent_fitnesses, num_offsprings, original_source_code):
         max_attempts = 3
         attempt = 0
         crossovers = []
 
+        # extract a code from each parent and generate a diff
+        parent_code_diffs = [self.get_code_diff(original_source_code, code) for code in parent_codes]
+        codes_and_fitnesses = self.format_crossover_parents(parent_code_diffs, parent_fitnesses)
+
+        # Prepend the code line number to each code line
+        original_source_code = "\n".join(
+            [f"Line {i}: {line}" for i, line in enumerate(original_source_code.split("\n"))]
+        )
+
+
         while attempt < max_attempts:
             attempt += 1
             messages = self.prompt.format_messages(
+                original_source_code=original_source_code,
                 codes_and_fitnesses=codes_and_fitnesses,
                 num_offsprings=num_offsprings,
             )
-            response = self.llm.invoke(messages)
 
-            print(f"Attempt {attempt}: Response: ", response.content)
+            response = ""
+            for chunk in self.llm.stream(messages):
+                print(chunk.content, end="", flush=True)
+                response += chunk.content
 
-            strategies = self.extract_strategies(response.content)
-            codes = self.extract_codes(response.content)
+            crossovers = self.parse(response, operation_type="Crossover")
 
-            if strategies and codes and len(strategies) == len(codes):
-                for strategy, code in zip(strategies, codes):
-                    print("Strategy: ", strategy)
-                    print("Code: ", code)
-                    crossovers.append(
-                        {"strategy": strategy, "crossover_code": code}
-                    )
-                return crossovers
+            strategies = [crossover["strategy"] for crossover in crossovers]
+            code_changes = [crossover["code_changes"] for crossover in crossovers]
+
+            if not strategies or not code_changes:
+                if not strategies:
+                    print("No strategies found, retrying...")
+                if not code_changes:
+                    print("No codes found, retrying...")
+                continue
+
+            if strategies and code_changes and len(strategies) == len(code_changes):
+                return strategies, code_changes
 
             print("Mismatch or empty strategies/codes, retrying...")
 
@@ -297,8 +383,6 @@ class LLMMutation(LLMBase):
             Return the best {num_offsprings} mutations. We highly want diverse mutations.
 
             [ON OUTPUT FORMAT]
-            First, analyze the code and do some thinking.
-
             Note that the code is quite long. So I prepended a code line number to each line of the code.
             Your new code could be shorter or longer than the codes to be replaced.
             For example, if you want to replace the code in line A to B, you should write the new code like:
@@ -306,9 +390,9 @@ class LLMMutation(LLMBase):
             <Mutation 1>
             strategy: Focus on the lines A:B that do X, which could be optimized by Y.
             start line number: A
-            start line code: Line A code
+            start line code: Line A code (every single letter, number, and symbol should be included)
             end line number: B
-            end line code: Line B code
+            end line code: Line B code (every single letter, number, and symbol should be included)
             code:
             ```
             // new code
@@ -316,9 +400,9 @@ class LLMMutation(LLMBase):
 
             (and optionally more lines to replace if necessary to make the code valid)
             start line number: C
-            start line code: Line C code
+            start line code: Line C code (every single letter, number, and symbol should be included)
             end line number: D
-            end line code: Line D code
+            end line code: Line D code (every single letter, number, and symbol should be included)
             code:
             ```
             // new code
@@ -327,9 +411,9 @@ class LLMMutation(LLMBase):
             "start line code" and "end line code" are the codes of the start and end lines.
             The new code could be shorter or longer than the codes to be replaced.
             As you can see, you can replace multiple sections of the code if necessary (like when including a new library, etc.)
-
-            First, analyze the given code and generate any possible sources of inefficiency.
-            And then write the mutations.
+            Important note for the end line. If the target end line is just a bracket, you should write it so.
+            If you fail to include the bracket and just write the new code, you might end up with two closing brackets and the code will not compile.
+            
             Strictly follow the output format.
             - Don't use a markdown! Don't decorate the texts!
             - dont use ** to wrap the strategy or code. No asteriks for wrapping!
@@ -342,7 +426,9 @@ class LLMMutation(LLMBase):
             Please write a fast, valid C++ code.
 
             In summary, first analyze the code and generate any possible sources of inefficiency.
-            Then write the mutations.
+            Then write the mutations for a faster, more efficient code.
+            Sometimes, you can think outside the box.
+            Sometimes, you can think of some known optimization patterns.
 
             For a mutation block, the output format should always start with <Mutation N>.
             And then obey the output format like below.
@@ -351,10 +437,90 @@ class LLMMutation(LLMBase):
             end line number: B
             end line code: Line B code
             code:
-
+            ```
+            // new code
+            ```
             """
         )
     )
+
+    debug_prompt = ChatPromptTemplate.from_template(
+        textwrap.dedent(
+            """
+            We are implementing a genetic algorithm to optimize code by performing mutation operations, 
+            aiming to improve its fitness score (runtime).
+            As an expert C++ developer, your task is to generate {num_offsprings} mutations of the given code.
+            A lower fitness score means better performance.
+
+            Each mutation operation should involve selecting specific parts of the code, 
+            such as import packages, lines, or blocks, and applying diverse strategies to optimize them.
+            The strategy should clearly describe the focus area and the intended optimization.
+            Balancing exploration and exploitation is key to success.
+            Your code should be a valid C++ code that can be compiled and run.
+            Your goal is to return the best {num_offsprings} optimization mutations.
+
+            Also, here are some reflections that you may use to generate the mutation:
+            {reflections}
+            You wrote these reflections yourself in the past so that you can learn from them and write a better, faster code without making the same mistakes again.
+            However, note that you should not strictly follow the reflections because we want you to explore and discover new strategies.
+
+            Now, here's the code to mutate:
+            {code}
+            Fitness score: {fitness}
+
+            Return the best {num_offsprings} mutations. We highly want diverse mutations.
+
+            [ON OUTPUT FORMAT]
+            First, analyze the code and do some thinking.
+
+            Note that the code is quite long. So I prepended a code line number to each line of the code.
+            Your new code could be shorter or longer than the codes to be replaced.
+            For example, if you want to replace the code in line A to B, you should write the new code like:
+
+            <Mutation 1>
+            strategy: Focus on the lines A:B that do X, which could be optimized by Y.
+            start line number: A
+            start line code: Line A code (every single letter, number, and symbol should be included)
+            end line number: B
+            end line code: Line B code (every single letter, number, and symbol should be included)
+            code:
+            ```
+            // new code
+            ```
+            Here, "start line number" and "end line number" are the line numbers of the code to be replaced.
+            "start line code" and "end line code" are the codes of the start and end lines.
+            The new code could be shorter or longer than the codes to be replaced.
+            As you can see, you can replace multiple sections of the code if necessary (like when including a new library, etc.)
+            Important note for the end line. If the target end line is just a bracket, you should write it so.
+            If you fail to include the bracket and just write the new code, you might end up with two closing brackets and the code will not compile.
+            
+            Strictly follow the output format.
+            - Don't use a markdown! Don't decorate the texts!
+            - dont use ** to wrap the strategy or code. No asteriks for wrapping!
+            - dont use ```cpp. Only do ```
+            - Otherwise, your output will be rejected.
+
+            When I replace the target code lines with your new code,
+            the new patched code should be a valid .cc code that can be compiled and run.
+            So you cannot simply remove any code without caution.
+            Please write a fast, valid C++ code.
+
+            Only change upto 1 line of code. Prioritize the code that is most likely to be compiled.
+
+            For a mutation block, the output format should always start with <Mutation N>.
+            And then obey the output format like below.
+            start line number: A
+            start line code: Line A code
+            end line number: B
+            end line code: Line B code
+            code:
+            ```
+            // new code
+            ```
+            """
+        )
+    )
+
 
     def mutate(
         self,
@@ -373,9 +539,17 @@ class LLMMutation(LLMBase):
             [f"{i}: {line}" for i, line in enumerate(target_code.split("\n"))]
         )
 
+        if self.is_debugging:
+            # print("\033[33m" + target_code + "\033[0m")
+            with open("/home/luke/magpie/target_code.txt", "w") as f:
+                f.write(target_code)
+            prompt = self.debug_prompt
+        else:
+            prompt = self.prompt
+
         while attempt < max_attempts:
             attempt += 1
-            messages = self.prompt.format_messages(
+            messages = prompt.format_messages(
                 code=target_code,
                 fitness=target_fitness,
                 num_offsprings=num_offsprings,
@@ -400,7 +574,7 @@ class LLMMutation(LLMBase):
             if not strategies:
                 print("No strategies found, retrying...")
                 continue
-
+    
             if not code_changes:
                 print("No codes found, retrying...")
                 continue
@@ -422,56 +596,8 @@ class LLMMutation(LLMBase):
         raise ValueError(
             "Failed to generate valid mutations after 3 attempts."
         )
-
-    def parse(self, output: str) -> List[Dict]:
-        mutations = []
-        # Split text into individual mutations, ignoring the empty first split
-        mutation_blocks = re.split(r"<Mutation \d+>", output)[1:]
-
-        for block in mutation_blocks:
-            mutation = {"strategy": "", "code_changes": []}
-
-            # Extract strategy
-            strategy_match = re.search(r"strategy: (.+)", block)
-            if strategy_match:
-                mutation["strategy"] = strategy_match.group(1).strip()
-
-            # Extract code changes with a pattern that matches all fields
-            change_pattern = re.compile(
-                r"start line number: (\S+)\s+"  # \S+ allows non-numeric like "sl1"
-                r"start line code: (.*?)\s+"
-                r"end line number: (\S+)\s+"  # \S+ for "el1"
-                r"end line code: (.*?)\s+"
-                r"code:\s*(.*?)(?=\s*start line number:|\Z)",  # Until next section or end
-                re.DOTALL,
-            )
-            change_sections = change_pattern.findall(block)
-
-            for change in change_sections:
-                # Attempt to convert line numbers to int, keep as string if it fails
-                try:
-                    start_line = int(change[0])
-                except ValueError:
-                    start_line = change[0]
-                try:
-                    end_line = int(change[2])
-                except ValueError:
-                    end_line = change[2]
-
-                mutation["code_changes"].append(
-                    {
-                        "start_line_number": start_line,
-                        "start_line_code": change[1].strip(),
-                        "end_line_number": end_line,
-                        "end_line_code": change[3].strip(),
-                        "new_code": change[4].strip(),
-                    }
-                )
-
-            mutations.append(mutation)
-
-        return mutations
-
+    
+        
 
 class LLMOneShotOptimization(LLMMutation):
     prompt = ChatPromptTemplate.from_template(

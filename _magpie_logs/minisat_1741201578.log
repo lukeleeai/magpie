@@ -1,0 +1,151 @@
+2025-03-05 19:06:18,509	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 7777189559832483
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+llm_prob = 1.0
+warmup = 1
+warmup_strategy = last
+max_steps = 200
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 4
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 1.0
+offspring_mutation = 0.0
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-05 19:06:18,509	[DEBUG]	
+2025-03-05 19:06:18,509	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-05 19:06:18,509	[INFO]	~~~~ WARMUP ~~~~
+2025-03-05 19:06:18,866	[DEBUG]	EXEC>  SUCCESS 0.0016006666666666667
+2025-03-05 19:06:18,866	[INFO]	WARM    SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-05 19:06:18,866	[INFO]	REF     SUCCESS               0.00 (--) [0 edit(s)]  
+2025-03-05 19:06:18,868	[INFO]	
+2025-03-05 19:06:18,868	[INFO]	~~~~ START ~~~~
+2025-03-05 19:06:20,699	[DEBUG]	EXEC>  SUCCESS 0.002228
+2025-03-05 19:06:20,700	[INFO]	0-1     SUCCESS              +0.00 (139.19%) [1 edit(s)]  
+2025-03-05 19:06:20,700	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 36, 'start_line_code': 'static DoubleOption opt_random_seed (_cat, "rnd-seed", "Used by the random variable selection", 91648253, DoubleRange(0, false, HUGE_VAL, false));', 'end_line_number': 36, 'end_line_code': 'static DoubleOption opt_random_seed (_cat, "rnd-seed", "Used by the random variable selection", 91648253, DoubleRange(0, false, HUGE_VAL, false));', 'new_code': 'static DoubleOption opt_random_seed (_cat, "rnd-seed", "Used by the random variable selection", 123456789, DoubleRange(0, false, HUGE_VAL, false));'}])"
+2025-03-05 19:06:23,497	[DEBUG]	EXEC>  SUCCESS 0.0012963333333333334
+2025-03-05 19:06:23,498	[INFO]	0-2     SUCCESS              *0.00 (80.99%) [1 edit(s)]  
+2025-03-05 19:06:23,498	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), [{'start_line_number': 42, 'start_line_code': 'static DoubleOption opt_restart_inc (_cat, "rinc", "Restart interval increase factor", 2, DoubleRange(1, false, HUGE_VAL, false));', 'end_line_number': 42, 'end_line_code': 'static DoubleOption opt_restart_inc (_cat, "rinc", "Restart interval increase factor", 2, DoubleRange(1, false, HUGE_VAL, false));', 'new_code': 'static DoubleOption opt_restart_inc (_cat, "rinc", "Restart interval increase factor", 1.5, DoubleRange(1, false, HUGE_VAL, false));'}])"
+
+2025-03-05 19:06:26,361	[DEBUG]	EXEC>  SUCCESS 0.0013059999999999999
+2025-03-05 19:06:26,362	[INFO]	0-3     SUCCESS               0.00 (81.59%) [1 edit(s)]  
+2025-03-05 19:06:26,362	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), [{'start_line_number': 70, 'start_line_code': ', learntsize_factor((double)1/(double)3), learntsize_inc(1.1)', 'end_line_number': 70, 'end_line_code': ', learntsize_factor((double)1/(double)3), learntsize_inc(1.1)', 'new_code': ', learntsize_factor((double)1/(double)3), learntsize_inc(1.05)'}])"
+2025-03-05 19:06:29,173	[DEBUG]	EXEC>  SUCCESS 0.0008626666666666666
+2025-03-05 19:06:29,174	[INFO]	0-4     SUCCESS              *0.00 (53.89%) [1 edit(s)]  
+2025-03-05 19:06:29,174	[DEBUG]	patch(0-4)="LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 33, 'start_line_code': 'static DoubleOption opt_var_decay (_cat, "var-decay", "The variable activity decay factor", 0.95, DoubleRange(0, false, 1, false));', 'end_line_number': 33, 'end_line_code': 'static DoubleOption opt_var_decay (_cat, "var-decay", "The variable activity decay factor", 0.95, DoubleRange(0, false, 1, false));', 'new_code': 'static DoubleOption opt_var_decay (_cat, "var-decay", "The variable activity decay factor", 0.9, DoubleRange(0, false, 1, false));'}])"
+
+2025-03-05 19:06:30,174	[INFO]	Step: 4
+2025-03-05 19:06:30,174	[INFO]	Stop Steps: 200
+2025-03-05 19:06:31,203	[INFO]	~~~~ END ~~~~
+2025-03-05 19:06:31,203	[INFO]	Best patch step: 3

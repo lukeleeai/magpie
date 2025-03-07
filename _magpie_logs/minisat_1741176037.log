@@ -1,0 +1,200 @@
+2025-03-05 12:00:37,514	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 3991993431000236
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+llm_prob = 1.0
+warmup = 1
+warmup_strategy = last
+max_steps = 10
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 3
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.0
+offspring_mutation = 1.0
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-05 12:00:37,514	[DEBUG]	
+2025-03-05 12:00:37,514	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-05 12:00:37,514	[INFO]	~~~~ WARMUP ~~~~
+2025-03-05 12:00:43,182	[DEBUG]	EXEC>  SUCCESS 0.5231589999999999
+2025-03-05 12:00:43,182	[INFO]	WARM    SUCCESS               0.52 (--) [0 edit(s)]  
+2025-03-05 12:00:43,182	[INFO]	REF     SUCCESS               0.52 (--) [0 edit(s)]  
+2025-03-05 12:00:43,186	[INFO]	
+2025-03-05 12:00:43,186	[INFO]	~~~~ START ~~~~
+2025-03-05 12:01:17,434	[DEBUG]	EXEC>  SUCCESS 0.5223116999999999
+2025-03-05 12:01:17,434	[INFO]	0-1     SUCCESS              *0.52 (99.84%) [1 edit(s)]  
+2025-03-05 12:01:17,435	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 709, 'start_line_code': 'double  F = 1.0 / nVars();', 'end_line_number': 719, 'end_line_code': 'return progress / nVars();', 'new_code': '\ndouble  F = 1.0 / nVars();\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += (1U << i) * F * (end - beg);  // Use left shift for powers of 2\n}\nreturn progress / nVars();\n'}])"
+
+2025-03-05 12:01:18,996	[INFO]	0-2     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 12:01:18,996	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), [{'start_line_number': 529, 'start_line_code': 'sort(learnts, reduceDB_lt(ca));', 'end_line_number': 540, 'end_line_code': 'checkGarbage();', 'new_code': '\n// Use std::nth_element for partial sorting\nstd::nth_element(learnts.begin(), learnts.begin() + learnts.size() / 2, learnts.end(), reduceDB_lt(ca));\nfor (i = j = 0; i < learnts.size(); i++){\n    Clause& c = ca[learnts[i]];\n    if (c.size() > 2 && !locked(c) && (i < learnts.size() / 2 || c.activity() < extra_lim))\n        removeClause(learnts[i]);\n    else\n        learnts[j++] = learnts[i];\n}\nlearnts.shrink(i - j);\ncheckGarbage();\n'}])"
+2025-03-05 12:01:20,405	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 12:01:20,405	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), [{'start_line_number': 459, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 502, 'end_line_code': 'return confl;', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size(); i != end; i++){\n    Lit blocker = i->blocker;\n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n\n    if (c[0] == false_lit)\n        std::swap(c[0], c[1]);\n    \n    if (value(blocker) == l_True){\n        *j++ = *i;\n        continue;\n    }\n    \n    Lit first = c[0];\n    Watcher w = Watcher(cr, first);\n\n    if (value(first) == l_True){\n        *j++ = w;\n        continue;\n    }\n\n    for (int k = 2; k < c.size(); k++){\n        if (value(c[k]) != l_False){\n            std::swap(c[1], c[k]);\n            watches[~c[1]].push(w);\n            goto NextClause;\n        }\n    }\n\n    *j++ = w;\n    if (value(first) == l_False){\n        confl = cr;\n        qhead = trail.size();\n        while (i != end)\n            *j++ = *i++;\n    }else\n        uncheckedEnqueue(first, cr);\n\nNextClause:;\n}\nws.shrink(i - j);\n'}])"
+2025-03-05 12:01:21,406	[INFO]	Step: 3
+2025-03-05 12:01:21,406	[INFO]	Stop Steps: 10
+2025-03-05 12:01:56,175	[INFO]	Step: 3
+2025-03-05 12:01:56,175	[INFO]	Stop Steps: 10
+2025-03-05 12:02:03,559	[DEBUG]	EXEC>  SUCCESS 0.5440008000000001
+2025-03-05 12:02:03,560	[INFO]	1-1     SUCCESS              +0.54 (103.98%) [2 edit(s)]  
+2025-03-05 12:02:03,560	[DEBUG]	patch(1-1)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 709, 'start_line_code': 'double  F = 1.0 / nVars();', 'end_line_number': 719, 'end_line_code': 'return progress / nVars();', 'new_code': '\ndouble  F = 1.0 / nVars();\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += (1U << i) * F * (end - beg);  // Use left shift for powers of 2\n}\nreturn progress / nVars();\n'}]) | LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 452, 'start_line_code': 'watches.cleanAll();', 'end_line_number': 452, 'end_line_code': 'watches.cleanAll();', 'new_code': '\n// Remove the unnecessary cleaning of all watch lists which is costly\n'}, {'start_line_number': 459, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 501, 'end_line_code': 'ws.shrink(i - j);', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n    Lit blocker = i->blocker;\n    if (value(blocker) == l_True){\n        *j++ = *i++; \n        continue; \n    }\n    \n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n    \n    if (c[0] == false_lit)\n        c[0] = c[1], c[1] = false_lit;\n    assert(c[1] == false_lit);\n    i++;\n    \n    Lit first = c[0];\n    Watcher w = Watcher(cr, first);\n    if (first != blocker && value(first) == l_True){\n        *j++ = w; \n        continue; \n    }\n    \n    for (int k = 2; k < c.size(); k++)\n        if (value(c[k]) != l_False){\n            c[1] = c[k]; c[k] = false_lit;\n            watches[~c[1]].push(w);\n            goto NextClause; \n        }\n    \n    *j++ = w;\n    if (value(first) == l_False){\n        confl = cr;\n        qhead = trail.size();\n        while (i < end)\n            *j++ = *i++;\n    }else\n        uncheckedEnqueue(first, cr);\n\nNextClause:;\n}\nws.shrink(i - j);\n'}])"
+2025-03-05 12:02:03,560	[INFO]	Step: 4
+2025-03-05 12:02:03,560	[INFO]	Stop Steps: 10
+2025-03-05 12:02:11,559	[DEBUG]	EXEC>  SUCCESS 0.5419073
+2025-03-05 12:02:11,559	[INFO]	1-2     SUCCESS              +0.54 (103.58%) [1 edit(s)]  
+2025-03-05 12:02:11,559	[DEBUG]	patch(1-2)="LineLLMMutation(('core/Solver.cc', 4), [{'start_line_number': 911, 'start_line_code': 'void Solver::garbageCollect()', 'end_line_number': 922, 'end_line_code': 'to.moveTo(ca);', 'new_code': '\nvoid Solver::garbageCollect()\n{\n    // Use a more aggressive strategy for garbage collection by reducing the threshold \n    // for the next region size to prevent excessive memory usage.\n    ClauseAllocator to(ca.size() - (ca.wasted() / 2)); // halve the estimated utilization degree\n\n    relocAll(to);\n    if (verbosity >= 2)\n        printf("|  Garbage collection:   %12d bytes => %12d bytes             |\\n",\n               ca.size()*ClauseAllocator::Unit_Size, to.size()*ClauseAllocator::Unit_Size);\n    to.moveTo(ca);\n}\n'}])"
+2025-03-05 12:02:11,559	[INFO]	Step: 5
+2025-03-05 12:02:11,559	[INFO]	Stop Steps: 10
+2025-03-05 12:02:11,892	[INFO]	1-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-05 12:02:11,893	[DEBUG]	patch(1-3)="LineLLMMutation(('core/Solver.cc', 5), [{'start_line_number': 544, 'start_line_code': 'void Solver::removeSatisfied(vec<CRef>& cs)', 'end_line_number': 555, 'end_line_code': 'cs.shrink(i - j);', 'new_code': "```\nvoid Solver::removeSatisfied(vec<CRef>& cs)\n{\n    int i = 0, j = 0;\n    while (i < cs.size()) {\n        Clause& c = ca[cs[i]];\n        if (satisfied(c)) {\n            removeClause(cs[i]);\n        } else {\n            cs[j++] = cs[i];\n        }\n        ++i;\n    }\n    cs.shrink(i - j);\n}\n```\n\nThese mutations aim to improve memory management efficiency and simplify the clause database more effectively, potentially enhancing the solver's overall performance."}])"
+2025-03-05 12:02:11,893	[INFO]	Step: 6
+2025-03-05 12:02:11,893	[INFO]	Stop Steps: 10
+2025-03-05 12:02:51,475	[INFO]	Step: 6
+2025-03-05 12:02:51,475	[INFO]	Stop Steps: 10
+2025-03-05 12:02:58,895	[DEBUG]	EXEC>  SUCCESS 0.5429065000000001
+2025-03-05 12:02:58,895	[INFO]	2-1     SUCCESS              +0.54 (103.77%) [2 edit(s)]  
+2025-03-05 12:02:58,896	[DEBUG]	patch(2-1)="LineLLMMutation(('core/Solver.cc', 4), [{'start_line_number': 911, 'start_line_code': 'void Solver::garbageCollect()', 'end_line_number': 922, 'end_line_code': 'to.moveTo(ca);', 'new_code': '\nvoid Solver::garbageCollect()\n{\n    // Use a more aggressive strategy for garbage collection by reducing the threshold \n    // for the next region size to prevent excessive memory usage.\n    ClauseAllocator to(ca.size() - (ca.wasted() / 2)); // halve the estimated utilization degree\n\n    relocAll(to);\n    if (verbosity >= 2)\n        printf("|  Garbage collection:   %12d bytes => %12d bytes             |\\n",\n               ca.size()*ClauseAllocator::Unit_Size, to.size()*ClauseAllocator::Unit_Size);\n    to.moveTo(ca);\n}\n'}]) | LineLLMMutation(('core/Solver.cc', 6), [{'start_line_number': 448, 'start_line_code': 'CRef Solver::propagate()', 'end_line_number': 507, 'end_line_code': 'return confl;', 'new_code': "\nCRef Solver::propagate()\n{\n    CRef confl = CRef_Undef;\n    int num_props = 0;\n    watches.cleanAll();\n\n    while (qhead < trail.size()){\n        Lit p = trail[qhead++]; // 'p' is enqueued fact to propagate.\n        vec<Watcher>& ws = watches[p];\n        Watcher *i, *j, *end;\n        num_props++;\n\n        for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;){\n            Lit blocker = i->blocker;\n            if (value(blocker) == l_True){\n                *j++ = *i++; continue;\n            }\n\n            CRef cr = i->cref;\n            Clause& c = ca[cr];\n            Lit false_lit = ~p;\n            if (c[0] == false_lit) std::swap(c[0], c[1]);\n            assert(c[1] == false_lit);\n            i++;\n\n            Lit first = c[0];\n            Watcher w = Watcher(cr, first);\n            if (first != blocker && value(first) == l_True){\n                *j++ = w; continue;\n            }\n\n            for (int k = 2; k < c.size(); k++){\n                if (value(c[k]) != l_False){\n                    std::swap(c[1], c[k]);\n                    watches[~c[1]].push(w);\n                    goto NextClause;\n                }\n            }\n\n            *j++ = w;\n            if (value(first) == l_False){\n                confl = cr;\n                qhead = trail.size();\n                while (i < end) *j++ = *i++;\n            } else {\n                uncheckedEnqueue(first, cr);\n            }\n\n        NextClause:;\n        }\n        ws.shrink(i - j);\n    }\n    propagations += num_props;\n    simpDB_props -= num_props;\n\n    return confl;\n}\n"}])"
+2025-03-05 12:02:58,896	[INFO]	Step: 7
+2025-03-05 12:02:58,896	[INFO]	Stop Steps: 10
+2025-03-05 12:03:05,993	[DEBUG]	EXEC>  SUCCESS 0.5165552
+2025-03-05 12:03:05,994	[INFO]	2-2     SUCCESS              *0.52 (98.74%) [3 edit(s)]  
+2025-03-05 12:03:05,994	[DEBUG]	patch(2-2)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 709, 'start_line_code': 'double  F = 1.0 / nVars();', 'end_line_number': 719, 'end_line_code': 'return progress / nVars();', 'new_code': '\ndouble  F = 1.0 / nVars();\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += (1U << i) * F * (end - beg);  // Use left shift for powers of 2\n}\nreturn progress / nVars();\n'}]) | LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 452, 'start_line_code': 'watches.cleanAll();', 'end_line_number': 452, 'end_line_code': 'watches.cleanAll();', 'new_code': '\n// Remove the unnecessary cleaning of all watch lists which is costly\n'}, {'start_line_number': 459, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 501, 'end_line_code': 'ws.shrink(i - j);', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n    Lit blocker = i->blocker;\n    if (value(blocker) == l_True){\n        *j++ = *i++; \n        continue; \n    }\n    \n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n    \n    if (c[0] == false_lit)\n        c[0] = c[1], c[1] = false_lit;\n    assert(c[1] == false_lit);\n    i++;\n    \n    Lit first = c[0];\n    Watcher w = Watcher(cr, first);\n    if (first != blocker && value(first) == l_True){\n        *j++ = w; \n        continue; \n    }\n    \n    for (int k = 2; k < c.size(); k++)\n        if (value(c[k]) != l_False){\n            c[1] = c[k]; c[k] = false_lit;\n            watches[~c[1]].push(w);\n            goto NextClause; \n        }\n    \n    *j++ = w;\n    if (value(first) == l_False){\n        confl = cr;\n        qhead = trail.size();\n        while (i < end)\n            *j++ = *i++;\n    }else\n        uncheckedEnqueue(first, cr);\n\nNextClause:;\n}\nws.shrink(i - j);\n'}]) | LineLLMMutation(('core/Solver.cc', 7), [{'start_line_number': 732, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 746, 'end_line_code': 'return pow(y, seq);', 'new_code': '\nstatic double luby(double y, int x){\n    int size, seq;\n    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);\n\n    while (size-1 != x){\n        size = (size-1) >> 1;\n        seq--;\n        x = x % size;\n    }\n\n    double result = 1.0;\n    for (int i = 0; i < seq; i++) {\n        result *= y;\n    }\n    return result;\n}\n'}])"
+
+2025-03-05 12:03:05,994	[INFO]	Step: 8
+2025-03-05 12:03:05,994	[INFO]	Stop Steps: 10
+2025-03-05 12:03:07,972	[INFO]	2-3     TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-03-05 12:03:07,972	[DEBUG]	patch(2-3)="LineLLMMutation(('core/Solver.cc', 8), [{'start_line_number': 460, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 501, 'end_line_code': 'ws.shrink(i - j);', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size(); i != end; ++i) {\n    Lit blocker = i->blocker;\n    if (value(blocker) == l_True) {\n        *j++ = *i;\n        continue;\n    }\n\n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n    if (c[0] == false_lit) {\n        c[0] = c[1];\n        c[1] = false_lit;\n    }\n    assert(c[1] == false_lit);\n\n    Lit first = c[0];\n    Watcher w = Watcher(cr, first);\n    if (first != blocker && value(first) == l_True) {\n        *j++ = w;\n        continue;\n    }\n\n    for (int k = 2; k < c.size(); ++k) {\n        if (value(c[k]) != l_False) {\n            c[1] = c[k];\n            c[k] = false_lit;\n            watches[~c[1]].push(w);\n            goto NextClause;\n        }\n    }\n\n    *j++ = w;\n    if (value(first) == l_False) {\n        confl = cr;\n        qhead = trail.size();\n        while (++i != end) *j++ = *i;\n    } else {\n        uncheckedEnqueue(first, cr);\n    }\nNextClause:;\n}\nws.shrink(i - j);\n'}])"
+2025-03-05 12:03:07,973	[INFO]	Step: 9
+2025-03-05 12:03:07,973	[INFO]	Stop Steps: 10
+2025-03-05 12:03:43,357	[INFO]	Step: 9
+2025-03-05 12:03:43,358	[INFO]	Stop Steps: 10
+2025-03-05 12:03:45,459	[INFO]	3-1     TEST_CODE_ERROR       None (--) [4 edit(s)]  
+2025-03-05 12:03:45,459	[DEBUG]	patch(3-1)="LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 709, 'start_line_code': 'double  F = 1.0 / nVars();', 'end_line_number': 719, 'end_line_code': 'return progress / nVars();', 'new_code': '\ndouble  F = 1.0 / nVars();\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += (1U << i) * F * (end - beg);  // Use left shift for powers of 2\n}\nreturn progress / nVars();\n'}]) | LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 452, 'start_line_code': 'watches.cleanAll();', 'end_line_number': 452, 'end_line_code': 'watches.cleanAll();', 'new_code': '\n// Remove the unnecessary cleaning of all watch lists which is costly\n'}, {'start_line_number': 459, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 501, 'end_line_code': 'ws.shrink(i - j);', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n    Lit blocker = i->blocker;\n    if (value(blocker) == l_True){\n        *j++ = *i++; \n        continue; \n    }\n    \n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n    \n    if (c[0] == false_lit)\n        c[0] = c[1], c[1] = false_lit;\n    assert(c[1] == false_lit);\n    i++;\n    \n    Lit first = c[0];\n    Watcher w = Watcher(cr, first);\n    if (first != blocker && value(first) == l_True){\n        *j++ = w; \n        continue; \n    }\n    \n    for (int k = 2; k < c.size(); k++)\n        if (value(c[k]) != l_False){\n            c[1] = c[k]; c[k] = false_lit;\n            watches[~c[1]].push(w);\n            goto NextClause; \n        }\n    \n    *j++ = w;\n    if (value(first) == l_False){\n        confl = cr;\n        qhead = trail.size();\n        while (i < end)\n            *j++ = *i++;\n    }else\n        uncheckedEnqueue(first, cr);\n\nNextClause:;\n}\nws.shrink(i - j);\n'}]) | LineLLMMutation(('core/Solver.cc', 7), [{'start_line_number': 732, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 746, 'end_line_code': 'return pow(y, seq);', 'new_code': '\nstatic double luby(double y, int x){\n    int size, seq;\n    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);\n\n    while (size-1 != x){\n        size = (size-1) >> 1;\n        seq--;\n        x = x % size;\n    }\n\n    double result = 1.0;\n    for (int i = 0; i < seq; i++) {\n        result *= y;\n    }\n    return result;\n}\n'}]) | LineLLMMutation(('core/Solver.cc', 9), [{'start_line_number': 460, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 501, 'end_line_code': 'ws.shrink(i - j);', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size(); i != end; i++) {\n    Lit blocker = i->blocker;\n    if (value(blocker) == l_True) {\n        *j++ = *i;\n        continue;\n    }\n\n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n\n    if (c[0] == false_lit)\n        std::swap(c[0], c[1]);\n    assert(c[1] == false_lit);\n\n    Lit first = c[0];\n    if (first != blocker && value(first) == l_True) {\n        *j++ = Watcher(cr, first);\n        continue;\n    }\n\n    for (int k = 2; k < c.size(); k++) {\n        if (value(c[k]) != l_False) {\n            c[1] = c[k];\n            c[k] = false_lit;\n            watches[~c[1]].push(Watcher(cr, c[1]));\n            goto NextClause;\n        }\n    }\n\n    *j++ = Watcher(cr, c[0]);\n    if (value(first) == l_False) {\n        confl = cr;\n        qhead = trail.size();\n        while (i < end)\n            *j++ = *i++;\n    } else {\n        uncheckedEnqueue(first, cr);\n    }\n\nNextClause:;\n}\nws.shrink(i - j);\n'}])"
+2025-03-05 12:03:45,459	[INFO]	Step: 10
+2025-03-05 12:03:45,459	[INFO]	Stop Steps: 10
+2025-03-05 12:03:45,459	[INFO]	(Abstract Algorithm) Stopping Condition: step budget
+2025-03-05 12:03:45,459	[INFO]	Step: 10
+2025-03-05 12:03:45,459	[INFO]	Stop Steps: 10
+2025-03-05 12:03:48,217	[INFO]	~~~~ END ~~~~
+2025-03-05 12:03:48,217	[INFO]	Best patch step: 7
+2025-03-05 12:03:48,217	[INFO]	
+2025-03-05 12:03:48,217	[INFO]	==== REPORT ====
+2025-03-05 12:03:48,217	[INFO]	Termination: step budget
+2025-03-05 12:03:48,217	[INFO]	Log file: /home/luke/magpie/_magpie_logs/minisat_1741176037.log
+2025-03-05 12:03:48,217	[INFO]	Patch file: _magpie_logs/minisat_1741176037.patch
+2025-03-05 12:03:48,218	[INFO]	Diff file: _magpie_logs/minisat_1741176037.diff
+2025-03-05 12:03:48,218	[INFO]	Reference fitness: 0.52
+2025-03-05 12:03:48,218	[INFO]	Best fitness: 0.52
+2025-03-05 12:03:48,218	[INFO]	
+2025-03-05 12:03:48,219	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('core/Solver.cc', 0), [{'start_line_number': 709, 'start_line_code': 'double  F = 1.0 / nVars();', 'end_line_number': 719, 'end_line_code': 'return progress / nVars();', 'new_code': '\ndouble  F = 1.0 / nVars();\nfor (int i = 0; i <= decisionLevel(); i++){\n    int beg = i == 0 ? 0 : trail_lim[i - 1];\n    int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n    progress += (1U << i) * F * (end - beg);  // Use left shift for powers of 2\n}\nreturn progress / nVars();\n'}]) + LineLLMMutation(('core/Solver.cc', 3), [{'start_line_number': 452, 'start_line_code': 'watches.cleanAll();', 'end_line_number': 452, 'end_line_code': 'watches.cleanAll();', 'new_code': '\n// Remove the unnecessary cleaning of all watch lists which is costly\n'}, {'start_line_number': 459, 'start_line_code': 'for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){', 'end_line_number': 501, 'end_line_code': 'ws.shrink(i - j);', 'new_code': '\nfor (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n    Lit blocker = i->blocker;\n    if (value(blocker) == l_True){\n        *j++ = *i++; \n        continue; \n    }\n    \n    CRef cr = i->cref;\n    Clause& c = ca[cr];\n    Lit false_lit = ~p;\n    \n    if (c[0] == false_lit)\n        c[0] = c[1], c[1] = false_lit;\n    assert(c[1] == false_lit);\n    i++;\n    \n    Lit first = c[0];\n    Watcher w = Watcher(cr, first);\n    if (first != blocker && value(first) == l_True){\n        *j++ = w; \n        continue; \n    }\n    \n    for (int k = 2; k < c.size(); k++)\n        if (value(c[k]) != l_False){\n            c[1] = c[k]; c[k] = false_lit;\n            watches[~c[1]].push(w);\n            goto NextClause; \n        }\n    \n    *j++ = w;\n    if (value(first) == l_False){\n        confl = cr;\n        qhead = trail.size();\n        while (i < end)\n            *j++ = *i++;\n    }else\n        uncheckedEnqueue(first, cr);\n\nNextClause:;\n}\nws.shrink(i - j);\n'}]) + LineLLMMutation(('core/Solver.cc', 7), [{'start_line_number': 732, 'start_line_code': 'static double luby(double y, int x){', 'end_line_number': 746, 'end_line_code': 'return pow(y, seq);', 'new_code': '\nstatic double luby(double y, int x){\n    int size, seq;\n    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);\n\n    while (size-1 != x){\n        size = (size-1) >> 1;\n        seq--;\n        x = x % size;\n    }\n\n    double result = 1.0;\n    for (int i = 0; i < seq; i++) {\n        result *= y;\n    }\n    return result;\n}\n'}])
+2025-03-05 12:03:48,219	[INFO]	
+2025-03-05 12:03:48,219	[INFO]	==== DIFF ====
+

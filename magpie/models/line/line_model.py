@@ -52,21 +52,23 @@ class LineModel(AbstractLineModel):
             return f"{tag_start}{target_loc}=after:{tag_end}{self.contents[self.locations[target_type][target_loc-1]]}"
         raise ValueError
 
-    def do_llm_mutation(self, llm_id, code_changes):
-        print("\033[35mApplying LLM Mutation to ", llm_id, "\033[0m")
+    def do_llm_operation(self, llm_id, code_changes, operation_type):
+        print("\033[35mApplying LLM ", operation_type, " to ", llm_id, "\033[0m")
 
         original_code = self.dump()
         original_code_lines = original_code.split("\n")
         patched_code = ""
 
         for code_change in code_changes:
-            print("\033[32mcode_change: ", code_change, "\033[0m")
-            start_line_code = code_change["start_line_code"].strip()
-            end_line_code = code_change["end_line_code"].strip()
+            print("\030[32mcode_change: ", code_change, "\033[0m")
+            start_line_code = " ".join(code_change["start_line_code"].split())
+            end_line_code = " ".join(code_change["end_line_code"].split())
+
+            print("Searching for start line code: ", start_line_code)
             start_line_code_matching_indices = [
                 i
                 for i, line in enumerate(original_code_lines)
-                if line.strip() == start_line_code
+                if " ".join(line.split()) == start_line_code
             ]
 
             if len(start_line_code_matching_indices) > 1:
@@ -77,15 +79,20 @@ class LineModel(AbstractLineModel):
                         x - int(code_change["start_line_number"])
                     ),
                 )
-            else:
+            elif len(start_line_code_matching_indices) == 1:
                 start_line_code_matching_index = (
                     start_line_code_matching_indices[0]
                 )
+            else:
+                patched_code = ""
+                self.init_contents(patched_code)
+                return False
 
+            print("Searching for end line code: ", end_line_code)
             end_line_code_matching_indices = [
                 i
                 for i, line in enumerate(original_code_lines)
-                if line.strip() == end_line_code
+                if " ".join(line.split()) == end_line_code
             ]
 
             if len(end_line_code_matching_indices) > 1:
@@ -94,10 +101,21 @@ class LineModel(AbstractLineModel):
                     end_line_code_matching_indices,
                     key=lambda x: abs(x - int(code_change["end_line_number"])),
                 )
-            else:
+            elif len(end_line_code_matching_indices) == 1:
                 end_line_code_matching_index = end_line_code_matching_indices[
                     0
                 ]
+            else:
+                patched_code = ""
+                self.init_contents(patched_code)
+                return False
+
+            # Sometimes, LLM fails to consider the ending bracket.
+            if len(code_change["new_code"].strip()) > 1 and end_line_code_matching_index < len(original_code_lines) - 1:
+                print("The next line of the ending line: ", original_code_lines[end_line_code_matching_index+1].strip())
+                print("The last line of the new code: ", code_change["new_code"].split()[-1].strip())
+                if " ".join(original_code_lines[end_line_code_matching_index+1].strip()) == "}" and " ".join(code_change["new_code"].split()[-1].strip()) == "}":
+                    end_line_code_matching_index += 1
 
             if (
                 len(start_line_code_matching_indices) == 0
@@ -105,11 +123,11 @@ class LineModel(AbstractLineModel):
             ):
                 raise ValueError
 
-            patched_code = original_code_lines[:start_line_code_matching_index]
+            patched_code = "\n".join(original_code_lines[:start_line_code_matching_index])
             patched_code += code_change["new_code"]
-            patched_code += original_code_lines[
+            patched_code += "\n".join(original_code_lines[
                 end_line_code_matching_index + 1 :
-            ]
+            ])
 
             print(
                 "\033[33m"
@@ -121,9 +139,7 @@ class LineModel(AbstractLineModel):
                 )
                 + "\033[0m"
             )
-            print("\033[32m--------------------------------\033[0m")
-            print("\033[32m" + "\n".join(code_change["new_code"]) + "\033[0m")
-            print("\033[32m--------------------------------\033[0m")
+            print("\033[32m" + code_change["new_code"] + "\033[0m")
             print(
                 "\033[33m"
                 + "\n".join(
@@ -135,8 +151,6 @@ class LineModel(AbstractLineModel):
                 )
                 + "\033[0m"
             )
-
-            print("\033[31m" + "\n".join(patched_code) + "\033[0m")
 
             original_code_lines = patched_code.split("\n")
 

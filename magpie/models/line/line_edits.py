@@ -24,7 +24,7 @@ class LineLLMMutation(Edit):
         model = variant.models[self.target[0]]
         llm_id = self.target[1]
         code_changes = self.data[0]
-        return model.do_llm_mutation(llm_id, code_changes)
+        return model.do_llm_operation(llm_id, code_changes, "Mutation")
 
 
 magpie.utils.known_edits.append(LineLLMMutation)
@@ -47,7 +47,7 @@ class LineLLMCrossover(Edit):
         model = variant.models[self.target[0]]
         llm_id = self.target[1]
         code_changes = self.data[0]
-        return model.do_llm_crossover(llm_id, code_changes)
+        return model.do_llm_operation(llm_id, code_changes, "Crossover")
 
 
 magpie.utils.known_edits.append(LineLLMCrossover)
