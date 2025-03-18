@@ -115,6 +115,8 @@ number: literal_number""",
         "uniform_rate": 0.5,  # GeneticProgrammingUniformConcat and GeneticProgrammingUniformInter only
         "batch_reset": True,
         "llm_type": "baseline",
+        # reflection section
+        "reflection": "",
     },
     # [search.minify] section
     "search.minify": {

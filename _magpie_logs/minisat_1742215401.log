@@ -1,0 +1,168 @@
+2025-03-17 12:43:22,044	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 613927164496572
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 20
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.4
+offspring_mutation = 0.6
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+reflection = ALL
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-17 12:43:22,044	[DEBUG]	
+2025-03-17 12:43:22,044	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-17 12:43:22,044	[INFO]	~~~~ WARMUP ~~~~
+2025-03-17 12:43:35,898	[DEBUG]	EXEC>  SUCCESS 0.6720076
+2025-03-17 12:43:35,898	[INFO]	WARM    SUCCESS               0.67 (--) [0 edit(s)]  
+2025-03-17 12:43:49,915	[DEBUG]	EXEC>  SUCCESS 0.68667155
+2025-03-17 12:43:49,915	[INFO]	WARM    SUCCESS               0.69 (--) [0 edit(s)]  
+2025-03-17 12:44:03,993	[DEBUG]	EXEC>  SUCCESS 0.6896011
+2025-03-17 12:44:03,993	[INFO]	WARM    SUCCESS               0.69 (--) [0 edit(s)]  
+2025-03-17 12:44:03,993	[INFO]	REF     SUCCESS               0.69 (--) [0 edit(s)]  
+2025-03-17 12:44:03,995	[INFO]	
+2025-03-17 12:44:03,996	[INFO]	~~~~ START ~~~~
+2025-03-17 12:45:25,123	[DEBUG]	EXEC>  SUCCESS 0.687351
+2025-03-17 12:45:31,042	[INFO]	0-1     SUCCESS              *0.69 (99.67%) [1 edit(s)]  
+2025-03-17 12:45:31,042	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), '-         for (int i = 0; i <= decisionLevel(); i++){\n-             int beg = i == 0 ? 0 : trail_lim[i - 1];\n-             int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n-             progress += pow(F, i) * (end - beg);\n-         }\n+         double factor = 1.0;\n+         for (int i = 0; i <= decisionLevel(); i++){\n+             int beg = i == 0 ? 0 : trail_lim[i - 1];\n+             int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n+             progress += factor * (end - beg);\n+             factor *= F;\n+         }')"
+
+2025-03-17 12:45:48,053	[DEBUG]	EXEC>  SUCCESS 0.70679505
+2025-03-17 12:46:01,168	[INFO]	0-2     SUCCESS               0.71 (102.49%) [1 edit(s)]  
+2025-03-17 12:46:01,169	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), '-            for (int k = 2; k < c.size(); k++)\n-                if (value(c[k]) != l_False){\n-                    c[1] = c[k]; c[k] = false_lit;\n-                    watches[~c[1]].push(w);\n-                    goto NextClause; }\n+            { int size = c.size();\n+              int k = 2;\n+              for (; k + 1 < size; k += 2){\n+                  if (value(c[k]) != l_False) { c[1] = c[k]; c[k] = false_lit; watches[~c[1]].push(w); goto NextClause; }\n+                  if (value(c[k+1]) != l_False) { c[1] = c[k+1]; c[k+1] = false_lit; watches[~c[1]].push(w); goto NextClause; }\n+              }\n+              for (; k < size; k++) {\n+                  if (value(c[k]) != l_False) { c[1] = c[k]; c[k] = false_lit; watches[~c[1]].push(w); goto NextClause; }\n+              }\n+            }')"
+2025-03-17 12:46:15,969	[DEBUG]	EXEC>  SUCCESS 0.6758221499999999
+2025-03-17 12:46:20,955	[INFO]	0-3     SUCCESS              *0.68 (98.00%) [1 edit(s)]  
+2025-03-17 12:46:20,955	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), '-            Lit q = c[j];\n-            if (!seen[var(q)] && level(var(q)) > 0){\n+            Lit q = c[j];\n+            int lvl = level(var(q));\n+            if (!seen[var(q)] && lvl > 0){')"
+
+2025-03-17 12:46:37,643	[DEBUG]	EXEC>  SUCCESS 0.6912439499999999
+2025-03-17 12:46:43,384	[INFO]	0-4     SUCCESS               0.69 (100.24%) [1 edit(s)]  
+2025-03-17 12:46:43,384	[DEBUG]	patch(0-4)="LineLLMMutation(('core/Solver.cc', 3), '-    for (int i = trail.size()-1; i >= trail_lim[0]; i--){\n+    int trailSize = trail.size(); int base = trail_lim[0];\n+    for (int i = trailSize-1; i >= base; i--){')"
+2025-03-17 12:46:54,943	[INFO]	~~~~ END ~~~~
+2025-03-17 12:46:54,943	[INFO]	Best patch step: 2
+2025-03-17 12:46:54,944	[INFO]	
+2025-03-17 12:46:54,944	[INFO]	==== REPORT ====
+2025-03-17 12:46:54,944	[INFO]	Termination: keyboard interrupt
+2025-03-17 12:46:54,944	[INFO]	Log file: /home/luke/magpie/_magpie_logs/minisat_1742215401.log
+2025-03-17 12:46:54,945	[INFO]	Patch file: _magpie_logs/minisat_1742215401.patch
+2025-03-17 12:46:54,945	[INFO]	Diff file: _magpie_logs/minisat_1742215401.diff
+2025-03-17 12:46:54,945	[INFO]	Reference fitness: 0.69
+2025-03-17 12:46:54,945	[INFO]	Best fitness: 0.68
+2025-03-17 12:46:54,945	[INFO]	
+2025-03-17 12:46:54,946	[INFO]	==== BEST PATCH ====
+LineLLMMutation(('core/Solver.cc', 2), '-            Lit q = c[j];\n-            if (!seen[var(q)] && level(var(q)) > 0){\n+            Lit q = c[j];\n+            int lvl = level(var(q));\n+            if (!seen[var(q)] && lvl > 0){')
+2025-03-17 12:46:54,946	[INFO]	
+2025-03-17 12:46:54,946	[INFO]	==== DIFF ====
+

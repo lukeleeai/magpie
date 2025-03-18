@@ -1,0 +1,197 @@
+2025-03-14 13:23:52,696	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 1101392188661999
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 20
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.4
+offspring_mutation = 0.6
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+reflection = 
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-14 13:23:52,696	[DEBUG]	
+2025-03-14 13:23:52,697	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-14 13:23:52,697	[INFO]	~~~~ WARMUP ~~~~
+2025-03-14 13:24:06,719	[DEBUG]	EXEC>  SUCCESS 0.6804357999999999
+2025-03-14 13:24:06,719	[INFO]	WARM    SUCCESS               0.68 (--) [0 edit(s)]  
+2025-03-14 13:24:20,472	[DEBUG]	EXEC>  SUCCESS 0.6738158
+2025-03-14 13:24:20,472	[INFO]	WARM    SUCCESS               0.67 (--) [0 edit(s)]  
+2025-03-14 13:24:34,455	[DEBUG]	EXEC>  SUCCESS 0.6853292
+2025-03-14 13:24:34,455	[INFO]	WARM    SUCCESS               0.69 (--) [0 edit(s)]  
+2025-03-14 13:24:34,455	[INFO]	REF     SUCCESS               0.69 (--) [0 edit(s)]  
+2025-03-14 13:24:34,457	[INFO]	
+2025-03-14 13:24:34,457	[INFO]	~~~~ START ~~~~
+2025-03-14 13:25:49,199	[DEBUG]	EXEC>  SUCCESS 0.68594305
+2025-03-14 13:25:49,200	[INFO]	0-1     SUCCESS              +0.69 (100.09%) [1 edit(s)]  
+2025-03-14 13:25:49,200	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), '-#include <math.h>\n+#include <cmath>')"
+2025-03-14 13:26:05,894	[DEBUG]	EXEC>  SUCCESS 0.6911377999999999
+2025-03-14 13:26:05,895	[INFO]	0-2     SUCCESS               0.69 (100.85%) [1 edit(s)]  
+2025-03-14 13:26:05,895	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), '-            if (first != blocker && value(first) == l_True){\n-                *j++ = w; continue; }\n+            if (value(first) == l_True){\n+                *j++ = w; continue; }')"
+2025-03-14 13:26:20,632	[DEBUG]	EXEC>  SUCCESS 0.6723995
+2025-03-14 13:26:20,633	[INFO]	0-3     SUCCESS              *0.67 (98.11%) [1 edit(s)]  
+2025-03-14 13:26:20,633	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), '-    double  progress = 0;\n-    double  F = 1.0 / nVars();\n-    for (int i = 0; i <= decisionLevel(); i++){\n-        int beg = i == 0 ? 0 : trail_lim[i - 1];\n-        int end = i == decisionLevel() ? trail.size() : trail_lim[i];\n-        progress += pow(F, i) * (end - beg);\n-    }\n-    return progress / nVars();\n+    double progress = 0;\n+    double F = 1.0 / nVars();\n+    double term = 1.0;\n+    for (int i = 0; i <= decisionLevel(); i++){\n+        int beg = (i == 0 ? 0 : trail_lim[i - 1]);\n+        int end = (i == decisionLevel() ? trail.size() : trail_lim[i]);\n+        progress += term * (end - beg);\n+        term *= F;\n+    }\n+    return progress / nVars();')"
+
+2025-03-14 13:26:21,962	[INFO]	0-4     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-14 13:26:21,962	[DEBUG]	patch(0-4)="LineLLMMutation(('core/Solver.cc', 3), '-                    for (int j = top; j < analyze_toclear.size(); j++)\n-                        seen[var(analyze_toclear[j])] = 0;\n+                    std::fill(seen.begin() + top, seen.begin() + analyze_toclear.size(), 0);')"
+2025-03-14 13:26:37,089	[DEBUG]	EXEC>  SUCCESS 0.69223115
+2025-03-14 13:26:37,090	[INFO]	0-5     SUCCESS               0.69 (101.01%) [1 edit(s)]  
+2025-03-14 13:26:37,090	[DEBUG]	patch(0-5)="LineLLMMutation(('core/Solver.cc', 4), '-#include <cmath>\n+#include <cmath>\n+#include <algorithm>')"
+2025-03-14 13:26:53,990	[DEBUG]	EXEC>  SUCCESS 0.7018632
+2025-03-14 13:26:53,990	[INFO]	0-6     SUCCESS               0.70 (102.41%) [1 edit(s)]  
+2025-03-14 13:26:53,990	[DEBUG]	patch(0-6)="LineLLMMutation(('core/Solver.cc', 5), '-    activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);\n+    static const double kRndInitScale = 1e-5;\n+    activity .push(rnd_init_act ? drand(random_seed) * kRndInitScale : 0);')"
+2025-03-14 13:27:10,884	[DEBUG]	EXEC>  SUCCESS 0.7012277
+2025-03-14 13:27:10,885	[INFO]	0-7     SUCCESS               0.70 (102.32%) [1 edit(s)]  
+2025-03-14 13:27:10,885	[DEBUG]	patch(0-7)="LineLLMMutation(('core/Solver.cc', 6), '-    assert(c.size() > 1);\n-    watches[~c[0]].push(Watcher(cr, c[1]));\n-    watches[~c[1]].push(Watcher(cr, c[0]));\n+    int sz = c.size();\n+    assert(sz > 1);\n+    watches[~c[0]].push(Watcher(cr, c[1]));\n+    watches[~c[1]].push(Watcher(cr, c[0]));')"
+2025-03-14 13:27:27,483	[DEBUG]	EXEC>  SUCCESS 0.6866879
+2025-03-14 13:27:27,484	[INFO]	0-8     SUCCESS               0.69 (100.20%) [1 edit(s)]  
+2025-03-14 13:27:27,484	[DEBUG]	patch(0-8)="LineLLMMutation(('core/Solver.cc', 7), '-    const Clause& c = ca[cr];\n-    assert(c.size() > 1);\n+    const Clause& c = ca[cr];\n+    int sz = c.size();\n+    assert(sz > 1);\n-    if (c.learnt()) learnts_literals -= c.size();\n-    else            clauses_literals -= c.size();\n+    if (c.learnt()) learnts_literals -= sz;\n+    else            clauses_literals -= sz;')"
+2025-03-14 13:27:44,725	[DEBUG]	EXEC>  SUCCESS 0.71830795
+2025-03-14 13:27:44,726	[INFO]	0-9     SUCCESS               0.72 (104.81%) [1 edit(s)]  
+2025-03-14 13:27:44,726	[DEBUG]	patch(0-9)="LineLLMMutation(('core/Solver.cc', 8), '-    for (i = j = 0; i < learnts.size(); i++){\n-        Clause& c = ca[learnts[i]];\n-        if (c.size() > 2 && !locked(c) && (i < learnts.size() / 2 || c.activity() < extra_lim))\n-            removeClause(learnts[i]);\n-        else\n-            learnts[j++] = learnts[i];\n-    }\n-    learnts.shrink(i - j);\n+    int lst_size = learnts.size();\n+    for (i = j = 0; i < lst_size; i++){\n+        Clause& c = ca[learnts[i]];\n+        if (c.size() > 2 && !locked(c) && (i < lst_size / 2 || c.activity() < extra_lim))\n+            removeClause(learnts[i]);\n+        else\n+            learnts[j++] = learnts[i];\n+    }\n+    learnts.shrink(lst_size - j);')"
+2025-03-14 13:28:01,231	[DEBUG]	EXEC>  SUCCESS 0.68159845
+2025-03-14 13:28:01,231	[INFO]	0-10    SUCCESS               0.68 (99.46%) [1 edit(s)]  
+2025-03-14 13:28:01,231	[DEBUG]	patch(0-10)="LineLLMMutation(('core/Solver.cc', 9), '-    while (next == var_Undef || value(next) != l_Undef || !decision[next])\n-        if (order_heap.empty()){\n-            next = var_Undef;\n-            break;\n-        }else\n-            next = order_heap.removeMin();\n+    while (!order_heap.empty()){\n+        next = order_heap.removeMin();\n+        if (value(next) == l_Undef && decision[next])\n+            break;\n+    }\n+    if (order_heap.empty() && (value(next) != l_Undef || !decision[next]))\n+        next = var_Undef;')"
+2025-03-14 13:28:02,558	[INFO]	0-11    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-14 13:28:02,558	[DEBUG]	patch(0-11)="LineLLMMutation(('core/Solver.cc', 10), '-    for (int i = trail.size()-1; i >= trail_lim[0]; i--){\n-        Var x = var(trail[i]);\n-        if (seen[x]){\n-            if (reason(x) == CRef_Undef){\n-                assert(level(x) > 0);\n-                out_conflict.push(~trail[i]);\n-            }else{\n-                Clause& c = ca[reason(x)];\n-                for (int j = 1; j < c.size(); j++)\n-                    if (level(var(c[j])) > 0)\n-                        seen[var(c[j])] = 1;\n-            }\n-            seen[x] = 0;\n-        }\n-    }\n+    for (auto it = trail.rbegin(); it != trail.rend() && (trail.size() - 1 - (it - trail.rbegin())) >= (unsigned)trail_lim[0]; ++it){\n+        Var x = var(*it);\n+        if (seen[x]){\n+            if (reason(x) == CRef_Undef){\n+                assert(level(x) > 0);\n+                out_conflict.push(~(*it));\n+            } else {\n+                Clause& c = ca[reason(x)];\n+                for (int j = 1; j < c.size(); j++)\n+                    if (level(var(c[j])) > 0)\n+                        seen[var(c[j])] = 1;\n+            }\n+            seen[x] = 0;\n+        }\n+    }')"
+2025-03-14 13:28:19,146	[DEBUG]	EXEC>  SUCCESS 0.6859509
+2025-03-14 13:28:19,147	[INFO]	0-12    SUCCESS               0.69 (100.09%) [1 edit(s)]  
+2025-03-14 13:28:19,147	[DEBUG]	patch(0-12)="LineLLMMutation(('core/Solver.cc', 11), '-    for (int i = 0; i < clauses.size(); i++)\n-        if (!satisfied(ca[clauses[i]]))\n-            cnt++;\n+    int clauseCount = clauses.size();\n+    for (int i = 0; i < clauseCount; i++)\n+        if (!satisfied(ca[clauses[i]]))\n+            cnt++;')"
+2025-03-14 13:28:21,975	[INFO]	0-13    TEST_CODE_ERROR       None (--) [1 edit(s)]  
+2025-03-14 13:28:21,976	[DEBUG]	patch(0-13)="LineLLMMutation(('core/Solver.cc', 12), '-    trail    .capacity(v+1);\n+    // Removed trail.capacity(v+1) to rely on lazy allocation for improved performance')"
+2025-03-14 13:28:23,293	[INFO]	0-14    COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-14 13:28:23,293	[DEBUG]	patch(0-14)="LineLLMMutation(('core/Solver.cc', 13), '-    vec<Var> vs;\n-    for (Var v = 0; v < nVars(); v++)\n-        if (decision[v] && value(v) == l_Undef)\n-            vs.push(v);\n-    order_heap.build(vs);\n+    vec<Var> vs;\n+    vs.reserve(nVars());\n+    for (Var v = 0; v < nVars(); v++)\n+        if (decision[v] && value(v) == l_Undef)\n+            vs.push(v);\n+    order_heap.build(vs);')"
+2025-03-14 13:28:39,907	[DEBUG]	EXEC>  SUCCESS 0.6883487
+2025-03-14 13:28:39,907	[INFO]	0-15    SUCCESS               0.69 (100.44%) [1 edit(s)]  
+2025-03-14 13:28:39,908	[DEBUG]	patch(0-15)="LineLLMMutation(('core/Solver.cc', 14), '-    if (verbosity >= 2)\n-        printf("|  Garbage collection:   %12d bytes => %12d bytes             |\\n",\n-               ca.size()*ClauseAllocator::Unit_Size, to.size()*ClauseAllocator::Unit_Size);\n+    if (verbosity >= 2) {\n+        int unitSize = ClauseAllocator::Unit_Size;\n+        printf("|  Garbage collection:   %12d bytes => %12d bytes             |\\n",\n+               ca.size()*unitSize, to.size()*unitSize);\n+    }')"
+2025-03-14 13:28:56,793	[DEBUG]	EXEC>  SUCCESS 0.7006138500000001
+2025-03-14 13:28:56,794	[INFO]	0-16    SUCCESS               0.70 (102.23%) [1 edit(s)]  
+2025-03-14 13:28:56,794	[DEBUG]	patch(0-16)="LineLLMMutation(('core/Solver.cc', 15), '-        for (int j = (p == lit_Undef) ? 0 : 1; j < c.size(); j++){\n+        int clauseSize = c.size();\n+        for (int j = (p == lit_Undef) ? 0 : 1; j < clauseSize; j++){')"
+2025-03-14 13:29:13,319	[DEBUG]	EXEC>  SUCCESS 0.6824373000000001
+2025-03-14 13:29:13,320	[INFO]	0-17    SUCCESS               0.68 (99.58%) [1 edit(s)]  
+2025-03-14 13:29:13,320	[DEBUG]	patch(0-17)="LineLLMMutation(('core/Solver.cc', 16), '-    do{\n+    do{\n+        __builtin_prefetch(&trail[index > 0 ? index - 1 : 0]);')"
+2025-03-14 13:29:29,931	[DEBUG]	EXEC>  SUCCESS 0.6868511000000002
+2025-03-14 13:29:29,931	[INFO]	0-18    SUCCESS               0.69 (100.22%) [1 edit(s)]  
+2025-03-14 13:29:29,932	[DEBUG]	patch(0-18)="LineLLMMutation(('core/Solver.cc', 17), '-    model.clear();\n-    conflict.clear();\n+    model.clear(); conflict.clear();')"
+2025-03-14 13:29:46,358	[DEBUG]	EXEC>  SUCCESS 0.67769775
+2025-03-14 13:29:46,358	[INFO]	0-19    SUCCESS               0.68 (98.89%) [1 edit(s)]  
+2025-03-14 13:29:46,358	[DEBUG]	patch(0-19)="LineLLMMutation(('core/Solver.cc', 18), '-    if (verbosity > 0)\n-        printf("Wrote %d clauses with %d variables.\\n", cnt, max);\n+    #ifdef DEBUG_PRINT\n+    if (verbosity > 0)\n+        printf("Wrote %d clauses with %d variables.\\n", cnt, max);\n+    #endif')"
+2025-03-14 13:30:03,133	[DEBUG]	EXEC>  SUCCESS 0.6954876000000001
+2025-03-14 13:30:03,133	[INFO]	0-20    SUCCESS               0.70 (101.48%) [1 edit(s)]  
+2025-03-14 13:30:03,134	[DEBUG]	patch(0-20)="LineLLMMutation(('core/Solver.cc', 19), '-    if (!ok || propagate() != CRef_Undef)\n-        return ok = false;\n+    CRef confl = propagate();\n+    if (!ok || confl != CRef_Undef)\n+        return ok = false;')"
+2025-03-14 13:30:04,134	[INFO]	Step: 20
+2025-03-14 13:30:04,134	[INFO]	Stop Steps: 100

@@ -1,0 +1,142 @@
+2025-03-17 12:38:44,312	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8952817915965275
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+llm_prob = 1.0
+warmup = 1
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 5
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.4
+offspring_mutation = 0.6
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+reflection = ALL
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-17 12:38:44,312	[DEBUG]	
+2025-03-17 12:38:44,312	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-17 12:38:44,312	[INFO]	~~~~ WARMUP ~~~~
+2025-03-17 12:38:58,706	[DEBUG]	EXEC>  SUCCESS 0.6987227500000001
+2025-03-17 12:38:58,706	[INFO]	WARM    SUCCESS               0.70 (--) [0 edit(s)]  
+2025-03-17 12:38:58,706	[INFO]	REF     SUCCESS               0.70 (--) [0 edit(s)]  
+2025-03-17 12:38:58,708	[INFO]	
+2025-03-17 12:38:58,709	[INFO]	~~~~ START ~~~~
+2025-03-17 12:39:03,025	[INFO]	0-1     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-17 12:39:03,025	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), '-if (decisionLevel() > level){\n+adjalksfjd')"
+2025-03-17 12:39:07,693	[INFO]	~~~~ END ~~~~
+2025-03-17 12:39:07,694	[INFO]	Best patch step: None
+2025-03-17 12:39:07,694	[INFO]	
+2025-03-17 12:39:07,694	[INFO]	==== REPORT ====
+2025-03-17 12:39:07,694	[INFO]	Termination: keyboard interrupt
+2025-03-17 12:39:07,694	[INFO]	Log file: /home/luke/magpie/_magpie_logs/minisat_1742215124.log

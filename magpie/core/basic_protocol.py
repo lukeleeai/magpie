@@ -43,7 +43,16 @@ class BasicProtocol:
             and int(config["search.gp"]["pop_size"]) == 1
         )
 
-        self.results_manager = ResultsManager()
+        results_file_name = "llm_agent"
+
+        if config["search.gp"]["reflection"] == "SUCCESSFUL":
+            results_file_name += "_reflection_on_successful"
+        elif config["search.gp"]["reflection"] == "ALL":
+            results_file_name += "_reflection_on_all"
+        else:
+            results_file_name += "_no_reflection"
+
+        self.results_manager = ResultsManager(results_file_name)
 
     def run(self, config):
         self.set_results_manager(config)

@@ -1,0 +1,162 @@
+2025-03-13 21:13:33,675	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 8487277943930805
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 10
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.4
+offspring_mutation = 0.6
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+reflection = 
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-13 21:13:33,707	[DEBUG]	
+2025-03-13 21:13:33,707	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-13 21:13:33,707	[INFO]	~~~~ WARMUP ~~~~
+2025-03-13 21:13:40,250	[DEBUG]	EXEC>  SUCCESS 1.5748010000000001
+2025-03-13 21:13:40,250	[INFO]	WARM    SUCCESS               1.57 (--) [0 edit(s)]  
+2025-03-13 21:13:45,221	[DEBUG]	EXEC>  SUCCESS 1.5778100000000002
+2025-03-13 21:13:45,221	[INFO]	WARM    SUCCESS               1.58 (--) [0 edit(s)]  
+2025-03-13 21:13:50,222	[DEBUG]	EXEC>  SUCCESS 1.5865566666666666
+2025-03-13 21:13:50,223	[INFO]	WARM    SUCCESS               1.59 (--) [0 edit(s)]  
+2025-03-13 21:13:50,223	[INFO]	REF     SUCCESS               1.59 (--) [0 edit(s)]  
+2025-03-13 21:13:50,225	[INFO]	
+2025-03-13 21:13:50,225	[INFO]	~~~~ START ~~~~
+2025-03-13 21:15:03,478	[DEBUG]	EXEC>  SUCCESS 1.6315100000000002
+2025-03-13 21:15:03,479	[INFO]	0-1     SUCCESS              +1.63 (102.83%) [1 edit(s)]  
+2025-03-13 21:15:03,479	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), '-            for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n-                // Try to avoid inspecting the clause:\n-                Lit blocker = i->blocker;\n-                if (value(blocker) == l_True){\n-                    *j++ = *i++; continue; }\n+            for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n+                // Try to avoid inspecting the clause:\n+                Lit blocker = i->blocker;\n+                lbool blockerVal = value(blocker);\n+                if (blockerVal == l_True){\n+                    *j++ = *i++; continue; }')"
+2025-03-13 21:15:11,166	[DEBUG]	EXEC>  SUCCESS 1.5943393333333333
+2025-03-13 21:15:11,166	[INFO]	0-2     SUCCESS              +1.59 (100.49%) [1 edit(s)]  
+2025-03-13 21:15:11,166	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), '-        while (!seen[var(trail[index--])]);\n-        p     = trail[index+1];\n+        while (!seen[var(trail[index])]) index--;\n+        p     = trail[index];\n+        index--;')"
+2025-03-13 21:15:12,509	[INFO]	0-3     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-13 21:15:12,509	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), '+double precomputed_init_activity() {\n+    static double init_val = drand(opt_random_seed) * 0.00001;\n+    return init_val;\n+}\n-    activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);\n+    activity .push(rnd_init_act ? precomputed_init_activity() : 0);')"
+2025-03-13 21:15:20,269	[DEBUG]	EXEC>  SUCCESS 1.62603
+2025-03-13 21:15:20,270	[INFO]	0-4     SUCCESS               1.63 (102.49%) [1 edit(s)]  
+2025-03-13 21:15:20,270	[DEBUG]	patch(0-4)="LineLLMMutation(('core/Solver.cc', 3), '-    return next == var_Undef ? lit_Undef : mkLit(next, rnd_pol ? drand(random_seed) < 0.5 : polarity[next]);\n+    bool sign = rnd_pol ? (drand(random_seed) < 0.5) : polarity[next];\n+    return next == var_Undef ? lit_Undef : mkLit(next, sign);')"
+2025-03-13 21:15:28,053	[DEBUG]	EXEC>  SUCCESS 1.628605
+2025-03-13 21:15:28,054	[INFO]	0-5     SUCCESS               1.63 (102.65%) [1 edit(s)]  
+2025-03-13 21:15:28,054	[DEBUG]	patch(0-5)="LineLLMMutation(('core/Solver.cc', 4), '-            for (int k = 2; k < c.size(); k++)\n-                if (value(c[k]) != l_False){\n-                    c[1] = c[k]; c[k] = false_lit;\n-                    watches[~c[1]].push(w);\n-                    goto NextClause; }\n+            {\n+                bool found = false;\n+                for (int k = 2; k < c.size(); k++){\n+                    if (value(c[k]) != l_False){\n+                        c[1] = c[k];\n+                        c[k] = false_lit;\n+                        watches[~c[1]].push(w);\n+                        found = true;\n+                        break;\n+                    }\n+                }\n+                if(found) goto NextClause;\n+            }')"
+2025-03-13 21:15:29,391	[INFO]	0-6     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-13 21:15:29,391	[DEBUG]	patch(0-6)="LineLLMMutation(('core/Solver.cc', 5), '-                    for (int j = top; j < analyze_toclear.size(); j++)\n-                        seen[var(analyze_toclear[j])] = 0;\n-                    analyze_toclear.shrink(analyze_toclear.size() - top);\n-                    return false;\n+                    std::fill(seen.get() + top, seen.get() + analyze_toclear.size(), 0);\n+                    analyze_toclear.shrink(analyze_toclear.size() - top);\n+                    return false;')"
+2025-03-13 21:15:30,798	[INFO]	0-7     COMPILE_CODE_ERROR    None (--) [1 edit(s)]  
+2025-03-13 21:15:30,798	[DEBUG]	patch(0-7)="LineLLMMutation(('core/Solver.cc', 6), '-    for (i = j = 0; i < learnts.size(); i++){\n-        Clause& c = ca[learnts[i]];\n-        if (c.size() > 2 && !locked(c) && (i < learnts.size() / 2 || c.activity() < extra_lim))\n-            removeClause(learnts[i]);\n-        else\n-            learnts[j++] = learnts[i];\n-    }\n-    learnts.shrink(i - j);\n+    auto new_end = std::partition(learnts.begin(), learnts.end(), [&](const CRef cr){\n+         Clause& c = ca[cr];\n+         if(c.size() > 2 && !locked(c) && (c.activity() < extra_lim)){\n+             removeClause(cr);\n+             return false;\n+         }\n+         return true;\n+    });\n+    learnts.shrink(learnts.size() - std::distance(new_end, learnts.end()));')"
+2025-03-13 21:15:31,364	[INFO]	~~~~ END ~~~~
+2025-03-13 21:15:31,364	[INFO]	Best patch step: None
+2025-03-13 21:15:31,365	[INFO]	
+2025-03-13 21:15:31,365	[INFO]	==== REPORT ====
+2025-03-13 21:15:31,365	[INFO]	Termination: keyboard interrupt
+2025-03-13 21:15:31,365	[INFO]	Log file: /home/luke/magpie/_magpie_logs/minisat_1741900413.log

@@ -6,6 +6,7 @@ import json
 import os
 import re
 import time
+from glob import glob
 
 import magpie.core
 import magpie.utils
@@ -55,7 +56,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         self.config["uniform_rate"] = float(sec["uniform_rate"])
         self.dataset = config["software"]["path"].split("/")[-2]
         self.id = config["software"]["path"].split("/")[-1]
-        # self.llm_type = sec["llm_type"]
+        self.config["reflection"] = sec["reflection"]
 
         print("Dataset: ", self.dataset)
         print("ID: ", self.id)
@@ -149,17 +150,24 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
             local_best_fitness = None
             mutations = self.mutate_original(self.config["pop_size"])
 
+            self.log_path = f"/home/luke/magpie/logs/codes/reflection_on_{self.config['reflection']}"
+            num_logs = len(glob(f"{self.log_path}*"))
+            self.log_path = f"{self.log_path}_{num_logs+1}"
+
+            os.makedirs(self.log_path, exist_ok=True)
+
             for variant in mutations:
-                # print("Variant name: ", variant.name)
                 run = self.evaluate_variant(variant, force=True)
                 accept = best = False
                 if run.status == "SUCCESS":
                     variant.fitness = run.fitness
                     self.add_node_history(variant)
                     code = variant.get_patched_code()
+                    print("Success code: ", code[:100])
                     name = variant.name
-                    with open(f"/home/luke/magpie/logs/codes/with_crossover/{variant.fitness}_{name}.txt", "w") as f:
+                    with open(f"{self.log_path}/{variant.fitness}_{name}.txt", "w") as f:
                         f.write(code)
+                    print("SUccess code2: ", code[:100])
                     if self.dominates(run.fitness, local_best_fitness):
                         local_best_fitness = run.fitness
                         accept = True
@@ -174,12 +182,32 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                             best = True
                 else:
                     code = variant.get_patched_code()
+                    print("Failed code: ", code[:100])
                     name = variant.name
-                    with open(f"/home/luke/magpie/logs/codes/with_crossover/failed_{name}.txt", "w") as f:
+                    with open(f"{self.log_path}/failed_{name}.txt", "w") as f:
                         f.write(code)
+                    print("Failed code2: ", code[:100])
 
-                # reflection = self.llm_reflection.reflect(variant, run.status)
-                # self.reflections.append(reflection)
+                if self.config["reflection"]:
+                    print("Passing the following code to reflection: ", code[:100])
+                    fitness = run.fitness if run.status == "SUCCESS" else -1
+                    is_successful = run.status == "SUCCESS" 
+                    error_message = None if is_successful else run.last_exec.stderr.decode().split("error: ")[-1]
+                    reflection = self.llm_reflection.reflect(variant, code, run.status, fitness, error_message)
+                    variant_operation_type = variant.patch.edits[0].__class__.__name__
+                    fitness_improvement = run.fitness - self.report["reference_fitness"] if is_successful else None
+                    new_reflections = {
+                        "operation_type": variant_operation_type,
+                        "reflection": reflection,
+                        "is_successful": is_successful,
+                        "fitness_improvement": fitness_improvement,
+                    }
+                    self.reflections.append(new_reflections)
+
+                    # Save reflection to log file
+                    with open(f"{self.log_path}/reflections.txt", "a") as f:
+                        f.write(f"Operation: {variant_operation_type}, Success: {run.status == 'SUCCESS'}\n")
+                        f.write(f"Reflection: {reflection}\n\n")
 
                 self.hook_evaluation(variant, run, accept, best)
                 pop[variant] = run
@@ -261,7 +289,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                         variant.fitness = run.fitness
                         code = variant.get_patched_code()
                         name = variant.name
-                        with open(f"/home/luke/magpie/logs/codes/with_crossover/{variant.fitness}_{name}.txt", "w") as f:
+                        with open(f"{self.log_path}/{variant.fitness}_{name}.txt", "w") as f:
                             f.write(code)
                         self.add_node_history(variant)
                         if self.dominates(run.fitness, local_best_fitness):
@@ -279,13 +307,27 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     else:
                         code = variant.get_patched_code()
                         name = variant.name
-                        with open(f"/home/luke/magpie/logs/codes/with_crossover/failed_{name}.txt", "w") as f:
+                        with open(f"{self.log_path}/failed_{name}.txt", "w") as f:
                             f.write(code)
 
-                    # reflection = self.llm_reflection.reflect(
-                    #     variant, run.status
-                    # )
-                    # self.reflections.append(reflection)
+                    if self.config["reflection"]:
+                        fitness = run.fitness if run.status == "SUCCESS" else -1
+                        error_message = None if run.status == "SUCCESS" else run.last_exec.stderr.decode().split("error: ")[-1]
+                        reflection = self.llm_reflection.reflect(variant, code, run.status, fitness, error_message)
+                        variant_operation_type = variant.patch.edits[0].__class__.__name__
+                        is_successful = run.status == "SUCCESS"
+                        fitness_improvement = run.fitness - self.report["reference_fitness"] if is_successful else None
+                        self.reflections.append({
+                            "operation_type": variant_operation_type,
+                            "reflection": reflection,
+                            "is_successful": is_successful,
+                            "fitness_improvement": fitness_improvement,
+                        })
+                        
+                        # Save reflection to log file
+                        with open(f"{self.log_path}/reflections.txt", "a") as f:
+                            f.write(f"Operation: {variant_operation_type}, Success: {run.status == 'SUCCESS'}\n")
+                            f.write(f"Reflection: {reflection}\n\n")
 
                     self.hook_evaluation(variant, run, accept, best)
                     pop[variant] = run
@@ -363,18 +405,39 @@ class GeneticProgrammingLLM(GeneticProgramming):
         parent_code = variant.get_patched_code()
         parent_fitness = variant.fitness or self.report["reference_fitness"]
 
+        if self.config["reflection"] == "RECENT_SUCCESSFUL":
+            reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_MUTATION"][-5:]
+        elif self.config["reflection"] == "MOST_SUCCESSFUL":
+            # top 5
+            reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_MUTATION"]
+            reflections = sorted(reflections, key=lambda x: x["fitness_improvement"], reverse=True)[:5]
+        elif self.config["reflection"] == "ALL":
+            # top 5 most successful
+            no_error_reflections = [refl for refl in self.reflections if refl["operation_type"] == "LLM_MUTATION"]
+            top_5_improved_reflections = sorted(no_error_reflections, key=lambda x: x["fitness_improvement"], reverse=True)[:5]
+            # top 5 least successful
+            least_successful_reflections = [refl for refl in self.reflections if refl["operation_type"] == "LLM_MUTATION"]
+            top_5_degraded_reflections = sorted(least_successful_reflections, key=lambda x: x["fitness_improvement"], reverse=False)[:5]
+            # random unsuccessful
+            random_error_reflections = [refl for refl in self.reflections if not refl["is_successful"] and refl["operation_type"] == "LLM_MUTATION"]
+            random.shuffle(random_error_reflections)
+            random_error_reflections = random_error_reflections[:5]
+            reflections = top_5_improved_reflections + top_5_degraded_reflections + random_error_reflections
+        elif self.config["reflection"] == "NONE":
+            reflections = []
+        else:
+            raise ValueError(f"Invalid reflection type: {self.config['reflection']}")
+
         strategies, code_changes = self.llm_mutator.mutate(
             source_code=parent_code,
             target_code=parent_code,
             target_fitness=parent_fitness,
             num_offsprings=num_mutations,
-            reflections=self.reflections,
+            reflections=reflections,
         )
 
         for strategy, mutation_code_changes in zip(strategies, code_changes):
             print("Mutating")
-            # print("\n===Mutating variant: ", parent_name, "===")
-            # print("Mutation: ", mutation)
             new_mutation = self.create_edit(
                 self.software.noop_variant,
                 operation_type=LLM_MUTATION,
@@ -386,6 +449,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
             new_variant.set_parents(
                 MUTATION, [parent_name], [parent_code], [parent_fitness]
             )
+            # print("Variant code: ", new_variant.get_patched_code())
             new_mutations.append(new_variant)
 
             print("New mutation: ", new_variant.name, "\n\n")
@@ -402,13 +466,24 @@ class GeneticProgrammingLLM(GeneticProgramming):
             parent.fitness or self.report["reference_fitness"]
             for parent in parents
         ]
-        # codes_and_fitnesses = format_crossover_parents(
-        #     parent_codes, parent_fitnesses
-        # )
         original_source_code = self.software.noop_variant.get_patched_code()
+
+        if self.config["reflection"] == "RECENT_SUCCESSFUL":
+            reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_CROSSOVER"][-5:]
+        elif self.config["reflection"] == "MOST_SUCCESSFUL":
+            reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_CROSSOVER"]
+            reflections = sorted(reflections, key=lambda x: x["fitness_improvement"], reverse=True)[:5]
+        elif self.config["reflection"] == "ALL":
+            reflections = []
+        elif self.config["reflection"] == "NONE":
+            reflections = []
+        else:
+            raise ValueError(f"Invalid reflection type: {self.config['reflection']}")
+
+        print("Num reflections: ", len(reflections))
         
         strategies, code_changes = self.llm_crossover.crossover(
-            parent_codes, parent_fitnesses, num_crossovers, original_source_code
+            parent_codes, parent_fitnesses, num_crossovers, original_source_code, reflections
         )
 
         for strategy, code_change in zip(strategies, code_changes):

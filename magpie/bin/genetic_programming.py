@@ -13,6 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('--scenario', type=pathlib.Path, required=True)
     parser.add_argument('--algo', type=str)
     parser.add_argument('--seed', type=int)
+    parser.add_argument("--reflection", type=str, default="")  # SUCCESSFUL, ALL, ""
     args = parser.parse_args()
 
     # read scenario file
@@ -32,6 +33,11 @@ if __name__ == '__main__':
     else:
         config['search']['algorithm'] = 'GeneticProgrammingUniformConcat'
         algo = magpie.algos.GeneticProgrammingUniformConcat
+
+    # setup reflection
+    config["search.gp"]["reflection"] = args.reflection
+    print("Reflection: ", config["search.gp"]["reflection"])
+
 
     # setup protocol
     magpie.core.setup(config)

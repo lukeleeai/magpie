@@ -57,102 +57,75 @@ class LineModel(AbstractLineModel):
 
         original_code = self.dump()
         original_code_lines = original_code.split("\n")
-        patched_code = ""
+        
+        # Parse the target code into lines
+        target_lines = original_code.strip().split('\n')
 
-        for code_change in code_changes:
-            print("\030[32mcode_change: ", code_change, "\033[0m")
-            start_line_code = " ".join(code_change["start_line_code"].split())
-            end_line_code = " ".join(code_change["end_line_code"].split())
+        # Group changes
+        changes = []
+        current_removals = []
+        current_additions = []
 
-            print("Searching for start line code: ", start_line_code)
-            start_line_code_matching_indices = [
-                i
-                for i, line in enumerate(original_code_lines)
-                if " ".join(line.split()) == start_line_code
-            ]
+        # Process each line in the code_change
+        for line in code_changes.strip().split('\n'):
+            if not line:
+                continue
+                
+            # Use simple startswith for detecting markers
+            if line.startswith('-'):
+                # If we have collected removals and additions, and now see a new removal,
+                # store the previous change group and start a new one
+                if current_removals and current_additions:
+                    changes.append((current_removals.copy(), current_additions.copy()))
+                    current_additions = []
+                    current_removals = []
+                
+                # Extract the content after the '-' but strip it for comparison
+                content = line[1:].strip()
+                current_removals.append(content)
+            
+            elif line.startswith('+'):
+                # Extract the content after the '+' but preserve the whitespace
+                content = line[1:]  # Keep the original spacing
+                current_additions.append(content)
 
-            if len(start_line_code_matching_indices) > 1:
-                # find the index closest to code_change["start_line_number"]
-                start_line_code_matching_index = min(
-                    start_line_code_matching_indices,
-                    key=lambda x: abs(
-                        x - int(code_change["start_line_number"])
-                    ),
-                )
-            elif len(start_line_code_matching_indices) == 1:
-                start_line_code_matching_index = (
-                    start_line_code_matching_indices[0]
-                )
-            else:
-                patched_code = ""
-                self.init_contents(patched_code)
-                return False
+        # Add the last change group if it exists
+        if current_removals or current_additions:
+            changes.append((current_removals.copy(), current_additions.copy()))
 
-            print("Searching for end line code: ", end_line_code)
-            end_line_code_matching_indices = [
-                i
-                for i, line in enumerate(original_code_lines)
-                if " ".join(line.split()) == end_line_code
-            ]
+        # Apply the changes to the target code
+        result_lines = []
+        i = 0
 
-            if len(end_line_code_matching_indices) > 1:
-                # find the index closest to code_change["end_line_number"]
-                end_line_code_matching_index = min(
-                    end_line_code_matching_indices,
-                    key=lambda x: abs(x - int(code_change["end_line_number"])),
-                )
-            elif len(end_line_code_matching_indices) == 1:
-                end_line_code_matching_index = end_line_code_matching_indices[
-                    0
-                ]
-            else:
-                patched_code = ""
-                self.init_contents(patched_code)
-                return False
+        while i < len(target_lines):
+            matched = False
+            
+            for removals, additions in changes:
+                # Check if we have enough lines left to match
+                if i + len(removals) <= len(target_lines):
+                    # Use regex to match each line, ignoring whitespace differences
+                    match = True
+                    for j, removal in enumerate(removals):
+                        # Create a pattern that matches the line content, ignoring whitespace
+                        pattern = r'^\s*' + re.escape(removal) + r'\s*$'
+                        if not re.match(pattern, target_lines[i + j]):
+                            match = False
+                            break
+                    
+                    if match:
+                        # Add the replacement lines with their original spacing
+                        result_lines.extend(additions)
+                        # Skip the removed lines
+                        i += len(removals)
+                        matched = True
+                        break
+            
+            if not matched:
+                result_lines.append(target_lines[i])
+                i += 1
 
-            # Sometimes, LLM fails to consider the ending bracket.
-            if len(code_change["new_code"].strip()) > 1 and end_line_code_matching_index < len(original_code_lines) - 1:
-                print("The next line of the ending line: ", original_code_lines[end_line_code_matching_index+1].strip())
-                print("The last line of the new code: ", code_change["new_code"].split()[-1].strip())
-                if " ".join(original_code_lines[end_line_code_matching_index+1].strip()) == "}" and " ".join(code_change["new_code"].split()[-1].strip()) == "}":
-                    end_line_code_matching_index += 1
-
-            if (
-                len(start_line_code_matching_indices) == 0
-                or len(end_line_code_matching_indices) == 0
-            ):
-                raise ValueError
-
-            patched_code = "\n".join(original_code_lines[:start_line_code_matching_index])
-            patched_code += code_change["new_code"]
-            patched_code += "\n".join(original_code_lines[
-                end_line_code_matching_index + 1 :
-            ])
-
-            print(
-                "\033[33m"
-                + "\n".join(
-                    original_code_lines[
-                        start_line_code_matching_index
-                        - 5 : start_line_code_matching_index
-                    ]
-                )
-                + "\033[0m"
-            )
-            print("\033[32m" + code_change["new_code"] + "\033[0m")
-            print(
-                "\033[33m"
-                + "\n".join(
-                    original_code_lines[
-                        end_line_code_matching_index
-                        + 1 : end_line_code_matching_index
-                        + 5
-                    ]
-                )
-                + "\033[0m"
-            )
-
-            original_code_lines = patched_code.split("\n")
+        patched_code = '\n'.join(result_lines)
+        print("Patched code length: ", len(patched_code))
 
         self.init_contents(patched_code)
         return True

@@ -1,0 +1,153 @@
+2025-03-17 12:27:49,971	[DEBUG]	==== CONFIG ====
+[magpie]
+import = 
+seed = 6862185763610494
+log_dir = _magpie_logs
+work_dir = _magpie_work
+local_original_copy = True
+local_original_name = __original__
+output_encoding = ascii
+edit_retries = 10
+default_timeout = 100
+default_lengthout = 1e6
+diff_method = unified
+trust_local_filesystem = True
+run_timeout = 100
+
+[magpie.log]
+color_output = True
+format_info = {counter:<7} {status:<20} {best}{fitness} ({ratio}) [{size}] {cached} {log}
+format_debug = patch({counter})="{patch}"{diffifbest}
+format_fitness = {:.2f}
+format_ratio = {:.2%%}
+format_patchif = 
+	 --> {patch}
+format_diffif = 
+	{diff}
+
+[software]
+path = dataset/minisat
+target_files = 
+	core/Solver.cc
+software = BasicSoftware
+model_rules = 
+	*.params : ParamFileConfigModel
+	*.xml : SrcmlModel
+	* : LineModel
+model_config = 
+	*.params : [paramconfig]
+	*.xml : [srcml]
+init_cmd = bash init.sh
+init_timeout = 60
+init_lengthout = -1
+setup_cmd = bash compile.sh
+setup_timeout = 
+setup_lengthout = 
+compile_cmd = bash compile.sh
+compile_timeout = 
+compile_lengthout = 
+test_cmd = bash test.sh
+test_timeout = 
+test_lengthout = 
+run_cmd = bash run_fixed.sh
+run_timeout = 
+run_lengthout = 
+batch_timeout = 
+batch_lengthout = 
+batch_bin_fitness_strategy = aggregate
+batch_fitness_strategy = sum
+fitness = time
+retries = 1
+
+[srcml]
+rename = 
+	stmt: break continue decl_stmt do expr_stmt for goto if return switch while
+	number: literal_number
+focus = block stmt operator_comp operator_arith number
+internodes = block
+process_pseudo_blocks = True
+process_literals = True
+process_operators = True
+
+[paramconfig]
+timing = test run
+cli_prefix = --
+cli_glue = =
+cli_boolean = show
+cli_boolean_prefix_true = 
+cli_boolean_prefix_false = no-
+cli_none = hide
+silent_prefix = @
+silent_suffix = $
+
+[search]
+protocol = BasicProtocol
+algorithm = GeneticProgrammingLLM
+possible_edits = 
+	LineLLMMutation
+	LineLLMCrossover
+llm_prob = 1.0
+warmup = 3
+warmup_strategy = last
+max_steps = 100
+max_time = 20000
+target_fitness = 
+cache_maxsize = 100
+cache_keep = 0.2
+batch_instances = 
+batch_shuffle = True
+batch_bin_shuffle = False
+batch_sample_size = 1
+
+[search.ls]
+delete_prob = 0.5
+max_neighbours = 
+when_trapped = continue
+accept_fail = False
+tabu_length = 10
+
+[search.gp]
+pop_size = 5
+delete_prob = 0.0
+offspring_elitism = 0.1
+offspring_crossover = 0.4
+offspring_mutation = 0.6
+uniform_rate = 0.5
+batch_reset = False
+llm_type = baseline
+reflection = ALL
+
+[search.minify]
+do_cleanup = True
+do_rebuild = True
+do_simplify = True
+round_robin_limit = 3
+
+
+2025-03-17 12:27:49,971	[DEBUG]	
+2025-03-17 12:27:49,971	[INFO]	==== SEARCH: GeneticProgrammingLLM ====
+2025-03-17 12:27:49,971	[INFO]	~~~~ WARMUP ~~~~
+2025-03-17 12:28:03,835	[DEBUG]	EXEC>  SUCCESS 0.6705355
+2025-03-17 12:28:03,836	[INFO]	WARM    SUCCESS               0.67 (--) [0 edit(s)]  
+2025-03-17 12:28:17,759	[DEBUG]	EXEC>  SUCCESS 0.682264
+2025-03-17 12:28:17,759	[INFO]	WARM    SUCCESS               0.68 (--) [0 edit(s)]  
+2025-03-17 12:28:31,704	[DEBUG]	EXEC>  SUCCESS 0.6831859499999999
+2025-03-17 12:28:31,704	[INFO]	WARM    SUCCESS               0.68 (--) [0 edit(s)]  
+2025-03-17 12:28:31,704	[INFO]	REF     SUCCESS               0.68 (--) [0 edit(s)]  
+2025-03-17 12:28:31,706	[INFO]	
+2025-03-17 12:28:31,706	[INFO]	~~~~ START ~~~~
+2025-03-17 12:29:20,798	[DEBUG]	EXEC>  SUCCESS 0.70209575
+2025-03-17 12:29:26,427	[INFO]	0-1     SUCCESS              +0.70 (102.77%) [1 edit(s)]  
+2025-03-17 12:29:26,427	[DEBUG]	patch(0-1)="LineLLMMutation(('core/Solver.cc', 0), '-    for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n-        // Try to avoid inspecting the clause:\n-        Lit blocker = i->blocker;\n-        if (value(blocker) == l_True){\n-            *j++ = *i++; continue; }\n+    for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){\n+        const Lit blocker = i->blocker;\n+        const lbool blocker_val = value(blocker);\n+        if (blocker_val == l_True){\n+            *j++ = *i++;\n+            continue;\n+        }')"
+2025-03-17 12:29:41,275	[DEBUG]	EXEC>  SUCCESS 0.6783834500000001
+2025-03-17 12:29:48,343	[INFO]	0-2     SUCCESS              *0.68 (99.30%) [1 edit(s)]  
+2025-03-17 12:29:48,343	[DEBUG]	patch(0-2)="LineLLMMutation(('core/Solver.cc', 1), '-        for (int j = (p == lit_Undef) ? 0 : 1; j < c.size(); j++){\n-            Lit q = c[j];\n-            if (!seen[var(q)] && level(var(q)) > 0){\n-                varBumpActivity(var(q));\n-                seen[var(q)] = 1;\n-                if (level(var(q)) >= decisionLevel())\n-                    pathC++;\n-                else\n-                    out_learnt.push(q);\n-            }\n-        }\n+        for (int j = (p == lit_Undef) ? 0 : 1; j < c.size(); j++){\n+            Lit q = c[j];\n+            int v = var(q);\n+            int lvl = level(v);\n+            if (!seen[v] && lvl > 0){\n+                varBumpActivity(v);\n+                seen[v] = 1;\n+                if (lvl >= decisionLevel())\n+                    pathC++;\n+                else\n+                    out_learnt.push(q);\n+            }\n+        }')"
+
+2025-03-17 12:30:04,924	[DEBUG]	EXEC>  SUCCESS 0.6860145
+2025-03-17 12:30:12,379	[INFO]	0-3     SUCCESS               0.69 (100.41%) [1 edit(s)]  
+2025-03-17 12:30:12,379	[DEBUG]	patch(0-3)="LineLLMMutation(('core/Solver.cc', 2), '-    activity .push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);\n+    activity .push(rnd_init_act ? drand(random_seed) * 1e-5 : 0);')"
+2025-03-17 12:30:29,120	[DEBUG]	EXEC>  SUCCESS 0.69415625
+2025-03-17 12:30:40,030	[INFO]	0-4     SUCCESS               0.69 (101.61%) [1 edit(s)]  
+2025-03-17 12:30:40,030	[DEBUG]	patch(0-4)="LineLLMMutation(('core/Solver.cc', 3), '-    if (locked(c)) vardata[var(c[0])].reason = CRef_Undef;\n+    if (locked(c)) {\n+        Var v = var(c[0]);\n+        vardata[v].reason = CRef_Undef;\n+    }')"
+2025-03-17 12:30:41,360	[INFO]	~~~~ END ~~~~
+2025-03-17 12:30:41,360	[INFO]	Best patch step: 1

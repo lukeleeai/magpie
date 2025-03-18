@@ -5,8 +5,14 @@ num_exp=1
 num_data=1
 
 # python magpie genetic_programming --scenario "dataset/minisat/scenario.txt"
-python magpie genetic_programming --scenario "dataset/minisat/_magpie/scenario_sbco.txt"
+# python magpie genetic_programming --scenario "dataset/minisat/_magpie/scenario_sbco.txt"
+# python magpie genetic_programming --scenario "dataset/minisat/_magpie/scenario_sbco.txt"
 
+for i in {1..3}; do
+    python magpie genetic_programming --scenario "dataset/minisat/_magpie/scenario_sbco.txt" --reflection "ALL"
+    python magpie genetic_programming --scenario "dataset/minisat/_magpie/scenario_sbco.txt" --reflection "MOST_SUCCESSFUL"
+    python magpie genetic_programming --scenario "dataset/minisat/_magpie/scenario_sbco.txt" --reflection "NONE"
+done
 # # Run train dataset
 # dataset_name="train"
 # # python dataset/automate.py --dataset_name $dataset_name --num_data $num_data

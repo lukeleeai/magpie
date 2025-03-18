@@ -444,60 +444,69 @@ void Solver::uncheckedEnqueue(Lit p, CRef from)
 |    otherwise CRef_Undef.
 |
 |    Post-conditions:
-|      * the propagation queue is empty, even if there was a conflict.CRef Solver::propagate() {
-    CRef confl = CRef_Undef;
-    int num_props = 0;
-    while (qhead < trail.size()) {
-        Lit p = trail[qhead++]; 
-        vec<Watcher>& ws = watches[p];
-        Watcher* i = (Watcher*)ws;
-        Watcher* j = i;
-        Watcher* end = i + ws.size();
-        while (i != end) {
+|      * the propagation queue is empty, even if there was a conflict.
+|________________________________________________________________________________________________@*/
+CRef Solver::propagate()
+{
+    CRef    confl     = CRef_Undef;
+    int     num_props = 0;
+    watches.cleanAll();
+
+    while (qhead < trail.size()){
+        Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
+        vec<Watcher>&  ws  = watches[p];
+        Watcher        *i, *j, *end;
+        num_props++;
+
+        for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
+            // Try to avoid inspecting the clause:
             Lit blocker = i->blocker;
-            if (value(blocker) == l_True) {
-                *j++ = *i++;
-                continue;
-            }
-            CRef cr = i->cref;
-            Clause& c = ca[cr];
-            Lit false_lit = ~p;
-            if (c[0] == false_lit) {
-                c[0] = c[1];
-                c[1] = false_lit;
-            }
-            Lit first = c[0];
-            Watcher w = Watcher(cr, first);
-            if (first != blocker && value(first) == l_True) {
-                *j++ = w;
-                continue;
-            }
-            for (int k = 2; k < c.size(); k++) {
-                if (value(c[k]) != l_False) {
-                    c[1] = c[k];
-                    c[k] = false_lit;
+            if (value(blocker) == l_True){
+                *j++ = *i++; continue; }
+
+            // Make sure the false literal is data[1]:
+            CRef     cr        = i->cref;
+            Clause&  c         = ca[cr];
+            Lit      false_lit = ~p;
+            if (c[0] == false_lit)
+                c[0] = c[1], c[1] = false_lit;
+            assert(c[1] == false_lit);
+            i++;
+
+            // If 0th watch is true, then clause is already satisfied.
+            Lit     first = c[0];
+            Watcher w     = Watcher(cr, first);
+            if (first != blocker && value(first) == l_True){
+                *j++ = w; continue; }
+
+            // Look for new watch:
+            for (int k = 2; k < c.size(); k++)
+                if (value(c[k]) != l_False){
+                    c[1] = c[k]; c[k] = false_lit;
                     watches[~c[1]].push(w);
-                    goto NextClause;
-                }
-            }
+                    goto NextClause; }
+
+            // Did not find watch -- clause is unit under assignment:
             *j++ = w;
-            if (value(first) == l_False) {
+            if (value(first) == l_False){
                 confl = cr;
                 qhead = trail.size();
+                // Copy the remaining watches:
                 while (i < end)
                     *j++ = *i++;
-            } else {
+            }else
                 uncheckedEnqueue(first, cr);
-            }
-        NextClause:
-            i++;
+
+        NextClause:;
         }
         ws.shrink(i - j);
     }
     propagations += num_props;
     simpDB_props -= num_props;
+
     return confl;
 }
+
 
 /*_________________________________________________________________________________________________
 |
@@ -853,8 +862,13 @@ void Solver::toDimacs(FILE* f, const vec<Lit>& assumps)
         fprintf(f, "%s%d 0\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max)+1);
     }
 
-    for (int i = 0; i < clauses.size(); i++)
-        toDimacs(f, ca[clauses[i]], map, max);
+    std::stringstream ss;
+    for (int i = 0; i < clauses.size(); i++){
+        std::ostringstream oss;
+        toDimacs(oss, ca[clauses[i]], map, max);
+        ss << oss.str();
+    }
+    fputs(ss.str().c_str(), f);
 
     if (verbosity > 0)
         printf("Wrote %d clauses with %d variables.\n", cnt, max);
@@ -912,4 +926,3 @@ void Solver::garbageCollect()
                ca.size()*ClauseAllocator::Unit_Size, to.size()*ClauseAllocator::Unit_Size);
     to.moveTo(ca);
 }
-
