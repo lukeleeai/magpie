@@ -422,7 +422,7 @@ class BasicSoftware(AbstractSoftware):
                         self.process_run_exec(run_result, exec_result)
                     self.process_batch_single(run_result, inst)
                     if run_result.status != "SUCCESS":
-                        print("Run Exec Result: ", exec_result)
+                        # print("Run Exec Result: ", exec_result)
                         run_result.status = f"RUN_{run_result.status}"
                         break
                     if batch_timeout:
@@ -525,20 +525,48 @@ class BasicSoftware(AbstractSoftware):
         if True:
             stdout = exec_result.stdout.decode(magpie.settings.output_encoding)
             try:
-                # Extract CPU times from the output
-                cpu_times = []
-                for line in stdout.splitlines():
-                    if "CPU time" in line:
-                        time_str = line.split(":")[-1].strip().split()[0]
-                        cpu_times.append(float(time_str))
-                
-                if cpu_times:
-                    run_result.fitness = sum(cpu_times) / len(cpu_times)
+                if "sat4j" in stdout:
+                    pattern = r"Wall clock time (\d+\.\d+)s"
+                    times = re.findall(pattern, stdout)
+                    total_time = sum(float(time) for time in times)
+                    run_result.fitness = total_time
+                elif "RandomForest" in stdout:
+                    # Extract times from the RandomForest output
+                    build_times = []
+                    test_times = []
+                    cv_times = []
+                    
+                    for line in stdout.splitlines():
+                        if "Time taken to build model:" in line:
+                            time_str = line.split(":")[-1].strip().split()[0]
+                            build_times.append(float(time_str))
+                        elif "Time taken to test model on training data:" in line:
+                            time_str = line.split(":")[-1].strip().split()[0]
+                            test_times.append(float(time_str))
+                        elif "Time taken to perform cross-validation:" in line:
+                            time_str = line.split(":")[-1].strip().split()[0]
+                            cv_times.append(float(time_str))
+                    
+                    # Calculate total time across all runs
+                    total_time = sum(build_times) + sum(test_times) + sum(cv_times)
+                    run_result.fitness = total_time
+                    print("Total time: ", total_time)
                 else:
-                    run_result.status = "PARSE_ERROR"
+                    # Extract CPU times from the output
+                    cpu_times = []
+                    for line in stdout.splitlines():
+                        if "CPU time" in line:
+                            time_str = line.split(":")[-1].strip().split()[0]
+                            cpu_times.append(float(time_str))
+                    
+                    if cpu_times:
+                        run_result.fitness = sum(cpu_times) / len(cpu_times)
+                    else:
+                        run_result.status = "PARSE_ERROR"
                     
             except ValueError:
-                print("Failed to parse stdout:", stdout)
+                # print("Failed to parse stdout:", stdout)
+                print("config dict: ", self.config)
                 run_result.status = "PARSE_ERROR"
 
         # if "[software] fitness" is "output", we check STDOUT for the string "MAGPIE_FITNESS:"

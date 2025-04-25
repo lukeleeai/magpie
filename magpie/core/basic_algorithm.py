@@ -295,7 +295,11 @@ class BasicAlgorithm(AbstractAlgorithm):
             self.stats["wallclock_end"] - self.stats["wallclock_start"]
         )
         if self.report["best_patch"]:
-            self.report["diff"] = self.report["best_patch"].diff
+            try:
+                self.report["diff"] = self.report["best_patch"].diff
+            except Exception as e:
+                variant = Variant(self.software, self.report['best_patch'])
+                self.report["diff"] = variant.diff
         msg = "~~~~ END ~~~~"
         if magpie.settings.color_output:
             msg = f"\033[1m{msg}\033[0m"

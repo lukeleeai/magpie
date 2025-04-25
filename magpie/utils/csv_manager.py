@@ -78,11 +78,13 @@ class ResultsManager(CSVManager):
         filename: str = "llm_eoc_ic_codestral",
     ):
         file_path = os.path.join(logs_dir, filename + ".csv")
+        print("LOG FILE PATH: ", file_path)
         columns = [
             "id",
-            "llm_prob",
             "reference_time",
             "new_code_time",
+            "best_fitness",
+            "step",
             "new_code",
         ]
         super().__init__(file_path, "id", columns)
@@ -90,15 +92,17 @@ class ResultsManager(CSVManager):
     def add_result(
         self,
         id: str,
-        llm_prob: float,
         new_code: str,
         new_code_time: float,
         reference_time: float,
+        best_fitness: float,
+        step: int,
     ):
         data = {
-            "llm_prob": [llm_prob],
             "reference_time": [reference_time],
             "new_code_time": [new_code_time],
+            "best_fitness": [best_fitness],
+            "step": [step],
             "new_code": [new_code],
         }
         self.add_entry(id, data)

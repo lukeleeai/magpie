@@ -17,9 +17,9 @@ from magpie.utils.constants import (
     MUTATION,
     CROSSOVER,
 )
-
 from magpie.utils.convert import (
     convert_to_prompt_data,
+    get_log_dir,
 )
 from magpie.utils.csv_manager import PromptsDataset
 
@@ -75,41 +75,140 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         step = self.stats["steps"] % self.config["pop_size"] + 1
         return f"{gen}-{step}"
 
-    def add_node_history(self, child):
-        print("\033[92mOperation type: ", child.operation_type, "\033[0m")
-        parent_name = "(" + "x".join(child.parents_names) + ")"
-        print(f"\033[92mAdding {child.name} to {parent_name}\033[0m")
-        self.node_history[parent_name]["operation_type"] = child.operation_type
-        self.node_history[parent_name]["parent_names"] = child.parents_names
-        self.node_history[parent_name]["parent_codes"] = child.parents_codes
-        self.node_history[parent_name][
-            "parent_fitnesses"
-        ] = child.parents_fitnesses
+    def get_new_log_dir(self, search_algorithm, reflection, pop_size=None):
+        print("[get_new_log_dir] reflection: ", reflection)
+        log_dir = get_log_dir(self.id, search_algorithm, reflection, pop_size)
+        print("[get_new_log_dir] log_dir: ", log_dir)
+        os.makedirs(log_dir, exist_ok=True)
+        num_logs = len(os.listdir(log_dir))
+        return f"{log_dir}/{num_logs+1}"
 
-        new_code = child.get_patched_code()
-        new_child = {
-            "fitness": child.fitness,
-            "new_code": new_code,
-            "strategy": child.strategy,
-        }
-        # Skip if exists, otherwise append
-        children = self.node_history[parent_name]["children"]
-        for i, child in enumerate(children):
-            if child["new_code"] == new_code:
-                children[i] = new_child
-                break
+    def add_log_file(self, log_dir, step, run, best_fitness, code):
+        if run.status == 'SUCCESS':
+            run_fitness = round(run.fitness, 5)
+            best_fitness = round(best_fitness, 5)
+            log_path = f"{log_dir}/step{step}_run{run_fitness}_best{best_fitness}.txt"
         else:
-            children.append(new_child)
+            best_fitness = round(best_fitness, 5)
+            log_path = f"{log_dir}/step{step}_run{run.status}_best{best_fitness}.txt"
 
-    def create_empty_variant(self):
-        sol = magpie.core.Patch()
-        source_code = magpie.core.Variant(self.software, sol)
-        return source_code
+        with open(log_path, "w") as f:
+            f.write(code)
 
-    def mutate_original(self, num_mutations):
-        source_code = self.create_empty_variant()
-        mutations = self.mutate(source_code, num_mutations)
-        return mutations
+    def run(self):
+        try:
+            # warmup
+            self.hook_warmup()
+            self.warmup()
+
+            # early stop if something went wrong during warmup
+            if self.report['stop']:
+                return
+
+            # start!
+            self.hook_start()
+
+            # self.log_path = f"/home/luke/magpie/logs/codes/gp"
+            # num_logs = len(glob(f"{self.log_path}*"))
+            # self.log_path = f"{self.log_path}_{num_logs+1}"
+            self.log_dir = self.get_new_log_dir(self.name, self.config["reflection"])
+            print("Log dir: ", self.log_dir)
+            os.makedirs(self.log_dir, exist_ok=True)
+
+            # initial pop
+            pop = {}
+            local_best_fitness = None
+            while len(pop) < self.config['pop_size']:
+                sol = magpie.core.Patch()
+                self.mutate(sol)
+                if sol in pop:
+                    continue
+                variant = magpie.core.Variant(self.software, sol)
+                run = self.evaluate_variant(variant)
+                accept = best = False
+                if run.status == 'SUCCESS':
+                    if self.dominates(run.fitness, local_best_fitness):
+                        local_best_fitness = run.fitness
+                        accept = True
+                        if self.dominates(run.fitness, self.report['best_fitness']):
+                            self.report['best_fitness'] = run.fitness
+                            self.report['best_patch'] = sol
+                            best = True
+                    self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], variant.get_patched_code())
+                else:
+                    self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], variant.get_patched_code())
+                self.hook_evaluation(variant, run, accept, best)
+                pop[sol] = run
+                self.stats['steps'] += 1
+
+            # main loop
+            while not self.stopping_condition():
+                self.stats['gen'] += 1
+                self.hook_main_loop()
+                offsprings = []
+                parents = self.select(pop)
+                # elitism
+                copy_parents = copy.deepcopy(parents)
+                k = int(self.config['pop_size']*self.config['offspring_elitism'])
+                for parent in copy_parents[:k]:
+                    offsprings.append(parent)
+                # crossover
+                copy_parents = copy.deepcopy(parents)
+                k = int(self.config['pop_size']*self.config['offspring_crossover'])
+                for parent in copy_parents[:k]:
+                    sol = copy.deepcopy(random.sample(parents, 1)[0])
+                    if random.random() > 0.5:
+                        sol = self.crossover(parent, sol)
+                    else:
+                        sol = self.crossover(sol, parent)
+                    offsprings.append(sol)
+                # mutation
+                copy_parents = copy.deepcopy(parents)
+                k = int(self.config['pop_size']*self.config['offspring_mutation'])
+                for parent in copy_parents[:k]:
+                    self.mutate(parent)
+                    offsprings.append(parent)
+                # regrow
+                while len(offsprings) < self.config['pop_size']:
+                    sol = magpie.core.Patch()
+                    self.mutate(sol)
+                    if sol in pop:
+                        continue
+                    offsprings.append(sol)
+                # replace
+                pop.clear()
+                local_best_fitness = None
+                for sol in offsprings:
+                    if self.stopping_condition():
+                        break
+                    variant = magpie.core.Variant(self.software, sol)
+                    run = self.evaluate_variant(variant)
+                    accept = best = False
+                    print("================================================")
+                    print("Fitness: ", run.status, run.fitness)
+                    print("================================================")
+                    self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], variant.get_patched_code())
+
+                    if run.status == 'SUCCESS':
+                        if self.dominates(run.fitness, local_best_fitness):
+                            local_best_fitness = run.fitness
+                            accept = True
+                            if self.dominates(run.fitness, self.report['best_fitness']):
+                                self.report['best_fitness'] = run.fitness
+                                self.report['best_patch'] = sol
+                                best = True
+                    else:
+                        self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], variant.get_patched_code())
+                    self.hook_evaluation(variant, run, accept, best)
+                    pop[sol] = run
+                    self.stats['steps'] += 1
+
+        except KeyboardInterrupt:
+            self.report['stop'] = 'keyboard interrupt'
+
+        finally:
+            # the end
+            self.hook_end()
 
     def format_code(self, code):
         # Use regex to find all numbers in the string
@@ -126,6 +225,41 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
         with open(path, "w") as file:
             json.dump(self.node_history, file, indent=4)
 
+    def mutate(self, patch, num_mutations=None):
+        if patch.edits and random.random() < self.config["delete_prob"]:
+            del patch.edits[random.randrange(0, len(patch.edits))]
+        else:
+            patch.edits.append(self.create_edit(self.software.noop_variant))
+
+    def crossover(self, sol1, sol2):
+        c = copy.deepcopy(sol1)
+        for edit in sol2.edits:
+            c.edits.append(edit)
+        return c
+
+    def filter(self, pop):
+        return {sol for sol in pop if pop[sol].status == "SUCCESS"}
+
+    def select(self, pop):
+        """returns possible parents ordered by fitness"""
+        return sorted(self.filter(pop), key=lambda sol: pop[sol].fitness)
+
+    def hook_main_loop(self):
+        if self.config["batch_reset"]:
+            for a in self.config["batch_bins"]:
+                random.shuffle(a)
+            self.hook_reset_batch()
+
+
+class GeneticProgrammingLLM(GeneticProgramming):
+    def __init__(self):
+        super().__init__()
+        self.name = "Genetic Programming (LLM)"
+        self.llm_type = "baseline"
+        self.llm_mutator = LLMMutation()
+        self.llm_crossover = LLMCrossover()
+
+    
     def run(self):
         try:
             print("--------------------------------")
@@ -143,18 +277,13 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
             # start!
             self.hook_start()
 
-            # Unlike before, we now use variants instead of patches
-
             # initial pop
             pop = {}
             local_best_fitness = None
-            mutations = self.mutate_original(self.config["pop_size"])
+            mutations = self.mutate_source_code(self.config["pop_size"])
 
-            self.log_path = f"/home/luke/magpie/logs/codes/reflection_on_{self.config['reflection']}"
-            num_logs = len(glob(f"{self.log_path}*"))
-            self.log_path = f"{self.log_path}_{num_logs+1}"
-
-            os.makedirs(self.log_path, exist_ok=True)
+            self.log_dir = self.get_new_log_dir(self.name, self.config["reflection"], self.config["pop_size"])
+            os.makedirs(self.log_dir, exist_ok=True)
 
             for variant in mutations:
                 run = self.evaluate_variant(variant, force=True)
@@ -163,11 +292,8 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     variant.fitness = run.fitness
                     self.add_node_history(variant)
                     code = variant.get_patched_code()
-                    print("Success code: ", code[:100])
                     name = variant.name
-                    with open(f"{self.log_path}/{variant.fitness}_{name}.txt", "w") as f:
-                        f.write(code)
-                    print("SUccess code2: ", code[:100])
+                    self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], code)
                     if self.dominates(run.fitness, local_best_fitness):
                         local_best_fitness = run.fitness
                         accept = True
@@ -182,11 +308,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                             best = True
                 else:
                     code = variant.get_patched_code()
-                    print("Failed code: ", code[:100])
-                    name = variant.name
-                    with open(f"{self.log_path}/failed_{name}.txt", "w") as f:
-                        f.write(code)
-                    print("Failed code2: ", code[:100])
+                    self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], code)
 
                 if self.config["reflection"]:
                     print("Passing the following code to reflection: ", code[:100])
@@ -205,9 +327,9 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     self.reflections.append(new_reflections)
 
                     # Save reflection to log file
-                    with open(f"{self.log_path}/reflections.txt", "a") as f:
-                        f.write(f"Operation: {variant_operation_type}, Success: {run.status == 'SUCCESS'}\n")
-                        f.write(f"Reflection: {reflection}\n\n")
+                    # with open(f"{self.log_dir}/reflections.txt", "a") as f:
+                    #     f.write(f"Operation: {variant_operation_type}, Success: {run.status == 'SUCCESS'}\n")
+                    #     f.write(f"Reflection: {reflection}\n\n")
 
                 self.hook_evaluation(variant, run, accept, best)
                 pop[variant] = run
@@ -261,7 +383,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     offsprings.extend(mutations)
 
                 # regrow
-                mutations = self.mutate_original(
+                mutations = self.mutate_source_code(
                     self.config["pop_size"] - len(offsprings)
                 )
                 offsprings.extend(mutations)
@@ -269,11 +391,6 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                 # replace
                 pop.clear()
                 local_best_fitness = None
-                # print("Pop size: ", self.config["pop_size"])
-                # print("Offsprings size: ", len(offsprings))
-                # print the offsprings
-                # for variant in offsprings:
-                #     print("Offspring: ", variant.name)
 
                 for variant in offsprings:
                     if self.stopping_condition():
@@ -288,9 +405,7 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     if run.status == "SUCCESS":
                         variant.fitness = run.fitness
                         code = variant.get_patched_code()
-                        name = variant.name
-                        with open(f"{self.log_path}/{variant.fitness}_{name}.txt", "w") as f:
-                            f.write(code)
+                        self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], code)
                         self.add_node_history(variant)
                         if self.dominates(run.fitness, local_best_fitness):
                             local_best_fitness = run.fitness
@@ -307,10 +422,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                     else:
                         code = variant.get_patched_code()
                         name = variant.name
-                        with open(f"{self.log_path}/failed_{name}.txt", "w") as f:
-                            f.write(code)
+                        self.add_log_file(self.log_dir, self.stats['steps'], run, self.report['best_fitness'], code)
 
                     if self.config["reflection"]:
+                        print("Reflecting...")
                         fitness = run.fitness if run.status == "SUCCESS" else -1
                         error_message = None if run.status == "SUCCESS" else run.last_exec.stderr.decode().split("error: ")[-1]
                         reflection = self.llm_reflection.reflect(variant, code, run.status, fitness, error_message)
@@ -324,10 +439,10 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                             "fitness_improvement": fitness_improvement,
                         })
                         
-                        # Save reflection to log file
-                        with open(f"{self.log_path}/reflections.txt", "a") as f:
-                            f.write(f"Operation: {variant_operation_type}, Success: {run.status == 'SUCCESS'}\n")
-                            f.write(f"Reflection: {reflection}\n\n")
+                        # # Save reflection to log file
+                        # with open(f"{self.log_dir}/reflections.txt", "a") as f:
+                        #     f.write(f"Operation: {variant_operation_type}, Success: {run.status == 'SUCCESS'}\n")
+                        #     f.write(f"Reflection: {reflection}\n\n")
 
                     self.hook_evaluation(variant, run, accept, best)
                     pop[variant] = run
@@ -336,11 +451,6 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                         "\033[94mSecond Step: ", self.stats["steps"], "\033[0m"
                     )
 
-            # print("--------------------------------")
-            # for sol in pop.keys():
-            #     print("Sol: ", len(sol.edits))
-            # print("--------------------------------")
-
             print("=====================")
             print("Node history")
 
@@ -348,11 +458,6 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
                 k: self.node_history[k] for k in sorted(self.node_history)
             }
 
-            # for parent_name, log in self.node_history.items():
-            #     prompt_data = convert_to_prompt_data(log)
-            #     self.prompts_dataset.add_prompt(
-            #         self.dataset + self.id, parent_name, prompt_data
-            #     )
             print("=====================")
 
             # Save node history to a file
@@ -365,39 +470,15 @@ class GeneticProgramming(magpie.core.BasicAlgorithm):
             # the end
             self.hook_end()
 
-    def mutate(self, patch):
-        if patch.edits and random.random() < self.config["delete_prob"]:
-            del patch.edits[random.randrange(0, len(patch.edits))]
-        else:
-            patch.edits.append(self.create_edit(self.software.noop_variant))
+    def create_empty_variant(self):
+        sol = magpie.core.Patch()
+        source_code = magpie.core.Variant(self.software, sol)
+        return source_code
 
-    def crossover(self, sol1, sol2):
-        c = copy.deepcopy(sol1)
-        for edit in sol2.edits:
-            c.edits.append(edit)
-        return c
-
-    def filter(self, pop):
-        return {sol for sol in pop if pop[sol].status == "SUCCESS"}
-
-    def select(self, pop):
-        """returns possible parents ordered by fitness"""
-        return sorted(self.filter(pop), key=lambda sol: pop[sol].fitness)
-
-    def hook_main_loop(self):
-        if self.config["batch_reset"]:
-            for a in self.config["batch_bins"]:
-                random.shuffle(a)
-            self.hook_reset_batch()
-
-
-class GeneticProgrammingLLM(GeneticProgramming):
-    def __init__(self):
-        super().__init__()
-        self.name = "Genetic Programming (LLM)"
-        self.llm_type = "baseline"
-        self.llm_mutator = LLMMutation()
-        self.llm_crossover = LLMCrossover()
+    def mutate_source_code(self, num_mutations):
+        source_code = self.create_empty_variant()
+        mutations = self.mutate(source_code, num_mutations)
+        return mutations
 
     def mutate(self, variant, num_mutations):
         new_mutations = []
@@ -407,10 +488,10 @@ class GeneticProgrammingLLM(GeneticProgramming):
 
         if self.config["reflection"] == "RECENT_SUCCESSFUL":
             reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_MUTATION"][-5:]
-        elif self.config["reflection"] == "MOST_SUCCESSFUL":
-            # top 5
+        elif self.config["reflection"] == "SUCCESSFUL":
+            # top 15
             reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_MUTATION"]
-            reflections = sorted(reflections, key=lambda x: x["fitness_improvement"], reverse=True)[:5]
+            reflections = sorted(reflections, key=lambda x: x["fitness_improvement"], reverse=True)[:15]
         elif self.config["reflection"] == "ALL":
             # top 5 most successful
             no_error_reflections = [refl for refl in self.reflections if refl["operation_type"] == "LLM_MUTATION"]
@@ -470,7 +551,7 @@ class GeneticProgrammingLLM(GeneticProgramming):
 
         if self.config["reflection"] == "RECENT_SUCCESSFUL":
             reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_CROSSOVER"][-5:]
-        elif self.config["reflection"] == "MOST_SUCCESSFUL":
+        elif self.config["reflection"] == "SUCCESSFUL":
             reflections = [refl for refl in self.reflections if refl["is_successful"] and refl["operation_type"] == "LLM_CROSSOVER"]
             reflections = sorted(reflections, key=lambda x: x["fitness_improvement"], reverse=True)[:5]
         elif self.config["reflection"] == "ALL":
@@ -509,6 +590,34 @@ class GeneticProgrammingLLM(GeneticProgramming):
         print("Crossover done!")
 
         return new_crossovers
+
+    
+    def add_node_history(self, child):
+        print("\033[92mOperation type: ", child.operation_type, "\033[0m")
+        parent_name = "(" + "x".join(child.parents_names) + ")"
+        print(f"\033[92mAdding {child.name} to {parent_name}\033[0m")
+        self.node_history[parent_name]["operation_type"] = child.operation_type
+        self.node_history[parent_name]["parent_names"] = child.parents_names
+        self.node_history[parent_name]["parent_codes"] = child.parents_codes
+        self.node_history[parent_name][
+            "parent_fitnesses"
+        ] = child.parents_fitnesses
+
+        new_code = child.get_patched_code()
+        new_child = {
+            "fitness": child.fitness,
+            "new_code": new_code,
+            "strategy": child.strategy,
+        }
+        # Skip if exists, otherwise append
+        children = self.node_history[parent_name]["children"]
+        for i, child in enumerate(children):
+            if child["new_code"] == new_code:
+                children[i] = new_child
+                break
+        else:
+            children.append(new_child)
+
 
 
 magpie.utils.known_algos.append(GeneticProgrammingLLM)

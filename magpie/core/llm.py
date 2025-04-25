@@ -21,19 +21,8 @@ class LLMBase:
     def llm(self):
         # Lazy load the LLM to avoid deepcopy/pickle errors with thread locks
         if self._llm is None:
-            # Ues Mistral
-            # self._llm = ChatMistralAI(
-            #     model="codestral-latest",
-            #     temperature=0.7,
-            #     mistralai_api_key=os.getenv("MISTRAL_API_KEY"),
-            # )
-
             self._llm = ChatOpenAI(
-                # model="gpt-4o-mini",
-                # model="gpt-4o",
                 model="o3-mini-2025-01-31",
-                # model="ft:gpt-4o-mini-2024-07-18:prompt-infection::Au7BGrZS",  # PIE-finetuned
-                # temperature=0.7,
                 openai_api_key=os.getenv("OPENAI_API_KEY"),
                 openai_organization=os.getenv("OPENAI_ORG"),
             )
@@ -405,12 +394,17 @@ class LLMReflection(LLMBase):
 
             You should say what kind of operation / edits worked or not in details.
             In other words, your reflection should compare the parent code and a new code and reflect on the edits.
-            Note that the reader of your reflection does not have access to any of the code.
+            Note that the reader of your reflection does not have access to any of the code (so saying "the new code" is not helpful)
             So, you should be really specific.
             Note that small fitness improvement / degradation under 5% means the code change did not do anything meaningful.
             If the fitness improvement is under 5%, you should say that the code change did not do anything meaningful.
+
+            Bad example: "This code led to blah blah"
+            Good example: "Doing X / Removing Y / etc. led to blah blah."
             
-            Start your reflection with <reflection> tag and end with </reflection> tag.
+            First, reflect on the changes. 
+            And then, rewrite the reflection by starting with <reflection> tag and end with </reflection> tag so that
+            another LLM can learn from the reflection inside those tags without seeing the code.
             Now, please reflect on the new code and the run result:
             """
         )
@@ -447,94 +441,6 @@ class LLMReflection(LLMBase):
 
 
 class LLMMutation(LLMBase):
-    # prompt = ChatPromptTemplate.from_template(
-    #     textwrap.dedent(
-    #         """
-    #         We are implementing a genetic algorithm to optimize code by performing mutation operations, 
-    #         aiming to improve its fitness score (runtime).
-    #         As an expert C++ developer, your task is to generate {num_offsprings} mutations of the given code.
-    #         A lower fitness score means better performance.
-
-    #         Each mutation operation should involve selecting specific parts of the code, 
-    #         such as import packages, lines, or blocks, and applying diverse strategies to optimize them.
-    #         The strategy should clearly describe the focus area and the intended optimization.
-    #         Balancing exploration and exploitation is key to success.
-    #         Your code should be a valid C++ code that can be compiled and run.
-    #         Your goal is to return the best {num_offsprings} optimization mutations.
-
-    #         Also, here are some reflections that you may use to generate the mutation:
-    #         {reflections}
-    #         You wrote these reflections yourself in the past so that you can learn from them and write a better, faster code without making the same mistakes again.
-    #         However, note that you should not strictly follow the reflections because we want you to explore and discover new strategies.
-
-    #         Now, here's the code to mutate:
-    #         {code}
-    #         Fitness score: {fitness}
-
-    #         Return the best {num_offsprings} mutations. We highly want diverse mutations.
-
-    #         [ON OUTPUT FORMAT]
-    #         Note that the code is quite long. So I prepended a code line number to each line of the code.
-    #         Your new code could be shorter or longer than the codes to be replaced.
-    #         For example, if you want to replace the code in line A to B, you should write the new code like:
-
-    #         <Mutation 1>
-    #         strategy: Focus on the lines A:B that do X, which could be optimized by Y.
-    #         start line: A
-    #         start code: The code of the line A (every single letter, number, and symbol should be included. copy paste as it is.)
-    #         end line: B
-    #         end code: The code of the line B (every single letter, number, and symbol should be included. copy paste as it is.)
-    #         code change:
-    #         ```
-    #         // new code
-    #         ```
-
-    #         (and optionally more lines to replace if necessary to make the code valid)
-    #         start line: C
-    #         start code: The code of the line C (every single letter, number, and symbol should be included. copy paste as it is.)
-    #         end line: D
-    #         end code: The code of the line D (every single letter, number, and symbol should be included. copy paste as it is.)
-    #         code change:
-    #         ```
-    #         // new code
-    #         ```
-    #         Here, "start line" and "end line" are the line numbers of the code to be replaced.
-    #         "start code" and "end code" are the codes of the start and end lines, which exist in the parent code.
-    #         The "code change" could be shorter or longer than the target codes to be replaced.
-    #         As you can see, you can replace multiple sections of the code if necessary (like when including a new library, etc.)
-    #         Important note for the end line. If the target end line is just a bracket, you should write it so.
-    #         If you fail to include the bracket and just write the new code, you might end up with two closing brackets and the code will not compile.
-            
-    #         Strictly follow the output format.
-    #         - Don't use a markdown! Don't decorate the texts!
-    #         - dont use ** to wrap the strategy or code. No asteriks for wrapping!
-    #         - dont use ```cpp. Only do ```
-    #         - Otherwise, your output will be rejected.
-
-    #         When I replace the target code lines with your new code,
-    #         the new patched code should be a valid .cc code that can be compiled and run.
-    #         So you cannot simply remove any code without caution.
-    #         Please write a fast, valid C++ code.
-
-    #         In summary, first analyze the code and generate any possible sources of inefficiency.
-    #         Then write the mutations for a faster, more efficient code.
-    #         Sometimes, you can think outside the box.
-    #         Sometimes, you can think of some known optimization patterns.
-
-    #         For a mutation block, the output format should always start with <Mutation N>.
-    #         And then obey the output format like below.
-    #         start number: A
-    #         start code: Line A code
-    #         end number: B
-    #         end code: Line B code
-    #         code change:
-    #         ```
-    #         // new code
-    #         ```
-    #         """
-    #     )
-    # )
-
     prompt = ChatPromptTemplate.from_template(
         textwrap.dedent(
             """
@@ -584,33 +490,18 @@ class LLMMutation(LLMBase):
             <Mutation N>
             strategy: Focus on the the method / line / etc. that do X, which could be optimized by Y. (Be really specific)
             - target code block line 1
-            - target code block line 2
             - ...
             - target code block line N
             + new code line 1
-            + new code line 2
             + ...
             + new code line N
 
             <Mutation N+1>
             strategy: Focus on the the method / line / etc. that do X, which could be optimized by Y. (Be really specific)
             - target code block line 1
-            - target code block line 2
             - ...
             - target code block line N
             + new code line 1
-            + new code line 2
-            + ...
-            + new code line N
-
-            <Mutation N+2>
-            strategy: Focus on the the method / line / etc. that do X, which could be optimized by Y. (Be really specific)
-            - target code block line 1
-            - target code block line 2
-            - ...
-            - target code block line N
-            + new code line 1
-            + new code line 2
             + ...
             + new code line N
 
@@ -635,20 +526,24 @@ class LLMMutation(LLMBase):
             f. Every mutation should have one strategy and at least one code diff.
             g. The - lines will be directly replaced by the following + lines. You can alternate between - and + lines.
 
-            In summary, first analyze the code and generate any possible sources of inefficiency.
-            Then write the mutations for a faster, more efficient code.
-
             [Code optimization strategies]
             a. You could focus on specific lines that seem heavy
-            b. You can think outside the box
-            c. You can think of some known optimization patterns
-            d. You can focus on one heavy block of code
-            e. No marginal improvement is allowed.
+            b. Go beyond changing the format of the code.
+            c. Sometimes, removing some lines as long as it does not break the code could accelerate the code
+            d. You could focus on functions / blocks that are heavy or repeatedly executed many times and try to reduce their usage or speed up them
+            e. If needed, don't forget to import a new library
+            f. Make sure every variable is declared without errors.
+            g. Aim for major speedup of at least a few seconds. Minor speedup is a waste of time.
+            h. Reducing the iteration count could accelerate the code.
+            i. Watch out the }} symbol. 
 
             Remember. We want a valid, faster code diff.
-            Marginal improvement is okay, but we want major speedup.
 
-            Now, generate {num_offsprings} mutations.
+            First, think about which codes functions / blocks are the heaviest.
+            Then, write the mutation by focusing on those heavy codes / functions / blocks.
+
+            Now, generate {num_offsprings} mutations. Aim for at least 10 seconds of speedup!
+            Be bold about removing some lines.
             """
         )
     )

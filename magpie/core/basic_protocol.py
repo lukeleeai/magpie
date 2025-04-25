@@ -8,6 +8,7 @@ import subprocess
 import magpie.settings
 import magpie.utils.known
 from magpie.utils.csv_manager import ResultsManager
+from magpie.utils.convert import get_log_dir
 
 
 def apply_diff(source_code_path, diff_file):
@@ -43,16 +44,22 @@ class BasicProtocol:
             and int(config["search.gp"]["pop_size"]) == 1
         )
 
-        results_file_name = "llm_agent"
+        log_dir = get_log_dir(config["software"]["path"], config["search"]["algorithm"], config["search.gp"]["reflection"])
+        # log_dir = os.path.join("logs", config["software"]["path"].split("/")[-1]) + "/"
+        # if "LLM" in config["search"]["algorithm"]:
+        #     log_dir += "llm_agent"
+        #     if config["search.gp"]["reflection"] == "SUCCESSFUL":
+        #         log_dir += "_reflection_on_successful"
+        #     elif config["search.gp"]["reflection"] == "ALL":
+        #         log_dir += "_reflection_on_all"
+        #     else:
+        #         log_dir += "_no_reflection"
+        # else:
+        #     log_dir += "gp"
 
-        if config["search.gp"]["reflection"] == "SUCCESSFUL":
-            results_file_name += "_reflection_on_successful"
-        elif config["search.gp"]["reflection"] == "ALL":
-            results_file_name += "_reflection_on_all"
-        else:
-            results_file_name += "_no_reflection"
-
-        self.results_manager = ResultsManager(results_file_name)
+        os.makedirs(log_dir, exist_ok=True)
+        num_files = len(os.listdir(log_dir))
+        self.results_manager = ResultsManager(log_dir, str(num_files+1))
 
     def run(self, config):
         self.set_results_manager(config)
@@ -172,6 +179,8 @@ class BasicProtocol:
 
             # Save to results manager
             id = self.software.run_label.split("_")[0]
+            print("ID: ", id)
+            print("Best fitness: ", result["best_fitness"])
             self.results_manager.add_result(
                 id=id,
                 new_code=model_code,
@@ -185,7 +194,8 @@ class BasicProtocol:
                     if isinstance(result["reference_fitness"], (int, float))
                     else 0.0
                 ),
-                llm_prob=config["search"]["llm_prob"],
+                best_fitness=result["best_fitness"],
+                step=self.search.stats["steps"],
             )
 
         # cleanup temporary software copies

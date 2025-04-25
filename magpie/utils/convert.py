@@ -1,3 +1,5 @@
+import os
+
 from .known import algos as known_algos
 from .known import edits as known_edits
 from .known import models as known_models
@@ -67,14 +69,6 @@ def algo_from_string(s):
     msg = f'Unknown algorithm class "{s}"'
     raise RuntimeError(msg)
 
-
-# def format_crossover_parents(codes, fitnesses):
-#     return "\n\n".join(
-#         f"<Parent {i + 1}>\nCode: \n```\n{code}\n```\nFitness score: {fitness}"
-#         for i, (code, fitness) in enumerate(zip(codes, fitnesses))
-#     )
-
-
 def convert_to_prompt_data(log):
     # Determine the operation type and select the appropriate prompt template
     is_crossover = log["operation_type"] == CROSSOVER
@@ -115,3 +109,23 @@ def convert_to_prompt_data(log):
 
     # print("PROMPT: ", prompt)
     return prompt
+
+
+def get_log_dir(software_path, search_algorithm, reflection, pop_size=None):
+    log_dir = os.path.join("logs", software_path.split("/")[-1]) + "/"
+    if "LLM" in search_algorithm:
+        if pop_size == 1:
+            log_dir += "llm_baseline"
+            return log_dir
+        else:
+            log_dir += "sbco_agent"
+
+        if reflection == "SUCCESSFUL":
+            log_dir += "_reflection_on_successful"
+        elif reflection == "ALL":
+            log_dir += "_reflection_on_all"
+        else:
+            log_dir += "_no_reflection"
+    else:
+        log_dir += "gp"
+    return log_dir
