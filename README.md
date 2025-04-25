@@ -1,52 +1,40 @@
-# Magpie (Machine Automated General Performance Improvement via Evolution of software)
+# GI Agent (Genetic Improvement with AI Agent)
 
-<p align="center">
-  <img alt="MAGPIE logo" src="./docs/logo_magpie.png" />
-</p>
-
-Magpie: your software, but more efficient!
+GI Agent: Enhancing software performance through AI-guided genetic improvement!
 
 ## Introduction
 
-Magpie is a tool for automated software improvement.
-It implements [MAGPIE](#citation), using the genetic improvement methodology to traverse the search space of different software variants to find improved software.
+GI Agent is a tool for automated software improvement using AI agents to guide the genetic improvement process. 
+It extends [MAGPIE](#original-project-credits) with AI-powered capabilities to more efficiently traverse the search space of software variants to find improved solutions.
 
-Magpie provides support for improvement of both functional (automated bug fixing) and non-functional (e.g., execution time) properties of software.  
-Two types of language-agnostic source code representations are supported: line-by-line, and XML trees.
-For the latter we recommend the [srcML](https://www.srcml.org/) tool with out-of-the-box support for C/C++/C# and Java.  
-Finally, Magpie also enables parameter tuning and algorithm configuration, both independently and concurrently of the source code search process.
-
+GI Agent supports improvement of both functional (automated bug fixing) and non-functional (e.g., execution time) properties of software.
+Like its predecessor, it provides language-agnostic source code representations and enables parameter tuning and algorithm configuration.
 
 ## Requirements
 
 - Unix (Linux/macOS/etc; untested on Windows)
-- Python 3.11+ (`master` branch)
-- Python 3.8+ (`master_legacy` branch)
-
+- Python 3.11+
 
 ## Try it now!
 
-    git clone https://github.com/bloa/magpie.git
-    cd magpie
-    python3 magpie local_search --scenario examples/triangle-c/_magpie/scenario_slow.txt
-
+```bash
+git clone https://github.com/your-username/gi-agent.git
+cd gi-agent
+bash run_exp.sh
+```
 
 ## Documentation
 
-Everything you need to know about Magpie.
+For detailed documentation on the underlying GI framework, please see the original Magpie documentation.
 
 **Tutorials**
 
-- [Quick start](./docs/tutorials/quick_start.md) **(start here!)**
+- [Quick start](./docs/tutorials/quick_start.md)
 - [Search for improved variants](./docs/tutorials/search.md)
 
 **How-to guides**
 
 - [Write a custom fitness function](./docs/howto/custom_fitness_function.md)
-
-**Explanations**
-
-- [Project structure](./docs/explanations/project_structure.md)
 
 **Reference guides**
 
@@ -55,13 +43,13 @@ Everything you need to know about Magpie.
 - [Scenario files](./docs/reference/scenario_file.md)
 - [Algorithm configuration model](./docs/reference/paramconfig_model.md)
 
+## Original Project Credits
 
-## Acknowledgements
+This project is forked from [Magpie (Machine Automated General Performance Improvement via Evolution of software)](https://github.com/bloa/magpie), developed by Aymeric Blot and Justyna Petke. Magpie itself is based on [PyGGI 2.0](https://github.com/coinse/pyggi), developed at [COINSE KAIST](https://coinse.kaist.ac.kr/) in collaboration with [UCL SOLAR](https://solar.cs.ucl.ac.uk/).  
 
-Magpie is based on [PyGGI 2.0](https://github.com/coinse/pyggi), developed at [COINSE KAIST](https://coinse.kaist.ac.kr/) in collaboration with [UCL SOLAR](https://solar.cs.ucl.ac.uk/).  
-Part of its development was supported by UK EPSRC Fellowship EP/P023991/1.
+Part of the original development was supported by UK EPSRC Fellowship EP/P023991/1.
 
-If you use Magpie for a publication, we kindly ask you to cite the following [ArXiV paper](https://arxiv.org/abs/2208.02811) that describes MAGPIE's approach:
+If you use GI Agent for a publication, we kindly ask you to cite both our work and the original MAGPIE paper:
 
 ```
 @article{blot:2022:corr_1,
