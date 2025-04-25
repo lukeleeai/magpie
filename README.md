@@ -17,11 +17,11 @@ Like its predecessor, it provides language-agnostic source code representations 
 
 ## Try it now!
 
+After downloading the repository, please run
 ```bash
-git clone https://github.com/your-username/gi-agent.git
-cd gi-agent
 bash run_exp.sh
 ```
+to reproduce all the experiments.
 
 ## Documentation
 
